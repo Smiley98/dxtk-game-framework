@@ -82,15 +82,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="assets\fonts\SegoeUI_18.spritefont" />
+    <None Include="assets\sounds\ADPCMdroid.xwb" />
     <None Include="packages.config" />
-    <None Include="SegoeUI_18.spritefont" />
-    <None Include="tiny.sdkmesh" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="directx.ico" />
-    <Image Include="seafloor.dds" />
-    <Image Include="Tiny_skin.dds" />
-    <Image Include="windowslogo.dds" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
@@ -112,6 +106,14 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="StepTimer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\music\musicmono_adpcm.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\textures\seafloor.dds" />
+    <Image Include="assets\textures\windowslogo.dds" />
+    <Image Include="directx.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

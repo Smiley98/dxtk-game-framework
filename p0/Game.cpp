@@ -56,9 +56,9 @@ void Game::Initialize(HWND window, int width, int height)
     m_audioTimerAcc = 10.f;
     m_retryDefault = false;
 
-    m_waveBank = std::make_unique<WaveBank>(m_audEngine.get(), L"adpcmdroid.xwb");
+    m_waveBank = std::make_unique<WaveBank>(m_audEngine.get(), L"assets\\sounds\\adpcmdroid.xwb");
 
-    m_soundEffect = std::make_unique<SoundEffect>(m_audEngine.get(), L"MusicMono_adpcm.wav");
+    m_soundEffect = std::make_unique<SoundEffect>(m_audEngine.get(), L"assets\\music\\MusicMono_adpcm.wav");
     m_effect1 = m_soundEffect->CreateInstance();
     m_effect2 = m_waveBank->CreateInstance(10);
 
@@ -340,7 +340,7 @@ void Game::CreateDeviceDependentResources()
             m_batchInputLayout.ReleaseAndGetAddressOf())
     );
 
-    m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
+    m_font = std::make_unique<SpriteFont>(device, L"assets\\fonts\\SegoeUI_18.spritefont");
 
     m_shape = GeometricPrimitive::CreateTeapot(context, 4.f, 8);
 
@@ -349,11 +349,11 @@ void Game::CreateDeviceDependentResources()
 
     // Load textures
     DX::ThrowIfFailed(
-        CreateDDSTextureFromFile(device, L"seafloor.dds", nullptr, m_texture1.ReleaseAndGetAddressOf())
+        CreateDDSTextureFromFile(device, L"assets\\textures\\seafloor.dds", nullptr, m_texture1.ReleaseAndGetAddressOf())
     );
 
     DX::ThrowIfFailed(
-        CreateDDSTextureFromFile(device, L"windowslogo.dds", nullptr, m_texture2.ReleaseAndGetAddressOf())
+        CreateDDSTextureFromFile(device, L"assets\\textures\\windowslogo.dds", nullptr, m_texture2.ReleaseAndGetAddressOf())
     );
 }
 
