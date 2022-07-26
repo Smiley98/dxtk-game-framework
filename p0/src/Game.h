@@ -61,15 +61,15 @@ private:
     scene::Type m_scene = scene::TEST;
 
     // Device resources.
-    std::unique_ptr<DX::DeviceResources>    m_deviceResources;
+    std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 
     // Rendering loop timer.
     DX::StepTimer                           m_timer;
 
     // Input devices.
-    std::unique_ptr<DirectX::GamePad>       m_gamePad;
-    std::unique_ptr<DirectX::Keyboard>      m_keyboard;
-    std::unique_ptr<DirectX::Mouse>         m_mouse;
+    std::shared_ptr<DirectX::GamePad>       m_gamePad;
+    std::shared_ptr<DirectX::Keyboard>      m_keyboard;
+    std::shared_ptr<DirectX::Mouse>         m_mouse;
 
     // DirectXTK objects.
     std::unique_ptr<DirectX::CommonStates>                                  m_states;
@@ -82,7 +82,7 @@ private:
     std::unique_ptr<DirectX::SpriteFont>                                    m_font;
 
     // DirectXTK for Audio objects.
-    std::unique_ptr<DirectX::AudioEngine>                                   m_audEngine;
+    std::shared_ptr<DirectX::AudioEngine>                                   m_audEngine;
     std::unique_ptr<DirectX::WaveBank>                                      m_waveBank;
     std::unique_ptr<DirectX::SoundEffect>                                   m_soundEffect;
     std::unique_ptr<DirectX::SoundEffectInstance>                           m_effect1;

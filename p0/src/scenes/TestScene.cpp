@@ -1,22 +1,18 @@
 #include "pch.h"
 #include "TestScene.h"
 
-#include "GamePad.h"
-#include "Keyboard.h"
-#include "Mouse.h"
-#include "Audio.h"
-
 namespace scene
 {
-	TestScene::TestScene(DX::DeviceResources& graphics, DirectX::AudioEngine& audio) : Scene(graphics, audio)
+	TestScene::TestScene(std::weak_ptr<DX::DeviceResources> graphics, std::weak_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 	{
+		//m_waveBank = std::make_unique<WaveBank>(&audio, L"../../assets/sounds/adpcmdroid.xwb");
 	}
 
 	TestScene::~TestScene()
 	{
 	}
 
-	void TestScene::OnResize(int width, int height, DX::DeviceResources& graphics)
+	void TestScene::OnResize(int width, int height, std::weak_ptr<DX::DeviceResources> graphics)
 	{
 	}
 
@@ -40,7 +36,7 @@ namespace scene
 	{
 	}
 
-	void TestScene::OnRender(DX::DeviceResources& graphics)
+	void TestScene::OnRender(std::weak_ptr<DX::DeviceResources> graphics)
 	{
 	}
 }

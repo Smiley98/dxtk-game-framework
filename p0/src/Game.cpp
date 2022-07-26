@@ -16,7 +16,7 @@ using Microsoft::WRL::ComPtr;
 
 Game::Game() noexcept(false)
 {
-    m_deviceResources = std::make_unique<DX::DeviceResources>();
+    m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
 }
 
@@ -34,11 +34,11 @@ Game::~Game()
 void Game::Initialize(HWND window, int width, int height)
 {
 #pragma region input
-    m_gamePad = std::make_unique<GamePad>();
+    m_gamePad = std::make_shared<GamePad>();
 
-    m_keyboard = std::make_unique<Keyboard>();
+    m_keyboard = std::make_shared<Keyboard>();
 
-    m_mouse = std::make_unique<Mouse>();
+    m_mouse = std::make_shared<Mouse>();
     m_mouse->SetWindow(window);
 #pragma endregion
 
@@ -48,7 +48,7 @@ void Game::Initialize(HWND window, int width, int height)
     eflags |= AudioEngine_Debug;
 #endif
 
-    m_audEngine = std::make_unique<AudioEngine>(eflags);
+    m_audEngine = std::make_shared<AudioEngine>(eflags);
     m_audioEvent = 0;
     m_audioTimerAcc = 10.f;
     m_retryDefault = false;
@@ -194,7 +194,7 @@ void Game::Render()
     m_model->Draw(context, *m_states, local, m_view, m_projection);
     m_deviceResources->PIXEndEvent();
 
-    Scene::Render(*m_deviceResources);
+    Scene::Render(m_deviceResources);
     m_deviceResources->PIXEndEvent();
 
     // Show the new frame.
@@ -371,7 +371,7 @@ void Game::CreateDeviceDependentResources()
         CreateDDSTextureFromFile(device, L"assets/textures/windowslogo.dds", nullptr, m_texture2.ReleaseAndGetAddressOf())
     );
 
-    Scene::Create(*m_deviceResources, *m_audEngine);
+    Scene::Create(m_deviceResources, m_audEngine);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -398,7 +398,7 @@ void Game::CreateWindowSizeDependentResources()
 
     m_batchEffect->SetProjection(m_projection);
 
-    Scene::Resize(size.right - size.left, size.bottom - size.top, *m_deviceResources);
+    Scene::Resize(size.right - size.left, size.bottom - size.top, m_deviceResources);
 }
 
 void Game::OnDeviceLost()

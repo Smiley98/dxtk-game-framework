@@ -1,14 +1,14 @@
 #pragma once
 
 // D3D11 and STL
-#include <d3d11.h>
+//#include <d3d11.h>
 #include <array>
 #include <memory>
 
-// DXTK structures
-#include "DeviceResources.h"
-#include "PrimitiveBatch.h"
-#include "SimpleMath.h"
+namespace DX
+{
+	class DeviceResources;
+}
 
 // Input
 class DirectX::GamePad;
@@ -29,7 +29,6 @@ class DirectX::GeometricPrimitive;
 class DirectX::Model;
 class DirectX::SpriteBatch;
 class DirectX::SpriteFont;
-class DirectX::WaveBank;
 
 #include "Types.h"
 namespace scene
@@ -41,11 +40,11 @@ namespace scene
 		virtual ~Scene() = 0;
 
 		// Constructors/destructors
-		static void Create(DX::DeviceResources& graphics, DirectX::AudioEngine& audio);
+		static void Create(std::weak_ptr<DX::DeviceResources> graphics, std::weak_ptr<DirectX::AudioEngine> audio);
 		static void Destroy();
 
 		// Handle window resize event
-		static void Resize(int width, int height, DX::DeviceResources& graphics);
+		static void Resize(int width, int height, std::weak_ptr<DX::DeviceResources> graphics);
 
 		// Sets internal scene to passed in scene and calls its begin handler (starts the game)
 		static void Run(Type type);
@@ -63,13 +62,13 @@ namespace scene
 			const DirectX::Mouse& mouse
 		);
 
-		static void Render(DX::DeviceResources& graphics);
+		static void Render(std::weak_ptr<DX::DeviceResources> graphics);
 
 		static Type Current();
 
 	protected:
-		Scene(DX::DeviceResources& graphics, DirectX::AudioEngine& audio);
-		virtual void OnResize(int width, int height, DX::DeviceResources& graphics) = 0;
+		Scene(std::weak_ptr<DX::DeviceResources> graphics, std::weak_ptr<DirectX::AudioEngine> audio);
+		virtual void OnResize(int width, int height, std::weak_ptr<DX::DeviceResources> graphics) = 0;
 
 		virtual void OnBegin() = 0;
 		virtual void OnEnd() = 0;
@@ -84,7 +83,7 @@ namespace scene
 			const DirectX::Mouse& mouse
 		) = 0;
 
-		virtual void OnRender(DX::DeviceResources& graphics) = 0;
+		virtual void OnRender(std::weak_ptr<DX::DeviceResources> graphics) = 0;
 
 	private:
 		static std::array<Scene*, NONE> sScenes;
