@@ -4,11 +4,13 @@
 
 #include "pch.h"
 #include "Game.h"
+#include "scenes/Scene.h"
 
 extern void ExitGame() noexcept;
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
+using namespace scene;
 
 using Microsoft::WRL::ComPtr;
 
@@ -26,32 +28,27 @@ Game::~Game()
     }
 }
 
-// Initialize the Direct3D resources required to run.
+// Input and audio should be initialized before
+// CreateDeviceDependentResources() and CreateWindowSizeDependentResources()
+// since Scene expects them to be initialized by then.
 void Game::Initialize(HWND window, int width, int height)
 {
+#pragma region input
     m_gamePad = std::make_unique<GamePad>();
 
     m_keyboard = std::make_unique<Keyboard>();
 
     m_mouse = std::make_unique<Mouse>();
     m_mouse->SetWindow(window);
+#pragma endregion
 
-    m_deviceResources->SetWindow(window, width, height);
-
-    m_deviceResources->CreateDeviceResources();
-    CreateDeviceDependentResources();
-
-    m_deviceResources->CreateWindowSizeDependentResources();
-    CreateWindowSizeDependentResources();
-
-    // Create DirectXTK for Audio objects
+#pragma region audio
     AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
 #ifdef _DEBUG
     eflags |= AudioEngine_Debug;
 #endif
 
     m_audEngine = std::make_unique<AudioEngine>(eflags);
-
     m_audioEvent = 0;
     m_audioTimerAcc = 10.f;
     m_retryDefault = false;
@@ -64,6 +61,19 @@ void Game::Initialize(HWND window, int width, int height)
 
     m_effect1->Play(true);
     m_effect2->Play();
+#pragma endregion
+
+#pragma region graphics
+    m_deviceResources->SetWindow(window, width, height);
+
+    m_deviceResources->CreateDeviceResources();
+    CreateDeviceDependentResources();
+
+    m_deviceResources->CreateWindowSizeDependentResources();
+    CreateWindowSizeDependentResources();
+#pragma endregion
+
+    Scene::Run(m_scene);
 }
 
 #pragma region Frame Update
@@ -136,6 +146,8 @@ void Game::Update(DX::StepTimer const& timer)
     {
         ExitGame();
     }
+
+    Scene::Update(timer.GetElapsedSeconds(), *m_gamePad, *m_keyboard, *m_mouse);
 }
 #pragma endregion
 
@@ -182,6 +194,7 @@ void Game::Render()
     m_model->Draw(context, *m_states, local, m_view, m_projection);
     m_deviceResources->PIXEndEvent();
 
+    Scene::Render(*m_deviceResources);
     m_deviceResources->PIXEndEvent();
 
     // Show the new frame.
@@ -357,12 +370,14 @@ void Game::CreateDeviceDependentResources()
     DX::ThrowIfFailed(
         CreateDDSTextureFromFile(device, L"assets\\textures\\windowslogo.dds", nullptr, m_texture2.ReleaseAndGetAddressOf())
     );
+
+    Scene::Create(*m_deviceResources, *m_audEngine);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
 void Game::CreateWindowSizeDependentResources()
 {
-    auto const size = m_deviceResources->GetOutputSize();
+    const RECT size = m_deviceResources->GetOutputSize();
     const float aspectRatio = float(size.right) / float(size.bottom);
     float fovAngleY = 70.0f * XM_PI / 180.0f;
 
@@ -382,6 +397,8 @@ void Game::CreateWindowSizeDependentResources()
     );
 
     m_batchEffect->SetProjection(m_projection);
+
+    Scene::Resize(size.right - size.left, size.bottom - size.top, *m_deviceResources);
 }
 
 void Game::OnDeviceLost()
@@ -397,12 +414,15 @@ void Game::OnDeviceLost()
     m_texture1.Reset();
     m_texture2.Reset();
     m_batchInputLayout.Reset();
+
+    m_scene = Scene::Current();
+    Scene::Destroy();
 }
 
 void Game::OnDeviceRestored()
 {
     CreateDeviceDependentResources();
-
     CreateWindowSizeDependentResources();
+    Scene::Run(m_scene);
 }
 #pragma endregion

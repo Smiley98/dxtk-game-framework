@@ -6,7 +6,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
-
+#include "scenes/Types.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -30,8 +30,8 @@ public:
     void Tick();
 
     // IDeviceNotify
-    void OnDeviceLost() override;
-    void OnDeviceRestored() override;
+    void OnDeviceLost() final;
+    void OnDeviceRestored() final;
 
     // Messages
     void OnActivated();
@@ -45,7 +45,7 @@ public:
 
     // Properties
     void GetDefaultSize( int& width, int& height ) const noexcept;
-
+    
 private:
 
     void Update(DX::StepTimer const& timer);
@@ -57,6 +57,8 @@ private:
     void CreateWindowSizeDependentResources();
 
     void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
+
+    scene::Type m_scene = scene::TEST;
 
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
