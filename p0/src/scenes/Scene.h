@@ -1,10 +1,4 @@
 #pragma once
-#include <array>
-#include <memory>
-
-#include "SimpleMath.h"
-#include "PrimitiveBatch.h"
-#include "VertexTypes.h"
 
 namespace DX
 {
@@ -32,7 +26,15 @@ class DirectX::Model;
 class DirectX::SpriteBatch;
 class DirectX::SpriteFont;
 
+// Utilities too large to forward-declare
+#include "SimpleMath.h"
+#include "PrimitiveBatch.h"
+#include "VertexTypes.h"
+
 #include "Types.h"
+#include <array>
+#include <memory>
+
 namespace scene
 {
 	class Scene

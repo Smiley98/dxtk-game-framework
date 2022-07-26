@@ -49,6 +49,6 @@ namespace scene
         DirectX::SimpleMath::Matrix                                             m_view;
         DirectX::SimpleMath::Matrix                                             m_projection;
 
-        //void XM_CALLCONV DrawGrid(std::shared_ptr<DX::DeviceResources> graphics, FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR origin, size_t xdivs, size_t ydivs, GXMVECTOR color);
+        void XM_CALLCONV DrawGrid(std::shared_ptr<DX::DeviceResources> graphics, DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
     };
 }

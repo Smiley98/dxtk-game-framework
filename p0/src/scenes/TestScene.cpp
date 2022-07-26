@@ -116,9 +116,10 @@ namespace scene
 		auto context = graphics->GetD3DDeviceContext();
 
 		// Draw procedurally generated dynamic grid
-		//const XMVECTORF32 xaxis = { 20.f, 0.f, 0.f };
-		//const XMVECTORF32 yaxis = { 0.f, 0.f, 20.f };
-		//DrawGrid(graphics, xaxis, yaxis, g_XMZero, 20, 20, Colors::Gray);
+		const XMVECTORF32 xaxis = { 20.f, 0.f, 0.f };
+		const XMVECTORF32 yaxis = { 0.f, 0.f, 20.f };
+		DrawGrid(graphics, xaxis, yaxis, g_XMZero, 20, 20, Colors::Gray);
+		//DrawGrid(xaxis, yaxis, g_XMZero, 20, 20, Colors::Gray);
 
 		// Draw sprite
 		graphics->PIXBeginEvent(L"Draw sprite");
@@ -146,7 +147,7 @@ namespace scene
 		graphics->PIXEndEvent();
 	}
 
-	/*void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphics, FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR origin, size_t xdivs, size_t ydivs, GXMVECTOR color)
+	void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphics, DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color)
 	{
 		graphics->PIXBeginEvent(L"Draw grid");
 
@@ -191,5 +192,5 @@ namespace scene
 		m_batch->End();
 
 		graphics->PIXEndEvent();
-	}*/
+	}
 }
