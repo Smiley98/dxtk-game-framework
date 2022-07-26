@@ -1,7 +1,3 @@
-//
-// Game.cpp
-//
-
 #include "pch.h"
 #include "Game.h"
 #include "scenes/Scene.h"
@@ -33,45 +29,22 @@ Game::~Game()
 // since Scene expects them to be initialized by then.
 void Game::Initialize(HWND window, int width, int height)
 {
-#pragma region input
     m_gamePad = std::make_shared<GamePad>();
-
     m_keyboard = std::make_shared<Keyboard>();
-
     m_mouse = std::make_shared<Mouse>();
     m_mouse->SetWindow(window);
-#pragma endregion
 
-#pragma region audio
     AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
 #ifdef _DEBUG
     eflags |= AudioEngine_Debug;
 #endif
-
     m_audEngine = std::make_shared<AudioEngine>(eflags);
-    m_audioEvent = 0;
-    m_audioTimerAcc = 10.f;
-    m_retryDefault = false;
 
-    m_waveBank = std::make_unique<WaveBank>(m_audEngine.get(), L"assets/sounds/adpcmdroid.xwb");
-
-    m_soundEffect = std::make_unique<SoundEffect>(m_audEngine.get(), L"assets/music/MusicMono_adpcm.wav");
-    m_effect1 = m_soundEffect->CreateInstance();
-    m_effect2 = m_waveBank->CreateInstance(10);
-
-    m_effect1->Play(true);
-    m_effect2->Play();
-#pragma endregion
-
-#pragma region graphics
     m_deviceResources->SetWindow(window, width, height);
-
     m_deviceResources->CreateDeviceResources();
     CreateDeviceDependentResources();
-
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
-#pragma endregion
 
     Scene::Run(m_scene);
 }
@@ -85,13 +58,8 @@ void Game::Tick()
         Update(m_timer);
     });
 
-    // Only update audio engine once per frame
-    if (!m_audEngine->IsCriticalError() && m_audEngine->Update())
-    {
-        // Setup a retry in 1 second
-        m_audioTimerAcc = 1.f;
-        m_retryDefault = true;
-    }
+    if (!m_audEngine->IsCriticalError())
+        m_audEngine->Update();
 
     Render();
 }
@@ -108,29 +76,6 @@ void Game::Update(DX::StepTimer const& timer)
 
     m_batchEffect->SetView(m_view);
     m_batchEffect->SetWorld(Matrix::Identity);
-
-    m_audioTimerAcc -= (float)timer.GetElapsedSeconds();
-    if (m_audioTimerAcc < 0)
-    {
-        if (m_retryDefault)
-        {
-            m_retryDefault = false;
-            if (m_audEngine->Reset())
-            {
-                // Restart looping audio
-                m_effect1->Play(true);
-            }
-        }
-        else
-        {
-            m_audioTimerAcc = 4.f;
-
-            m_waveBank->Play(m_audioEvent++);
-
-            if (m_audioEvent >= 11)
-                m_audioEvent = 0;
-        }
-    }
 
     auto const pad = m_gamePad->GetState(0);
     if (pad.IsConnected())
@@ -313,12 +258,6 @@ void Game::OnWindowSizeChanged(int width, int height)
 
 void Game::NewAudioDevice()
 {
-    if (m_audEngine && !m_audEngine->IsAudioDevicePresent())
-    {
-        // Setup a retry in 1 second
-        m_audioTimerAcc = 1.f;
-        m_retryDefault = true;
-    }
 }
 
 // Properties

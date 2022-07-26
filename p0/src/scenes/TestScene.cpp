@@ -1,23 +1,29 @@
 #include "pch.h"
 #include "TestScene.h"
 
+using namespace DirectX;
 namespace scene
 {
-	TestScene::TestScene(std::weak_ptr<DX::DeviceResources> graphics, std::weak_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
+	TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 	{
-		//m_waveBank = std::make_unique<WaveBank>(&audio, L"../../assets/sounds/adpcmdroid.xwb");
+		m_waveBank = std::make_unique<WaveBank>(audio.get(), L"assets/sounds/adpcmdroid.xwb");
+		m_soundEffect = std::make_unique<SoundEffect>(audio.get(), L"assets/music/MusicMono_adpcm.wav");
+		m_effect1 = m_soundEffect->CreateInstance();
+		m_effect2 = m_waveBank->CreateInstance(10);
 	}
 
 	TestScene::~TestScene()
 	{
 	}
 
-	void TestScene::OnResize(int width, int height, std::weak_ptr<DX::DeviceResources> graphics)
+	void TestScene::OnResize(int width, int height, std::shared_ptr<DX::DeviceResources> graphics)
 	{
 	}
 
 	void TestScene::OnBegin()
 	{
+		m_effect1->Play(true);
+		m_effect2->Play();
 	}
 
 	void TestScene::OnEnd()
@@ -36,7 +42,7 @@ namespace scene
 	{
 	}
 
-	void TestScene::OnRender(std::weak_ptr<DX::DeviceResources> graphics)
+	void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 	}
 }

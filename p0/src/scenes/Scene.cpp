@@ -7,7 +7,7 @@ namespace scene
 	std::array<Scene*, NONE> Scene::sScenes;
 	Type Scene::sType = NONE;
 
-	Scene::Scene(std::weak_ptr<DX::DeviceResources> graphics, std::weak_ptr<DirectX::AudioEngine> audio)
+	Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	{
 	}
 
@@ -15,7 +15,7 @@ namespace scene
 	{
 	}
 
-	void Scene::Create(std::weak_ptr<DX::DeviceResources> graphics, std::weak_ptr<DirectX::AudioEngine> audio)
+	void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	{
 		sScenes[TEST] = new TestScene(graphics, audio);
 		//sScenes[SPLASH] = new SplashScene;
@@ -34,7 +34,7 @@ namespace scene
 		}
 	}
 
-	void Scene::Resize(int width, int height, std::weak_ptr<DX::DeviceResources> graphics)
+	void Scene::Resize(int width, int height, std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		for (Scene* scene : sScenes)
 			scene->OnResize(width, height, graphics);
@@ -79,7 +79,7 @@ namespace scene
 		sScenes[sType]->OnUpdate(dt, gamePad, keyboard, mouse);
 	}
 
-	void Scene::Render(std::weak_ptr<DX::DeviceResources> graphics)
+	void Scene::Render(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		sScenes[sType]->OnRender(graphics);
 	}
