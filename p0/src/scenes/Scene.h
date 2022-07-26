@@ -1,16 +1,37 @@
 #pragma once
-#include <windef.h>
+
+// D3D11 and STL
+#include <d3d11.h>
 #include <array>
 #include <memory>
 
+// DXTK structures
 #include "DeviceResources.h"
-#include "Types.h"
+#include "PrimitiveBatch.h"
+#include "SimpleMath.h"
 
+// Input
 class DirectX::GamePad;
 class DirectX::Keyboard;
 class DirectX::Mouse;
-class DirectX::AudioEngine;
 
+// Audio
+class DirectX::AudioEngine;
+class DirectX::WaveBank;
+class DirectX::SoundEffect;
+class DirectX::SoundEffectInstance;
+
+// Graphics
+class DirectX::CommonStates;
+class DirectX::BasicEffect;
+class DirectX::EffectFactory;
+class DirectX::GeometricPrimitive;
+class DirectX::Model;
+class DirectX::SpriteBatch;
+class DirectX::SpriteFont;
+class DirectX::WaveBank;
+
+#include "Types.h"
 namespace scene
 {
 	class Scene
