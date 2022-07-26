@@ -1,13 +1,15 @@
 #pragma once
-
-// D3D11 and STL
-//#include <d3d11.h>
 #include <array>
 #include <memory>
+
+#include "SimpleMath.h"
+#include "PrimitiveBatch.h"
+#include "VertexTypes.h"
 
 namespace DX
 {
 	class DeviceResources;
+	class StepTimer;
 }
 
 // Input
@@ -56,7 +58,7 @@ namespace scene
 		static void Resume();
 
 		static void Update(
-			const double dt,
+			const DX::StepTimer& timer,
 			const DirectX::GamePad& gamePad,
 			const DirectX::Keyboard& keyboard,
 			const DirectX::Mouse& mouse
@@ -77,7 +79,7 @@ namespace scene
 		virtual void OnResume() = 0;
 
 		virtual void OnUpdate(
-			const double dt,
+			const DX::StepTimer& timer,
 			const DirectX::GamePad& gamePad,
 			const DirectX::Keyboard& keyboard,
 			const DirectX::Mouse& mouse

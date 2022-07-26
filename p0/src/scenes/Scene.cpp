@@ -70,13 +70,13 @@ namespace scene
 	}
 
 	void Scene::Update(
-		const double dt,
+		const DX::StepTimer& timer,
 		const DirectX::GamePad& gamePad,
 		const DirectX::Keyboard& keyboard,
 		const DirectX::Mouse& mouse
 	)
 	{
-		sScenes[sType]->OnUpdate(dt, gamePad, keyboard, mouse);
+		sScenes[sType]->OnUpdate(timer, gamePad, keyboard, mouse);
 	}
 
 	void Scene::Render(std::shared_ptr<DX::DeviceResources> graphics)
