@@ -38,6 +38,8 @@ namespace scene
 		m_fxFactory->SetDirectory(L"assets/models");
 		m_model = Model::CreateFromSDKMESH(device, L"assets/models/tiny.sdkmesh", *m_fxFactory);
 
+		m_van = Model::CreateFromVBO(device, L"assets/meshes/van.vbo");
+
 		// Load textures
 		DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/seafloor.dds", nullptr, m_texture1.ReleaseAndGetAddressOf()));
 		DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/windowslogo.dds", nullptr, m_texture2.ReleaseAndGetAddressOf()));
@@ -136,13 +138,21 @@ namespace scene
 		m_shape->Draw(local, m_view, m_projection, Colors::White, m_texture1.Get());
 		graphics->PIXEndEvent();
 
-		graphics->PIXBeginEvent(L"Draw model");
-		const XMVECTORF32 scale = { 0.01f, 0.01f, 0.01f };
-		const XMVECTORF32 translate = { 3.f, -2.f, -4.f };
-		const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
-		local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-		m_model->Draw(context, *m_states, local, m_view, m_projection);
-		graphics->PIXEndEvent();
+		{	graphics->PIXBeginEvent(L"Draw sdkmesh");
+			const XMVECTORF32 scale = { 0.01f, 0.01f, 0.01f };
+			const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
+			const XMVECTORF32 translate = { 3.f, -2.f, -4.f };
+			XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+			m_model->Draw(context, *m_states, local, m_view, m_projection);
+		}	graphics->PIXEndEvent();
+
+		{	graphics->PIXBeginEvent(L"Draw vbo (van)");
+			const Vector3 scale(0.1f);
+			const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
+			const XMVECTORF32 translate = { 2.f, 0.f, -4.f };
+			XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+			m_van->Draw(context, *m_states, local, m_view, m_projection);
+		}	graphics->PIXEndEvent();
 
 		graphics->PIXEndEvent();
 	}
