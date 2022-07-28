@@ -48,7 +48,7 @@ namespace scene
 		static void Destroy();
 
 		// Handle window resize event
-		static void Resize(int width, int height, std::shared_ptr<DX::DeviceResources> graphics);
+		static void Resize(std::shared_ptr<DX::DeviceResources> graphics);
 
 		// Sets internal scene to passed in scene and calls its begin handler (starts the game)
 		static void Run(Type type);
@@ -72,7 +72,7 @@ namespace scene
 
 	protected:
 		Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
-		virtual void OnResize(int width, int height, std::shared_ptr<DX::DeviceResources> graphics) = 0;
+		virtual void OnResize(std::shared_ptr<DX::DeviceResources> graphics) = 0;
 
 		virtual void OnBegin() = 0;
 		virtual void OnEnd() = 0;

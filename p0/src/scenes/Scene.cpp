@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Scene.h"
 #include "TestScene.h"
+#include "MainScene.h"
 
 namespace scene
 {
@@ -17,11 +18,11 @@ namespace scene
 
 	void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	{
-		sScenes[TEST] = new TestScene(graphics, audio);
+		//sScenes[TEST] = new TestScene(graphics, audio);
 		//sScenes[SPLASH] = new SplashScene;
 		//sScenes[LOADOUT] = new LoadoutScene;
 		//sScenes[MAP] = new MapScene;
-		//sScenes[MAIN] = new MainScene;
+		sScenes[MAIN] = new MainScene(graphics, audio);
 	}
 
 	void Scene::Destroy()
@@ -34,10 +35,10 @@ namespace scene
 		}
 	}
 
-	void Scene::Resize(int width, int height, std::shared_ptr<DX::DeviceResources> graphics)
+	void Scene::Resize(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		for (Scene* scene : sScenes)
-			scene->OnResize(width, height, graphics);
+			scene->OnResize(graphics);
 	}
 
 	void Scene::Run(Type type)

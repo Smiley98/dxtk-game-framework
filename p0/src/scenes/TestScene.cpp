@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "TestScene.h"
-
 #include "DeviceResources.h"
 #include "StepTimer.h"
 
@@ -67,7 +66,7 @@ namespace scene
 		m_batchInputLayout.Reset();
 	}
 
-	void TestScene::OnResize(int width, int height, std::shared_ptr<DX::DeviceResources> graphics)
+	void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		const RECT size = graphics->GetOutputSize();
 		const float aspectRatio = float(size.right) / float(size.bottom);
@@ -142,8 +141,6 @@ namespace scene
 		graphics->PIXEndEvent();
 
 		// Draw 3D objects
-		context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
-
 		graphics->PIXBeginEvent(L"Draw teapot");
 		XMMATRIX local = m_world * Matrix::CreateTranslation(-2.f, -2.f, -4.f);
 		m_shape->Draw(local, m_view, m_projection, Colors::White, m_texture1.Get());

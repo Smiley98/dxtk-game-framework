@@ -11,7 +11,7 @@ namespace scene
         ~TestScene() final;
 
     protected:
-        void OnResize(int width, int height, std::shared_ptr<DX::DeviceResources> graphics) final;
+        void OnResize(std::shared_ptr<DX::DeviceResources> graphics) final;
 
         void OnBegin() final;
         void OnEnd() final;

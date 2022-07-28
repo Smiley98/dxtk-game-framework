@@ -52,5 +52,5 @@ private:
     std::shared_ptr<DirectX::Keyboard>      m_keyboard;
     std::shared_ptr<DirectX::Mouse>         m_mouse;
     DX::StepTimer                           m_timer;
-    scene::Type                             m_scene = scene::TEST;
+    scene::Type                             m_scene = scene::MAIN;
 };

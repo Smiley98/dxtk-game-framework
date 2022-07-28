@@ -185,8 +185,8 @@ void Game::CreateDeviceDependentResources()
 // Allocate all memory resources that change on a window SizeChanged event.
 void Game::CreateWindowSizeDependentResources()
 {
-    auto const r = m_deviceResources->GetOutputSize();
-    Scene::Resize(r.right, r.bottom, m_deviceResources);
+    // RECT r = m_deviceResources->GetOutputSize(); // Use this internally if you want screen size information
+    Scene::Resize(m_deviceResources);
 }
 
 void Game::OnDeviceLost()

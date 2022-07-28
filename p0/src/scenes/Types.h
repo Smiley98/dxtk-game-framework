@@ -2,11 +2,11 @@
 namespace scene
 {
 	enum Type {
-		TEST,
+		//TEST,
 		//SPLASH,
 		//LOADOUT,
 		//MAP,
-		//MAIN,
+		MAIN,
 		NONE
 	};
 }
