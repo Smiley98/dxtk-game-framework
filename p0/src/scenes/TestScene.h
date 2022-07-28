@@ -36,6 +36,7 @@ namespace scene
         std::unique_ptr<DirectX::GeometricPrimitive>                            m_shape;
         std::unique_ptr<DirectX::Model>                                         m_model;
         std::unique_ptr<DirectX::Model>                                         m_van;
+        std::shared_ptr<DirectX::BasicEffect>                                   m_vanEffect;
         std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
         std::unique_ptr<DirectX::SpriteBatch>                                   m_sprites;
         std::unique_ptr<DirectX::SpriteFont>                                    m_font;
@@ -43,6 +44,7 @@ namespace scene
         // D3D11 objects
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        m_texture1;
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        m_texture2;
+        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        m_textureVan;
         Microsoft::WRL::ComPtr<ID3D11InputLayout>                               m_batchInputLayout;
 
         // Graphics objects

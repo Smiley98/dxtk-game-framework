@@ -38,11 +38,16 @@ namespace scene
 		m_fxFactory->SetDirectory(L"assets/models");
 		m_model = Model::CreateFromSDKMESH(device, L"assets/models/tiny.sdkmesh", *m_fxFactory);
 
-		m_van = Model::CreateFromVBO(device, L"assets/meshes/van.vbo");
-
 		// Load textures
 		DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/seafloor.dds", nullptr, m_texture1.ReleaseAndGetAddressOf()));
 		DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/windowslogo.dds", nullptr, m_texture2.ReleaseAndGetAddressOf()));
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, m_textureVan.ReleaseAndGetAddressOf()));
+
+		m_vanEffect = std::make_shared<BasicEffect>(device);
+		m_vanEffect->SetTextureEnabled(true);
+		m_vanEffect->SetTexture(m_textureVan.Get());
+
+		m_van = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", m_vanEffect);
 	}
 
 	TestScene::~TestScene()
@@ -55,8 +60,10 @@ namespace scene
 		m_font.reset();
 		m_shape.reset();
 		m_model.reset();
+		m_van.reset();
 		m_texture1.Reset();
 		m_texture2.Reset();
+		m_textureVan.Reset();
 		m_batchInputLayout.Reset();
 	}
 
@@ -92,6 +99,8 @@ namespace scene
 
 	void TestScene::OnEnd()
 	{
+		m_effect1->Stop();
+		m_effect2->Stop();
 	}
 
 	void TestScene::OnPause()
@@ -132,7 +141,9 @@ namespace scene
 		m_sprites->End();
 		graphics->PIXEndEvent();
 
-		// Draw 3D object
+		// Draw 3D objects
+		context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
+
 		graphics->PIXBeginEvent(L"Draw teapot");
 		XMMATRIX local = m_world * Matrix::CreateTranslation(-2.f, -2.f, -4.f);
 		m_shape->Draw(local, m_view, m_projection, Colors::White, m_texture1.Get());
@@ -149,7 +160,7 @@ namespace scene
 		{	graphics->PIXBeginEvent(L"Draw vbo (van)");
 			const Vector3 scale(0.1f);
 			const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
-			const XMVECTORF32 translate = { 2.f, 0.f, -4.f };
+			const XMVECTORF32 translate = { 2.f, -1.f, -4.f };
 			XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 			m_van->Draw(context, *m_states, local, m_view, m_projection);
 		}	graphics->PIXEndEvent();
