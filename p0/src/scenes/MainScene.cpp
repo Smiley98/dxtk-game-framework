@@ -23,6 +23,7 @@ namespace scene
 		m_shader->SetDiffuseColor(Colors::Green);
 		m_shader->SetSpecularColor(Colors::Blue);
 		m_shader->SetSpecularPower(32.0f);
+
 		//m_shader->SetTextureEnabled(true);
 		//m_shader->SetTexture(m_texture.Get());
 		//DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, m_texture.ReleaseAndGetAddressOf()));
@@ -41,7 +42,7 @@ namespace scene
 	{
 		const RECT size = graphics->GetOutputSize();
 		const float aspectRatio = float(size.right) / float(size.bottom);
-		float fovAngleY = 70.0f * XM_PI / 180.0f;
+		float fovAngleY = 35.0f * XM_PI / 180.0f;
 		fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
 		m_projection = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 100.0f);
 	}
@@ -64,9 +65,10 @@ namespace scene
 
 	void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
 	{
-		const Vector3 eye(0.0f, 0.0f, 2.0f);
+		// eye { 0.0f, 0.0f, -10.0f } up UnitY for front view, eye { 0.0f, -10.0f, 0.0f } up UnitZ for top view
+		const Vector3 eye(0.0f, -10.0f, 0.0f);
 		const Vector3 at(0.0f, 0.0f, 0.0f);
-		m_view = Matrix::CreateLookAt(eye, at, Vector3::UnitY);
+		m_view = Matrix::CreateLookAt(eye, at, Vector3::UnitZ);
 		m_world = Matrix::CreateRotationY(float(timer.GetTotalSeconds() * XM_PIDIV4));
 	}
 
@@ -74,10 +76,7 @@ namespace scene
 	{
 		auto context = graphics->GetD3DDeviceContext();
 
-		const Vector3 scale(1.0f);
-		const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
-		const XMVECTORF32 translate = { 2.f, -1.f, -4.f };
-		XMMATRIX local = m_world;// *XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+		XMMATRIX local = m_world * Matrix::CreateTranslation(1.0f, 0.0f, 1.0f);
 		m_vbo->Draw(context, *m_states, local, m_view, m_projection);
 	}
 }
