@@ -167,7 +167,6 @@ void Game::NewAudioDevice()
 {
 }
 
-// Properties
 void Game::GetDefaultSize(int& width, int& height) const noexcept
 {
     width = 800;

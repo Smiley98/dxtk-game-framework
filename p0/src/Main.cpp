@@ -23,7 +23,7 @@ namespace
     HDEVNOTIFY g_hNewAudio = nullptr;
 }
 
-LPCWSTR g_szAppName = L"DirectXTKSimpleSample";
+LPCWSTR g_szAppName = L"Battle Vans";
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 void ExitGame() noexcept;
@@ -66,17 +66,16 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         if (!RegisterClassExW(&wcex))
             return 1;
 
-        // Create window
-        int w, h;
-        g_game->GetDefaultSize(w, h);
+        // Can also pass MONITOR_DEFAULTTONEAREST which returns the monitor with largest intersecting window (in case not primary)
+        // (I should just set my 1440p monitor to primary for testing to avoid the 4k vertical monitor xD)
+        HWND hDesktop = GetDesktopWindow();
+        HMONITOR hmon = MonitorFromWindow(hDesktop, MONITOR_DEFAULTTOPRIMARY);
+        MONITORINFO mi = { sizeof(mi) };
+        if (!GetMonitorInfo(hmon, &mi)) return NULL;
 
-        RECT rc = { 0, 0, static_cast<LONG>(w), static_cast<LONG>(h) };
-
-        AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-
-        HWND hwnd = CreateWindowExW(0, L"DirectXTKSimpleSampleWindowClass", g_szAppName, WS_OVERLAPPEDWINDOW,
-            CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
-            nullptr);
+        HWND hwnd = CreateWindowExW(0, L"DirectXTKSimpleSampleWindowClass", g_szAppName, WS_POPUP | WS_VISIBLE,
+            mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top,
+            nullptr, nullptr, hInstance, nullptr);
 
         if (!hwnd)
             return 1;
@@ -85,6 +84,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
         SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(g_game.get()));
 
+        RECT rc;
         GetClientRect(hwnd, &rc);
 
         g_game->Initialize(hwnd, rc.right - rc.left, rc.bottom - rc.top);
@@ -118,8 +118,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static bool s_in_sizemove = false;
     static bool s_in_suspend = false;
     static bool s_minimized = false;
-    static bool s_fullscreen = false;
-    // TODO: Set s_fullscreen to true if defaulting to fullscreen.
+    static bool s_fullscreen = true;
+    // Set s_fullscreen to true if defaulting to fullscreen.
 
     auto game = reinterpret_cast<Game*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
@@ -338,16 +338,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     game->GetDefaultSize(width, height);
 
                 ShowWindow(hWnd, SW_SHOWNORMAL);
-
                 SetWindowPos(hWnd, HWND_TOP, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED);
             }
             else
             {
                 SetWindowLongPtr(hWnd, GWL_STYLE, WS_POPUP);
                 SetWindowLongPtr(hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
-
                 SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-
                 ShowWindow(hWnd, SW_SHOWMAXIMIZED);
             }
 
