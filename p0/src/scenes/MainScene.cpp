@@ -12,31 +12,35 @@ namespace scene
 		auto context = graphics->GetD3DDeviceContext();
 		auto device = graphics->GetD3DDevice();
 
-		m_states = std::make_unique<CommonStates>(device);
-		m_shader = std::make_shared<BasicEffect>(device);
+		mStates = std::make_unique<CommonStates>(device);
+		mShader = std::make_shared<BasicEffect>(device);
 
-		m_shader->SetLightingEnabled(true);
-		m_shader->SetPerPixelLighting(true);
-		m_shader->SetLightDirection(0, Vector3::UnitZ * -1.0f);
+		mShader->SetLightingEnabled(true);
+		mShader->SetPerPixelLighting(true);
+		mShader->SetLightDirection(0, Vector3::UnitZ * -1.0f);
 
-		m_shader->SetAmbientLightColor(Colors::Red);
-		m_shader->SetDiffuseColor(Colors::Green);
-		m_shader->SetSpecularColor(Colors::Blue);
-		m_shader->SetSpecularPower(32.0f);
+		mShader->SetAmbientLightColor(Colors::Red);
+		mShader->SetDiffuseColor(Colors::Green);
+		mShader->SetSpecularColor(Colors::Blue);
+		mShader->SetSpecularPower(32.0f);
 
-		//m_shader->SetTextureEnabled(true);
-		//m_shader->SetTexture(m_texture.Get());
-		//DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, m_texture.ReleaseAndGetAddressOf()));
-		m_vbo = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", m_shader);	// Downtown Toronto was exported correctly ;)
-		//m_vbo = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", m_shader);
+		//mShader->SetTextureEnabled(true);
+		//mShader->SetTexture(m_texture.Get());
+		//DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, mTexture.ReleaseAndGetAddressOf()));
+		//mVbo = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", mShader);	// Downtown Toronto was exported correctly ;)
+		mVbo = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", mShader);
+
+		mTransform.Scale(25.0f);
+		mTransform.Rotate(-45.0f);
+		mTransform.Translate(mTransform.Front() * -750.0f);
 	}
 
 	MainScene::~MainScene()
 	{
-		m_states.reset();
-		m_vbo.reset();
-		m_shader.reset();
-		//m_texture.Reset();
+		mStates.reset();
+		mVbo.reset();
+		mShader.reset();
+		//mTexture.Reset();
 	}
 
 	void MainScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
@@ -45,7 +49,7 @@ namespace scene
 		const float aspectRatio = float(size.right) / float(size.bottom);
 		float fovAngleY = 60.0f * XM_PI / 180.0f;
 		fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-		m_projection = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
+		mProjection = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
 	}
 
 	void MainScene::OnBegin()
@@ -66,17 +70,18 @@ namespace scene
 
 	void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
 	{
-		const Vector3 eye(0.0f, -100.0f, 1000.0f);
-		const Vector3 at(0.0f, 0.0f, 0.0f);
-		m_view = Matrix::CreateLookAt(eye, at, Vector3::UnitY);
-		m_world = Matrix::CreateRotationZ(float(timer.GetTotalSeconds() * XM_PIDIV4));
+		const float dt = (float)timer.GetElapsedSeconds();
+		const float tt = (float)timer.GetTotalSeconds();
+
+		mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
+		mTransform.DeltaRotate(cosf(tt) * 0.4f);
+		mTransform.DeltaTranslate(mTransform.Front() * dt * 100.0f);
 	}
 
 	void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		auto context = graphics->GetD3DDeviceContext();
-
-		XMMATRIX local = Matrix::CreateScale(1.0f) * m_world;
-		m_vbo->Draw(context, *m_states, local, m_view, m_projection);
+		
+		mVbo->Draw(context, *mStates, mTransform.World(), mView, mProjection);
 	}
 }

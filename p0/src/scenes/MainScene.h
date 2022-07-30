@@ -23,16 +23,15 @@ namespace scene
 		virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) override;
 
 	private:
-		std::unique_ptr<DirectX::CommonStates> m_states;
-		//std::unique_ptr<DirectX::GeometricPrimitive> m_shape;	// Better to use Model so we have automatic bounds and identical desired workflow
-		//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture; // No need for textures yet
-		std::unique_ptr<DirectX::Model>	m_vbo;
-		std::shared_ptr<DirectX::BasicEffect> m_shader;
+		std::unique_ptr<DirectX::CommonStates> mStates;
+		//std::unique_ptr<DirectX::GeometricPrimitive> mShape;			// Better to use Model so we have automatic bounds and identical desired workflow
+		//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mTexture;	// No need for textures yet
+		std::unique_ptr<DirectX::Model>	mVbo;
+		std::shared_ptr<DirectX::BasicEffect> mShader;
 
-		DirectX::SimpleMath::Matrix m_world;
-		DirectX::SimpleMath::Matrix	m_view;
-		DirectX::SimpleMath::Matrix	m_projection;
-
+		Transform mTransform;
+		DirectX::SimpleMath::Matrix	mView;
+		DirectX::SimpleMath::Matrix	mProjection;
 	};
 }
 

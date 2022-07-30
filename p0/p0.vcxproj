@@ -99,6 +99,7 @@
     <ClCompile Include="src\DeviceResources.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\math\Transform.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -110,6 +111,7 @@
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
     <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\math\Transform.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\scenes\MainScene.h" />
     <ClInclude Include="src\scenes\Scene.h" />

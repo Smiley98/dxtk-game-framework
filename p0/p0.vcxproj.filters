@@ -25,6 +25,9 @@
     <Filter Include="Scenes">
       <UniqueIdentifier>{147dc630-8292-4e75-99e5-315057528631}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{47846550-1bb3-4356-8447-c3c05d398868}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\fonts\SegoeUI_18.spritefont">
@@ -54,6 +57,9 @@
     <ClCompile Include="src\scenes\MainScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="src\math\Transform.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\scenes\TestScene.h">
@@ -71,6 +77,9 @@
     </ClInclude>
     <ClInclude Include="src\scenes\MainScene.h">
       <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Transform.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

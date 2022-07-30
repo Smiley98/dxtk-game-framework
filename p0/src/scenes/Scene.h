@@ -25,12 +25,10 @@ class DirectX::GeometricPrimitive;
 class DirectX::Model;
 class DirectX::SpriteBatch;
 class DirectX::SpriteFont;
-
-// Utilities too large to forward-declare
-#include "SimpleMath.h"
 #include "PrimitiveBatch.h"
 #include "VertexTypes.h"
 
+#include "../math/Transform.h"
 #include "Types.h"
 #include <array>
 #include <memory>
