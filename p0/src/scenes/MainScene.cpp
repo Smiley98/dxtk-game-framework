@@ -27,8 +27,8 @@ namespace scene
 		//m_shader->SetTextureEnabled(true);
 		//m_shader->SetTexture(m_texture.Get());
 		//DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, m_texture.ReleaseAndGetAddressOf()));
-		//m_vbo = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", m_shader);	// Downtown Toronto was exported correctly ;)
-		m_vbo = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", m_shader);
+		m_vbo = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", m_shader);	// Downtown Toronto was exported correctly ;)
+		//m_vbo = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", m_shader);
 	}
 
 	MainScene::~MainScene()
@@ -76,7 +76,7 @@ namespace scene
 	{
 		auto context = graphics->GetD3DDeviceContext();
 
-		XMMATRIX local = Matrix::CreateScale(1.0f) *  m_world * Matrix::CreateTranslation(1.0f, 0.0f, 1.0f);
+		XMMATRIX local = Matrix::CreateScale(1.0f) * m_world;
 		m_vbo->Draw(context, *m_states, local, m_view, m_projection);
 	}
 }

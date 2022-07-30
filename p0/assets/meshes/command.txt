@@ -1,0 +1,5 @@
+./meshconvert.exe <name>.obj -n -op -flipv -vbo -y
+
+objs are un-triangulated for better workflow in the odd chance I actually want to modify them.
+meshconvert is smart enough to triangulate faces and generate normals so the only blender box that
+needs to be checked when exporting objs is Write Materials.
