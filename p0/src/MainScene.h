@@ -27,10 +27,12 @@ namespace scene
 		std::unique_ptr<DirectX::CommonStates> mStates;
 
 		std::unique_ptr<DirectX::Model>	mTd;
+		std::unique_ptr<DirectX::GeometricPrimitive> mBox;
 		std::unique_ptr<DirectX::GeometricPrimitive> mCapsule;
 
 		Transform mVanTransform;
 		Transform mTdTransform;
+		Transform mBoxTransform;
 		Transform mCapsuleTransform;
 
 		DirectX::SimpleMath::Matrix	mView;
