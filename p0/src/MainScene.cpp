@@ -11,36 +11,42 @@ namespace scene
 	{
 		auto context = graphics->GetD3DDeviceContext();
 		auto device = graphics->GetD3DDevice();
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, mVanTexture.ReleaseAndGetAddressOf()));
 
 		mStates = std::make_unique<CommonStates>(device);
-		mShader = std::make_shared<BasicEffect>(device);
 
-		mShader->SetLightingEnabled(true);
-		mShader->SetPerPixelLighting(true);
-		mShader->SetLightDirection(0, Vector3::UnitZ * -1.0f);
+		mVanShader = std::make_shared<BasicEffect>(device);
+		mBuildingShader = std::make_shared<BasicEffect>(device);
+		mVanShader->EnableDefaultLighting();
+		mBuildingShader->EnableDefaultLighting();
+		mVanShader->SetLightDirection(0, Vector3::UnitZ * -1.0f + Vector3::UnitX * -1.0f);
+		mBuildingShader->SetLightDirection(0, Vector3::UnitZ * -1.0f + Vector3::UnitX * -1.0f);
 
-		mShader->SetAmbientLightColor(Colors::Red);
-		mShader->SetDiffuseColor(Colors::Green);
-		mShader->SetSpecularColor(Colors::Blue);
-		mShader->SetSpecularPower(32.0f);
+		mBuildingShader->SetTextureEnabled(false);
+		mTd = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", mBuildingShader);
 
-		//mShader->SetTextureEnabled(true);
-		//mShader->SetTexture(m_texture.Get());
-		//DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, mTexture.ReleaseAndGetAddressOf()));
-		//mVbo = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", mShader);	// Downtown Toronto was exported correctly ;)
-		mVbo = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", mShader);
+		mVanShader->SetTextureEnabled(true);
+		mVanShader->SetTexture(mVanTexture.Get());
+		mVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", mVanShader);
 
-		mTransform.Scale(25.0f);
-		mTransform.Rotate(-45.0f);
-		mTransform.Translate(mTransform.Front() * -750.0f);
+		mVanTransform.Rotate(-45.0f);
+		mVanTransform.Translate(mVanTransform.Front() * -750.0f);
+
+		mCapsule = GeometricPrimitive::CreateCylinder(context);
+		mCapsuleTransform.Scale(50.0f);
 	}
 
 	MainScene::~MainScene()
 	{
 		mStates.reset();
-		mVbo.reset();
-		mShader.reset();
-		//mTexture.Reset();
+
+		mVanShader.reset();
+		mBuildingShader.reset();
+
+		mVanTexture.Reset();
+		mVan.reset();
+		mTd.reset();
+		mCapsule.reset();
 	}
 
 	void MainScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
@@ -74,14 +80,16 @@ namespace scene
 		const float tt = (float)timer.GetTotalSeconds();
 
 		mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
-		mTransform.DeltaRotate(cosf(tt) * 0.4f);
-		mTransform.DeltaTranslate(mTransform.Front() * dt * 100.0f);
+		mVanTransform.DeltaRotate(cosf(tt) * 0.4f);
+		mVanTransform.DeltaTranslate(mVanTransform.Front() * dt * 100.0f);
 	}
 
 	void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		auto context = graphics->GetD3DDeviceContext();
 		
-		mVbo->Draw(context, *mStates, mTransform.World(), mView, mProjection);
+		mVan->Draw(context, *mStates, mVanTransform.World(), mView, mProjection);
+		mTd->Draw(context, *mStates, mTdTransform.World(), mView, mProjection);
+		mCapsule->Draw(mCapsuleTransform.World(), mView, mProjection);
 	}
 }

@@ -57,17 +57,17 @@ namespace scene
 	void Scene::Pause()
 	{
 		Scene*& scene = sScenes[sType];
-		if (!scene->m_paused)
+		if (!scene->mPaused)
 			scene->Pause();
-		scene->m_paused = true;
+		scene->mPaused = true;
 	}
 
 	void Scene::Resume()
 	{
 		Scene*& scene = sScenes[sType];
-		if (scene->m_paused)
+		if (scene->mPaused)
 			scene->Resume();
-		scene->m_paused = false;
+		scene->mPaused = false;
 	}
 
 	void Scene::Update(

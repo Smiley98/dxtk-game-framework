@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "Transform.h"
 
 namespace scene
 {
@@ -24,12 +25,19 @@ namespace scene
 
 	private:
 		std::unique_ptr<DirectX::CommonStates> mStates;
-		//std::unique_ptr<DirectX::GeometricPrimitive> mShape;			// Better to use Model so we have automatic bounds and identical desired workflow
-		//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mTexture;	// No need for textures yet
-		std::unique_ptr<DirectX::Model>	mVbo;
-		std::shared_ptr<DirectX::BasicEffect> mShader;
 
-		Transform mTransform;
+		std::shared_ptr<DirectX::BasicEffect> mVanShader;
+		std::shared_ptr<DirectX::BasicEffect> mBuildingShader;
+
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mVanTexture;
+		std::unique_ptr<DirectX::Model>	mVan;
+		std::unique_ptr<DirectX::Model>	mTd;
+		std::unique_ptr<DirectX::GeometricPrimitive> mCapsule;
+
+		Transform mVanTransform;
+		Transform mTdTransform;
+		Transform mCapsuleTransform;
+
 		DirectX::SimpleMath::Matrix	mView;
 		DirectX::SimpleMath::Matrix	mProjection;
 	};

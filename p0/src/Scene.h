@@ -1,37 +1,14 @@
 #pragma once
+#include "DXTK.h"
+#include "SceneType.h"
+#include <array>
+#include <memory>
 
 namespace DX
 {
 	class DeviceResources;
 	class StepTimer;
 }
-
-// Input
-class DirectX::GamePad;
-class DirectX::Keyboard;
-class DirectX::Mouse;
-
-// Audio
-class DirectX::AudioEngine;
-class DirectX::WaveBank;
-class DirectX::SoundEffect;
-class DirectX::SoundEffectInstance;
-
-// Graphics
-class DirectX::CommonStates;
-class DirectX::BasicEffect;
-class DirectX::EffectFactory;
-class DirectX::GeometricPrimitive;
-class DirectX::Model;
-class DirectX::SpriteBatch;
-class DirectX::SpriteFont;
-#include "PrimitiveBatch.h"
-#include "VertexTypes.h"
-
-#include "../math/Transform.h"
-#include "Types.h"
-#include <array>
-#include <memory>
 
 namespace scene
 {
@@ -90,6 +67,6 @@ namespace scene
 	private:
 		static std::array<Scene*, NONE> sScenes;
 		static Type sType;
-		bool m_paused = false;
+		bool mPaused = false;
 	};
 }

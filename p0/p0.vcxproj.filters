@@ -28,6 +28,9 @@
     <Filter Include="Math">
       <UniqueIdentifier>{47846550-1bb3-4356-8447-c3c05d398868}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{1a0e5549-4c67-4c16-ad22-fa3e199cd87f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\fonts\SegoeUI_18.spritefont">
@@ -44,42 +47,45 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\scenes\TestScene.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scenes\Scene.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="src\DeviceResources.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\pch.cpp" />
-    <ClCompile Include="src\scenes\MainScene.cpp">
+    <ClCompile Include="src\Assets.cpp" />
+    <ClCompile Include="src\Transform.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MainScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="src\math\Transform.cpp">
-      <Filter>Math</Filter>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TestScene.cpp">
+      <Filter>Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\scenes\TestScene.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\scenes\Scene.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="src\DeviceResources.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\StepTimer.h" />
-    <ClInclude Include="src\scenes\Types.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\scenes\MainScene.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\math\Transform.h">
+    <ClInclude Include="src\Assets.h" />
+    <ClInclude Include="src\DXTK.h" />
+    <ClInclude Include="src\Transform.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MainScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TestScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneType.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
