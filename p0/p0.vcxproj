@@ -96,6 +96,8 @@
     <Manifest Include="settings.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Collision.cpp" />
+    <ClCompile Include="src\DebugRenderer.cpp" />
     <ClCompile Include="src\DeviceResources.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -109,6 +111,8 @@
     <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Collision.h" />
+    <ClInclude Include="src\DebugRenderer.h" />
     <ClInclude Include="src\DeviceResources.h" />
     <ClInclude Include="src\DXTK.h" />
     <ClInclude Include="src\Game.h" />
@@ -117,6 +121,7 @@
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneType.h" />
     <ClInclude Include="src\StepTimer.h" />
+    <ClInclude Include="src\Tags.h" />
     <ClInclude Include="src\TestScene.h" />
     <ClInclude Include="src\Transform.h" />
   </ItemGroup>
