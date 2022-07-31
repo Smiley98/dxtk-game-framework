@@ -1,14 +1,10 @@
 #pragma once
 #include "DXTK.h"
+#include "DeviceResources.h"
+#include "StepTimer.h"
 #include "SceneType.h"
 #include <array>
 #include <memory>
-
-namespace DX
-{
-	class DeviceResources;
-	class StepTimer;
-}
 
 namespace scene
 {
@@ -63,6 +59,13 @@ namespace scene
 		) = 0;
 
 		virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) = 0;
+
+		// Shared assets. Scene is a convenient place to handle shared, as well as scene-specific assets.
+		// No point in adding needless indirection since assets won't be used outside of scenes.
+		static std::shared_ptr<DirectX::BasicEffect> sBuildingShader;
+		static std::shared_ptr<DirectX::BasicEffect> sVanShader;
+		static std::shared_ptr<DirectX::Model> sVan;
+		static Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sVanTexture;
 
 	private:
 		static std::array<Scene*, NONE> sScenes;

@@ -26,11 +26,6 @@ namespace scene
 	private:
 		std::unique_ptr<DirectX::CommonStates> mStates;
 
-		std::shared_ptr<DirectX::BasicEffect> mVanShader;
-		std::shared_ptr<DirectX::BasicEffect> mBuildingShader;
-
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mVanTexture;
-		std::unique_ptr<DirectX::Model>	mVan;
 		std::unique_ptr<DirectX::Model>	mTd;
 		std::unique_ptr<DirectX::GeometricPrimitive> mCapsule;
 

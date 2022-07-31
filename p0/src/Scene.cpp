@@ -3,10 +3,17 @@
 #include "TestScene.h"
 #include "MainScene.h"
 
+using namespace DirectX;
+using namespace DirectX::SimpleMath;
 namespace scene
 {
 	std::array<Scene*, NONE> Scene::sScenes;
 	Type Scene::sType = NONE;
+
+	std::shared_ptr<DirectX::BasicEffect> Scene::sVanShader;
+	std::shared_ptr<DirectX::BasicEffect> Scene::sBuildingShader;
+	std::shared_ptr<DirectX::Model> Scene::sVan;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Scene::sVanTexture;
 
 	Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	{
@@ -18,15 +25,36 @@ namespace scene
 
 	void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	{
+		auto context = graphics->GetD3DDeviceContext();
+		auto device = graphics->GetD3DDevice();
+
+		DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, sVanTexture.ReleaseAndGetAddressOf()));
+		sVanShader = std::make_shared<BasicEffect>(device);
+		sVanShader->EnableDefaultLighting();
+		sVanShader->SetLightDirection(0, Vector3::UnitZ * -1.0f + Vector3::UnitX * -1.0f);
+		sVanShader->SetTextureEnabled(true);
+		sVanShader->SetTexture(sVanTexture.Get());
+		sVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", sVanShader);
+
+		sBuildingShader = std::make_shared<BasicEffect>(device);
+		sBuildingShader->EnableDefaultLighting();
+		sBuildingShader->SetLightDirection(0, Vector3::UnitZ * -1.0f + Vector3::UnitX * -1.0f);
+		sBuildingShader->SetTextureEnabled(false);
+
 		//sScenes[TEST] = new TestScene(graphics, audio);
-		//sScenes[SPLASH] = new SplashScene;
-		//sScenes[LOADOUT] = new LoadoutScene;
-		//sScenes[MAP] = new MapScene;
+		//sScenes[SPLASH] = new SplashScene(graphics, audio);
+		//sScenes[LOADOUT] = new LoadoutScene(graphics, audio);
+		//sScenes[MAP] = new MapScene(graphics, audio);
 		sScenes[MAIN] = new MainScene(graphics, audio);
 	}
 
 	void Scene::Destroy()
 	{
+		sBuildingShader.reset();
+		sVanShader.reset();
+		sVanTexture.Reset();
+		sVan.reset();
+
 		sType = NONE;
 		for (Scene* scene : sScenes)
 		{

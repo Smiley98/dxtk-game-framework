@@ -96,7 +96,6 @@
     <Manifest Include="settings.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Assets.cpp" />
     <ClCompile Include="src\DeviceResources.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -110,7 +109,6 @@
     <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Assets.h" />
     <ClInclude Include="src\DeviceResources.h" />
     <ClInclude Include="src\DXTK.h" />
     <ClInclude Include="src\Game.h" />

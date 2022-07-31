@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "TestScene.h"
-#include "DeviceResources.h"
-#include "StepTimer.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
