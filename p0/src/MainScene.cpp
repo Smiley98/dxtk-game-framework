@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MainScene.h"
 #include "DebugRenderer.h"
+#include "Collision.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -72,6 +73,7 @@ namespace Scene
 	void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		auto context = graphics->GetD3DDeviceContext();
+
 
 		sVan->Draw(context, *mStates, mVanTransform.World(), mView, mProjection);
 		mTd->Draw(context, *mStates, mTdTransform.World(), mView, mProjection);

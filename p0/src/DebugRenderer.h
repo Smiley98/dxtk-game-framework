@@ -1,11 +1,13 @@
 #pragma once
 #include "DXTK.h"
-#include "Collision.h"
 #include <memory>
+
+struct SphereCollider;
+struct CapsuleCollider;
 
 namespace Debug
 {
-	enum Type {
+	enum Geometry {
 		BOX,
 		SPHERE,
 		CYLINDER,
@@ -14,12 +16,12 @@ namespace Debug
 		TEAPOT
 	};
 
-	void Primitive(Type geometry, const DirectX::SimpleMath::Matrix& world, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+	void Primitive(Geometry geometry, const DirectX::SimpleMath::Matrix& world, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color = DirectX::Colors::White);
 
-	void Draw(const Collision::SphereCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+	void Draw(const SphereCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color = DirectX::Colors::White);
 
-	void Draw(const Collision::CapsuleCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+	void Draw(const CapsuleCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color = DirectX::Colors::White);
 };

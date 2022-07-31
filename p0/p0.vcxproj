@@ -117,6 +117,7 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\MainScene.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\RigidTransform.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneType.h" />
     <ClInclude Include="src\StepTimer.h" />

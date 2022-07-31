@@ -98,6 +98,9 @@
     <ClInclude Include="src\DebugRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="src\RigidTransform.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

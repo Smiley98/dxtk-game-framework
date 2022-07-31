@@ -1,12 +1,13 @@
 #include "pch.h"
 #include "DebugRenderer.h"
+#include "Collision.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 namespace Debug
 {
-	void Primitive(Type geometry, const Matrix& world, const Matrix& view, const Matrix& proj,
+	void Primitive(Geometry geometry, const Matrix& world, const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
 	{
 		auto context = graphics->GetD3DDeviceContext();
@@ -35,16 +36,14 @@ namespace Debug
 		}
 	}
 
-	void Draw(const Collision::SphereCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+	void Draw(const SphereCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
 	{
-		auto context = graphics->GetD3DDeviceContext();
 	}
 
-	void Draw(const Collision::CapsuleCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+	void Draw(const CapsuleCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
 	{
-		auto context = graphics->GetD3DDeviceContext();
 	}
 
 }
