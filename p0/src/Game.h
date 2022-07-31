@@ -45,11 +45,11 @@ private:
     void CreateWindowSizeDependentResources();
 
     // Shared resources 
-    std::shared_ptr<DX::DeviceResources>    m_deviceResources;
-    std::shared_ptr<DirectX::AudioEngine>   m_audEngine;
-    std::shared_ptr<DirectX::GamePad>       m_gamePad;
-    std::shared_ptr<DirectX::Keyboard>      m_keyboard;
-    std::shared_ptr<DirectX::Mouse>         m_mouse;
-    DX::StepTimer                           m_timer;
-    scene::Type                             m_scene = scene::MAIN;
+    std::shared_ptr<DX::DeviceResources>    mDeviceResources;
+    std::shared_ptr<DirectX::AudioEngine>   mAudioEngine;
+    std::shared_ptr<DirectX::GamePad>       mGamePad;
+    std::shared_ptr<DirectX::Keyboard>      mKeyboard;
+    std::shared_ptr<DirectX::Mouse>         mMouse;
+    DX::StepTimer                           mTimer;
+    Scene::Type                             mScene = Scene::MAIN;
 };

@@ -2,7 +2,7 @@
 #include "Scene.h"
 #include "Transform.h"
 
-namespace scene
+namespace Scene
 {
 	class MainScene :
 		public Scene
@@ -25,15 +25,12 @@ namespace scene
 
 	private:
 		std::unique_ptr<DirectX::CommonStates> mStates;
-
 		std::unique_ptr<DirectX::Model>	mTd;
-		std::unique_ptr<DirectX::GeometricPrimitive> mBox;
-		std::unique_ptr<DirectX::GeometricPrimitive> mCapsule;
 
 		Transform mVanTransform;
 		Transform mTdTransform;
 		Transform mBoxTransform;
-		Transform mCapsuleTransform;
+		Transform mCylinderTransform;
 
 		DirectX::SimpleMath::Matrix	mView;
 		DirectX::SimpleMath::Matrix	mProjection;

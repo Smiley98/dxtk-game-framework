@@ -3,7 +3,7 @@
 #include "Transform.h"
 
 #include <vector>
-namespace collision
+namespace Collision
 {
 // TODO: static vs dynamic (building spheres vs everything else -- may not need all 4 vectors)
 	//static void AddStatic(const SphereCollider& collider);

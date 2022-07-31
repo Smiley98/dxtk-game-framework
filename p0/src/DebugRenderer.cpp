@@ -4,21 +4,48 @@
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-void DebugRenderer::Create(std::shared_ptr<DX::DeviceResources> graphics)
+namespace Debug
 {
+	void Primitive(Type geometry,
+		const DirectX::SimpleMath::Matrix& world,
+		const DirectX::SimpleMath::Matrix& view,
+		const DirectX::SimpleMath::Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics,
+		DirectX::XMVECTOR color)
+	{
+		auto context = graphics->GetD3DDeviceContext();
+		switch (geometry)
+		{
+		case Debug::BOX:
+			GeometricPrimitive::CreateCube(context)->Draw(world, view, proj, color);
+			break;
+		case Debug::SPHERE:
+			GeometricPrimitive::CreateSphere(context)->Draw(world, view, proj, color);
+			break;
+		case Debug::CYLINDER:
+			GeometricPrimitive::CreateCylinder(context)->Draw(world, view, proj, color);
+			break;
+		case Debug::CONE:
+			GeometricPrimitive::CreateCone(context)->Draw(world, view, proj, color);
+			break;
+		case Debug::TORUS:
+			GeometricPrimitive::CreateTorus(context)->Draw(world, view, proj, color);
+			break;
+		case Debug::TEAPOT:
+			GeometricPrimitive::CreateTeapot(context)->Draw(world, view, proj, color);
+			break;
+		default:
+			break;
+		}
+	}
 
-}
+	void Draw(const Collision::SphereCollider& collider, std::shared_ptr<DX::DeviceResources> graphics)
+	{
+		auto context = graphics->GetD3DDeviceContext();
+	}
 
-void DebugRenderer::Destroy()
-{
-
-}
-
-void DebugRenderer::Draw(const collision::SphereCollider& collider)
-{
-	
-}
-
-void DebugRenderer::Draw(const collision::CapsuleCollider& collider)
-{
+	void Draw(const Collision::CapsuleCollider& collider, std::shared_ptr<DX::DeviceResources> graphics)
+	{
+		auto context = graphics->GetD3DDeviceContext();
+	}
 }

@@ -6,7 +6,7 @@
 #include <array>
 #include <memory>
 
-namespace scene
+namespace Scene
 {
 	class Scene
 	{

@@ -3,7 +3,7 @@
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
-namespace scene
+namespace Scene
 {
 	TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 	{
@@ -49,19 +49,7 @@ namespace scene
 
 	TestScene::~TestScene()
 	{
-		m_states.reset();
-		m_fxFactory.reset();
-		m_sprites.reset();
-		m_batch.reset();
-		m_batchEffect.reset();
-		m_font.reset();
-		m_shape.reset();
-		m_model.reset();
-		m_van.reset();
-		m_texture1.Reset();
-		m_texture2.Reset();
-		m_textureVan.Reset();
-		m_batchInputLayout.Reset();
+		// Pointers get automatically reset since they're intellectuals ;)
 	}
 
 	void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)

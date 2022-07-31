@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 
-namespace scene
+namespace Scene
 {
     class TestScene :
         public Scene

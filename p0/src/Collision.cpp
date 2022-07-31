@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Collision.h"
 
-namespace collision
+namespace Collision
 {
 	using namespace DirectX;
 	using namespace DirectX::SimpleMath;
@@ -15,7 +15,7 @@ namespace collision
 	std::vector<CapsuleCollider> Collider::sCapsules(64);
 	uint32_t Collider::sId;
 
-	collision::Collider::Collider(Tag tag, void* data) :
+	Collider::Collider(Tag tag, void* data) :
 		mId(++sId),
 		mTag(tag),
 		mData(data)
@@ -50,7 +50,7 @@ namespace collision
 		return sCapsules.back();
 	}
 
-	void collision::Collider::Remove(const SphereCollider& collider)
+	void Collider::Remove(const SphereCollider& collider)
 	{
 		for (auto i = sSpheres.begin(); i != sSpheres.end(); i++)
 		{
@@ -59,7 +59,7 @@ namespace collision
 		}
 	}
 
-	void collision::Collider::Remove(const CapsuleCollider& collider)
+	void Collider::Remove(const CapsuleCollider& collider)
 	{
 		for (auto i = sCapsules.begin(); i != sCapsules.end(); i++)
 		{
@@ -68,14 +68,14 @@ namespace collision
 		}
 	}
 
-	void collision::Collider::Clear()
+	void Collider::Clear()
 	{
 		sSpheres.clear();
 		sCapsules.clear();
 		sId = 0;
 	}
 
-	std::vector<HitPair> collision::Collider::Collisions()
+	std::vector<HitPair> Collider::Collisions()
 	{
 		return std::vector<HitPair>();
 	}

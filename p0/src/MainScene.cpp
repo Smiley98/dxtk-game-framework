@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "MainScene.h"
+#include "DebugRenderer.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
-namespace scene
+namespace Scene
 {
 	MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 	{
@@ -20,20 +21,17 @@ namespace scene
 		mVanTransform.Rotate(-45.0f);
 		mVanTransform.Translate(mVanTransform.Front() * -750.0f);
 
-		mCapsule = GeometricPrimitive::CreateCylinder(context);
-		mCapsuleTransform.Scale(sVan->meshes.front()->boundingBox.Extents * 2.0f);
-		mCapsuleTransform.Translate(-100.0f, 0.0f);
+		Vector3 scale = sVan->meshes.front()->boundingBox.Extents * 2.0f;
 
-		mBox = GeometricPrimitive::CreateBox(context, sVan->meshes.front()->boundingBox.Extents * 2.0f);
+		mCylinderTransform.Scale(scale);
+		mCylinderTransform.Translate(-100.0f, 0.0f);
+
+		mBoxTransform.Scale(scale);
 		mBoxTransform.Translate(100.0f, 0.0f);
 	}
 
 	MainScene::~MainScene()
 	{
-		mStates.reset();
-		mTd.reset();
-		mBox.reset();
-		mCapsule.reset();
 	}
 
 	void MainScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
@@ -74,10 +72,11 @@ namespace scene
 	void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		auto context = graphics->GetD3DDeviceContext();
-		
+
 		sVan->Draw(context, *mStates, mVanTransform.World(), mView, mProjection);
 		mTd->Draw(context, *mStates, mTdTransform.World(), mView, mProjection);
-		mBox->Draw(mBoxTransform.World(), mView, mProjection);
-		mCapsule->Draw(mCapsuleTransform.World(), mView, mProjection);
+
+		Debug::Primitive(Debug::BOX, mBoxTransform.World(), mView, mProjection, graphics);
+		Debug::Primitive(Debug::CYLINDER, mCylinderTransform.World(), mView, mProjection, graphics);
 	}
 }

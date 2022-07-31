@@ -1,5 +1,5 @@
 #pragma once
-namespace scene
+namespace Scene
 {
 	enum Type {
 		//TEST,

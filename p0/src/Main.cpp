@@ -18,12 +18,11 @@ using namespace DirectX;
 
 namespace
 {
-    std::unique_ptr<Game> g_game;
-
-    HDEVNOTIFY g_hNewAudio = nullptr;
+    std::unique_ptr<Game> gGame;
+    HDEVNOTIFY gNewAudio = nullptr;
 }
 
-LPCWSTR g_szAppName = L"Battle Vans";
+LPCWSTR gAppName = L"Battle Vans";
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 void ExitGame() noexcept;
@@ -48,7 +47,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (FAILED(hr))
         return 1;
 
-    g_game = std::make_unique<Game>();
+    gGame = std::make_unique<Game>();
 
     // Register class and create window
     {
@@ -73,7 +72,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         MONITORINFO mi = { sizeof(mi) };
         if (!GetMonitorInfo(hmon, &mi)) return NULL;
 
-        HWND hwnd = CreateWindowExW(0, L"DirectXTKSimpleSampleWindowClass", g_szAppName, WS_POPUP | WS_VISIBLE,
+        HWND hwnd = CreateWindowExW(0, L"DirectXTKSimpleSampleWindowClass", gAppName, WS_POPUP | WS_VISIBLE,
             mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top,
             nullptr, nullptr, hInstance, nullptr);
 
@@ -82,12 +81,12 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
         ShowWindow(hwnd, nCmdShow);
 
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(g_game.get()));
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(gGame.get()));
 
         RECT rc;
         GetClientRect(hwnd, &rc);
 
-        g_game->Initialize(hwnd, rc.right - rc.left, rc.bottom - rc.top);
+        gGame->Initialize(hwnd, rc.right - rc.left, rc.bottom - rc.top);
     }
 
     // Main message loop
@@ -101,11 +100,11 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         }
         else
         {
-            g_game->Tick();
+            gGame->Tick();
         }
     }
 
-    g_game.reset();
+    gGame.reset();
 
     CoUninitialize();
 
@@ -126,7 +125,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
-        if (!g_hNewAudio)
+        if (!gNewAudio)
         {
             // Ask for notification of new audio devices
             DEV_BROADCAST_DEVICEINTERFACE filter = {};
@@ -134,15 +133,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             filter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
             filter.dbcc_classguid = KSCATEGORY_AUDIO;
 
-            g_hNewAudio = RegisterDeviceNotification(hWnd, &filter, DEVICE_NOTIFY_WINDOW_HANDLE);
+            gNewAudio = RegisterDeviceNotification(hWnd, &filter, DEVICE_NOTIFY_WINDOW_HANDLE);
         }
         break;
 
     case WM_CLOSE:
-        if (g_hNewAudio)
+        if (gNewAudio)
         {
-            UnregisterDeviceNotification(g_hNewAudio);
-            g_hNewAudio = nullptr;
+            UnregisterDeviceNotification(gNewAudio);
+            gNewAudio = nullptr;
         }
         DestroyWindow(hWnd);
         break;
@@ -160,8 +159,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     auto pInter = reinterpret_cast<PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
                     if (pInter->dbcc_classguid == KSCATEGORY_AUDIO)
                     {
-                        if (g_game)
-                            g_game->NewAudioDevice();
+                        if (gGame)
+                            gGame->NewAudioDevice();
                     }
                 }
             }
@@ -178,8 +177,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     auto pInter = reinterpret_cast<PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
                     if (pInter->dbcc_classguid == KSCATEGORY_AUDIO)
                     {
-                        if (g_game)
-                            g_game->NewAudioDevice();
+                        if (gGame)
+                            gGame->NewAudioDevice();
                     }
                 }
             }

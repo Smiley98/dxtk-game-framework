@@ -1,17 +1,28 @@
 #pragma once
+#include "DXTK.h"
 #include "DeviceResources.h"
 #include "Collision.h"
+#include <memory>
 
-class DebugRenderer
+namespace Debug
 {
-public:
-	static void Create(std::shared_ptr<DX::DeviceResources> graphics);
-	static void Destroy();
+	enum Type {
+		BOX,
+		SPHERE,
+		CYLINDER,
+		CONE,
+		TORUS,
+		TEAPOT
+	};
 
-	static void Draw(const collision::SphereCollider& collider);
-	static void Draw(const collision::CapsuleCollider& collider);
+	void Primitive(Type geometry,
+		const DirectX::SimpleMath::Matrix& world,
+		const DirectX::SimpleMath::Matrix& view,
+		const DirectX::SimpleMath::Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics,
+		DirectX::XMVECTOR color = DirectX::Colors::White);
 
-private:
-	static std::shared_ptr<DX::DeviceResources> sGraphics;
+	void Draw(const Collision::SphereCollider& collider, std::shared_ptr<DX::DeviceResources> graphics);
+	void Draw(const Collision::CapsuleCollider& collider, std::shared_ptr<DX::DeviceResources> graphics);
 };
 

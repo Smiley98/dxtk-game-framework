@@ -5,7 +5,7 @@
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
-namespace scene
+namespace Scene
 {
 	std::array<Scene*, NONE> Scene::sScenes;
 	Type Scene::sType = NONE;
