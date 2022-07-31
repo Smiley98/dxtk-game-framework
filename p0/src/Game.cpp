@@ -44,7 +44,7 @@ void Game::Initialize(HWND window, int width, int height)
     mDeviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
-    Scene::Scene::Run(mScene);
+    Scene::Run(mScene);
 }
 
 // Executes the basic game loop.
@@ -79,7 +79,7 @@ void Game::Update(const DX::StepTimer& timer)
         ExitGame();
     }
 
-    Scene::Scene::Update(timer, *mGamePad, *mKeyboard, *mMouse);
+    Scene::Update(timer, *mGamePad, *mKeyboard, *mMouse);
 }
 
 // Draws the scene.
@@ -93,7 +93,7 @@ void Game::Render()
 
     Clear();
 
-    Scene::Scene::Render(mDeviceResources);
+    Scene::Render(mDeviceResources);
     mDeviceResources->PIXEndEvent();
 
     // Show the new frame.
@@ -176,26 +176,26 @@ void Game::GetDefaultSize(int& width, int& height) const noexcept
 // These are the resources that depend on the device.
 void Game::CreateDeviceDependentResources()
 {
-    Scene::Scene::Create(mDeviceResources, mAudioEngine);
+    Scene::Create(mDeviceResources, mAudioEngine);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
 void Game::CreateWindowSizeDependentResources()
 {
     // RECT r = m_deviceResources->GetOutputSize(); // Use this internally if you want screen size information
-    Scene::Scene::Resize(mDeviceResources);
+    Scene::Resize(mDeviceResources);
 }
 
 void Game::OnDeviceLost()
 {
     mScene = Scene::Scene::Current();
-    Scene::Scene::Destroy();
+    Scene::Destroy();
 }
 
 void Game::OnDeviceRestored()
 {
     CreateDeviceDependentResources();
     CreateWindowSizeDependentResources();
-    Scene::Scene::Run(mScene);
+    Scene::Run(mScene);
 }
 #pragma endregion
