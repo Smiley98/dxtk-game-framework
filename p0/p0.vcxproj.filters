@@ -54,9 +54,6 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\pch.cpp" />
-    <ClCompile Include="src\Transform.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
     <ClCompile Include="src\MainScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>

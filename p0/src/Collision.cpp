@@ -15,38 +15,26 @@ namespace Collision
 	std::vector<CapsuleCollider> Collider::sCapsules(64);
 	uint32_t Collider::sId;
 
-	Collider::Collider(Tag tag, void* data) :
-		mId(++sId),
+	Collider::Collider(const Transform& transform, Tag tag, void* data) :
+		mTransform(transform),
 		mTag(tag),
-		mData(data)
+		mData(data),
+		mId(++sId)
 	{
 #if _DEBUG
 		assert(tag != NONE);
 #endif
 	}
 
-	uint32_t Collider::Id() const
+	SphereCollider& Collider::AddSphere(const Transform& transform, Tag tag, void* data)
 	{
-		return mId;
-	}
-
-	SphereCollider& Collider::Add(const DirectX::SimpleMath::Vector3& translation, float radius,
-		Tag tag, void* data)
-	{
-#if _DEBUG
-		assert(tag != NONE);
-#endif
-		sSpheres.push_back({ translation, radius, tag, data });
+		sSpheres.push_back({ transform, tag, data });
 		return sSpheres.back();
 	}
 
-	CapsuleCollider& Collider::Add(const DirectX::SimpleMath::Vector3& translation, const DirectX::SimpleMath::Vector3& orientation, float halfHeight, float radius,
-		Tag tag, void* data)
+	CapsuleCollider& Collider::AddCapsule(const Transform& transform, Tag tag, void* data)
 	{
-#if _DEBUG
-		assert(tag != NONE);
-#endif
-		sCapsules.push_back({ translation, orientation, halfHeight, radius, tag, data });
+		sCapsules.push_back({ transform, tag, data });
 		return sCapsules.back();
 	}
 
@@ -80,51 +68,65 @@ namespace Collision
 		return std::vector<HitPair>();
 	}
 
-	SphereCollider::SphereCollider(const DirectX::SimpleMath::Vector3& translation,
-		float radius, Tag tag, void* data) :
-		Collider(tag, data),
-		mTranslation(translation),
-		mRadius(radius)
+	SphereCollider::SphereCollider(const Transform& transform, Tag tag, void* data) :
+		Collider(transform, tag, data)
 	{
 	}
 
 	bool SphereCollider::Collision(const SphereCollider& collider, Vector3& mtv)
 	{
+		const float ra = Radius();
+		const float rb = collider.Radius();
+
+		const Vector3 pa = Position();
+		const Vector3 pb = collider.Position();
+
 		return false;
 	}
 
 	bool SphereCollider::Collision(const CapsuleCollider& collider, Vector3& mtv)
 	{
+		const float rSphere = Radius();
+		const float rCapsule = collider.Radius();
+
+		const float hhCapsule = collider.HalfHeight();
+
+		const Vector3 tSphere = Position(); 
+		const Vector3 tCapsule = mTransform.Translation();
+		const Vector3 oCapsule = mTransform.Front();
+
 		return false;
 	}
 
-	void SphereCollider::Update(const Transform& transform)
-	{
-
-	}
-
-	CapsuleCollider::CapsuleCollider(const DirectX::SimpleMath::Vector3& translation, const DirectX::SimpleMath::Vector3& orientation,
-		float halfHeight, float radius, Tag tag, void* data) :
-		Collider(tag, data),
-		mTranslation(translation),
-		mOrientation(orientation),
-		mHalfHeight(halfHeight),
-		mRadius(radius)
+	CapsuleCollider::CapsuleCollider(const Transform& transform, Tag tag, void* data) :
+		Collider(transform, tag, data)
 	{
 	}
 
 	bool CapsuleCollider::Collision(const SphereCollider& collider, Vector3& mtv)
 	{
+		const float r = Radius();
+		const float hh = HalfHeight();
+		const Vector3 t = mTransform.Translation();
+		const Vector3 o = mTransform.Front();
+
 		return false;
 	}
 
 	bool CapsuleCollider::Collision(const CapsuleCollider& collider, Vector3& mtv)
 	{
+		const float ra = Radius();
+		const float rb = collider.Radius();
+
+		const float hha = HalfHeight();
+		const float hhb = collider.HalfHeight();
+
+		const Vector3 ta = mTransform.Translation();
+		const Vector3 tb = mTransform.Translation();
+
+		const Vector3 oa = mTransform.Front();
+		const Vector3 ob = mTransform.Front();
+
 		return false;
-	}
-
-	void CapsuleCollider::Update(const Transform& transform)
-	{
-
 	}
 }

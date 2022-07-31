@@ -4,38 +4,134 @@
 class Transform
 {
 public:
-	Transform();
-	~Transform();
+	~Transform() {}
+	Transform() :
+		mTranslation(DirectX::SimpleMath::Vector3::Zero),
+		mRotation(DirectX::SimpleMath::Vector3::Zero),
+		mScaling(DirectX::SimpleMath::Vector3::One) {}
 
-	DirectX::SimpleMath::Matrix  World();
-	DirectX::SimpleMath::Vector4 Position();
+	// World matrix
+	inline DirectX::SimpleMath::Matrix World() const
+	{
+		using namespace DirectX;
+		using namespace DirectX::SimpleMath;
+		return XMMatrixTransformation(
+			g_XMZero, Quaternion::Identity, mScaling,
+			g_XMZero, Quaternion::CreateFromYawPitchRoll(mRotation),
+			mTranslation);
+	}
 
-	DirectX::SimpleMath::Vector3 Front();	// local forward
-	DirectX::SimpleMath::Vector3 Adjacent();// local right
-	DirectX::SimpleMath::Vector3 Above();	// local up
+	// Position in world-space
+	inline DirectX::SimpleMath::Vector4 Position() const {
+		using namespace DirectX;
+		using namespace DirectX::SimpleMath;
+		return XMVector4Transform(Vector4::UnitW, World());
+	}
 
-	DirectX::SimpleMath::Vector3 Translation();
-	DirectX::SimpleMath::Vector3 Rotation();
-	DirectX::SimpleMath::Vector3 Scaling();
+	// local forward (orientation)
+	inline DirectX::SimpleMath::Vector3 Front()	const
+	{
+		using namespace DirectX::SimpleMath;
+		return Matrix::CreateFromYawPitchRoll(mRotation).Up();
+	}
 
-	void Translate(const DirectX::SimpleMath::Vector3& translation);
-	void Rotate(const DirectX::SimpleMath::Vector3& degreesYXZ);
-	void Scale(const DirectX::SimpleMath::Vector3& scaling);
+	// local right (forward x up)
+	inline DirectX::SimpleMath::Vector3 Adjacent() const
+	{
+		using namespace DirectX::SimpleMath;
+		return Front().Cross(Vector3::UnitZ);
+	}
 
-	void DeltaTranslate(const DirectX::SimpleMath::Vector3& translation);
-	void DeltaRotate(const DirectX::SimpleMath::Vector3& degreesYXZ);
-	void DeltaScale(const DirectX::SimpleMath::Vector3& scaling);
+	// local up (forward x right)
+	inline DirectX::SimpleMath::Vector3 Above()	const
+	{
+		return Front().Cross(Adjacent());
+	}
 
-	void Translate(float x, float y);
-	void Rotate(float degreesZ);
-	void Scale(float scaling);
+	// Translation
+	inline DirectX::SimpleMath::Vector3 Translation() const
+	{
+		return mTranslation;
+	}
 
-	void DeltaTranslate(float x, float y);
-	void DeltaRotate(float degreesZ);
-	void DeltaScale(float scaling);
+	// Euler angles in degrees
+	inline DirectX::SimpleMath::Vector3 Rotation() const
+	{
+		constexpr float DEGREES = 180.0f / DirectX::XM_PI;
+		return mRotation * DEGREES;
+	}
+
+	// Scale xyz
+	inline DirectX::SimpleMath::Vector3 Scaling() const
+	{
+		return mScaling;
+	}
+
+	inline void Translate(const DirectX::SimpleMath::Vector3& translation)
+	{
+		mTranslation = translation;
+	}
+
+	inline void Rotate(const DirectX::SimpleMath::Vector3& degreesYXZ)
+	{
+		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+		mRotation = degreesYXZ * RADIANS;
+	}
+
+	inline void Scale(const DirectX::SimpleMath::Vector3& scaling)
+	{
+		mScaling = scaling;
+	}
+
+	inline void DeltaTranslate(const DirectX::SimpleMath::Vector3& translation)
+	{
+		mTranslation += translation;
+	}
+
+	inline void DeltaRotate(const DirectX::SimpleMath::Vector3& degreesYXZ)
+	{
+		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+		mRotation += degreesYXZ * RADIANS;
+	}
+
+	inline void DeltaScale(const DirectX::SimpleMath::Vector3& scaling)
+	{
+		mScaling += scaling;
+	}
+
+	inline void Translate(float x, float y)
+	{
+		mTranslation = { x, y, mTranslation.z };
+	}
+
+	inline void Rotate(float degreesZ)
+	{
+		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+		mRotation.z = degreesZ * RADIANS;
+	}
+
+	inline void Scale(float scaling)
+	{
+		mScaling = { scaling, scaling, scaling };
+	}
+
+	inline void DeltaTranslate(float x, float y)
+	{
+		mTranslation += { x, y, mTranslation.z };
+	}
+
+	inline void DeltaRotate(float degreesZ)
+	{
+		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+		mRotation.z += degreesZ * RADIANS;
+	}
+
+	inline void DeltaScale(float scaling)
+	{
+		mScaling += { scaling, scaling, scaling };
+	}
 
 private:
-	DirectX::SimpleMath::Vector3 mPadding;
 	DirectX::SimpleMath::Vector3 mTranslation;
 	DirectX::SimpleMath::Vector3 mRotation;
 	DirectX::SimpleMath::Vector3 mScaling;

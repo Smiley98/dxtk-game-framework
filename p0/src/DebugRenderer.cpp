@@ -6,12 +6,8 @@ using namespace DirectX::SimpleMath;
 
 namespace Debug
 {
-	void Primitive(Type geometry,
-		const DirectX::SimpleMath::Matrix& world,
-		const DirectX::SimpleMath::Matrix& view,
-		const DirectX::SimpleMath::Matrix& proj,
-		std::shared_ptr<DX::DeviceResources> graphics,
-		DirectX::XMVECTOR color)
+	void Primitive(Type geometry, const Matrix& world, const Matrix& view, const Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
 	{
 		auto context = graphics->GetD3DDeviceContext();
 		switch (geometry)
@@ -39,13 +35,16 @@ namespace Debug
 		}
 	}
 
-	void Draw(const Collision::SphereCollider& collider, std::shared_ptr<DX::DeviceResources> graphics)
+	void Draw(const Collision::SphereCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
 	{
 		auto context = graphics->GetD3DDeviceContext();
 	}
 
-	void Draw(const Collision::CapsuleCollider& collider, std::shared_ptr<DX::DeviceResources> graphics)
+	void Draw(const Collision::CapsuleCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
 	{
 		auto context = graphics->GetD3DDeviceContext();
 	}
+
 }

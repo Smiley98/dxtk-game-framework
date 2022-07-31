@@ -36,17 +36,11 @@ namespace Collision
 	public:
 		Collider() = default;
 		~Collider() = default;
-		Collider(Tag tag, void* data = nullptr);
-		uint32_t Id() const;
+		Collider(const Transform& transform, Tag tag, void* data = nullptr);
+		inline uint32_t Id() const { return mId; }
 
-		// These shouldn't exist. Any necessary references should be stored on-add and released on-remove.
-		//static const SphereCollider* GetSphere(uint32_t id);
-		//static const CapsuleCollider* GetCapsule(uint32_t id);
-
-		static SphereCollider& Add(const DirectX::SimpleMath::Vector3& translation, float radius,
-			Tag tag, void* data = nullptr);
-		static CapsuleCollider& Add(const DirectX::SimpleMath::Vector3& translation, const DirectX::SimpleMath::Vector3& orientation, float halfHeight, float radius,
-			Tag tag, void* data = nullptr);
+		static SphereCollider& AddSphere(const Transform& transform, Tag tag, void* data = nullptr);
+		static CapsuleCollider& AddCapsule(const Transform& transform, Tag tag, void* data = nullptr);
 
 		static void Remove(const SphereCollider& collider);
 		static void Remove(const CapsuleCollider& collider);
@@ -54,22 +48,22 @@ namespace Collision
 		static void Clear();
 		static std::vector<HitPair> Collisions();
 
-		virtual void Update(const Transform& transform) = 0;
+		inline operator Transform() const noexcept { return mTransform; }
+		inline void SetTransform(const Transform& transform) { mTransform = transform; }
 
 	protected:
 		virtual bool Collision(const SphereCollider& collider, DirectX::SimpleMath::Vector3& mtv) = 0;
 		virtual bool Collision(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& mtv) = 0;
+		Transform mTransform;
 
 	private:
 		static std::vector<SphereCollider> sSpheres;
 		static std::vector<CapsuleCollider> sCapsules;
 		static uint32_t sId;
 
-		// No need to store members related to static/dynamic, or capsule/sphere
-		// because we already know that based on data structures (no Collider* nonsense).
-		uint32_t mId = 0;
 		Tag mTag = NONE;
 		void* mData = nullptr;
+		uint32_t mId = 0;
 	};
 
 	class SphereCollider :
@@ -79,18 +73,19 @@ namespace Collision
 	public:
 		SphereCollider() = default;
 		~SphereCollider() = default;
-		SphereCollider(const DirectX::SimpleMath::Vector3& translation, float radius,
-			Tag tag, void* data = nullptr);
+		SphereCollider(const Transform& transform, Tag tag, void* data = nullptr);
 
-		void Update(const Transform& transform) final;
+		inline DirectX::SimpleMath::Vector3 Position() const { return mTransform.Translation(); }
+		inline float Radius() const { return mTransform.Scaling().Length(); }
 
 	protected:
 		bool Collision(const SphereCollider& collider, DirectX::SimpleMath::Vector3& mtv) final;
 		bool Collision(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& mtv) final;
 
 	private:
-		DirectX::SimpleMath::Vector3 mTranslation;
-		float mRadius = 0.0f;
+		// Instead of optimizing for space, decompose internal transform during collision test
+		//DirectX::SimpleMath::Vector3 mTranslation;
+		//float mRadius = 0.0f;
 	};
 
 	class CapsuleCollider :
@@ -100,19 +95,22 @@ namespace Collision
 	public:
 		CapsuleCollider() = default;
 		~CapsuleCollider() = default;
-		CapsuleCollider(const DirectX::SimpleMath::Vector3& translation, const DirectX::SimpleMath::Vector3& orientation, float halfHeight, float radius,
-			Tag tag, void* data = nullptr);
+		CapsuleCollider(const Transform& transform, Tag tag, void* data = nullptr);
 
-		void Update(const Transform& transform) final;
+		inline DirectX::SimpleMath::Vector3 Translation() const { return mTransform.Translation(); }
+		inline DirectX::SimpleMath::Vector3 Orientation() const { return mTransform.Front(); }
+		inline float Radius()		const { return mTransform.Scaling().x; }
+		inline float HalfHeight()	const { return mTransform.Scaling().y; }
 
 	protected:
 		bool Collision(const SphereCollider& collider, DirectX::SimpleMath::Vector3& mtv) final;
 		bool Collision(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& mtv) final;
 
 	private:
-		DirectX::SimpleMath::Vector3 mTranslation;
-		DirectX::SimpleMath::Vector3 mOrientation;
-		float mHalfHeight = 0.0f;
-		float mRadius = 0.0f;
+		// Instead of optimizing for space, decompose internal transform during collision test
+		//DirectX::SimpleMath::Vector3 mTranslation;
+		//DirectX::SimpleMath::Vector3 mOrientation;
+		//float mHalfHeight = 0.0f;
+		//float mRadius = 0.0f;
 	};
 }

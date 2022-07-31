@@ -27,6 +27,9 @@ namespace DirectX
 	class SpriteFont;
 }
 
-#include "SimpleMath.h"
+#include "Transform.h"
 #include "PrimitiveBatch.h"
 #include "VertexTypes.h"
+
+#include "DeviceResources.h"
+#include "StepTimer.h"

@@ -1,7 +1,5 @@
 #pragma once
 #include "DXTK.h"
-#include "DeviceResources.h"
-#include "StepTimer.h"
 #include "SceneType.h"
 #include <array>
 #include <memory>
