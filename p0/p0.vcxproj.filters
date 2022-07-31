@@ -88,9 +88,6 @@
     <ClInclude Include="src\TestScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="src\SceneType.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="src\Collision.h">
       <Filter>Math</Filter>
     </ClInclude>

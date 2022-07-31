@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Game.h"
-#include "Scene.h"
 
 extern void ExitGame() noexcept;
 

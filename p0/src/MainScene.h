@@ -1,38 +1,34 @@
 #pragma once
 #include "Scene.h"
 
-namespace Scene
+class MainScene :
+	public Scene
 {
-	class MainScene :
-		public Scene
-	{
-	public:
-		MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
-		~MainScene() final;
+public:
+	MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
+	~MainScene() final;
 
-	protected:
-		virtual void OnResize(std::shared_ptr<DX::DeviceResources> graphics) override;
+protected:
+	virtual void OnResize(std::shared_ptr<DX::DeviceResources> graphics) override;
 
-		virtual void OnBegin() override;
-		virtual void OnEnd() override;
+	virtual void OnBegin() override;
+	virtual void OnEnd() override;
 
-		virtual void OnPause() override;
-		virtual void OnResume() override;
+	virtual void OnPause() override;
+	virtual void OnResume() override;
 
-		virtual void OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse) override;
-		virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) override;
+	virtual void OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse) override;
+	virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) override;
 
-	private:
-		std::unique_ptr<DirectX::CommonStates> mStates;
-		std::unique_ptr<DirectX::Model>	mTd;
+private:
+	std::unique_ptr<DirectX::CommonStates> mStates;
+	std::unique_ptr<DirectX::Model>	mTd;
 
-		Transform mVanTransform;
-		Transform mTdTransform;
-		Transform mBoxTransform;
-		Transform mCylinderTransform;
+	Transform mVanTransform;
+	Transform mTdTransform;
+	Transform mBoxTransform;
+	Transform mCylinderTransform;
 
-		DirectX::SimpleMath::Matrix	mView;
-		DirectX::SimpleMath::Matrix	mProjection;
-	};
-}
-
+	DirectX::SimpleMath::Matrix	mView;
+	DirectX::SimpleMath::Matrix	mProjection;
+};

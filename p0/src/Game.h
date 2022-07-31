@@ -1,7 +1,5 @@
 #pragma once
-#include "DeviceResources.h"
-#include "StepTimer.h"
-#include "SceneType.h"
+#include "Scene.h"
 
 class Game final : public DX::IDeviceNotify
 {

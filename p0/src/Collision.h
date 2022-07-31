@@ -38,6 +38,7 @@ private:
 	static uint32_t sId;
 };
 
+// Inheritance is for losers (x1)
 struct SphereCollider
 {
 	SphereCollider() = default;
@@ -51,6 +52,7 @@ struct SphereCollider
 	uint32_t id = 0;
 };
 
+// Inheritance is for losers (x2)
 struct CapsuleCollider
 {
 	CapsuleCollider() = default;
