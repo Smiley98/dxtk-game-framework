@@ -39,11 +39,22 @@ namespace Debug
 	void Draw(const SphereCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
 	{
+		auto sphere = GeometricPrimitive::CreateSphere(graphics->GetD3DDeviceContext(), collider.radius * 2.0f);
+		sphere->Draw(Matrix::CreateTranslation(collider.translation), view, proj, color);
 	}
 
 	void Draw(const CapsuleCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
 	{
-	}
+		Vector3 forward = collider.mTransform.Front();
+		Matrix top = Matrix::CreateTranslation(collider.mTransform.Translation() + forward *  collider.halfHeight);
+		Matrix bot = Matrix::CreateTranslation(collider.mTransform.Translation() + forward * -collider.halfHeight);
 
+		auto context = graphics->GetD3DDeviceContext();
+		auto cylinder = GeometricPrimitive::CreateCylinder(context, collider.halfHeight * 2.0f, collider.radius * 2.0f);
+		auto sphere = GeometricPrimitive::CreateSphere(context, collider.radius * 2.0f);
+		sphere->Draw(top, view, proj, color);
+		sphere->Draw(bot, view, proj, color);
+		cylinder->Draw(collider.mTransform.World(), view, proj, color);
+	}
 }

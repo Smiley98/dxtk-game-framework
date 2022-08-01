@@ -20,14 +20,7 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 
 	mVanTransform.Rotate(-45.0f);
 	mVanTransform.Translate(mVanTransform.Front() * -750.0f);
-
-	Vector3 scale = sVan->meshes.front()->boundingBox.Extents * 2.0f;
-
-	mCylinderTransform.Scale(scale);
-	mCylinderTransform.Translate(-100.0f, 0.0f);
-
-	mBoxTransform.Scale(scale);
-	mBoxTransform.Translate(100.0f, 0.0f);
+	mVanExtents = sVan->meshes.front()->boundingBox.Extents;
 }
 
 MainScene::~MainScene()
@@ -73,10 +66,14 @@ void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
 
+	SphereCollider sphereColliderLeft{ { mVanTransform.Translation() + -3.0f * mVanExtents.x * mVanTransform.Adjacent() }, mVanExtents.x};
+	SphereCollider sphereColliderRight{ { mVanTransform.Translation() + 3.0f * mVanExtents.x * mVanTransform.Adjacent() }, mVanExtents.x};
+	Debug::Draw(sphereColliderLeft, mView, mProjection, graphics);
+	Debug::Draw(sphereColliderRight, mView, mProjection, graphics);
+
+	CapsuleCollider capsuleCollider{ mVanTransform, mVanExtents.y, mVanExtents.x };
+	Debug::Draw(capsuleCollider, mView, mProjection, graphics);
 
 	sVan->Draw(context, *mStates, mVanTransform.World(), mView, mProjection);
-	mTd->Draw(context, *mStates, mTdTransform.World(), mView, mProjection);
-
-	Debug::Primitive(Debug::BOX, mBoxTransform.World(), mView, mProjection, graphics);
-	Debug::Primitive(Debug::CYLINDER, mCylinderTransform.World(), mView, mProjection, graphics);
+	mTd->Draw(context, *mStates, Matrix::Identity, mView, mProjection);
 }

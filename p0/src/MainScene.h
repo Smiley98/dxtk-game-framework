@@ -24,10 +24,8 @@ private:
 	std::unique_ptr<DirectX::CommonStates> mStates;
 	std::unique_ptr<DirectX::Model>	mTd;
 
+	DirectX::SimpleMath::Vector3 mVanExtents;
 	Transform mVanTransform;
-	Transform mTdTransform;
-	Transform mBoxTransform;
-	Transform mCylinderTransform;
 
 	DirectX::SimpleMath::Matrix	mView;
 	DirectX::SimpleMath::Matrix	mProjection;

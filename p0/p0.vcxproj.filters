@@ -69,6 +69,7 @@
     <ClCompile Include="src\DebugRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
