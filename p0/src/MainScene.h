@@ -22,6 +22,8 @@ protected:
 
 private:
 	std::unique_ptr<DirectX::CommonStates> mStates;
+
+	std::shared_ptr<DirectX::BasicEffect> mBuildingShader;
 	std::unique_ptr<DirectX::Model>	mTd;
 
 	DirectX::SimpleMath::Vector3 mVanExtents;

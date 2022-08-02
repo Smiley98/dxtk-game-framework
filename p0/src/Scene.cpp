@@ -9,9 +9,13 @@ using namespace DirectX::SimpleMath;
 std::array<Scene*, Scene::NONE> Scene::sScenes;
 Scene::Type Scene::sType = NONE;
 
-std::shared_ptr<DirectX::BasicEffect> Scene::sVanShader;
-std::shared_ptr<DirectX::BasicEffect> Scene::sBuildingShader;
+Vector3 Scene::sLightDirection { 0.0f, 0.0f, -1.0f };
+Vector3 Scene::sAmbient	{ Vector3::One * 0.5f };
+Vector3 Scene::sDiffuse	{ Vector3::One * 0.75f };
+Vector3 Scene::sSpecular{ Vector3::One * 0.1f };
+
 std::shared_ptr<DirectX::Model> Scene::sVan;
+std::shared_ptr<DirectX::BasicEffect> Scene::sVanShader;
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Scene::sVanTexture;
 
 Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
@@ -30,15 +34,14 @@ void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_pt
 	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, sVanTexture.ReleaseAndGetAddressOf()));
 	sVanShader = std::make_shared<BasicEffect>(device);
 	sVanShader->EnableDefaultLighting();
-	sVanShader->SetLightDirection(0, Vector3::UnitZ * -1.0f + Vector3::UnitX * -1.0f);
+	sVanShader->SetAmbientLightColor(sAmbient);
+	sVanShader->SetDiffuseColor(sDiffuse);
+	sVanShader->SetSpecularColor(sSpecular);
+	sVanShader->SetSpecularPower(256.0f);
+	sVanShader->SetLightDirection(0, sLightDirection);
 	sVanShader->SetTextureEnabled(true);
 	sVanShader->SetTexture(sVanTexture.Get());
 	sVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", sVanShader);
-
-	sBuildingShader = std::make_shared<BasicEffect>(device);
-	sBuildingShader->EnableDefaultLighting();
-	sBuildingShader->SetLightDirection(0, Vector3::UnitZ * -1.0f + Vector3::UnitX * -1.0f);
-	sBuildingShader->SetTextureEnabled(false);
 
 	//sScenes[TEST] = new TestScene(graphics, audio);
 	//sScenes[SPLASH] = new SplashScene(graphics, audio);
@@ -49,7 +52,6 @@ void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_pt
 
 void Scene::Destroy()
 {
-	sBuildingShader.reset();
 	sVanShader.reset();
 	sVanTexture.Reset();
 	sVan.reset();

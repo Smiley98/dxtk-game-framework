@@ -66,9 +66,13 @@ protected:
 
 	// Shared assets. Scene is a convenient place to handle shared, as well as scene-specific assets.
 	// No point in adding needless indirection since assets won't be used outside of scenes.
-	static std::shared_ptr<DirectX::BasicEffect> sBuildingShader;
-	static std::shared_ptr<DirectX::BasicEffect> sVanShader;
+	static DirectX::SimpleMath::Vector3 sLightDirection;
+	static DirectX::SimpleMath::Vector3 sAmbient;
+	static DirectX::SimpleMath::Vector3 sDiffuse;
+	static DirectX::SimpleMath::Vector3 sSpecular;
+
 	static std::shared_ptr<DirectX::Model> sVan;
+	static std::shared_ptr<DirectX::BasicEffect> sVanShader;
 	static Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sVanTexture;
 
 private:

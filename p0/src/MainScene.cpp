@@ -10,13 +10,21 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 {
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();
+	mStates = std::make_unique<CommonStates>(device);
 
 	// TODO: Make a Buildings class that loads all building vbos
 	// Even though buildings only exist in the MainScene,
 	// its still more convenient to contain them within a class
-	mTd = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", sBuildingShader);
+	mBuildingShader = std::make_shared<BasicEffect>(device);
+	mBuildingShader->EnableDefaultLighting();
+	mBuildingShader->SetLightDirection(0, sLightDirection);
+	mBuildingShader->SetAmbientLightColor(sAmbient);
+	mBuildingShader->SetDiffuseColor(sDiffuse);
+	mBuildingShader->SetSpecularColor(sSpecular);
+	mBuildingShader->SetSpecularPower(1024.0f);
+	mBuildingShader->SetTextureEnabled(false);
 
-	mStates = std::make_unique<CommonStates>(device);
+	mTd = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", mBuildingShader);
 
 	mVanTransform.Rotate(-45.0f);
 	mVanTransform.Translate(mVanTransform.Front() * -750.0f);
@@ -68,12 +76,12 @@ void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	SphereCollider sphereColliderLeft{ { mVanTransform.Translation() + -3.0f * mVanExtents.x * mVanTransform.Adjacent() }, mVanExtents.x};
 	SphereCollider sphereColliderRight{ { mVanTransform.Translation() + 3.0f * mVanExtents.x * mVanTransform.Adjacent() }, mVanExtents.x};
-	Debug::Draw(sphereColliderLeft, mView, mProjection, graphics);
-	Debug::Draw(sphereColliderRight, mView, mProjection, graphics);
+	//Debug::Draw(sphereColliderLeft, mView, mProjection, graphics);
+	//Debug::Draw(sphereColliderRight, mView, mProjection, graphics);
 
 	CapsuleCollider capsuleCollider{ mVanTransform, mVanExtents.y, mVanExtents.x };
-	Debug::Draw(capsuleCollider, mView, mProjection, graphics);
-
+	//Debug::Draw(capsuleCollider, mView, mProjection, graphics);
+	
 	sVan->Draw(context, *mStates, mVanTransform.World(), mView, mProjection);
 	mTd->Draw(context, *mStates, Matrix::Identity, mView, mProjection);
 }
