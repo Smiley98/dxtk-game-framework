@@ -12,6 +12,7 @@ constexpr float RESOLUTION = 1.0f + 3.0f * FLT_EPSILON;
 	//std::vector<CapsuleCollider> sStaticCapsules;
 	//std::vector<CapsuleCollider> sDynamicCapsules;
 	
+//TODO: make convenience methods that only return collision boolean rather than calculating mtv in addition
 struct SphereCollider;
 struct CapsuleCollider;
 inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, DirectX::SimpleMath::Vector3& mtv);
@@ -23,6 +24,12 @@ struct SphereCollider
 {
 	SphereCollider() = default;
 	~SphereCollider() = default;
+
+	// Calls SphereSphere(other, this) --> resolves this
+	inline bool IsColliding(const SphereCollider& other, DirectX::SimpleMath::Vector3& mtv)
+	{
+		return SphereSphere(other, *this, mtv);
+	}
 
 	DirectX::SimpleMath::Vector3 translation;
 	float radius = 0.0f;

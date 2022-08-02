@@ -81,9 +81,9 @@ void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 
 	mTestCollider.translation = { mTestCollider.radius * cos(tt), mTestCollider.radius * sin(tt), 0.0f };
 	Vector3 mtv;
-	if (SphereSphere(mTdCollider, mTestCollider, mtv))
+	if (mTestCollider.IsColliding(mTdCollider, mtv))
 		mTestCollider.translation += mtv;
-	mTestColor = SphereSphere(mTdCollider, mTestCollider, mtv) ? Colors::Red : Colors::Green;
+	mTestColor = mTestCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
 }
 
 void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
