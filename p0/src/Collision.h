@@ -3,6 +3,9 @@
 #include "Transform.h"
 #include <vector>
 
+// 3.0 because 1.0 for collider a, 1.0 for collider b, and another 1.0 for good measure ;)
+constexpr float RESOLUTION = 1.0f + 3.0f * FLT_EPSILON;
+
 // TODO: static vs dynamic (building spheres vs everything else -- may not need all 4 vectors)
 	//std::vector<SphereCollider> sStaticSpheres;
 	//std::vector<SphereCollider> sDynamicSpheres;
@@ -71,6 +74,12 @@ private:
 	static uint32_t sId;
 };
 
+// mtv points from a to b ie:
+// let A = { 0.0, 0.0 }
+// let B = { 1.0, 1.0 }
+// If we want to resolve B intuitively, then we NEED to pass them as (A, B) to
+// yield an mtv that pushes B towards +x +y.
+// If we instead passed (B, A), then the mtv would be along -x -y which is counter-intuitive.
 inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, DirectX::SimpleMath::Vector3& mtv)
 {
 	using namespace DirectX::SimpleMath;
@@ -83,7 +92,7 @@ inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, Direc
 		Vector3 direction;
 		AB.Normalize(direction);
 		mtv = direction * (radiiAB - lengthAB);
-		mtv *= (1.0f + FLT_EPSILON);
+		mtv *= RESOLUTION;
 	}
 	return colliding;
 }

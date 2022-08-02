@@ -38,7 +38,6 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 
 	//mTestCollider.radius = mTdCollider.radius;
 	mTestCollider.radius = 50.0f;
-	mTestCollider.translation = { 50.0f, 0.0f, 0.0f };
 }
 
 MainScene::~MainScene()
@@ -80,14 +79,11 @@ void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 	mVanTransform.DeltaTranslate(mVanTransform.Front() * dt * 100.0f);
 	mVanCollider.mTransform = mVanTransform;
 
+	mTestCollider.translation = { mTestCollider.radius * cos(tt), mTestCollider.radius * sin(tt), 0.0f };
 	Vector3 mtv;
-	bool colliding = SphereSphere(mTdCollider, mTestCollider, mtv);
-	mTestColor = colliding ? Colors::Red : Colors::Green;
-
-	if (colliding)
-	{
+	if (SphereSphere(mTdCollider, mTestCollider, mtv))
 		mTestCollider.translation += mtv;
-	}
+	mTestColor = SphereSphere(mTdCollider, mTestCollider, mtv) ? Colors::Red : Colors::Green;
 }
 
 void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
