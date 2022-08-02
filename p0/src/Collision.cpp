@@ -58,7 +58,7 @@ void Collision::Clear()
 	sId = 0;
 }
 
-std::vector<Collision::HitPair> Collision::Collide()
+std::vector<HitPair> Collision::Collide()
 {
 	return {};
 }

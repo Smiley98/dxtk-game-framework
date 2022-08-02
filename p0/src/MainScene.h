@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "Collision.h"
 
 class MainScene :
 	public Scene
@@ -22,11 +23,15 @@ protected:
 
 private:
 	std::unique_ptr<DirectX::CommonStates> mStates;
-
 	std::shared_ptr<DirectX::BasicEffect> mBuildingShader;
-	std::unique_ptr<DirectX::Model>	mTd;
 
-	DirectX::SimpleMath::Vector3 mVanExtents;
+	SphereCollider mTestCollider;
+	DirectX::XMVECTOR mTestColor;
+
+	std::unique_ptr<DirectX::Model>	mTd;
+	SphereCollider mTdCollider;
+
+	CapsuleCollider mVanCollider;
 	Transform mVanTransform;
 
 	DirectX::SimpleMath::Matrix	mView;

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "MainScene.h"
 #include "DebugRenderer.h"
-#include "Collision.h"
+
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -25,10 +25,20 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	mBuildingShader->SetTextureEnabled(false);
 
 	mTd = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", mBuildingShader);
+	Vector3 tdBounds = mTd->meshes.front()->boundingBox.Extents;
+	//mTdCollider.radius = std::max(tdBounds.x, tdBounds.y);
+	mTdCollider.radius = 50.0f;
+	mTdCollider.translation = Vector3::Zero;
 
 	mVanTransform.Rotate(-45.0f);
 	mVanTransform.Translate(mVanTransform.Front() * -750.0f);
-	mVanExtents = sVan->meshes.front()->boundingBox.Extents;
+
+	Vector3 vanBounds = sVan->meshes.front()->boundingBox.Extents;
+	mVanCollider = { mVanTransform, vanBounds.y, vanBounds.x };
+
+	//mTestCollider.radius = mTdCollider.radius;
+	mTestCollider.radius = 50.0f;
+	mTestCollider.translation = { 50.0f, 0.0f, 0.0f };
 }
 
 MainScene::~MainScene()
@@ -68,20 +78,31 @@ void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
 	mVanTransform.DeltaRotate(cosf(tt) * 0.4f);
 	mVanTransform.DeltaTranslate(mVanTransform.Front() * dt * 100.0f);
+	mVanCollider.mTransform = mVanTransform;
+
+	Vector3 mtv;
+	bool colliding = SphereSphere(mTdCollider, mTestCollider, mtv);
+	mTestColor = colliding ? Colors::Red : Colors::Green;
+
+	if (colliding)
+	{
+		mTestCollider.translation += mtv;
+	}
 }
 
 void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
 
-	SphereCollider sphereColliderLeft{ { mVanTransform.Translation() + -3.0f * mVanExtents.x * mVanTransform.Adjacent() }, mVanExtents.x};
-	SphereCollider sphereColliderRight{ { mVanTransform.Translation() + 3.0f * mVanExtents.x * mVanTransform.Adjacent() }, mVanExtents.x};
+	//SphereCollider sphereColliderLeft{ { mVanTransform.Translation() + -3.0f * mVanExtents.x * mVanTransform.Adjacent() }, mVanExtents.x};
+	//SphereCollider sphereColliderRight{ { mVanTransform.Translation() + 3.0f * mVanExtents.x * mVanTransform.Adjacent() }, mVanExtents.x};
 	//Debug::Draw(sphereColliderLeft, mView, mProjection, graphics);
 	//Debug::Draw(sphereColliderRight, mView, mProjection, graphics);
 
-	CapsuleCollider capsuleCollider{ mVanTransform, mVanExtents.y, mVanExtents.x };
-	//Debug::Draw(capsuleCollider, mView, mProjection, graphics);
-	
-	sVan->Draw(context, *mStates, mVanTransform.World(), mView, mProjection);
-	mTd->Draw(context, *mStates, Matrix::Identity, mView, mProjection);
+	//mTd->Draw(context, *mStates, Matrix::Identity, mView, mProjection);
+	//sVan->Draw(context, *mStates, mVanTransform.World(), mView, mProjection);
+	//Debug::Draw(mVanCollider, mView, mProjection, graphics);
+
+	Debug::Draw(mTestCollider, mView, mProjection, graphics, mTestColor);
+	Debug::Draw(mTdCollider, mView, mProjection, graphics);
 }
