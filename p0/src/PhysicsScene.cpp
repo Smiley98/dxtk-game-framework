@@ -19,8 +19,8 @@ PhysicsScene::PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::s
 	mCapsuleCapsuleA.halfHeight = mHalfHeight;
 	mCapsuleCapsuleA.radius = mRadius;
 	mCapsuleCapsuleB = mCapsuleCapsuleA;
-	//mCapsuleCapsuleB.transform.Translate({ -mHalfHeight, 0.0f, 0.0f });
-	//mCapsuleCapsuleB.transform.Rotate({ 0.0f, 0.0f, 45.0f });
+	mCapsuleCapsuleB.transform.Translate({ -mHalfHeight, 0.0f, 0.0f });
+	mCapsuleCapsuleB.transform.Rotate({ 0.0f, 0.0f, 45.0f });
 }
 
 PhysicsScene::~PhysicsScene()
@@ -67,9 +67,8 @@ void PhysicsScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& 
 
 	const float distance = 100.0f;
 	const float height = mHalfHeight * 2.0f;
-	//mCapsuleCapsuleB.transform.Translate(mCapsuleCapsuleA.transform.Translation() + Vector3{ -125.0f, sin(tt) * distance, 0.0f });
-	mCapsuleCapsuleB.transform.Translate(mCapsuleCapsuleA.transform.Translation() + Vector3{ cos(tt) * distance, 0.0f, 0.0f });
-	mCapsuleCapsuleB.transform.DeltaRotate({ 0.0f, 0.0f, speed * 0.1f });
+	//mCapsuleCapsuleB.transform.Translate(mCapsuleCapsuleA.transform.Translation() + Vector3{ cos(tt) * distance, 0.0f, 0.0f });
+	//mCapsuleCapsuleB.transform.DeltaRotate({ 0.0f, 0.0f, speed * 0.1f });
 	mCapsuleCapsuleColor = mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA) ? Colors::Red : Colors::Green;
 }
 
@@ -83,12 +82,11 @@ void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Debug::Draw(mCapsuleCapsuleA, mView, mProjection, graphics, mCapsuleCapsuleColor, true);
 	Debug::Draw(mCapsuleCapsuleB, mView, mProjection, graphics, mCapsuleCapsuleColor, true);
 
-	// b bottom right is (-20, -50)
-	//SphereCollider test{ {-20.0f, -50.0f, 0.0f}, mRadius };
-	//Debug::Draw(test, mView, mProjection, graphics);
-
-	Vector3 na, nb;
-	NearestSpheres(mCapsuleCapsuleA.transform, mCapsuleCapsuleA.halfHeight, mCapsuleCapsuleA.radius, mCapsuleCapsuleB.transform, mCapsuleCapsuleB.halfHeight, mCapsuleCapsuleB.radius, na, nb);
-	Debug::Draw({ na, mRadius }, mView, mProjection, graphics);
-	Debug::Draw({ nb, mRadius }, mView, mProjection, graphics, Colors::Aqua);
+	Vector3 bUpper, bLower, aNearest, bNearest;
+	Bounds(mCapsuleCapsuleB.transform, mCapsuleCapsuleB.halfHeight, bUpper, bLower);
+	NearestSpheres(mCapsuleCapsuleA.transform, mCapsuleCapsuleA.halfHeight, mCapsuleCapsuleA.radius, mCapsuleCapsuleB.transform, mCapsuleCapsuleB.halfHeight, mCapsuleCapsuleB.radius, aNearest, bNearest);
+	Debug::Draw({ aNearest, mRadius }, mView, mProjection, graphics);
+	Debug::Draw({ bNearest, mRadius }, mView, mProjection, graphics, Colors::Aqua);
+	//Debug::Draw({ bUpper, mRadius }, mView, mProjection, graphics, Colors::Purple);
+	//Debug::Draw({ bLower, mRadius }, mView, mProjection, graphics, Colors::Blue);
 }
