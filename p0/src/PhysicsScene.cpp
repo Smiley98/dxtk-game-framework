@@ -1,11 +1,11 @@
 #include "pch.h"
-#include "MainScene.h"
+#include "PhysicsScene.h"
 #include "DebugRenderer.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
+PhysicsScene::PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();
@@ -38,24 +38,24 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 
 	// TD as sphere
 	//mTdCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
-	
+
 	// TD as capsule
 	mTdCollider.radius = tdBounds.x;
 	mTdCollider.halfHeight = tdBounds.y;
 
 	//mSphereCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
-	
+
 	//mCapsuleCollider.transform.Translate({ tdBounds.x, tdBounds.y, 0.0f });
 	//mCapsuleCollider.transform.Rotate({ 0.0f, 0.0f, 90.0f });
 	//mCapsuleCollider.radius = tdBounds.x;
 	//mCapsuleCollider.halfHeight = tdBounds.y;
 }
 
-MainScene::~MainScene()
+PhysicsScene::~PhysicsScene()
 {
 }
 
-void MainScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
+void PhysicsScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	const RECT size = graphics->GetOutputSize();
 	const float aspectRatio = float(size.right) / float(size.bottom);
@@ -64,23 +64,23 @@ void MainScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	mProjection = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
 }
 
-void MainScene::OnBegin()
+void PhysicsScene::OnBegin()
 {
 }
 
-void MainScene::OnEnd()
+void PhysicsScene::OnEnd()
 {
 }
 
-void MainScene::OnPause()
+void PhysicsScene::OnPause()
 {
 }
 
-void MainScene::OnResume()
+void PhysicsScene::OnResume()
 {
 }
 
-void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
+void PhysicsScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
 {
 	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
 	const float dt = (float)timer.GetElapsedSeconds();
@@ -114,11 +114,11 @@ void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 	Vector3 mtv;
 	if (mTdCollider.IsColliding(mVanCollider, mtv))
 		mTdCollider.transform.Translate(mtv);
-		//mTdCollider.translation = mtv;
+	//mTdCollider.translation = mtv;
 	mColor = mTdCollider.IsColliding(mVanCollider, mtv) ? Colors::Red : Colors::Green;
 }
 
-void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
+void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
 

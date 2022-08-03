@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Scene.h"
 #include "TestScene.h"
+#include "PhysicsScene.h"
 #include "MainScene.h"
 
 using namespace DirectX;
@@ -43,11 +44,12 @@ void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_pt
 	sVanShader->SetTexture(sVanTexture.Get());
 	sVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", sVanShader);
 
-	//sScenes[TEST] = new TestScene(graphics, audio);
 	//sScenes[SPLASH] = new SplashScene(graphics, audio);
 	//sScenes[LOADOUT] = new LoadoutScene(graphics, audio);
 	//sScenes[MAP] = new MapScene(graphics, audio);
-	sScenes[MAIN] = new MainScene(graphics, audio);
+	//sScenes[MAIN] = new MainScene(graphics, audio);
+	//sScenes[TEST] = new TestScene(graphics, audio);
+	sScenes[PHYSICS] = new PhysicsScene(graphics, audio);
 }
 
 void Scene::Destroy()

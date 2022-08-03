@@ -7,11 +7,12 @@ class Scene
 {
 public:
 	enum Type {
-		//TEST,
 		//SPLASH,
 		//LOADOUT,
 		//MAP,
-		MAIN,
+		//MAIN,
+		//TEST,
+		PHYSICS,
 		NONE
 	};
 
