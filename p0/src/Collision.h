@@ -185,9 +185,8 @@ inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, D
 inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv)
 {
 	using namespace DirectX::SimpleMath;
-	float extent = b.halfHeight + b.radius;
 	Vector3 front = b.transform.Front();
-	Vector3 tip = b.transform.Translation() + front * extent;
-	Vector3 base = b.transform.Translation() - front * extent;
-	return SphereSphere(a, { ClosestLinePoint(base, tip, a.translation), b.radius }, mtv);
+	Vector3 cylinderTop = b.transform.Translation() + front * b.halfHeight;
+	Vector3 cylinderBot = b.transform.Translation() - front * b.halfHeight;
+	return SphereSphere(a, { ClosestLinePoint(cylinderBot, cylinderTop, a.translation), b.radius }, mtv);
 }

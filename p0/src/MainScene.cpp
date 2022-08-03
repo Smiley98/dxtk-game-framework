@@ -29,19 +29,22 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	Vector3 vanBounds = sVan->meshes.front()->boundingBox.Extents;
 
 	mVanCollider = { {}, vanBounds.y, vanBounds.x };
-	mVanCollider.transform.Rotate({ 0.0f, 0.0f, -45.0f });
-	mVanCollider.transform.Translate(mVanCollider.transform.Front() * -750.0f);
+	mVanCollider.transform.Rotate({ 0.0f, 000.0f, -45.0f });
+	mVanCollider.transform.Translate({ -500.0f, -500.0f, 0.0f });
 
-	// TD as sphere -- max bounds for real values, 50.0 for testing
-	mTdCollider.radius = std::max(tdBounds.x, tdBounds.y);
+	// Fishtail
+	//mVanCollider.transform.Rotate({ 0.0f, 0.0f, -45.0f });
+	//mVanCollider.transform.Translate(mVanCollider.transform.Front() * -750.0f);
+
+	// TD as sphere
+	mTdCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
 	//mTdCollider.radius = 50.0f;
-	//mTdCollider.translation = Vector3::Zero;
 	
 	// TD as capsule
 	//mTdCollider.radius = tdBounds.x;
 	//mTdCollider.halfHeight = tdBounds.y;
 
-	//mSphereCollider.radius = std::max(tdBounds.x, tdBounds.y);
+	//mSphereCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
 	//mSphereCollider.radius = 50.0f;
 	
 	//mCapsuleCollider.transform.Translate({ tdBounds.x, tdBounds.y, 0.0f });
@@ -85,8 +88,14 @@ void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 	const float tt = (float)timer.GetTotalSeconds();
 
 	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
-	mVanCollider.transform.DeltaRotate({0.0f, 0.0f, cosf(tt) * 0.4f });
-	mVanCollider.transform.DeltaTranslate(mVanCollider.transform.Front() * dt * 100.0f);
+	float speed = 100.0f * dt;
+	mVanCollider.transform.DeltaTranslate({ speed, speed, 0.0f });
+	//mVanCollider.transform.DeltaRotate({ 0.0f, 0.0f, speed });
+	mVanCollider.transform.Rotate({ 0.0f, 0.0f, cosf(tt) * 100.0f });
+
+	// Fishtail
+	//mVanCollider.transform.DeltaRotate({0.0f, 0.0f, cosf(tt) * 0.4f });
+	//mVanCollider.transform.DeltaTranslate(mVanCollider.transform.Front() * dt * 100.0f);
 
 	//mSphereCollider.translation = { mSphereCollider.radius * cos(tt), mSphereCollider.radius * sin(tt), 0.0f };
 	//Vector3 mtv;
@@ -112,6 +121,7 @@ void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	//mTd->Draw(context, *mStates, Matrix::Identity, mView, mProjection);
 	//sVan->Draw(context, *mStates, mVanCollider.transform.World(), mView, mProjection);
+
 	Debug::Draw(mVanCollider, mView, mProjection, graphics, mColor);
 	Debug::Draw(mTdCollider, mView, mProjection, graphics);
 
