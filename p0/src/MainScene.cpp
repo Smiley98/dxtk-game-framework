@@ -26,18 +26,28 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 
 	mTd = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", mBuildingShader);
 	Vector3 tdBounds = mTd->meshes.front()->boundingBox.Extents;
-	//mTdCollider.radius = std::max(tdBounds.x, tdBounds.y);
-	mTdCollider.radius = 50.0f;
-	mTdCollider.translation = Vector3::Zero;
-
-	mVanTransform.Rotate(-45.0f);
-	mVanTransform.Translate(mVanTransform.Front() * -750.0f);
-
 	Vector3 vanBounds = sVan->meshes.front()->boundingBox.Extents;
+
+	mVanTransform.Rotate({ 0.0f, 0.0f, -45.0f });
+	mVanTransform.Translate(mVanTransform.Front() * -750.0f);
 	mVanCollider = { mVanTransform, vanBounds.y, vanBounds.x };
 
-	//mTestCollider.radius = mTdCollider.radius;
-	mTestCollider.radius = 50.0f;
+	// TD as sphere -- max bounds for real values, 50.0 for testing
+	//mTdCollider.radius = std::max(tdBounds.x, tdBounds.y);
+	//mTdCollider.radius = 50.0f;
+	//mTdCollider.translation = Vector3::Zero;
+	
+	// TD as capsule
+	mTdCollider.radius = tdBounds.x;
+	mTdCollider.halfHeight = tdBounds.y;
+
+	//mSphereCollider.radius = std::max(tdBounds.x, tdBounds.y);
+	//mSphereCollider.radius = 50.0f;
+	
+	mCapsuleCollider.transform.Rotate({ 0.0f, 0.0f, 90.0f });
+	mCapsuleCollider.radius = vanBounds.x;
+	mCapsuleCollider.halfHeight = vanBounds.y;
+	mCapsuleColor = Colors::Green;
 }
 
 MainScene::~MainScene()
@@ -75,15 +85,21 @@ void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 	const float tt = (float)timer.GetTotalSeconds();
 
 	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
-	mVanTransform.DeltaRotate(cosf(tt) * 0.4f);
+	mVanTransform.DeltaRotate({0.0f, 0.0f, cosf(tt) * 0.4f });
 	mVanTransform.DeltaTranslate(mVanTransform.Front() * dt * 100.0f);
-	mVanCollider.mTransform = mVanTransform;
+	mVanCollider.transform = mVanTransform;
 
-	mTestCollider.translation = { mTestCollider.radius * cos(tt), mTestCollider.radius * sin(tt), 0.0f };
-	Vector3 mtv;
-	if (mTestCollider.IsColliding(mTdCollider, mtv))
-		mTestCollider.translation += mtv;
-	mTestColor = mTestCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
+	//mSphereCollider.translation = { mSphereCollider.radius * cos(tt), mSphereCollider.radius * sin(tt), 0.0f };
+	//Vector3 mtv;
+	//if (mSphereCollider.IsColliding(mTdCollider, mtv))
+	//	mSphereCollider.translation += mtv;
+	//mSphereColor = mSphereCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
+
+	//mCapsuleCollider.translation = { mCapsuleCollider.radius * cos(tt), mSphereCollider.radius * sin(tt), 0.0f };
+	//Vector3 mtv;
+	//if (mCapsuleCollider.IsColliding(mTdCollider, mtv))
+	//	mCapsuleCollider.transform.DeltaTranslate(mtv);
+	//mCapsuleColor = mCapsuleCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
 }
 
 void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -99,6 +115,8 @@ void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//sVan->Draw(context, *mStates, mVanTransform.World(), mView, mProjection);
 	//Debug::Draw(mVanCollider, mView, mProjection, graphics);
 
-	Debug::Draw(mTestCollider, mView, mProjection, graphics, mTestColor);
+	//Debug::Draw(mSphereCollider, mView, mProjection, graphics, mSphereColor);
+	Debug::Draw(mCapsuleCollider, mView, mProjection, graphics, mCapsuleColor);
+
 	Debug::Draw(mTdCollider, mView, mProjection, graphics);
 }

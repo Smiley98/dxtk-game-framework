@@ -25,11 +25,15 @@ private:
 	std::unique_ptr<DirectX::CommonStates> mStates;
 	std::shared_ptr<DirectX::BasicEffect> mBuildingShader;
 
-	SphereCollider mTestCollider;
-	DirectX::XMVECTOR mTestColor;
+	SphereCollider mSphereCollider;
+	DirectX::XMVECTOR mSphereColor;
+
+	CapsuleCollider mCapsuleCollider;
+	DirectX::XMVECTOR mCapsuleColor;
 
 	std::unique_ptr<DirectX::Model>	mTd;
-	SphereCollider mTdCollider;
+	CapsuleCollider mTdCollider;
+	//SphereCollider mTdCollider;
 
 	CapsuleCollider mVanCollider;
 	Transform mVanTransform;

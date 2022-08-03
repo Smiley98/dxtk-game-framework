@@ -18,6 +18,10 @@ struct CapsuleCollider;
 inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, DirectX::SimpleMath::Vector3& mtv);
 inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv);
 inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv);
+inline DirectX::SimpleMath::Vector3 ClosestLinePoint(
+	const DirectX::SimpleMath::Vector3& a,
+	const DirectX::SimpleMath::Vector3& b,
+	const DirectX::SimpleMath::Vector3& p);
 
 // Inheritance is for losers (x1)
 struct SphereCollider
@@ -45,7 +49,13 @@ struct CapsuleCollider
 	CapsuleCollider() = default;
 	~CapsuleCollider() = default;
 
-	RigidTransform mTransform;
+	// Calls CapsuleCapsule(other, this) --> resolves this
+	inline bool IsColliding(const CapsuleCollider& other, DirectX::SimpleMath::Vector3& mtv)
+	{
+		return CapsuleCapsule(other, *this, mtv);
+	}
+
+	RigidTransform transform;
 	float halfHeight = 0.0f;
 	float radius = 0.0f;
 
@@ -81,6 +91,18 @@ private:
 	static uint32_t sId;
 };
 
+// Returns the closest point on line ab to point p
+inline DirectX::SimpleMath::Vector3 ClosestLinePoint(
+	const DirectX::SimpleMath::Vector3& a,
+	const DirectX::SimpleMath::Vector3& b,
+	const DirectX::SimpleMath::Vector3& p)
+{
+	using namespace DirectX::SimpleMath;
+	Vector3 AB = b - a;
+	float t = (p - a).Dot(AB) / AB.Dot(AB);
+	return a + std::min(std::max(t, 0.0f), 1.0f) * AB;
+}
+
 // mtv points from a to b ie:
 // let A = { 0.0, 0.0 }
 // let B = { 1.0, 1.0 }
@@ -104,10 +126,64 @@ inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, Direc
 	return colliding;
 }
 
+// mtv points from a to b ie:
+// let A = { 0.0, 0.0 }
+// let B = { 1.0, 1.0 }
+// If we want to resolve B intuitively, then we NEED to pass them as (A, B) to
+// yield an mtv that pushes B towards +x +y.
+// If we instead passed (B, A), then the mtv would be along -x -y which is counter-intuitive.
 inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv)
 {
 	using namespace DirectX::SimpleMath;
-	return true;
+
+	float aExtent = a.halfHeight + a.radius;
+	Vector3 aFront = a.transform.Front();
+	Vector3 aTip = a.transform.Translation() + aFront * aExtent;
+	Vector3 aBase = a.transform.Translation() - aFront * aExtent;
+	Vector3 aNorm = aTip - aBase;
+	aNorm.Normalize();
+	Vector3 aOrtho = aNorm * a.radius;
+	Vector3 aTopLeft = aTip - aOrtho;
+	Vector3 aBotRight = aBase + aOrtho;
+
+	float bExtent = b.halfHeight + b.radius;
+	Vector3 bFront = b.transform.Front();
+	Vector3 bTip = b.transform.Translation() + bFront * bExtent;
+	Vector3 bBase = b.transform.Translation() - bFront * bExtent;
+	Vector3 bNorm = bTip - bBase;
+	bNorm.Normalize();
+	Vector3 bOrtho = bNorm * b.radius;
+	Vector3 bTopLeft = bTip - bOrtho;
+	Vector3 bBotRight = bBase + bOrtho;
+
+	Vector3 v0 = bBotRight - aBotRight;
+	Vector3 v1 = bTopLeft - aBotRight;
+	Vector3 v2 = bBotRight - aTopLeft;
+	Vector3 v3 = bTopLeft - aTopLeft;
+
+	float d0 = v0.Dot(v0);
+	float d1 = v1.Dot(v1);
+	float d2 = v2.Dot(v2);
+	float d3 = v3.Dot(v3);
+
+	// select best potential endpoint on capsule A:
+	Vector3 bestA = (d2 < d0 || d2 < d1 || d3 < d0 || d3 < d1) ? aTopLeft : aBotRight;
+	Vector3 bestB = ClosestLinePoint(bBotRight, bTopLeft, bestA);
+	bestA = ClosestLinePoint(aBotRight, aTopLeft, bestB);
+
+	// (// A = bottom right, B = top left)
+	return SphereSphere({ bestA, a.radius }, { bestB, b.radius }, mtv);
+	//mtv = bestA - bestB;
+	//float lengthMTV = mtv.Length();
+	//mtv /= lengthMTV;
+	//
+	////Vector3 penetration_normal = bestA – bestB;
+	//float len = length(penetration_normal);
+	//penetration_normal /= len;  // normalize
+	//float penetration_depth = a.radius + b.radius – len;
+	//bool intersects = penetration_depth > 0;
+
+	//return true;
 }
 
 inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv)

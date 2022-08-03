@@ -85,27 +85,29 @@ public:
 		mRotation += degreesYXZ * RADIANS;
 	}
 
-	inline void Translate(float x, float y)
-	{
-		mTranslation = { x, y, mTranslation.z };
-	}
-
-	inline void Rotate(float degreesZ)
-	{
-		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
-		mRotation.z = degreesZ * RADIANS;
-	}
-
-	inline void DeltaTranslate(float x, float y)
-	{
-		mTranslation += { x, y, mTranslation.z };
-	}
-
-	inline void DeltaRotate(float degreesZ)
-	{
-		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
-		mRotation.z += degreesZ * RADIANS;
-	}
+	// These 2d convenience methods are ambiguous because its not clear what happens to z;
+	// Does z get overwritten to 0 since x and y are overwritten, or does it persist?
+	//inline void Translate(float x, float y)
+	//{
+	//	mTranslation = { x, y, mTranslation.z };
+	//}
+	//
+	//inline void Rotate(float degreesZ)
+	//{
+	//	constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+	//	mRotation.z = degreesZ * RADIANS;
+	//}
+	//
+	//inline void DeltaTranslate(float x, float y)
+	//{
+	//	mTranslation += { x, y, mTranslation.z };
+	//}
+	//
+	//inline void DeltaRotate(float degreesZ)
+	//{
+	//	constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+	//	mRotation.z += degreesZ * RADIANS;
+	//}
 
 private:
 	DirectX::SimpleMath::Vector3 mTranslation;

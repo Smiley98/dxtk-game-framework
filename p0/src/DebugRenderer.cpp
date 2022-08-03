@@ -46,15 +46,15 @@ namespace Debug
 	void Draw(const CapsuleCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
 	{
-		Vector3 forward = collider.mTransform.Front();
-		Matrix top = Matrix::CreateTranslation(collider.mTransform.Translation() + forward *  collider.halfHeight);
-		Matrix bot = Matrix::CreateTranslation(collider.mTransform.Translation() + forward * -collider.halfHeight);
+		Vector3 forward = collider.transform.Front();
+		Matrix top = Matrix::CreateTranslation(collider.transform.Translation() + forward *  collider.halfHeight);
+		Matrix bot = Matrix::CreateTranslation(collider.transform.Translation() + forward * -collider.halfHeight);
 
 		auto context = graphics->GetD3DDeviceContext();
 		auto cylinder = GeometricPrimitive::CreateCylinder(context, collider.halfHeight * 2.0f, collider.radius * 2.0f);
 		auto sphere = GeometricPrimitive::CreateSphere(context, collider.radius * 2.0f);
 		sphere->Draw(top, view, proj, color);
 		sphere->Draw(bot, view, proj, color);
-		cylinder->Draw(collider.mTransform.World(), view, proj, color);
+		cylinder->Draw(collider.transform.World(), view, proj, color);
 	}
 }
