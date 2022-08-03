@@ -15,11 +15,12 @@ PhysicsScene::PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::s
 	mSphereSphereA.radius = mRadius;
 	mSphereSphereB = mSphereSphereA;
 
-	mCapsuleCapsuleA.transform.Translate({ 500.0f, 0.0f, 0.0f });
+	mCapsuleCapsuleA.transform.Translate({ 0.0, 0.0f, 0.0f });
 	mCapsuleCapsuleA.halfHeight = mHalfHeight;
 	mCapsuleCapsuleA.radius = mRadius;
 	mCapsuleCapsuleB = mCapsuleCapsuleA;
-	//mCapsuleCapsuleB.transform.Rotate({ 0.0f, 0.0f, 90.0f });
+	mCapsuleCapsuleB.transform.Translate({ -mHalfHeight, 0.0f, 0.0f });
+	mCapsuleCapsuleB.transform.Rotate({ 0.0f, 0.0f, 45.0f });
 }
 
 PhysicsScene::~PhysicsScene()
@@ -67,8 +68,8 @@ void PhysicsScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& 
 	const float distance = 100.0f;
 	const float height = mHalfHeight * 2.0f;
 	//mCapsuleCapsuleB.transform.Translate(mCapsuleCapsuleA.transform.Translation() + Vector3{ -125.0f, sin(tt) * distance, 0.0f });
-	mCapsuleCapsuleB.transform.Translate(mCapsuleCapsuleA.transform.Translation() + Vector3{ cos(tt) * distance, 0.0f, 0.0f });
-	mCapsuleCapsuleB.transform.DeltaRotate({ 0.0f, 0.0f, speed * 0.1f });
+	//mCapsuleCapsuleB.transform.Translate(mCapsuleCapsuleA.transform.Translation() + Vector3{ cos(tt) * distance, 0.0f, 0.0f });
+	//mCapsuleCapsuleB.transform.DeltaRotate({ 0.0f, 0.0f, speed * 0.1f });
 	mCapsuleCapsuleColor = mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA) ? Colors::Red : Colors::Green;
 }
 
