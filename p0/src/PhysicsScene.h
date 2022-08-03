@@ -29,9 +29,9 @@ private:
 	SphereCollider mSphereSphereB;
 	DirectX::XMVECTOR mSphereSphereColor;
 
-	//CapsuleCollider mCapsuleCapsuleA;
-	//CapsuleCollider mCapsuleCapsuleB;
-	//DirectX::XMVECTOR mCapsuleCapsuleColor;
+	CapsuleCollider mCapsuleCapsuleA;
+	CapsuleCollider mCapsuleCapsuleB;
+	DirectX::XMVECTOR mCapsuleCapsuleColor;
 
 	//SphereCollider mSphereCapsuleA;
 	//CapsuleCollider mSphereCapsuleB;

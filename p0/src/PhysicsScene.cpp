@@ -14,6 +14,11 @@ PhysicsScene::PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::s
 	mSphereSphereA.translation = { -500.0f, 0.0f, 0.0f };
 	mSphereSphereA.radius = mRadius;
 	mSphereSphereB = mSphereSphereA;
+
+	mCapsuleCapsuleA.transform.Translate({ 500.0f, 0.0f, 0.0f });
+	mCapsuleCapsuleA.halfHeight = mHalfHeight;
+	mCapsuleCapsuleA.radius = mRadius;
+	mCapsuleCapsuleB = mCapsuleCapsuleA;
 }
 
 PhysicsScene::~PhysicsScene()
@@ -56,7 +61,13 @@ void PhysicsScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& 
 	Vector3 mtv;
 	if (mSphereSphereB.IsColliding(mSphereSphereA, mtv))
 		mSphereSphereB.translation += mtv;
-	mSphereSphereColor = mSphereSphereB.IsColliding(mSphereSphereA, mtv) ? Colors::Red : Colors::Green;
+	mSphereSphereColor = mSphereSphereB.IsColliding(mSphereSphereA) ? Colors::Red : Colors::Green;
+
+	const float distance = 100.0f;
+	const float height = mHalfHeight * 2.0f;
+	mCapsuleCapsuleB.transform.Translate(mCapsuleCapsuleA.transform.Translation() + Vector3{ cos(tt) * distance, 0.0f, 0.0f });
+	mCapsuleCapsuleB.transform.DeltaRotate({ 0.0f, 0.0f, speed });
+	mCapsuleCapsuleColor = mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA) ? Colors::Red : Colors::Green;
 }
 
 void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -65,4 +76,7 @@ void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	Debug::Draw(mSphereSphereA, mView, mProjection, graphics, mSphereSphereColor);
 	Debug::Draw(mSphereSphereB, mView, mProjection, graphics, mSphereSphereColor);
+
+	Debug::Draw(mCapsuleCapsuleA, mView, mProjection, graphics, mCapsuleCapsuleColor);
+	Debug::Draw(mCapsuleCapsuleB, mView, mProjection, graphics, mCapsuleCapsuleColor);
 }

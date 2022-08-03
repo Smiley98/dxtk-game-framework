@@ -37,7 +37,7 @@ void Collision::Remove(const SphereCollider& collider)
 {
 	for (auto i = sSpheres.begin(); i != sSpheres.end(); i++)
 	{
-		if (i->id == collider.id)
+		if (i->info.id == collider.info.id)
 			i = sSpheres.erase(i);
 	}
 }
@@ -46,7 +46,7 @@ void Collision::Remove(const CapsuleCollider& collider)
 {
 	for (auto i = sCapsules.begin(); i != sCapsules.end(); i++)
 	{
-		if (i->id == collider.id)
+		if (i->info.id == collider.info.id)
 			i = sCapsules.erase(i);
 	}
 }
