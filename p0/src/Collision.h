@@ -18,10 +18,12 @@ struct CapsuleCollider;
 inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, DirectX::SimpleMath::Vector3& mtv);
 inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv);
 inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv);
+inline void Bounds(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& topLeft, DirectX::SimpleMath::Vector3& botRight);
 inline DirectX::SimpleMath::Vector3 ClosestLinePoint(
 	const DirectX::SimpleMath::Vector3& a,
 	const DirectX::SimpleMath::Vector3& b,
 	const DirectX::SimpleMath::Vector3& p);
+
 
 // Inheritance is for losers (x1)
 struct SphereCollider
@@ -30,9 +32,9 @@ struct SphereCollider
 	~SphereCollider() = default;
 
 	// Calls SphereSphere(other, this) --> resolves this
-	inline bool IsColliding(const SphereCollider& other, DirectX::SimpleMath::Vector3& mtv)
+	inline bool IsColliding(const SphereCollider& a, DirectX::SimpleMath::Vector3& mtv)
 	{
-		return SphereSphere(other, *this, mtv);
+		return SphereSphere(a, *this, mtv);
 	}
 
 	DirectX::SimpleMath::Vector3 translation;
@@ -50,9 +52,9 @@ struct CapsuleCollider
 	~CapsuleCollider() = default;
 
 	// Calls CapsuleCapsule(other, this) --> resolves this
-	inline bool IsColliding(const CapsuleCollider& other, DirectX::SimpleMath::Vector3& mtv)
+	inline bool IsColliding(const CapsuleCollider& a, DirectX::SimpleMath::Vector3& mtv)
 	{
-		return CapsuleCapsule(other, *this, mtv);
+		return CapsuleCapsule(a, *this, mtv);
 	}
 
 	RigidTransform transform;
@@ -103,6 +105,20 @@ inline DirectX::SimpleMath::Vector3 ClosestLinePoint(
 	return a + std::min(std::max(t, 0.0f), 1.0f) * AB;
 }
 
+inline void Bounds(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& topLeft, DirectX::SimpleMath::Vector3& botRight)
+{
+	using namespace DirectX::SimpleMath;
+	float extent = collider.halfHeight + collider.radius;
+	Vector3 front = collider.transform.Front();
+	Vector3 tip = collider.transform.Translation() + front * extent;
+	Vector3 base = collider.transform.Translation() - front * extent;
+	Vector3 norm = tip - base;
+	norm.Normalize();
+	Vector3 ortho = norm * collider.radius;
+	topLeft = tip - ortho;
+	botRight = base + ortho;
+}
+
 // mtv points from a to b ie:
 // let A = { 0.0, 0.0 }
 // let B = { 1.0, 1.0 }
@@ -136,25 +152,13 @@ inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, D
 {
 	using namespace DirectX::SimpleMath;
 
-	float aExtent = a.halfHeight + a.radius;
-	Vector3 aFront = a.transform.Front();
-	Vector3 aTip = a.transform.Translation() + aFront * aExtent;
-	Vector3 aBase = a.transform.Translation() - aFront * aExtent;
-	Vector3 aNorm = aTip - aBase;
-	aNorm.Normalize();
-	Vector3 aOrtho = aNorm * a.radius;
-	Vector3 aTopLeft = aTip - aOrtho;
-	Vector3 aBotRight = aBase + aOrtho;
+	Vector3 aTopLeft;
+	Vector3 aBotRight;
+	Bounds(a, aTopLeft, aBotRight);
 
-	float bExtent = b.halfHeight + b.radius;
-	Vector3 bFront = b.transform.Front();
-	Vector3 bTip = b.transform.Translation() + bFront * bExtent;
-	Vector3 bBase = b.transform.Translation() - bFront * bExtent;
-	Vector3 bNorm = bTip - bBase;
-	bNorm.Normalize();
-	Vector3 bOrtho = bNorm * b.radius;
-	Vector3 bTopLeft = bTip - bOrtho;
-	Vector3 bBotRight = bBase + bOrtho;
+	Vector3 bTopLeft;
+	Vector3 bBotRight;
+	Bounds(b, bTopLeft, bBotRight);
 
 	Vector3 v0 = bBotRight - aBotRight;
 	Vector3 v1 = bTopLeft - aBotRight;
@@ -176,5 +180,8 @@ inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, D
 inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv)
 {
 	using namespace DirectX::SimpleMath;
+
+
+
 	return true;
 }
