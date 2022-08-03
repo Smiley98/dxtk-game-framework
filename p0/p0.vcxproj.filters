@@ -104,6 +104,9 @@
     <ClInclude Include="src\PhysicsScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="src\CollisionMath.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

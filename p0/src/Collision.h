@@ -1,6 +1,6 @@
 #pragma once
+#include "CollisionMath.h"
 #include "Tags.h"
-#include "Transform.h"
 #include <vector>
 
 // TODO: static vs dynamic (building spheres vs everything else -- may not need all 4 vectors)
@@ -10,16 +10,16 @@
 	//std::vector<CapsuleCollider> sDynamicCapsules;
 	
 //TODO: make convenience methods that only return collision boolean rather than calculating mtv in addition
-struct SphereCollider;
-struct CapsuleCollider;
-inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, DirectX::SimpleMath::Vector3& mtv);
-inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv);
-inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv);
-inline void Bounds(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& topLeft, DirectX::SimpleMath::Vector3& botRight);
-inline DirectX::SimpleMath::Vector3 ClosestLinePoint(
-	const DirectX::SimpleMath::Vector3& a,
-	const DirectX::SimpleMath::Vector3& b,
-	const DirectX::SimpleMath::Vector3& p);
+//struct SphereCollider;
+//struct CapsuleCollider;
+//inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, DirectX::SimpleMath::Vector3& mtv);
+//inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv);
+//inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv);
+//inline void Bounds(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& topLeft, DirectX::SimpleMath::Vector3& botRight);
+//inline DirectX::SimpleMath::Vector3 ClosestLinePoint(
+//	const DirectX::SimpleMath::Vector3& a,
+//	const DirectX::SimpleMath::Vector3& b,
+//	const DirectX::SimpleMath::Vector3& p);
 
 // Inheritance is for losers (x1)
 struct SphereCollider
@@ -29,15 +29,16 @@ struct SphereCollider
 
 	inline bool IsColliding(const SphereCollider& collider, DirectX::SimpleMath::Vector3& mtv)
 	{
-		return SphereSphere(collider, *this, mtv);
+		return SphereSphere(collider.translation, collider.radius, translation, radius, mtv);
+		//return SphereSphere(collider, *this, mtv);
 	}
 
-	inline bool IsColliding(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& mtv)
-	{
-		bool isColliding = SphereCapsule(*this, collider, mtv);
-		mtv = -mtv;
-		return isColliding;
-	}
+	//inline bool IsColliding(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& mtv)
+	//{
+	//	bool isColliding = SphereCapsule(*this, collider, mtv);
+	//	mtv = -mtv;
+	//	return isColliding;
+	//}
 
 	DirectX::SimpleMath::Vector3 translation;
 	float radius = 0.0f;
@@ -53,15 +54,15 @@ struct CapsuleCollider
 	CapsuleCollider() = default;
 	~CapsuleCollider() = default;
 
-	inline bool IsColliding(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& mtv)
-	{
-		return CapsuleCapsule(collider, *this, mtv);
-	}
-
-	inline bool IsColliding(const SphereCollider& collider, DirectX::SimpleMath::Vector3& mtv)
-	{
-		return SphereCapsule(collider, *this, mtv);
-	}
+	//inline bool IsColliding(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& mtv)
+	//{
+	//	return CapsuleCapsule(collider, *this, mtv);
+	//}
+	//
+	//inline bool IsColliding(const SphereCollider& collider, DirectX::SimpleMath::Vector3& mtv)
+	//{
+	//	return SphereCapsule(collider, *this, mtv);
+	//}
 
 	RigidTransform transform;
 	float halfHeight = 0.0f;
@@ -125,6 +126,7 @@ inline void Bounds(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3
 	botRight = base + ortho;
 }
 
+/*
 // MTV resolves b from a
 inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, DirectX::SimpleMath::Vector3& mtv)
 {
@@ -182,3 +184,4 @@ inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, Dir
 	Vector3 cylinderBot = b.transform.Translation() - front * b.halfHeight;
 	return SphereSphere(a, { ClosestLinePoint(cylinderBot, cylinderTop, a.translation), b.radius }, mtv);
 }
+*/

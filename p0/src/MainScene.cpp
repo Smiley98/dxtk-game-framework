@@ -26,29 +26,6 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	mTd = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", mBuildingShader);
 	Vector3 tdBounds = mTd->meshes.front()->boundingBox.Extents;
 	Vector3 vanBounds = sVan->meshes.front()->boundingBox.Extents;
-
-	// Van as capsule
-	//mVanCollider = { {}, vanBounds.y, vanBounds.x };
-	//mVanCollider.transform.Rotate({ 0.0f, 0.0f, -45.0f });
-	//mVanCollider.transform.Translate(mVanCollider.transform.Front() * -750.0f);
-
-	// Van as sphere
-	mVanCollider.radius = vanBounds.x;
-	mVanCollider.translation = { -500.0f, -500.0f, 0.0f };
-
-	// TD as sphere
-	//mTdCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
-	
-	// TD as capsule
-	mTdCollider.radius = tdBounds.x;
-	mTdCollider.halfHeight = tdBounds.y;
-
-	//mSphereCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
-	
-	//mCapsuleCollider.transform.Translate({ tdBounds.x, tdBounds.y, 0.0f });
-	//mCapsuleCollider.transform.Rotate({ 0.0f, 0.0f, 90.0f });
-	//mCapsuleCollider.radius = tdBounds.x;
-	//mCapsuleCollider.halfHeight = tdBounds.y;
 }
 
 MainScene::~MainScene()
@@ -85,49 +62,9 @@ void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
 	const float dt = (float)timer.GetElapsedSeconds();
 	const float tt = (float)timer.GetTotalSeconds();
-	float speed = 100.0f * dt;
-
-	//mSphereCollider.translation = { mSphereCollider.radius * cos(tt), mSphereCollider.radius * sin(tt), 0.0f };
-	//Vector3 mtv;
-	//if (mSphereCollider.IsColliding(mTdCollider, mtv))
-	//	mSphereCollider.translation += mtv;
-	//mSphereColor = mSphereCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
-
-	//mCapsuleCollider.translation = { mCapsuleCollider.radius * cos(tt), mSphereCollider.radius * sin(tt), 0.0f };
-	//Vector3 mtv;
-	//if (mCapsuleCollider.IsColliding(mTdCollider, mtv))
-	//	mCapsuleCollider.transform.DeltaTranslate(mtv);
-	//mCapsuleColor = mCapsuleCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
-
-	// Capsule-Sphere test
-	//mVanCollider.transform.DeltaTranslate({ speed, speed, 0.0f });
-	//mVanCollider.transform.Rotate({ 0.0f, 0.0f, cosf(tt) * 100.0f });
-	//Vector3 mtv;
-	//if (mVanCollider.IsColliding(mTdCollider, mtv))
-	//	mVanCollider.transform.DeltaTranslate(mtv);
-	//mColor = mVanCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
-
-	// Questionable van soccer
-	//mVanCollider.transform.DeltaRotate({ 0.0f, 0.0f, cosf(tt) * 0.4f });
-	//mVanCollider.transform.DeltaTranslate(mVanCollider.transform.Front() * speed);
-	mVanCollider.translation += {speed, speed, 0.0f};
-	Vector3 mtv;
-	if (mTdCollider.IsColliding(mVanCollider, mtv))
-		mTdCollider.transform.Translate(mtv);
-		//mTdCollider.translation = mtv;
-	mColor = mTdCollider.IsColliding(mVanCollider, mtv) ? Colors::Red : Colors::Green;
 }
 
 void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
-
-	//Debug::Draw(mSphereCollider, mView, mProjection, graphics, mSphereColor);
-	//Debug::Draw(mCapsuleCollider, mView, mProjection, graphics, mCapsuleColor);
-
-	//mTd->Draw(context, *mStates, Matrix::Identity, mView, mProjection);
-	//sVan->Draw(context, *mStates, mVanCollider.transform.World(), mView, mProjection);
-
-	Debug::Draw(mVanCollider, mView, mProjection, graphics, mColor);
-	Debug::Draw(mTdCollider, mView, mProjection, graphics);
 }
