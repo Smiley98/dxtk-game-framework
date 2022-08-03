@@ -24,17 +24,22 @@ inline DirectX::SimpleMath::Vector3 ClosestLinePoint(
 	const DirectX::SimpleMath::Vector3& b,
 	const DirectX::SimpleMath::Vector3& p);
 
-
 // Inheritance is for losers (x1)
 struct SphereCollider
 {
 	SphereCollider() = default;
 	~SphereCollider() = default;
 
-	// Calls SphereSphere(other, this) --> resolves this
-	inline bool IsColliding(const SphereCollider& a, DirectX::SimpleMath::Vector3& mtv)
+	inline bool IsColliding(const SphereCollider& collider, DirectX::SimpleMath::Vector3& mtv)
 	{
-		return SphereSphere(a, *this, mtv);
+		return SphereSphere(collider, *this, mtv);
+	}
+
+	inline bool IsColliding(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& mtv)
+	{
+		bool isColliding = SphereCapsule(*this, collider, mtv);
+		mtv = -mtv;
+		return isColliding;
 	}
 
 	DirectX::SimpleMath::Vector3 translation;
@@ -51,15 +56,14 @@ struct CapsuleCollider
 	CapsuleCollider() = default;
 	~CapsuleCollider() = default;
 
-	// Calls CapsuleCapsule(other, this) --> resolves this
-	inline bool IsColliding(const CapsuleCollider& a, DirectX::SimpleMath::Vector3& mtv)
+	inline bool IsColliding(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3& mtv)
 	{
-		return CapsuleCapsule(a, *this, mtv);
+		return CapsuleCapsule(collider, *this, mtv);
 	}
 
-	inline bool IsColliding(const SphereCollider& a, DirectX::SimpleMath::Vector3& mtv)
+	inline bool IsColliding(const SphereCollider& collider, DirectX::SimpleMath::Vector3& mtv)
 	{
-		return SphereCapsule(a, *this, mtv);
+		return SphereCapsule(collider, *this, mtv);
 	}
 
 	RigidTransform transform;
@@ -98,7 +102,7 @@ private:
 	static uint32_t sId;
 };
 
-// Returns the closest point on line ab to point p
+// Returns the closest point along line ab to point p
 inline DirectX::SimpleMath::Vector3 ClosestLinePoint(
 	const DirectX::SimpleMath::Vector3& a,
 	const DirectX::SimpleMath::Vector3& b,
@@ -124,12 +128,7 @@ inline void Bounds(const CapsuleCollider& collider, DirectX::SimpleMath::Vector3
 	botRight = base + ortho;
 }
 
-// mtv points from a to b ie:
-// let A = { 0.0, 0.0 }
-// let B = { 1.0, 1.0 }
-// If we want to resolve B intuitively, then we NEED to pass them as (A, B) to
-// yield an mtv that pushes B towards +x +y.
-// If we instead passed (B, A), then the mtv would be along -x -y which is counter-intuitive.
+// MTV resolves b from a
 inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, DirectX::SimpleMath::Vector3& mtv)
 {
 	using namespace DirectX::SimpleMath;
@@ -147,12 +146,7 @@ inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, Direc
 	return colliding;
 }
 
-// mtv points from a to b ie:
-// let A = { 0.0, 0.0 }
-// let B = { 1.0, 1.0 }
-// If we want to resolve B intuitively, then we NEED to pass them as (A, B) to
-// yield an mtv that pushes B towards +x +y.
-// If we instead passed (B, A), then the mtv would be along -x -y which is counter-intuitive.
+// MTV resolves b from a
 inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv)
 {
 	using namespace DirectX::SimpleMath;
@@ -182,6 +176,7 @@ inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, D
 	return SphereSphere({ bestA, a.radius }, { bestB, b.radius }, mtv);
 }
 
+// MTV resolves b from a
 inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv)
 {
 	using namespace DirectX::SimpleMath;

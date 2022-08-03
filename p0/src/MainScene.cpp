@@ -27,25 +27,18 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	mTd = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", mBuildingShader);
 	Vector3 tdBounds = mTd->meshes.front()->boundingBox.Extents;
 	Vector3 vanBounds = sVan->meshes.front()->boundingBox.Extents;
-
 	mVanCollider = { {}, vanBounds.y, vanBounds.x };
-	mVanCollider.transform.Rotate({ 0.0f, 000.0f, -45.0f });
-	mVanCollider.transform.Translate({ -500.0f, -500.0f, 0.0f });
-
-	// Fishtail
-	//mVanCollider.transform.Rotate({ 0.0f, 0.0f, -45.0f });
-	//mVanCollider.transform.Translate(mVanCollider.transform.Front() * -750.0f);
+	mVanCollider.transform.Rotate({ 0.0f, 0.0f, -45.0f });
+	mVanCollider.transform.Translate(mVanCollider.transform.Front() * -750.0f);
 
 	// TD as sphere
 	mTdCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
-	//mTdCollider.radius = 50.0f;
 	
 	// TD as capsule
 	//mTdCollider.radius = tdBounds.x;
 	//mTdCollider.halfHeight = tdBounds.y;
 
 	//mSphereCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
-	//mSphereCollider.radius = 50.0f;
 	
 	//mCapsuleCollider.transform.Translate({ tdBounds.x, tdBounds.y, 0.0f });
 	//mCapsuleCollider.transform.Rotate({ 0.0f, 0.0f, 90.0f });
@@ -84,18 +77,10 @@ void MainScene::OnResume()
 
 void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
 {
+	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
 	const float dt = (float)timer.GetElapsedSeconds();
 	const float tt = (float)timer.GetTotalSeconds();
-
-	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
 	float speed = 100.0f * dt;
-	mVanCollider.transform.DeltaTranslate({ speed, speed, 0.0f });
-	//mVanCollider.transform.DeltaRotate({ 0.0f, 0.0f, speed });
-	mVanCollider.transform.Rotate({ 0.0f, 0.0f, cosf(tt) * 100.0f });
-
-	// Fishtail
-	//mVanCollider.transform.DeltaRotate({0.0f, 0.0f, cosf(tt) * 0.4f });
-	//mVanCollider.transform.DeltaTranslate(mVanCollider.transform.Front() * dt * 100.0f);
 
 	//mSphereCollider.translation = { mSphereCollider.radius * cos(tt), mSphereCollider.radius * sin(tt), 0.0f };
 	//Vector3 mtv;
@@ -109,22 +94,33 @@ void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 	//	mCapsuleCollider.transform.DeltaTranslate(mtv);
 	//mCapsuleColor = mCapsuleCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
 
+	// Capsule-Sphere test
+	//mVanCollider.transform.DeltaTranslate({ speed, speed, 0.0f });
+	//mVanCollider.transform.Rotate({ 0.0f, 0.0f, cosf(tt) * 100.0f });
+	//Vector3 mtv;
+	//if (mVanCollider.IsColliding(mTdCollider, mtv))
+	//	mVanCollider.transform.DeltaTranslate(mtv);
+	//mColor = mVanCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
+
+	// Questionable van soccer
+	mVanCollider.transform.DeltaRotate({ 0.0f, 0.0f, cosf(tt) * 0.4f });
+	mVanCollider.transform.DeltaTranslate(mVanCollider.transform.Front() * speed);
 	Vector3 mtv;
-	if (mVanCollider.IsColliding(mTdCollider, mtv))
-		mVanCollider.transform.DeltaTranslate(mtv);
-	mColor = mVanCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
+	if (mTdCollider.IsColliding(mVanCollider, mtv))
+		mTdCollider.translation = mtv;
+	mColor = mTdCollider.IsColliding(mVanCollider, mtv) ? Colors::Red : Colors::Green;
 }
 
 void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
 
+	//Debug::Draw(mSphereCollider, mView, mProjection, graphics, mSphereColor);
+	//Debug::Draw(mCapsuleCollider, mView, mProjection, graphics, mCapsuleColor);
+
 	//mTd->Draw(context, *mStates, Matrix::Identity, mView, mProjection);
 	//sVan->Draw(context, *mStates, mVanCollider.transform.World(), mView, mProjection);
 
 	Debug::Draw(mVanCollider, mView, mProjection, graphics, mColor);
 	Debug::Draw(mTdCollider, mView, mProjection, graphics);
-
-	//Debug::Draw(mSphereCollider, mView, mProjection, graphics, mSphereColor);
-	//Debug::Draw(mCapsuleCollider, mView, mProjection, graphics, mCapsuleColor);
 }
