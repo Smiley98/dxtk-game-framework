@@ -27,16 +27,22 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	mTd = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", mBuildingShader);
 	Vector3 tdBounds = mTd->meshes.front()->boundingBox.Extents;
 	Vector3 vanBounds = sVan->meshes.front()->boundingBox.Extents;
-	mVanCollider = { {}, vanBounds.y, vanBounds.x };
-	mVanCollider.transform.Rotate({ 0.0f, 0.0f, -45.0f });
-	mVanCollider.transform.Translate(mVanCollider.transform.Front() * -750.0f);
+
+	// Van as capsule
+	//mVanCollider = { {}, vanBounds.y, vanBounds.x };
+	//mVanCollider.transform.Rotate({ 0.0f, 0.0f, -45.0f });
+	//mVanCollider.transform.Translate(mVanCollider.transform.Front() * -750.0f);
+
+	// Van as sphere
+	mVanCollider.radius = vanBounds.x;
+	mVanCollider.translation = { -500.0f, -500.0f, 0.0f };
 
 	// TD as sphere
-	mTdCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
+	//mTdCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
 	
 	// TD as capsule
-	//mTdCollider.radius = tdBounds.x;
-	//mTdCollider.halfHeight = tdBounds.y;
+	mTdCollider.radius = tdBounds.x;
+	mTdCollider.halfHeight = tdBounds.y;
 
 	//mSphereCollider.radius = (tdBounds.x + tdBounds.y) * 0.5f;
 	
@@ -103,11 +109,13 @@ void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 	//mColor = mVanCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
 
 	// Questionable van soccer
-	mVanCollider.transform.DeltaRotate({ 0.0f, 0.0f, cosf(tt) * 0.4f });
-	mVanCollider.transform.DeltaTranslate(mVanCollider.transform.Front() * speed);
+	//mVanCollider.transform.DeltaRotate({ 0.0f, 0.0f, cosf(tt) * 0.4f });
+	//mVanCollider.transform.DeltaTranslate(mVanCollider.transform.Front() * speed);
+	mVanCollider.translation += {speed, speed, 0.0f};
 	Vector3 mtv;
 	if (mTdCollider.IsColliding(mVanCollider, mtv))
-		mTdCollider.translation = mtv;
+		mTdCollider.transform.Translate(mtv);
+		//mTdCollider.translation = mtv;
 	mColor = mTdCollider.IsColliding(mVanCollider, mtv) ? Colors::Red : Colors::Green;
 }
 

@@ -31,10 +31,11 @@ private:
 	//DirectX::XMVECTOR mCapsuleColor;
 
 	std::unique_ptr<DirectX::Model>	mTd;
-	//CapsuleCollider mTdCollider;
-	SphereCollider mTdCollider;
+	CapsuleCollider mTdCollider;
+	//SphereCollider mTdCollider;
 
-	CapsuleCollider mVanCollider;
+	//CapsuleCollider mVanCollider;
+	SphereCollider mVanCollider;
 
 	DirectX::XMVECTOR mColor;
 
