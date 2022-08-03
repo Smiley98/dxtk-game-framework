@@ -19,23 +19,26 @@ public:
 
 private:
 	std::unique_ptr<DirectX::CommonStates> mStates;
-	std::shared_ptr<DirectX::BasicEffect> mBuildingShader;
-
-	//SphereCollider mSphereCollider;
-	//DirectX::XMVECTOR mSphereColor;
-	//CapsuleCollider mCapsuleCollider;
-	//DirectX::XMVECTOR mCapsuleColor;
-
-	std::unique_ptr<DirectX::Model>	mTd;
-	CapsuleCollider mTdCollider;
-	//SphereCollider mTdCollider;
-
-	//CapsuleCollider mVanCollider;
-	SphereCollider mVanCollider;
-
-	DirectX::XMVECTOR mColor;
-
 	DirectX::SimpleMath::Matrix	mView;
 	DirectX::SimpleMath::Matrix	mProjection;
+
+	const float mRadius = 25.0f;
+	const float mHalfHeight = 75.0f;
+
+	SphereCollider mSphereSphereA;
+	SphereCollider mSphereSphereB;
+	DirectX::XMVECTOR mSphereSphereColor;
+
+	CapsuleCollider mCapsuleCapsuleA;
+	CapsuleCollider mCapsuleCapsuleB;
+	DirectX::XMVECTOR mCapsuleCapsuleColor;
+
+	//SphereCollider mSphereCapsuleA;
+	//CapsuleCollider mSphereCapsuleB;
+	//DirectX::XMVECTOR mSphereCapsuleColor;
+	//
+	//CapsuleCollider mCapsuleSphereA;
+	//SphereCollider mCapsuleSphereB;
+	//DirectX::XMVECTOR mCapsuleSphereColor;
 };
 

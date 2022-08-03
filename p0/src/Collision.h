@@ -3,9 +3,6 @@
 #include "Transform.h"
 #include <vector>
 
-// 3.0 because 1.0 for collider a, 1.0 for collider b, and another 1.0 for good measure ;)
-constexpr float RESOLUTION = 1.0f + 3.0f * FLT_EPSILON;
-
 // TODO: static vs dynamic (building spheres vs everything else -- may not need all 4 vectors)
 	//std::vector<SphereCollider> sStaticSpheres;
 	//std::vector<SphereCollider> sDynamicSpheres;
@@ -138,10 +135,10 @@ inline bool SphereSphere(const SphereCollider& a, const SphereCollider& b, Direc
 	bool colliding = lengthAB <= radiiAB;
 	if (colliding)
 	{
+		constexpr float resolution = 1.0f + FLT_EPSILON * 16.0f;
 		Vector3 direction;
 		AB.Normalize(direction);
-		mtv = direction * (radiiAB - lengthAB);
-		mtv *= RESOLUTION;
+		mtv = resolution * direction * (radiiAB - lengthAB);
 	}
 	return colliding;
 }
