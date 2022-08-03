@@ -166,24 +166,11 @@ inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, D
 	float d2 = v2.Dot(v2);
 	float d3 = v3.Dot(v3);
 
-	// select best potential endpoint on capsule A:
 	Vector3 bestA = (d2 < d0 || d2 < d1 || d3 < d0 || d3 < d1) ? aTopLeft : aBotRight;
 	Vector3 bestB = ClosestLinePoint(bBotRight, bTopLeft, bestA);
 	bestA = ClosestLinePoint(aBotRight, aTopLeft, bestB);
 
-	// (// A = bottom right, B = top left)
 	return SphereSphere({ bestA, a.radius }, { bestB, b.radius }, mtv);
-	//mtv = bestA - bestB;
-	//float lengthMTV = mtv.Length();
-	//mtv /= lengthMTV;
-	//
-	////Vector3 penetration_normal = bestA – bestB;
-	//float len = length(penetration_normal);
-	//penetration_normal /= len;  // normalize
-	//float penetration_depth = a.radius + b.radius – len;
-	//bool intersects = penetration_depth > 0;
-
-	//return true;
 }
 
 inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv)
