@@ -44,10 +44,10 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	//mSphereCollider.radius = std::max(tdBounds.x, tdBounds.y);
 	//mSphereCollider.radius = 50.0f;
 	
+	mCapsuleCollider.transform.Translate({ tdBounds.x, tdBounds.y, 0.0f });
 	mCapsuleCollider.transform.Rotate({ 0.0f, 0.0f, 90.0f });
-	mCapsuleCollider.radius = vanBounds.x;
-	mCapsuleCollider.halfHeight = vanBounds.y;
-	mCapsuleColor = Colors::Green;
+	mCapsuleCollider.radius = tdBounds.x;
+	mCapsuleCollider.halfHeight = tdBounds.y;
 }
 
 MainScene::~MainScene()
@@ -96,10 +96,10 @@ void MainScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 	//mSphereColor = mSphereCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
 
 	//mCapsuleCollider.translation = { mCapsuleCollider.radius * cos(tt), mSphereCollider.radius * sin(tt), 0.0f };
-	//Vector3 mtv;
-	//if (mCapsuleCollider.IsColliding(mTdCollider, mtv))
-	//	mCapsuleCollider.transform.DeltaTranslate(mtv);
-	//mCapsuleColor = mCapsuleCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
+	Vector3 mtv;
+	if (mCapsuleCollider.IsColliding(mTdCollider, mtv))
+		mCapsuleCollider.transform.DeltaTranslate(mtv);
+	mCapsuleColor = mCapsuleCollider.IsColliding(mTdCollider, mtv) ? Colors::Red : Colors::Green;
 }
 
 void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
