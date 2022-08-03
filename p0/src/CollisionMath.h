@@ -58,10 +58,10 @@ inline bool CapsuleCapsule(const RigidTransform& tA, float hhA, float rA, const 
 inline void Extents(const RigidTransform& t, float hh, float r, DirectX::SimpleMath::Vector3& topLeft, DirectX::SimpleMath::Vector3& botRight)
 {
 	using namespace DirectX::SimpleMath;
-	float extent = hh + r;
+	float length = hh + r;
 	Vector3 front = t.Front();
-	Vector3 tip = t.Translation() + front * extent;
-	Vector3 base = t.Translation() - front * extent;
+	Vector3 tip = t.Translation() + front * length;
+	Vector3 base = t.Translation() - front * length;
 	Vector3 norm = tip - base;
 	norm.Normalize();
 	Vector3 ortho = norm * r;

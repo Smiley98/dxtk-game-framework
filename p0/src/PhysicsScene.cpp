@@ -19,6 +19,7 @@ PhysicsScene::PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::s
 	mCapsuleCapsuleA.halfHeight = mHalfHeight;
 	mCapsuleCapsuleA.radius = mRadius;
 	mCapsuleCapsuleB = mCapsuleCapsuleA;
+	//mCapsuleCapsuleB.transform.Rotate({ 0.0f, 0.0f, 90.0f });
 }
 
 PhysicsScene::~PhysicsScene()
@@ -65,8 +66,9 @@ void PhysicsScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& 
 
 	const float distance = 100.0f;
 	const float height = mHalfHeight * 2.0f;
+	//mCapsuleCapsuleB.transform.Translate(mCapsuleCapsuleA.transform.Translation() + Vector3{ -125.0f, sin(tt) * distance, 0.0f });
 	mCapsuleCapsuleB.transform.Translate(mCapsuleCapsuleA.transform.Translation() + Vector3{ cos(tt) * distance, 0.0f, 0.0f });
-	mCapsuleCapsuleB.transform.DeltaRotate({ 0.0f, 0.0f, speed });
+	mCapsuleCapsuleB.transform.DeltaRotate({ 0.0f, 0.0f, speed * 0.1f });
 	mCapsuleCapsuleColor = mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA) ? Colors::Red : Colors::Green;
 }
 
@@ -77,6 +79,11 @@ void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Debug::Draw(mSphereSphereA, mView, mProjection, graphics, mSphereSphereColor);
 	Debug::Draw(mSphereSphereB, mView, mProjection, graphics, mSphereSphereColor);
 
-	Debug::Draw(mCapsuleCapsuleA, mView, mProjection, graphics, mCapsuleCapsuleColor);
-	Debug::Draw(mCapsuleCapsuleB, mView, mProjection, graphics, mCapsuleCapsuleColor);
+	Debug::Draw(mCapsuleCapsuleA, mView, mProjection, graphics, mCapsuleCapsuleColor, true);
+	Debug::Draw(mCapsuleCapsuleB, mView, mProjection, graphics, mCapsuleCapsuleColor, true);
+
+	Vector3 na, nb;
+	NearestSpheres(mCapsuleCapsuleA.transform, mCapsuleCapsuleA.halfHeight, mCapsuleCapsuleA.radius, mCapsuleCapsuleB.transform, mCapsuleCapsuleB.halfHeight, mCapsuleCapsuleB.radius, na, nb);
+	Debug::Draw({ na, mRadius }, mView, mProjection, graphics);
+	Debug::Draw({ nb, mRadius }, mView, mProjection, graphics, Colors::Aqua);
 }

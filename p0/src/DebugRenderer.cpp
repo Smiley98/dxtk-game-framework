@@ -8,28 +8,28 @@ using namespace DirectX::SimpleMath;
 namespace Debug
 {
 	void Primitive(Geometry geometry, const Matrix& world, const Matrix& view, const Matrix& proj,
-		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
+		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color, bool wireframe)
 	{
 		auto context = graphics->GetD3DDeviceContext();
 		switch (geometry)
 		{
 		case Debug::BOX:
-			GeometricPrimitive::CreateCube(context)->Draw(world, view, proj, color);
+			GeometricPrimitive::CreateCube(context)->Draw(world, view, proj, color, nullptr, wireframe);
 			break;
 		case Debug::SPHERE:
-			GeometricPrimitive::CreateSphere(context)->Draw(world, view, proj, color);
+			GeometricPrimitive::CreateSphere(context)->Draw(world, view, proj, color, nullptr, wireframe);
 			break;
 		case Debug::CYLINDER:
-			GeometricPrimitive::CreateCylinder(context)->Draw(world, view, proj, color);
+			GeometricPrimitive::CreateCylinder(context)->Draw(world, view, proj, color, nullptr, wireframe);
 			break;
 		case Debug::CONE:
-			GeometricPrimitive::CreateCone(context)->Draw(world, view, proj, color);
+			GeometricPrimitive::CreateCone(context)->Draw(world, view, proj, color, nullptr, wireframe);
 			break;
 		case Debug::TORUS:
-			GeometricPrimitive::CreateTorus(context)->Draw(world, view, proj, color);
+			GeometricPrimitive::CreateTorus(context)->Draw(world, view, proj, color, nullptr, wireframe);
 			break;
 		case Debug::TEAPOT:
-			GeometricPrimitive::CreateTeapot(context)->Draw(world, view, proj, color);
+			GeometricPrimitive::CreateTeapot(context)->Draw(world, view, proj, color, nullptr, wireframe);
 			break;
 		default:
 			break;
@@ -37,14 +37,14 @@ namespace Debug
 	}
 
 	void Draw(const SphereCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
-		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
+		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color, bool wireframe)
 	{
 		auto sphere = GeometricPrimitive::CreateSphere(graphics->GetD3DDeviceContext(), collider.radius * 2.0f);
-		sphere->Draw(Matrix::CreateTranslation(collider.translation), view, proj, color);
+		sphere->Draw(Matrix::CreateTranslation(collider.translation), view, proj, color, nullptr, wireframe);
 	}
 
 	void Draw(const CapsuleCollider& collider, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
-		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color)
+		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color, bool wireframe)
 	{
 		Vector3 forward = collider.transform.Front();
 		Matrix top = Matrix::CreateTranslation(collider.transform.Translation() + forward *  collider.halfHeight);
@@ -53,8 +53,8 @@ namespace Debug
 		auto context = graphics->GetD3DDeviceContext();
 		auto cylinder = GeometricPrimitive::CreateCylinder(context, collider.halfHeight * 2.0f, collider.radius * 2.0f);
 		auto sphere = GeometricPrimitive::CreateSphere(context, collider.radius * 2.0f);
-		sphere->Draw(top, view, proj, color);
-		sphere->Draw(bot, view, proj, color);
-		cylinder->Draw(collider.transform.World(), view, proj, color);
+		sphere->Draw(top, view, proj, color, nullptr, wireframe);
+		sphere->Draw(bot, view, proj, color, nullptr, wireframe);
+		cylinder->Draw(collider.transform.World(), view, proj, color, nullptr, wireframe);
 	}
 }
