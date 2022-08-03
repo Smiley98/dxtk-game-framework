@@ -57,6 +57,11 @@ struct CapsuleCollider
 		return CapsuleCapsule(a, *this, mtv);
 	}
 
+	inline bool IsColliding(const SphereCollider& a, DirectX::SimpleMath::Vector3& mtv)
+	{
+		return SphereCapsule(a, *this, mtv);
+	}
+
 	RigidTransform transform;
 	float halfHeight = 0.0f;
 	float radius = 0.0f;
@@ -180,8 +185,9 @@ inline bool CapsuleCapsule(const CapsuleCollider& a, const CapsuleCollider& b, D
 inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, DirectX::SimpleMath::Vector3& mtv)
 {
 	using namespace DirectX::SimpleMath;
-
-
-
-	return true;
+	float extent = b.halfHeight + b.radius;
+	Vector3 front = b.transform.Front();
+	Vector3 tip = b.transform.Translation() + front * extent;
+	Vector3 base = b.transform.Translation() - front * extent;
+	return SphereSphere(a, { ClosestLinePoint(base, tip, a.translation), b.radius }, mtv);
 }

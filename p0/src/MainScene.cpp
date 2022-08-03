@@ -33,13 +33,13 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	mVanCollider.transform.Translate(mVanCollider.transform.Front() * -750.0f);
 
 	// TD as sphere -- max bounds for real values, 50.0 for testing
-	//mTdCollider.radius = std::max(tdBounds.x, tdBounds.y);
+	mTdCollider.radius = std::max(tdBounds.x, tdBounds.y);
 	//mTdCollider.radius = 50.0f;
 	//mTdCollider.translation = Vector3::Zero;
 	
 	// TD as capsule
-	mTdCollider.radius = tdBounds.x;
-	mTdCollider.halfHeight = tdBounds.y;
+	//mTdCollider.radius = tdBounds.x;
+	//mTdCollider.halfHeight = tdBounds.y;
 
 	//mSphereCollider.radius = std::max(tdBounds.x, tdBounds.y);
 	//mSphereCollider.radius = 50.0f;
