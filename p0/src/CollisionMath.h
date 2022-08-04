@@ -1,7 +1,7 @@
 #pragma once
 #include "Transform.h"
 
-inline void Bounds(const RigidTransform& t, float hh, DirectX::SimpleMath::Vector3& upper, DirectX::SimpleMath::Vector3& lower);
+inline void Bounds(const RigidTransform& t, float hh, DirectX::SimpleMath::Vector3& top, DirectX::SimpleMath::Vector3& bot);
 inline DirectX::SimpleMath::Vector3 NearestPoint(const DirectX::SimpleMath::Vector3& a, const DirectX::SimpleMath::Vector3& b, const DirectX::SimpleMath::Vector3& p);
 inline void NearestSpheres(
 	const RigidTransform& tA, float hhA, float rA,
@@ -54,13 +54,13 @@ inline bool CapsuleCapsule(const RigidTransform& tA, float hhA, float rA, const 
 	return SphereSphere(nearestA, rA, nearestB, rB, mtv);
 }
 
-// Outputs the upper and lower bounds of a cylinder (relative to its forward vector) where t = transform (translation & rotation), hh = half height
-inline void Bounds(const RigidTransform& t, float hh, DirectX::SimpleMath::Vector3& upper, DirectX::SimpleMath::Vector3& lower)
+// Outputs the top and bottom of a cylinder (relative to its forward vector) where t = transform (translation & rotation), hh = half height
+inline void Bounds(const RigidTransform& t, float hh, DirectX::SimpleMath::Vector3& top, DirectX::SimpleMath::Vector3& bot)
 {
 	using namespace DirectX::SimpleMath;
 	const Vector3 front = t.Front();
-	upper = t.Translation() + front * hh;
-	lower = t.Translation() - front * hh;
+	top = t.Translation() + front * hh;
+	bot = t.Translation() - front * hh;
 }
 
 // Returns the point along line ab closest to point p
@@ -79,26 +79,25 @@ inline void NearestSpheres(
 	DirectX::SimpleMath::Vector3& nearestB)
 {
 	using namespace DirectX::SimpleMath;
+	Vector3 aTop, aBot, bTop, bBot;
+	Bounds(tA, hhA, aTop, aBot);
+	Bounds(tB, hhB, bTop, bBot);
 
-	Vector3 aUpper;
-	Vector3 aLower;
-	Bounds(tA, hhA, aUpper, aLower);
+	// vAB
+	Vector3 vBotBot = bBot - aBot;
+	Vector3 vBotTop = bTop - aBot;
+	Vector3 vTopBot = bBot - aTop;
+	Vector3 vTopTop = bTop - aTop;
 
-	Vector3 bUpper;
-	Vector3 bLower;
-	Bounds(tB, hhB, bUpper, bLower);;
+	// dAB
+	float dBotBot = vBotBot.Dot(vBotBot);
+	float dBotTop = vBotTop.Dot(vBotTop);
+	float dTopBot = vTopBot.Dot(vTopBot);
+	float dTopTop = vTopTop.Dot(vTopTop);
 
-	Vector3 v0 = bLower - aLower;
-	Vector3 v1 = bUpper - aLower;
-	Vector3 v2 = bLower - aUpper;
-	Vector3 v3 = bUpper - aUpper;
+	// If any of aTop are closer than anything b, use aTop otherwise use aBot
+	nearestA = (dTopBot < dBotBot || dTopBot < dBotTop || dTopTop < dBotBot || dTopTop < dBotTop) ? aTop : aBot;
 
-	float d0 = v0.Dot(v0);
-	float d1 = v1.Dot(v1);
-	float d2 = v2.Dot(v2);
-	float d3 = v3.Dot(v3);
-
-	Vector3 nearbyA = (d2 < d0 || d2 < d1 || d3 < d0 || d3 < d1) ? aUpper : aLower;
-	nearestB = NearestPoint(bLower, bUpper, nearbyA);
-	nearestA = NearestPoint(aLower, aUpper, nearestB);
+	nearestB = NearestPoint(bBot, bTop, nearestA);
+	nearestA = NearestPoint(aBot, aTop, nearestB);
 }

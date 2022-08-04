@@ -76,17 +76,22 @@ void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
 
-	Debug::Draw(mSphereSphereA, mView, mProjection, graphics, mSphereSphereColor);
-	Debug::Draw(mSphereSphereB, mView, mProjection, graphics, mSphereSphereColor);
-
+	//Debug::Draw(mSphereSphereA, mView, mProjection, graphics, mSphereSphereColor);
+	//Debug::Draw(mSphereSphereB, mView, mProjection, graphics, mSphereSphereColor);
 	Debug::Draw(mCapsuleCapsuleA, mView, mProjection, graphics, mCapsuleCapsuleColor, true);
 	Debug::Draw(mCapsuleCapsuleB, mView, mProjection, graphics, mCapsuleCapsuleColor, true);
 
-	Vector3 bUpper, bLower, aNearest, bNearest;
+	Vector3 aUpper, aLower;
+	Vector3 bUpper, bLower;
+	Vector3 aNearest, bNearest;
+	Bounds(mCapsuleCapsuleA.transform, mCapsuleCapsuleA.halfHeight, aUpper, aLower);
 	Bounds(mCapsuleCapsuleB.transform, mCapsuleCapsuleB.halfHeight, bUpper, bLower);
 	NearestSpheres(mCapsuleCapsuleA.transform, mCapsuleCapsuleA.halfHeight, mCapsuleCapsuleA.radius, mCapsuleCapsuleB.transform, mCapsuleCapsuleB.halfHeight, mCapsuleCapsuleB.radius, aNearest, bNearest);
+
+	Debug::Draw({ aUpper, mRadius }, mView, mProjection, graphics, Colors::Purple);
+	Debug::Draw({ bUpper, mRadius }, mView, mProjection, graphics, Colors::Purple);
+	Debug::Draw({ aLower, mRadius }, mView, mProjection, graphics, Colors::Blue);
+	Debug::Draw({ bLower, mRadius }, mView, mProjection, graphics, Colors::Blue);
 	Debug::Draw({ aNearest, mRadius }, mView, mProjection, graphics);
 	Debug::Draw({ bNearest, mRadius }, mView, mProjection, graphics, Colors::Aqua);
-	//Debug::Draw({ bUpper, mRadius }, mView, mProjection, graphics, Colors::Purple);
-	//Debug::Draw({ bLower, mRadius }, mView, mProjection, graphics, Colors::Blue);
 }
