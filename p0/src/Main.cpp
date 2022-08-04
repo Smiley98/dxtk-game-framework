@@ -25,6 +25,7 @@ namespace
 LPCWSTR gAppName = L"Battle Vans";
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+BOOL MonitorEnumProc(HMONITOR monitor, HDC hdc, LPRECT pScreen, LPARAM userData);
 void ExitGame() noexcept;
 
 // Indicates to hybrid graphics systems to prefer the discrete part by default
@@ -65,15 +66,16 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         if (!RegisterClassExW(&wcex))
             return 1;
 
-        // Can also pass MONITOR_DEFAULTTONEAREST which returns the monitor with largest intersecting window (in case not primary)
-        // (I should just set my 1440p monitor to primary for testing to avoid the 4k vertical monitor xD)
-        HWND hDesktop = GetDesktopWindow();
-        HMONITOR hmon = MonitorFromWindow(hDesktop, MONITOR_DEFAULTTOPRIMARY);
-        MONITORINFO mi = { sizeof(mi) };
-        if (!GetMonitorInfo(hmon, &mi)) return NULL;
+        // Uncomment to use primary monitor instead of custom monitor (left-most for my testing setup)
+        //HMONITOR monitor = MonitorFromWindow(GetDesktopWindow(), MONITOR_DEFAULTTOPRIMARY);
+        //MONITORINFO monitorInfo = { sizeof(monitorInfo) };
+        //GetMonitorInfo(monitor, &monitorInfo);
+        //screen = monitorInfo.rcMonitor;
+        RECT screen;
+        EnumDisplayMonitors(NULL, nullptr, MonitorEnumProc, reinterpret_cast<LONG_PTR>(&screen));
 
         HWND hwnd = CreateWindowExW(0, L"DirectXTKSimpleSampleWindowClass", gAppName, WS_POPUP | WS_VISIBLE,
-            mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top,
+            screen.left, screen.top, screen.right - screen.left, screen.bottom - screen.top,
             nullptr, nullptr, hInstance, nullptr);
 
         if (!hwnd)
@@ -363,6 +365,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
 
     return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+// Return left-most monitor by returning the first monitor with a negative left value
+BOOL MonitorEnumProc(HMONITOR monitor, HDC hdc, LPRECT pScreen, LPARAM userData)
+{
+    RECT& screen = *reinterpret_cast<RECT*>(userData);
+    screen = *pScreen;
+    return screen.left >= 0;
 }
 
 // Exit helper
