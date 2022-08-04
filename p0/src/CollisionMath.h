@@ -83,20 +83,18 @@ inline void NearestSpheres(
 	Bounds(tA, hhA, aTop, aBot);
 	Bounds(tB, hhB, bTop, bBot);
 
-	// vAB
-	Vector3 vBotBot = bBot - aBot;
-	Vector3 vBotTop = bTop - aBot;
-	Vector3 vTopBot = bBot - aTop;
-	Vector3 vTopTop = bTop - aTop;
+	Vector3 aBot_bBotVec = bBot - aBot;
+	Vector3 aTop_bTopVec = bTop - aTop;
+	Vector3 aBot_bTopVec = bTop - aBot;
+	Vector3 aTop_bBotVec = bBot - aTop;
 
-	// dAB
-	float dBotBot = vBotBot.Dot(vBotBot);
-	float dBotTop = vBotTop.Dot(vBotTop);
-	float dTopBot = vTopBot.Dot(vTopBot);
-	float dTopTop = vTopTop.Dot(vTopTop);
+	float aBot_bBot = aBot_bBotVec.LengthSquared();
+	float aTop_bTop = aTop_bTopVec.LengthSquared();
+	float aBot_bTop = aBot_bTopVec.LengthSquared();
+	float aTop_bBot = aTop_bBotVec.LengthSquared();
 
-	// If any of aTop are closer than anything b, use aTop otherwise use aBot
-	nearestA = (dTopBot < dBotBot || dTopBot < dBotTop || dTopTop < dBotBot || dTopTop < dBotTop) ? aTop : aBot;
+	// TODO -- use AND logic to individually figure out which of the 4 sphere pairs is closest
+	nearestA = true ? aTop : aBot;
 
 	nearestB = NearestPoint(bBot, bTop, nearestA);
 	nearestA = NearestPoint(aBot, aTop, nearestB);
