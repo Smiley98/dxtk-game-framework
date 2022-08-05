@@ -1,24 +1,27 @@
 #pragma once
-#include "CollisionMath.h"
 #include "Tags.h"
 #include <vector>
+#include <unordered_map>
 
-// TODO: static vs dynamic (building spheres vs everything else -- may not need all 4 vectors)
-	//std::vector<SphereCollider> sStaticSpheres;
-	//std::vector<SphereCollider> sDynamicSpheres;
-	//std::vector<CapsuleCollider> sStaticCapsules;
-	//std::vector<CapsuleCollider> sDynamicCapsules;
-	
-//TODO: make convenience methods that only return collision boolean rather than calculating mtv in addition
-//struct SphereCollider;
-//struct CapsuleCollider;
-//inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, Vector3& mtv);
+#pragma region Types
+
+struct Sphere
+{
+	Vector3	t;	// Translation
+	float r;	// Radius
+};
+
+struct Capsule
+{
+	RigidTransform t;	// Transformation
+	float hh;			// Half-height
+	float r;			// Radius
+};
 
 struct ColliderInfo
 {
-	Tag tag = NONE;
-	void* data = nullptr;
-	uint32_t id = 0;
+	void* data = nullptr;	// Points to the object that owns this collider
+	Tag tag = Tag::NONE;	// Used to cast data
 };
 
 struct HitPair
@@ -28,75 +31,201 @@ struct HitPair
 	Vector3 mtv;
 };
 
-// Inheritance is for losers (x1)
+#pragma endregion
+
+#pragma region Math
+
+// Outputs the top and bottom of a cylinder relative to its forward vector
+inline void CylinderBounds(const Capsule& capsule, Vector3& top, Vector3& bot)
+{
+	const RigidTransform& t = capsule.t;
+	const Vector3 front = t.Front();
+	top = t.Translation() + front * capsule.hh;
+	bot = t.Translation() - front * capsule.hh;
+}
+
+// Returns the point along line ab closest to point p
+inline Vector3 NearestPoint(const Vector3& a, const Vector3& b, const Vector3& p)
+{
+	Vector3 AB = b - a;
+	float t = (p - a).Dot(AB) / AB.Dot(AB);
+	return a + std::min(std::max(t, 0.0f), 1.0f) * AB;
+}
+
+inline void NearestSpheres(const Capsule a, const Capsule b, Vector3& nearestA, Vector3& nearestB)
+{
+	Vector3 aTop, aBot, bTop, bBot;
+	CylinderBounds(a, aTop, aBot);
+	CylinderBounds(b, bTop, bBot);
+
+	Vector3 aBot_bBotVec = bBot - aBot;
+	Vector3 aTop_bTopVec = bTop - aTop;
+	Vector3 aBot_bTopVec = bTop - aBot;
+	Vector3 aTop_bBotVec = bBot - aTop;
+
+	float aBot_bBot = aBot_bBotVec.LengthSquared();
+	float aTop_bTop = aTop_bTopVec.LengthSquared();
+	float aBot_bTop = aBot_bTopVec.LengthSquared();
+	float aTop_bBot = aTop_bBotVec.LengthSquared();
+
+	// TODO -- use AND logic to individually figure out which of the 4 sphere pairs is closest
+	nearestA = true ? aTop : aBot;
+
+	nearestB = NearestPoint(bBot, bTop, nearestA);
+	nearestA = NearestPoint(aBot, aTop, nearestB);
+}
+
+inline bool SphereSphere(const Sphere& a, const Sphere& b)
+{
+	Vector3 AB = b.t - a.t;
+	float lengthAB = AB.Length();
+	float radiiAB = a.r + b.r;
+	return lengthAB <= radiiAB;
+}
+
+// MTV resolves B from A
+inline bool SphereSphere(const Sphere& a, const Sphere& b, Vector3& mtv)
+{
+	Vector3 AB = b.t - a.t;
+	float lengthAB = AB.Length();
+	float radiiAB = a.r + b.r;
+	bool colliding = lengthAB <= radiiAB;
+	if (colliding)
+	{
+		constexpr float resolution = 1.0f + FLT_EPSILON * 16.0f;
+		AB /= lengthAB;
+		mtv = resolution * AB * (radiiAB - lengthAB);
+	}
+	return colliding;
+}
+
+inline bool SphereCapsule(const Sphere& a, const Capsule& b)
+{
+	Vector3 front = b.t.Front();
+	Vector3 cylinderTop = b.t.Translation() + front * b.hh;
+	Vector3 cylinderBot = b.t.Translation() - front * b.hh;
+	return SphereSphere(a, { NearestPoint(cylinderBot, cylinderTop, a.t), b.r });
+}
+
+// MTV resolves b from a
+inline bool SphereCapsule(const Sphere& a, const Capsule& b, Vector3& mtv)
+{
+	Vector3 front = b.t.Front();
+	Vector3 cylinderTop = b.t.Translation() + front * b.hh;
+	Vector3 cylinderBot = b.t.Translation() - front * b.hh;
+	return SphereSphere(a, { NearestPoint(cylinderBot, cylinderTop, a.t), b.r }, mtv);
+}
+
+inline bool CapsuleCapsule(const Capsule& a, const Capsule& b)
+{
+	Vector3 nearestA, nearestB;
+	NearestSpheres(a, b, nearestA, nearestB);
+	return SphereSphere({ nearestA, a.r }, { nearestB, b.r });
+}
+
+// MTV resolves b from a
+inline bool CapsuleCapsule(const Capsule& a, const Capsule& b, Vector3& mtv)
+{
+	Vector3 nearestA, nearestB;
+	NearestSpheres(a, b, nearestA, nearestB);
+	return SphereSphere({ nearestA, a.r }, { nearestB, b.r }, mtv);
+}
+#pragma endregion
+
+#pragma region Colliders
+struct SphereCollider;
+struct CapsuleCollider;
+
 struct SphereCollider
 {
-	SphereCollider() = default;
-	~SphereCollider() = default;
-
-	inline bool IsColliding(const SphereCollider& collider) { return SphereSphere(collider.translation, collider.radius, translation, radius); }
-	inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) { return SphereSphere(collider.translation, collider.radius, translation, radius, mtv); }
-
-	//inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv)
-	//{
-	//	bool isColliding = SphereCapsule(*this, collider, mtv);
-	//	mtv = -mtv;
-	//	return isColliding;
-	//}
-
-	Vector3 translation;
-	float radius = 0.0f;
-
 	ColliderInfo info;
+	Sphere g; // Geometry
+
+	inline bool IsColliding(const SphereCollider& collider) const;
+	inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const;
+	inline bool IsColliding(const CapsuleCollider& collider) const;
+	inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const;
 };
 
-// Inheritance is for losers (x2)
 struct CapsuleCollider
 {
-	CapsuleCollider() = default;
-	~CapsuleCollider() = default;
-
-	inline bool IsColliding(const CapsuleCollider& collider) { return CapsuleCapsule(collider.transform, collider.halfHeight, collider.radius, transform, halfHeight, radius); }
-	inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) { return CapsuleCapsule(collider.transform, collider.halfHeight, collider.radius, transform, halfHeight, radius, mtv); }
-	
-	//inline bool IsColliding(const SphereCollider& collider, Vector3& mtv)
-	//{
-	//	return SphereCapsule(collider, *this, mtv);
-	//}
-
-	RigidTransform transform;
-	float halfHeight = 0.0f;
-	float radius = 0.0f;
-
 	ColliderInfo info;
+	Capsule g; // Geometry
+
+	inline bool IsColliding(const CapsuleCollider& collider) const;
+	inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const;
+	inline bool IsColliding(const SphereCollider& collider) const;
+	inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const;
 };
 
+// Not worrying about this at the moment. There's no gameplay yet so no point in making a HitPair mechanism.
+// An ECS will probably involve making a generic id system and O(1) removal system so wait for that!
 class Collision
 {
 public:
-	static SphereCollider& Add(const Vector3& translation, float radius, Tag tag, void* data);
-	static CapsuleCollider& Add(const RigidTransform& transform, float halfHeight, float radius, Tag tag, void* data);
+	SphereCollider& Add(const Sphere& geometry, ColliderInfo info);
+	CapsuleCollider& Add(const Capsule& geometry, ColliderInfo info);
 
-	static void Remove(const SphereCollider& collider);
-	static void Remove(const CapsuleCollider& collider);
+	void Remove(const SphereCollider& collider);
+	void Remove(const CapsuleCollider& collider);
 
-	static void Clear();
-	static std::vector<HitPair> Collide();
+	// All that's needed to resolve collisions is mtv
+	// and references to the colliders owners.
+	// (Let the GameObject adjust its collider in response).
+	std::vector<HitPair> Collide();
 
 private:
-	static std::vector<SphereCollider> sSpheres;
-	static std::vector<CapsuleCollider> sCapsules;
-	static uint32_t sId;
+	std::vector<SphereCollider> mSpheres;
+	std::vector<CapsuleCollider> mCapsules;
+	std::unordered_map<SphereCollider*, size_t> mSphereMap;
+	std::unordered_map<CapsuleCollider*, size_t> mCapsuleMap;
+
+	// TODO: static vs dynamic
+	//std::vector<SphereCollider> mStaticSpheres;
+	//std::vector<SphereCollider> mDynamicSpheres;
+	//std::vector<CapsuleCollider> mStaticCapsules;
+	//std::vector<CapsuleCollider> mDynamicCapsules;
 };
 
-/*
-// MTV resolves b from a
-inline bool SphereCapsule(const SphereCollider& a, const CapsuleCollider& b, Vector3& mtv)
+inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
 {
-	using namespace DirectX::SimpleMath;
-	Vector3 front = b.transform.Front();
-	Vector3 cylinderTop = b.transform.Translation() + front * b.halfHeight;
-	Vector3 cylinderBot = b.transform.Translation() - front * b.halfHeight;
-	return SphereSphere(a, { ClosestLinePoint(cylinderBot, cylinderTop, a.translation), b.radius }, mtv);
+	return SphereSphere(collider.g, g);
 }
-*/
+
+inline bool SphereCollider::IsColliding(const CapsuleCollider& collider) const
+{
+	return SphereCapsule(g, collider.g);
+}
+
+inline bool SphereCollider::IsColliding(const SphereCollider& collider, Vector3& mtv) const
+{
+	return SphereSphere(collider.g, g, mtv);
+}
+
+inline bool SphereCollider::IsColliding(const CapsuleCollider& collider, Vector3& mtv) const
+{
+	bool isColliding = SphereCapsule(g, collider.g, mtv);
+	mtv = -mtv;
+	return isColliding;
+}
+
+inline bool CapsuleCollider::IsColliding(const CapsuleCollider& collider) const
+{
+	return CapsuleCapsule(collider.g, g);
+}
+
+inline bool CapsuleCollider::IsColliding(const SphereCollider& collider) const
+{
+	return SphereCapsule(collider.g, g);
+}
+
+inline bool CapsuleCollider::IsColliding(const CapsuleCollider& collider, Vector3& mtv) const
+{
+	return CapsuleCapsule(collider.g, g, mtv);
+}
+
+inline bool CapsuleCollider::IsColliding(const SphereCollider& collider, Vector3& mtv) const
+{
+	return SphereCapsule(collider.g, g, mtv);
+}
+#pragma endregion

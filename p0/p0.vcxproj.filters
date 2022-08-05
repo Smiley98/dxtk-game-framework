@@ -104,9 +104,6 @@
     <ClInclude Include="src\PhysicsScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="src\CollisionMath.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\TransformBase.h">
       <Filter>Math</Filter>
     </ClInclude>
