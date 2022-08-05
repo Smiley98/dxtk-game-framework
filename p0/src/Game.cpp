@@ -4,7 +4,6 @@
 extern void ExitGame() noexcept;
 
 using namespace DirectX;
-using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 

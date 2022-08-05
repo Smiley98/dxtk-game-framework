@@ -3,13 +3,11 @@
 #include "DebugRenderer.h"
 
 using namespace DirectX;
-using namespace DirectX::SimpleMath;
 
 PhysicsScene::PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();
-	mStates = std::make_unique<CommonStates>(device);
 
 	mSphereSphereA.translation = { -500.0f, 0.0f, 0.0f };
 	mSphereSphereA.radius = mRadius;
@@ -32,7 +30,7 @@ void PhysicsScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const RECT size = graphics->GetOutputSize();
 	const float width = float(size.right - size.left);
 	const float height = float(size.bottom - size.top);
-	mProjection = Matrix::CreateOrthographic(width, height, 0.01f, 1000.0f);
+	mProj = Matrix::CreateOrthographic(width, height, 0.01f, 1000.0f);
 }
 
 void PhysicsScene::OnBegin()
@@ -78,8 +76,8 @@ void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	//Debug::Draw(mSphereSphereA, mView, mProjection, graphics, mSphereSphereColor);
 	//Debug::Draw(mSphereSphereB, mView, mProjection, graphics, mSphereSphereColor);
-	Debug::Draw(mCapsuleCapsuleA, mView, mProjection, graphics, mCapsuleCapsuleColor, true);
-	Debug::Draw(mCapsuleCapsuleB, mView, mProjection, graphics, mCapsuleCapsuleColor, true);
+	Debug::Draw(mCapsuleCapsuleA, mView, mProj, graphics, mCapsuleCapsuleColor, true);
+	Debug::Draw(mCapsuleCapsuleB, mView, mProj, graphics, mCapsuleCapsuleColor, true);
 
 	Vector3 aUpper, aLower;
 	Vector3 bUpper, bLower;
@@ -88,10 +86,10 @@ void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Bounds(mCapsuleCapsuleB.transform, mCapsuleCapsuleB.halfHeight, bUpper, bLower);
 	NearestSpheres(mCapsuleCapsuleA.transform, mCapsuleCapsuleA.halfHeight, mCapsuleCapsuleA.radius, mCapsuleCapsuleB.transform, mCapsuleCapsuleB.halfHeight, mCapsuleCapsuleB.radius, aNearest, bNearest);
 
-	Debug::Draw({ aUpper, mRadius }, mView, mProjection, graphics, Colors::Purple);
-	Debug::Draw({ bUpper, mRadius }, mView, mProjection, graphics, Colors::Purple);
-	Debug::Draw({ aLower, mRadius }, mView, mProjection, graphics, Colors::Blue);
-	Debug::Draw({ bLower, mRadius }, mView, mProjection, graphics, Colors::Blue);
-	Debug::Draw({ aNearest, mRadius }, mView, mProjection, graphics);
-	Debug::Draw({ bNearest, mRadius }, mView, mProjection, graphics, Colors::Aqua);
+	Debug::Draw({ aUpper, mRadius }, mView, mProj, graphics, Colors::Purple);
+	Debug::Draw({ bUpper, mRadius }, mView, mProj, graphics, Colors::Purple);
+	Debug::Draw({ aLower, mRadius }, mView, mProj, graphics, Colors::Blue);
+	Debug::Draw({ bLower, mRadius }, mView, mProj, graphics, Colors::Blue);
+	Debug::Draw({ aNearest, mRadius }, mView, mProj, graphics);
+	Debug::Draw({ bNearest, mRadius }, mView, mProj, graphics, Colors::Aqua);
 }

@@ -2,48 +2,46 @@
 #include "TestScene.h"
 
 using namespace DirectX;
-using namespace DirectX::SimpleMath;
 
 TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
-	m_waveBank = std::make_unique<WaveBank>(audio.get(), L"assets/sounds/adpcmdroid.xwb");
-	m_soundEffect = std::make_unique<SoundEffect>(audio.get(), L"assets/music/MusicMono_adpcm.wav");
-	m_effect1 = m_soundEffect->CreateInstance();
-	m_effect2 = m_waveBank->CreateInstance(10);
+	mWaveBank = std::make_unique<WaveBank>(audio.get(), L"assets/sounds/adpcmdroid.xwb");
+	mSoundEffect = std::make_unique<SoundEffect>(audio.get(), L"assets/music/MusicMono_adpcm.wav");
+	mEffect1 = mSoundEffect->CreateInstance();
+	mEffect2 = mWaveBank->CreateInstance(10);
 
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();
 
-	m_states = std::make_unique<CommonStates>(device);
-	m_fxFactory = std::make_unique<EffectFactory>(device);
-	m_sprites = std::make_unique<SpriteBatch>(context);
-	m_batch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(context);
-	m_batchEffect = std::make_unique<BasicEffect>(device);
-	m_batchEffect->SetVertexColorEnabled(true);
+	mFxFactory = std::make_unique<EffectFactory>(device);
+	mSprites = std::make_unique<SpriteBatch>(context);
+	mBatch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(context);
+	mBatchEffect = std::make_unique<BasicEffect>(device);
+	mBatchEffect->SetVertexColorEnabled(true);
 
 	DX::ThrowIfFailed(
 		CreateInputLayoutFromEffect<VertexPositionColor>(device,
-			m_batchEffect.get(),
-			m_batchInputLayout.ReleaseAndGetAddressOf())
+			mBatchEffect.get(),
+			mBatchInputLayout.ReleaseAndGetAddressOf())
 	);
 
-	m_font = std::make_unique<SpriteFont>(device, L"assets/fonts/SegoeUI_18.spritefont");
-	m_shape = GeometricPrimitive::CreateTeapot(context, 4.f, 8);
+	mFont = std::make_unique<SpriteFont>(device, L"assets/fonts/SegoeUI_18.spritefont");
+	mShape = GeometricPrimitive::CreateTeapot(context, 4.f, 8);
 
 	// SDKMESH has to use clockwise winding with right-handed coordinates, so textures are flipped in U
-	m_fxFactory->SetDirectory(L"assets/models");
-	m_model = Model::CreateFromSDKMESH(device, L"assets/models/tiny.sdkmesh", *m_fxFactory);
+	mFxFactory->SetDirectory(L"assets/models");
+	mModel = Model::CreateFromSDKMESH(device, L"assets/models/tiny.sdkmesh", *mFxFactory);
 
 	// Load textures
-	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/seafloor.dds", nullptr, m_texture1.ReleaseAndGetAddressOf()));
-	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/windowslogo.dds", nullptr, m_texture2.ReleaseAndGetAddressOf()));
-	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, m_textureVan.ReleaseAndGetAddressOf()));
+	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/seafloor.dds", nullptr, mTexture1.ReleaseAndGetAddressOf()));
+	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/windowslogo.dds", nullptr, mTexture2.ReleaseAndGetAddressOf()));
+	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, mTextureVan.ReleaseAndGetAddressOf()));
 
-	m_vanEffect = std::make_shared<BasicEffect>(device);
-	m_vanEffect->SetTextureEnabled(true);
-	m_vanEffect->SetTexture(m_textureVan.Get());
+	mVanEffect = std::make_shared<BasicEffect>(device);
+	mVanEffect->SetTextureEnabled(true);
+	mVanEffect->SetTexture(mTextureVan.Get());
 
-	m_van = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", m_vanEffect);
+	mVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", mVanEffect);
 }
 
 TestScene::~TestScene()
@@ -65,26 +63,26 @@ void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	}
 
 	// This sample makes use of a right-handed coordinate system using row-major matrices.
-	m_projection = Matrix::CreatePerspectiveFieldOfView(
+	mProj = Matrix::CreatePerspectiveFieldOfView(
 		fovAngleY,
 		aspectRatio,
 		0.01f,
 		100.0f
 	);
 
-	m_batchEffect->SetProjection(m_projection);
+	mBatchEffect->SetProjection(mProj);
 }
 
 void TestScene::OnBegin()
 {
-	m_effect1->Play(true);
-	m_effect2->Play();
+	mEffect1->Play(true);
+	mEffect2->Play();
 }
 
 void TestScene::OnEnd()
 {
-	m_effect1->Stop();
-	m_effect2->Stop();
+	mEffect1->Stop();
+	mEffect2->Stop();
 }
 
 void TestScene::OnPause()
@@ -99,10 +97,10 @@ void TestScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gam
 {
 	const Vector3 eye(0.0f, 0.7f, 1.5f);
 	const Vector3 at(0.0f, -0.1f, 0.0f);
-	m_view = Matrix::CreateLookAt(eye, at, Vector3::UnitY);
-	m_world = Matrix::CreateRotationY(float(timer.GetTotalSeconds() * XM_PIDIV4));
-	m_batchEffect->SetView(m_view);
-	m_batchEffect->SetWorld(Matrix::Identity);
+	mView = Matrix::CreateLookAt(eye, at, Vector3::UnitY);
+	mWorld = Matrix::CreateRotationY(float(timer.GetTotalSeconds() * XM_PIDIV4));
+	mBatchEffect->SetView(mView);
+	mBatchEffect->SetWorld(Matrix::Identity);
 }
 
 void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -118,33 +116,33 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	// Draw sprite
 	graphics->PIXBeginEvent(L"Draw sprite");
-	m_sprites->Begin();
-	m_sprites->Draw(m_texture2.Get(), XMFLOAT2(10, 75), nullptr, Colors::White);
+	mSprites->Begin();
+	mSprites->Draw(mTexture2.Get(), XMFLOAT2(10, 75), nullptr, Colors::White);
 
-	m_font->DrawString(m_sprites.get(), L"DirectXTK Simple Sample", XMFLOAT2(100, 10), Colors::Yellow);
-	m_sprites->End();
+	mFont->DrawString(mSprites.get(), L"DirectXTK Simple Sample", XMFLOAT2(100, 10), Colors::Yellow);
+	mSprites->End();
 	graphics->PIXEndEvent();
 
 	// Draw 3D objects
 	graphics->PIXBeginEvent(L"Draw teapot");
-	XMMATRIX local = m_world * Matrix::CreateTranslation(-2.f, -2.f, -4.f);
-	m_shape->Draw(local, m_view, m_projection, Colors::White, m_texture1.Get());
+	XMMATRIX local = mWorld * Matrix::CreateTranslation(-2.f, -2.f, -4.f);
+	mShape->Draw(local, mView, mProj, Colors::White, mTexture1.Get());
 	graphics->PIXEndEvent();
 
 	{	graphics->PIXBeginEvent(L"Draw sdkmesh");
 		const XMVECTORF32 scale = { 0.01f, 0.01f, 0.01f };
 		const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
 		const XMVECTORF32 translate = { 3.f, -2.f, -4.f };
-		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-		m_model->Draw(context, *m_states, local, m_view, m_projection);
+		XMMATRIX local = mWorld * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+		mModel->Draw(context, *mStates, local, mView, mProj);
 	}	graphics->PIXEndEvent();
 
 	{	graphics->PIXBeginEvent(L"Draw vbo (van)");
 		const Vector3 scale(0.1f);
 		const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
 		const XMVECTORF32 translate = { 2.f, -1.f, -4.f };
-		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-		m_van->Draw(context, *m_states, local, m_view, m_projection);
+		XMMATRIX local = mWorld * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+		mVan->Draw(context, *mStates, local, mView, mProj);
 	}	graphics->PIXEndEvent();
 
 	graphics->PIXEndEvent();
@@ -155,15 +153,15 @@ void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphi
 	graphics->PIXBeginEvent(L"Draw grid");
 
 	auto context = graphics->GetD3DDeviceContext();
-	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
-	context->OMSetDepthStencilState(m_states->DepthNone(), 0);
-	context->RSSetState(m_states->CullCounterClockwise());
+	context->OMSetBlendState(mStates->Opaque(), nullptr, 0xFFFFFFFF);
+	context->OMSetDepthStencilState(mStates->DepthNone(), 0);
+	context->RSSetState(mStates->CullCounterClockwise());
 
-	m_batchEffect->Apply(context);
+	mBatchEffect->Apply(context);
 
-	context->IASetInputLayout(m_batchInputLayout.Get());
+	context->IASetInputLayout(mBatchInputLayout.Get());
 
-	m_batch->Begin();
+	mBatch->Begin();
 
 	xdivs = std::max<size_t>(1, xdivs);
 	ydivs = std::max<size_t>(1, ydivs);
@@ -177,7 +175,7 @@ void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphi
 
 		const VertexPositionColor v1(XMVectorSubtract(vScale, yAxis), color);
 		const VertexPositionColor v2(XMVectorAdd(vScale, yAxis), color);
-		m_batch->DrawLine(v1, v2);
+		mBatch->DrawLine(v1, v2);
 	}
 
 	for (size_t i = 0; i <= ydivs; i++)
@@ -189,10 +187,10 @@ void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphi
 
 		const VertexPositionColor v1(XMVectorSubtract(vScale, xAxis), color);
 		const VertexPositionColor v2(XMVectorAdd(vScale, xAxis), color);
-		m_batch->DrawLine(v1, v2);
+		mBatch->DrawLine(v1, v2);
 	}
 
-	m_batch->End();
+	mBatch->End();
 
 	graphics->PIXEndEvent();
 }

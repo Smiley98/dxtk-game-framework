@@ -19,7 +19,8 @@ std::shared_ptr<DirectX::Model> Scene::sVan;
 std::shared_ptr<DirectX::BasicEffect> Scene::sVanShader;
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Scene::sVanTexture;
 
-Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
+Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) :
+	mStates(std::make_unique<CommonStates>(graphics->GetD3DDevice()))
 {
 }
 

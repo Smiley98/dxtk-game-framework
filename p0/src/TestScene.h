@@ -22,33 +22,28 @@ protected:
 
 private:
     // DirectXTK audio objects
-    std::unique_ptr<DirectX::WaveBank>              m_waveBank;
-    std::unique_ptr<DirectX::SoundEffect>           m_soundEffect;
-    std::unique_ptr<DirectX::SoundEffectInstance>   m_effect1;
-    std::unique_ptr<DirectX::SoundEffectInstance>   m_effect2;
+    std::unique_ptr<DirectX::WaveBank>              mWaveBank;
+    std::unique_ptr<DirectX::SoundEffect>           mSoundEffect;
+    std::unique_ptr<DirectX::SoundEffectInstance>   mEffect1;
+    std::unique_ptr<DirectX::SoundEffectInstance>   mEffect2;
 
     // DirectXTK graphics objects
-    std::unique_ptr<DirectX::CommonStates>                                  m_states;
-    std::unique_ptr<DirectX::BasicEffect>                                   m_batchEffect;
-    std::unique_ptr<DirectX::EffectFactory>                                 m_fxFactory;
-    std::unique_ptr<DirectX::GeometricPrimitive>                            m_shape;
-    std::unique_ptr<DirectX::Model>                                         m_model;
-    std::unique_ptr<DirectX::Model>                                         m_van;
-    std::shared_ptr<DirectX::BasicEffect>                                   m_vanEffect;
-    std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
-    std::unique_ptr<DirectX::SpriteBatch>                                   m_sprites;
-    std::unique_ptr<DirectX::SpriteFont>                                    m_font;
+    std::unique_ptr<DirectX::BasicEffect>                                   mBatchEffect;
+    std::unique_ptr<DirectX::EffectFactory>                                 mFxFactory;
+    std::unique_ptr<DirectX::GeometricPrimitive>                            mShape;
+    std::unique_ptr<DirectX::Model>                                         mModel;
+    std::unique_ptr<DirectX::Model>                                         mVan;
+    std::shared_ptr<DirectX::BasicEffect>                                   mVanEffect;
+    std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  mBatch;
+    std::unique_ptr<DirectX::SpriteBatch>                                   mSprites;
+    std::unique_ptr<DirectX::SpriteFont>                                    mFont;
+    Matrix                                                                  mWorld;
 
     // D3D11 objects
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        m_texture1;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        m_texture2;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        m_textureVan;
-    Microsoft::WRL::ComPtr<ID3D11InputLayout>                               m_batchInputLayout;
-
-    // Graphics objects
-    DirectX::SimpleMath::Matrix                                             m_world;
-    DirectX::SimpleMath::Matrix                                             m_view;
-    DirectX::SimpleMath::Matrix                                             m_projection;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture1;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture2;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTextureVan;
+    Microsoft::WRL::ComPtr<ID3D11InputLayout>                               mBatchInputLayout;
 
     void XM_CALLCONV DrawGrid(std::shared_ptr<DX::DeviceResources> graphics, DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 };

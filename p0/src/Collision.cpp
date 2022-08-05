@@ -2,7 +2,6 @@
 #include "Collision.h"
 
 using namespace DirectX;
-using namespace DirectX::SimpleMath;
 
 //std::vector<SphereCollider> Collider::sStaticSpheres;
 //std::vector<SphereCollider> Collider::sDynamicSpheres;

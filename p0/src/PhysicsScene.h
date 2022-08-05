@@ -19,8 +19,6 @@ public:
 
 private:
 	std::unique_ptr<DirectX::CommonStates> mStates;
-	DirectX::SimpleMath::Matrix	mView;
-	DirectX::SimpleMath::Matrix	mProjection;
 
 	const float mRadius = 25.0f;
 	const float mHalfHeight = 75.0f;

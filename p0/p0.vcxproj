@@ -126,6 +126,7 @@
     <ClInclude Include="src\Tags.h" />
     <ClInclude Include="src\TestScene.h" />
     <ClInclude Include="src\Transform.h" />
+    <ClInclude Include="src\TransformBase.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav" />

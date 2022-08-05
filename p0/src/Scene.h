@@ -76,6 +76,11 @@ protected:
 	static std::shared_ptr<DirectX::BasicEffect> sVanShader;
 	static Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sVanTexture;
 
+	// Common members
+	std::unique_ptr<DirectX::CommonStates> mStates;
+	Matrix mView;
+	Matrix mProj;
+
 private:
 	static std::array<Scene*, NONE> sScenes;
 	static Type sType;

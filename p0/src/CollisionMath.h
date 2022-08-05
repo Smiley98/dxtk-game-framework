@@ -1,16 +1,16 @@
 #pragma once
 #include "Transform.h"
 
-inline void Bounds(const RigidTransform& t, float hh, DirectX::SimpleMath::Vector3& top, DirectX::SimpleMath::Vector3& bot);
-inline DirectX::SimpleMath::Vector3 NearestPoint(const DirectX::SimpleMath::Vector3& a, const DirectX::SimpleMath::Vector3& b, const DirectX::SimpleMath::Vector3& p);
+inline void Bounds(const RigidTransform& t, float hh, Vector3& top, Vector3& bot);
+inline Vector3 NearestPoint(const Vector3& a, const Vector3& b, const Vector3& p);
 inline void NearestSpheres(
 	const RigidTransform& tA, float hhA, float rA,
 	const RigidTransform& tB, float hhB, float rB,
-	DirectX::SimpleMath::Vector3& bestA,
-	DirectX::SimpleMath::Vector3& bestB);
+	Vector3& bestA,
+	Vector3& bestB);
 
 // t = translation, r = radius
-inline bool SphereSphere(const DirectX::SimpleMath::Vector3& tA, float rA, const DirectX::SimpleMath::Vector3& tB, float rB)
+inline bool SphereSphere(const Vector3& tA, float rA, const Vector3& tB, float rB)
 {
 	using namespace DirectX::SimpleMath;
 	Vector3 AB = tB - tA;
@@ -20,7 +20,7 @@ inline bool SphereSphere(const DirectX::SimpleMath::Vector3& tA, float rA, const
 }
 
 // MTV resolves B from A where t = translation, r = radius
-inline bool SphereSphere(const DirectX::SimpleMath::Vector3& tA, float rA, const DirectX::SimpleMath::Vector3& tB, float rB, DirectX::SimpleMath::Vector3& mtv)
+inline bool SphereSphere(const Vector3& tA, float rA, const Vector3& tB, float rB, Vector3& mtv)
 {
 	using namespace DirectX::SimpleMath;
 	Vector3 AB = tB - tA;
@@ -46,7 +46,7 @@ inline bool CapsuleCapsule(const RigidTransform& tA, float hhA, float rA, const 
 }
 
 // MTV resolves b from a where t = transform (translation & rotation), hh = half height, r = radius
-inline bool CapsuleCapsule(const RigidTransform& tA, float hhA, float rA, const RigidTransform& tB, float hhB, float rB, DirectX::SimpleMath::Vector3& mtv)
+inline bool CapsuleCapsule(const RigidTransform& tA, float hhA, float rA, const RigidTransform& tB, float hhB, float rB, Vector3& mtv)
 {
 	using namespace DirectX::SimpleMath;
 	Vector3 nearestA, nearestB;
@@ -55,7 +55,7 @@ inline bool CapsuleCapsule(const RigidTransform& tA, float hhA, float rA, const 
 }
 
 // Outputs the top and bottom of a cylinder (relative to its forward vector) where t = transform (translation & rotation), hh = half height
-inline void Bounds(const RigidTransform& t, float hh, DirectX::SimpleMath::Vector3& top, DirectX::SimpleMath::Vector3& bot)
+inline void Bounds(const RigidTransform& t, float hh, Vector3& top, Vector3& bot)
 {
 	using namespace DirectX::SimpleMath;
 	const Vector3 front = t.Front();
@@ -64,7 +64,7 @@ inline void Bounds(const RigidTransform& t, float hh, DirectX::SimpleMath::Vecto
 }
 
 // Returns the point along line ab closest to point p
-inline DirectX::SimpleMath::Vector3 NearestPoint(const DirectX::SimpleMath::Vector3& a, const DirectX::SimpleMath::Vector3& b, const DirectX::SimpleMath::Vector3& p)
+inline Vector3 NearestPoint(const Vector3& a, const Vector3& b, const Vector3& p)
 {
 	using namespace DirectX::SimpleMath;
 	Vector3 AB = b - a;
@@ -75,8 +75,8 @@ inline DirectX::SimpleMath::Vector3 NearestPoint(const DirectX::SimpleMath::Vect
 inline void NearestSpheres(
 	const RigidTransform& tA, float hhA, float rA,
 	const RigidTransform& tB, float hhB, float rB,
-	DirectX::SimpleMath::Vector3& nearestA,
-	DirectX::SimpleMath::Vector3& nearestB)
+	Vector3& nearestA,
+	Vector3& nearestB)
 {
 	using namespace DirectX::SimpleMath;
 	Vector3 aTop, aBot, bTop, bBot;

@@ -3,13 +3,11 @@
 #include "DebugRenderer.h"
 
 using namespace DirectX;
-using namespace DirectX::SimpleMath;
 
 MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();
-	mStates = std::make_unique<CommonStates>(device);
 
 	// TODO: Make a Buildings class that loads all building vbos
 	// Even though buildings only exist in the MainScene,
@@ -38,7 +36,7 @@ void MainScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_PI / 180.0f;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-	mProjection = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
+	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
 }
 
 void MainScene::OnBegin()
