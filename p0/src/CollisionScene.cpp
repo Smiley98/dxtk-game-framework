@@ -106,7 +106,7 @@ void CollisionScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad
 
 	{
 		// Soccer (Sphere-Capsule)
-		mCapsule2.g.t.DeltaTranslate(mCapsule2.g.t.Front() * speed);
+		mCapsule2.g.t.DeltaTranslate(mCapsule2.g.t.Forward() * speed);
 		Vector3 mtv;
 		if (mSphere2.IsColliding(mCapsule2, mtv))
 			mSphere2.g.t += mtv;

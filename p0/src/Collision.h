@@ -40,7 +40,7 @@ struct HitPair
 inline void CylinderBounds(const Capsule& capsule, Vector3& top, Vector3& bot)
 {
 	const RigidTransform& t = capsule.t;
-	const Vector3 front = t.Front();
+	const Vector3 front = t.Forward();
 	top = t.Translation() + front * capsule.hh;
 	bot = t.Translation() - front * capsule.hh;
 }
@@ -109,7 +109,7 @@ inline bool SphereSphere(const Sphere& a, const Sphere& b, Vector3& mtv)
 
 inline bool SphereCapsule(const Sphere& a, const Capsule& b)
 {
-	Vector3 front = b.t.Front();
+	Vector3 front = b.t.Forward();
 	Vector3 cylinderTop = b.t.Translation() + front * b.hh;
 	Vector3 cylinderBot = b.t.Translation() - front * b.hh;
 	return SphereSphere(a, { NearestPoint(cylinderBot, cylinderTop, a.t), b.r });
@@ -118,7 +118,7 @@ inline bool SphereCapsule(const Sphere& a, const Capsule& b)
 // MTV resolves b from a
 inline bool SphereCapsule(const Sphere& a, const Capsule& b, Vector3& mtv)
 {
-	Vector3 front = b.t.Front();
+	Vector3 front = b.t.Forward();
 	Vector3 cylinderTop = b.t.Translation() + front * b.hh;
 	Vector3 cylinderBot = b.t.Translation() - front * b.hh;
 	return SphereSphere(a, { NearestPoint(cylinderBot, cylinderTop, a.t), b.r }, mtv);

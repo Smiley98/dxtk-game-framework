@@ -9,21 +9,21 @@ class TransformBase
 public:
 
 	// Local forward (orientation)
-	inline Vector3 Front()	const
+	inline Vector3 Forward()	const
 	{
 		return Matrix::CreateFromYawPitchRoll(mRotation).Up();
 	}
 
 	// Local right (forward x up)
-	inline Vector3 Adjacent() const
+	inline Vector3 Right() const
 	{
-		return Front().Cross(Vector3::UnitZ);
+		return Forward().Cross(Vector3::UnitZ);
 	}
 
 	// Local up (forward x right)
-	inline Vector3 Above()	const
+	inline Vector3 Up()	const
 	{
-		return Front().Cross(Adjacent());
+		return Forward().Cross(Right());
 	}
 
 	// Get translation
