@@ -1,5 +1,6 @@
 #pragma once
 #include "Tags.h"
+#include <array>
 #include <vector>
 #include <unordered_map>
 
@@ -58,19 +59,26 @@ inline void NearestSpheres(const Capsule a, const Capsule b, Vector3& nearestA, 
 	CylinderBounds(a, aTop, aBot);
 	CylinderBounds(b, bTop, bBot);
 
-	Vector3 aBot_bBotVec = bBot - aBot;
-	Vector3 aTop_bTopVec = bTop - aTop;
-	Vector3 aBot_bTopVec = bTop - aBot;
-	Vector3 aTop_bBotVec = bBot - aTop;
+	Vector3 vectors[4] {
+		bTop - aTop,
+		bBot - aTop,
+		bTop - aBot,
+		bBot - aBot
+	};
 
-	float aBot_bBot = aBot_bBotVec.LengthSquared();
-	float aTop_bTop = aTop_bTopVec.LengthSquared();
-	float aBot_bTop = aBot_bTopVec.LengthSquared();
-	float aTop_bBot = aTop_bBotVec.LengthSquared();
+	uint32_t min = 0;
+	float length = vectors[min].LengthSquared();
+	for (int i = 1; i < 4; i++)
+	{
+		float temp = vectors[i].LengthSquared();
+		if (temp < length)
+		{
+			length = temp;
+			min = i;
+		}
+	}
 
-	// TODO -- use AND logic to individually figure out which of the 4 sphere pairs is closest
-	nearestA = true ? aTop : aBot;
-
+	nearestA = min < 2 ? aTop : aBot;
 	nearestB = NearestPoint(bBot, bTop, nearestA);
 	nearestA = NearestPoint(aBot, aTop, nearestB);
 }
