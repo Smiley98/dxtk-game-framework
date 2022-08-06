@@ -72,22 +72,36 @@ void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
 
-	Debug::Draw(mSphereSphereA.g, mView, mProj, graphics, mSphereSphereColor);
-	Debug::Draw(mSphereSphereB.g, mView, mProj, graphics, mSphereSphereColor);
+	Debug::Draw(mSphereSphereA.g, mView, mProj, graphics, mSphereSphereColor, true);
+	Debug::Draw(mSphereSphereB.g, mView, mProj, graphics, mSphereSphereColor, true);
+	DebugSpheres(mSphereSphereA.g, mSphereSphereB.g, graphics);
+
 	Debug::Draw(mCapsuleCapsuleA.g, mView, mProj, graphics, mCapsuleCapsuleColor, true);
 	Debug::Draw(mCapsuleCapsuleB.g, mView, mProj, graphics, mCapsuleCapsuleColor, true);
+	DebugCapsules(mCapsuleCapsuleA.g, mCapsuleCapsuleB.g, graphics);
+}
 
+void PhysicsScene::DebugSpheres(const Sphere& a, const Sphere& b, std::shared_ptr<DX::DeviceResources> graphics)
+{
+	Vector3 direction = b.t - a.t;
+	direction.Normalize();
+	Debug::Draw({ a.t + a.r *  direction * 0.5f, a.r * 0.5f }, mView, mProj, graphics);
+	Debug::Draw({ b.t + b.r * -direction * 0.5f, b.r * 0.5f }, mView, mProj, graphics);
+}
+
+void PhysicsScene::DebugCapsules(const Capsule& a, const Capsule& b, std::shared_ptr<DX::DeviceResources> graphics)
+{
 	Vector3 aUpper, aLower;
 	Vector3 bUpper, bLower;
 	Vector3 aNearest, bNearest;
-	CylinderBounds(mCapsuleCapsuleA.g, aUpper, aLower);
-	CylinderBounds(mCapsuleCapsuleB.g, bUpper, bLower);
-	NearestSpheres(mCapsuleCapsuleA.g, mCapsuleCapsuleB.g, aNearest, bNearest);
+	CylinderBounds(a, aUpper, aLower);
+	CylinderBounds(b, bUpper, bLower);
+	NearestSpheres(a, b, aNearest, bNearest);
 
-	Debug::Draw({ aUpper, mRadius }, mView, mProj, graphics, Colors::Purple);
-	Debug::Draw({ bUpper, mRadius }, mView, mProj, graphics, Colors::Purple);
-	Debug::Draw({ aLower, mRadius }, mView, mProj, graphics, Colors::Blue);
-	Debug::Draw({ bLower, mRadius }, mView, mProj, graphics, Colors::Blue);
-	Debug::Draw({ aNearest, mRadius }, mView, mProj, graphics);
-	Debug::Draw({ bNearest, mRadius }, mView, mProj, graphics, Colors::Aqua);
+	Debug::Draw({ aUpper, mRadius }, mView, mProj, graphics, Colors::Blue);
+	Debug::Draw({ bUpper, mRadius }, mView, mProj, graphics, Colors::Blue);
+	Debug::Draw({ aLower, mRadius }, mView, mProj, graphics, Colors::Purple);
+	Debug::Draw({ bLower, mRadius }, mView, mProj, graphics, Colors::Purple);
+	Debug::Draw({ aNearest, mRadius }, mView, mProj, graphics, Colors::Black);
+	Debug::Draw({ bNearest, mRadius }, mView, mProj, graphics, Colors::White);
 }

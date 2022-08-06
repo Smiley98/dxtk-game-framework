@@ -31,6 +31,9 @@ private:
 	CapsuleCollider mCapsuleCapsuleB;
 	DirectX::XMVECTOR mCapsuleCapsuleColor;
 
+	void DebugSpheres(const Sphere& a, const Sphere& b, std::shared_ptr<DX::DeviceResources> graphics);
+	void DebugCapsules(const Capsule& a, const Capsule& b, std::shared_ptr<DX::DeviceResources> graphics);
+
 	//SphereCollider mSphereCapsuleA;
 	//CapsuleCollider mSphereCapsuleB;
 	//DirectX::XMVECTOR mSphereCapsuleColor;
