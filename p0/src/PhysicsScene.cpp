@@ -17,6 +17,15 @@ PhysicsScene::PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::s
 	mCapsuleCapsuleA.g.hh = mHalfHeight;
 	mCapsuleCapsuleA.g.r = mRadius;
 	mCapsuleCapsuleB = mCapsuleCapsuleA;
+
+	mCapsule1.g.t.Translate({ 0.0f, 250.0f, 0.0f });
+	mCapsule1.g.t.DeltaRotate(90.0f);
+	mCapsule1.g.hh = mHalfHeight;
+	mCapsule1.g.r = mRadius;
+	mSphere1.g.t ={ 0.0f, 250.0f, 0.0f };
+	mSphere1.g.r = mRadius;
+
+
 }
 
 PhysicsScene::~PhysicsScene()
@@ -54,18 +63,35 @@ void PhysicsScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& 
 	const float tt = (float)timer.GetTotalSeconds();
 	const float speed = 100.0f * dt;
 
-	mSphereSphereB.g.t = mSphereSphereA.g.t;
-	mSphereSphereB.g.t += { mRadius* cos(tt), mRadius* sin(tt), 0.0f };
-	Vector3 mtv;
-	if (mSphereSphereB.IsColliding(mSphereSphereA, mtv))
-		mSphereSphereB.g.t += mtv;
-	mSphereSphereColor = mSphereSphereB.IsColliding(mSphereSphereA) ? Colors::Red : Colors::Green;
+	{
+		mSphereSphereB.g.t = mSphereSphereA.g.t;
+		mSphereSphereB.g.t += { mRadius* cos(tt), mRadius* sin(tt), 0.0f };
+		Vector3 mtv;
+		if (mSphereSphereB.IsColliding(mSphereSphereA, mtv))
+			mSphereSphereB.g.t += mtv;
+		mSphereSphereColor = mSphereSphereB.IsColliding(mSphereSphereA) ? Colors::Red : Colors::Green;
+	}
 
-	const float distance = 100.0f;
-	const float height = mHalfHeight * 2.0f;
-	mCapsuleCapsuleB.g.t.Translate(mCapsuleCapsuleA.g.t.Translation() + Vector3{ cos(tt) * distance, 0.0f, 0.0f });
-	mCapsuleCapsuleB.g.t.DeltaRotate({ 0.0f, 0.0f, speed * 0.1f });
-	mCapsuleCapsuleColor = mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA) ? Colors::Red : Colors::Green;
+	{
+		const float distance = 100.0f;
+		const float height = mHalfHeight * 2.0f;
+		mCapsuleCapsuleB.g.t.Translate(mCapsuleCapsuleA.g.t.Translation() + Vector3{ cos(tt) * distance, 0.0f, 0.0f });
+		mCapsuleCapsuleB.g.t.DeltaRotate({ 0.0f, 0.0f, speed * 0.1f });
+		mCapsuleCapsuleColor = mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA) ? Colors::Red : Colors::Green;
+	}
+
+	// Sphere 1 is resolved from capsule 1
+	{
+		Vector3 mtv;
+		mSphere1.g.t = mCapsule1.g.t.Translation() + Vector3{ cos(tt) * mHalfHeight, -mRadius, 0.0f };
+		if (mSphere1.IsColliding(mCapsule1, mtv))
+			mSphere1.g.t += mtv;
+		mColor1 = mSphere1.IsColliding(mCapsule1) ? Colors::Red : Colors::Green;
+	}
+
+	{
+
+	}
 }
 
 void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -79,6 +105,9 @@ void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Debug::Draw(mCapsuleCapsuleA.g, mView, mProj, graphics, mCapsuleCapsuleColor, true);
 	Debug::Draw(mCapsuleCapsuleB.g, mView, mProj, graphics, mCapsuleCapsuleColor, true);
 	DebugCapsules(mCapsuleCapsuleA.g, mCapsuleCapsuleB.g, graphics);
+
+	Debug::Draw(mSphere1.g, mView, mProj, graphics, mColor1, true);
+	Debug::Draw(mCapsule1.g, mView, mProj, graphics, mColor1, true);
 }
 
 void PhysicsScene::DebugSpheres(const Sphere& a, const Sphere& b, std::shared_ptr<DX::DeviceResources> graphics)
@@ -91,17 +120,8 @@ void PhysicsScene::DebugSpheres(const Sphere& a, const Sphere& b, std::shared_pt
 
 void PhysicsScene::DebugCapsules(const Capsule& a, const Capsule& b, std::shared_ptr<DX::DeviceResources> graphics)
 {
-	Vector3 aUpper, aLower;
-	Vector3 bUpper, bLower;
 	Vector3 aNearest, bNearest;
-	CylinderBounds(a, aUpper, aLower);
-	CylinderBounds(b, bUpper, bLower);
 	NearestSpheres(a, b, aNearest, bNearest);
-
-	Debug::Draw({ aUpper, mRadius }, mView, mProj, graphics, Colors::Blue);
-	Debug::Draw({ bUpper, mRadius }, mView, mProj, graphics, Colors::Blue);
-	Debug::Draw({ aLower, mRadius }, mView, mProj, graphics, Colors::Purple);
-	Debug::Draw({ bLower, mRadius }, mView, mProj, graphics, Colors::Purple);
 	Debug::Draw({ aNearest, mRadius }, mView, mProj, graphics, Colors::Black);
 	Debug::Draw({ bNearest, mRadius }, mView, mProj, graphics, Colors::White);
 }

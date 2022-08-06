@@ -31,14 +31,15 @@ private:
 	CapsuleCollider mCapsuleCapsuleB;
 	DirectX::XMVECTOR mCapsuleCapsuleColor;
 
+	// Sphere 1 is resolved from capsule 1
+	SphereCollider mSphere1;
+	CapsuleCollider mCapsule1;
+	DirectX::XMVECTOR mColor1;
+
+	//SphereCollider mSphere2;
+	//CapsuleCollider mCapsule2;
+	//DirectX::XMVECTOR mColor2;
+
 	void DebugSpheres(const Sphere& a, const Sphere& b, std::shared_ptr<DX::DeviceResources> graphics);
 	void DebugCapsules(const Capsule& a, const Capsule& b, std::shared_ptr<DX::DeviceResources> graphics);
-
-	//SphereCollider mSphereCapsuleA;
-	//CapsuleCollider mSphereCapsuleB;
-	//DirectX::XMVECTOR mSphereCapsuleColor;
-	//
-	//CapsuleCollider mCapsuleSphereA;
-	//SphereCollider mCapsuleSphereB;
-	//DirectX::XMVECTOR mCapsuleSphereColor;
 };
