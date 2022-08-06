@@ -14,9 +14,11 @@ PhysicsScene::PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::s
 	mSphereSphereB = mSphereSphereA;
 
 	mCapsuleCapsuleA.g.t.Translate({ 500.0, 0.0f, 0.0f });
+	mCapsuleCapsuleB.g.t.DeltaRotate(90.0f);
 	mCapsuleCapsuleA.g.hh = mHalfHeight;
+	mCapsuleCapsuleB.g.hh = mHalfHeight;
 	mCapsuleCapsuleA.g.r = mRadius;
-	mCapsuleCapsuleB = mCapsuleCapsuleA;
+	mCapsuleCapsuleB.g.r = mRadius;
 
 	mCapsule1.g.t.Translate({ 0.0f, 250.0f, 0.0f });
 	mCapsule1.g.t.DeltaRotate(90.0f);
@@ -73,14 +75,16 @@ void PhysicsScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& 
 	}
 
 	{
-		const float distance = 100.0f;
-		const float height = mHalfHeight * 2.0f;
-		mCapsuleCapsuleB.g.t.Translate(mCapsuleCapsuleA.g.t.Translation() + Vector3{ cos(tt) * distance, 0.0f, 0.0f });
-		mCapsuleCapsuleB.g.t.DeltaRotate({ 0.0f, 0.0f, speed * 0.1f });
+		const Vector3 origin{ 500.0f, mHalfHeight + mRadius, 0.0f };
+		mCapsuleCapsuleB.g.t.Translate(origin + Vector3 { cos(tt) * speed, 0.0f, 0.0f });
+		mCapsuleCapsuleB.g.t.DeltaRotate({ 0.0f, 0.0f, speed });
+
+		Vector3 mtv;
+		if (mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA, mtv))
+			mCapsuleCapsuleB.g.t.DeltaTranslate(mtv);
 		mCapsuleCapsuleColor = mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA) ? Colors::Red : Colors::Green;
 	}
 
-	// Sphere 1 is resolved from capsule 1
 	{
 		Vector3 mtv;
 		mSphere1.g.t = mCapsule1.g.t.Translation() + Vector3{ cos(tt) * mHalfHeight, -mRadius, 0.0f };
@@ -90,7 +94,7 @@ void PhysicsScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& 
 	}
 
 	{
-
+		
 	}
 }
 

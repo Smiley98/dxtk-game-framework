@@ -31,7 +31,6 @@ private:
 	CapsuleCollider mCapsuleCapsuleB;
 	DirectX::XMVECTOR mCapsuleCapsuleColor;
 
-	// Sphere 1 is resolved from capsule 1
 	SphereCollider mSphere1;
 	CapsuleCollider mCapsule1;
 	DirectX::XMVECTOR mColor1;
