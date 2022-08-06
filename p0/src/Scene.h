@@ -12,7 +12,8 @@ public:
 		//MAP,
 		//MAIN,
 		//TEST,
-		PHYSICS,
+		COLLISION,
+		//PHYSICS,
 		NONE
 	};
 

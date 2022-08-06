@@ -2,12 +2,12 @@
 #include "Scene.h"
 #include "Collision.h"
 
-class PhysicsScene :
+class CollisionScene :
     public Scene
 {
 public:
-    PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
-    ~PhysicsScene() final;
+    CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
+    ~CollisionScene() final;
 
     void OnResize(std::shared_ptr<DX::DeviceResources> graphics) final;
     void OnBegin() final;
@@ -35,9 +35,9 @@ private:
 	CapsuleCollider mCapsule1;
 	DirectX::XMVECTOR mColor1;
 
-	//SphereCollider mSphere2;
-	//CapsuleCollider mCapsule2;
-	//DirectX::XMVECTOR mColor2;
+	SphereCollider mSphere2;
+	CapsuleCollider mCapsule2;
+	DirectX::XMVECTOR mColor2;
 
 	void DebugSpheres(const Sphere& a, const Sphere& b, std::shared_ptr<DX::DeviceResources> graphics);
 	void DebugCapsules(const Capsule& a, const Capsule& b, std::shared_ptr<DX::DeviceResources> graphics);

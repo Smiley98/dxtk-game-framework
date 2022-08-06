@@ -69,7 +69,7 @@
     <ClCompile Include="src\DebugRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="src\PhysicsScene.cpp">
+    <ClCompile Include="src\CollisionScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,7 +101,7 @@
     <ClInclude Include="src\RigidTransform.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\PhysicsScene.h">
+    <ClInclude Include="src\CollisionScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="src\TransformBase.h">

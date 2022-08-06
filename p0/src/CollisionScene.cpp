@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "PhysicsScene.h"
+#include "CollisionScene.h"
 #include "DebugRenderer.h"
 
 using namespace DirectX;
 
-PhysicsScene::PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
+CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();
@@ -27,14 +27,18 @@ PhysicsScene::PhysicsScene(std::shared_ptr<DX::DeviceResources> graphics, std::s
 	mSphere1.g.t ={ 0.0f, 250.0f, 0.0f };
 	mSphere1.g.r = mRadius;
 
-
+	mCapsule2.g.t.DeltaRotate(-45.0f);
+	mCapsule2.g.t.Translate({ -500, -500, 0.0f });
+	mCapsule2.g.hh = mHalfHeight;
+	mCapsule2.g.r = mRadius;
+	mSphere2.g.r = mRadius;
 }
 
-PhysicsScene::~PhysicsScene()
+CollisionScene::~CollisionScene()
 {
 }
 
-void PhysicsScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
+void CollisionScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	const RECT size = graphics->GetOutputSize();
 	const float width = float(size.right - size.left);
@@ -42,23 +46,23 @@ void PhysicsScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	mProj = Matrix::CreateOrthographic(width, height, 0.01f, 1000.0f);
 }
 
-void PhysicsScene::OnBegin()
+void CollisionScene::OnBegin()
 {
 }
 
-void PhysicsScene::OnEnd()
+void CollisionScene::OnEnd()
 {
 }
 
-void PhysicsScene::OnPause()
+void CollisionScene::OnPause()
 {
 }
 
-void PhysicsScene::OnResume()
+void CollisionScene::OnResume()
 {
 }
 
-void PhysicsScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
+void CollisionScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
 {
 	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 100.0f }, {}, Vector3::UnitY);
 	const float dt = (float)timer.GetElapsedSeconds();
@@ -86,19 +90,37 @@ void PhysicsScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& 
 	}
 
 	{
+		// Capsule-Sphere
 		Vector3 mtv;
-		mSphere1.g.t = mCapsule1.g.t.Translation() + Vector3{ cos(tt) * mHalfHeight, -mRadius, 0.0f };
-		if (mSphere1.IsColliding(mCapsule1, mtv))
-			mSphere1.g.t += mtv;
-		mColor1 = mSphere1.IsColliding(mCapsule1) ? Colors::Red : Colors::Green;
+		mCapsule1.g.t.Translate(mSphere1.g.t + Vector3{ cos(tt) * mHalfHeight, -mRadius, 0.0f });
+		if (mCapsule1.IsColliding(mSphere1, mtv))
+			mCapsule1.g.t.DeltaTranslate(mtv);
+		mColor1 = mCapsule1.IsColliding(mSphere1) ? Colors::Red : Colors::Green;
+
+		// Sphere-Capsule
+		//mSphere1.g.t = mCapsule1.g.t.Translation() + Vector3{ cos(tt) * mHalfHeight, -mRadius, 0.0f };
+		//if (mSphere1.IsColliding(mCapsule1, mtv))
+		//	mSphere1.g.t += mtv;
+		//mColor1 = mSphere1.IsColliding(mCapsule1) ? Colors::Red : Colors::Green;
 	}
 
 	{
-		
+		// Soccer (Sphere-Capsule)
+		mCapsule2.g.t.DeltaTranslate(mCapsule2.g.t.Front() * speed);
+		Vector3 mtv;
+		if (mSphere2.IsColliding(mCapsule2, mtv))
+			mSphere2.g.t += mtv;
+		mColor2 = mSphere2.IsColliding(mCapsule2) ? Colors::Red : Colors::Green;
+
+		if (mCapsule2.g.t.Translation().y > 500.0f)
+		{
+			mCapsule2.g.t.Translate({ -500, -500, 0.0f });
+			mSphere2.g.t = Vector3::Zero;
+		}
 	}
 }
 
-void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
+void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
 
@@ -112,9 +134,12 @@ void PhysicsScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	Debug::Draw(mSphere1.g, mView, mProj, graphics, mColor1, true);
 	Debug::Draw(mCapsule1.g, mView, mProj, graphics, mColor1, true);
+
+	Debug::Draw(mSphere2.g, mView, mProj, graphics, mColor2, true);
+	Debug::Draw(mCapsule2.g, mView, mProj, graphics, mColor2, true);
 }
 
-void PhysicsScene::DebugSpheres(const Sphere& a, const Sphere& b, std::shared_ptr<DX::DeviceResources> graphics)
+void CollisionScene::DebugSpheres(const Sphere& a, const Sphere& b, std::shared_ptr<DX::DeviceResources> graphics)
 {
 	Vector3 direction = b.t - a.t;
 	direction.Normalize();
@@ -122,7 +147,7 @@ void PhysicsScene::DebugSpheres(const Sphere& a, const Sphere& b, std::shared_pt
 	Debug::Draw({ b.t + b.r * -direction * 0.5f, b.r * 0.5f }, mView, mProj, graphics);
 }
 
-void PhysicsScene::DebugCapsules(const Capsule& a, const Capsule& b, std::shared_ptr<DX::DeviceResources> graphics)
+void CollisionScene::DebugCapsules(const Capsule& a, const Capsule& b, std::shared_ptr<DX::DeviceResources> graphics)
 {
 	Vector3 aNearest, bNearest;
 	NearestSpheres(a, b, aNearest, bNearest);

@@ -106,7 +106,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\PhysicsScene.cpp" />
+    <ClCompile Include="src\CollisionScene.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\TestScene.cpp" />
   </ItemGroup>
@@ -118,7 +118,7 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\MainScene.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\PhysicsScene.h" />
+    <ClInclude Include="src\CollisionScene.h" />
     <ClInclude Include="src\RigidTransform.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\StepTimer.h" />
