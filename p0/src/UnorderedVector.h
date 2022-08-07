@@ -11,7 +11,6 @@ template<typename T>
 class UnorderedVector
 {
 public:
-
 	template<typename... Args>
 	inline uint32_t Add(Args&&... args)
 	{

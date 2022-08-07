@@ -32,16 +32,6 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 	mCapsule2.g.hh = mHalfHeight;
 	mCapsule2.g.r = mRadius;
 	mSphere2.g.r = mRadius;
-
-	Collision::Id ssId = mCollision.AddStatic({ Vector3::Zero, 0.0f }, {});
-	Collision::Id dsId = mCollision.AddDynamic({ Vector3::Zero, 0.0f }, {});
-	Collision::Id scId = mCollision.AddStatic({ {}, 0.0f, 0.0f }, {});
-	Collision::Id dcId = mCollision.AddDynamic({ {}, 0.0f, 0.0f }, {});
-	mCollision.Remove(ssId);
-	mCollision.Remove(dsId);
-	mCollision.Remove(scId);
-	mCollision.Remove(dcId);
-	printf("Success!\n");
 }
 
 CollisionScene::~CollisionScene()
@@ -53,6 +43,7 @@ void CollisionScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const RECT size = graphics->GetOutputSize();
 	const float width = float(size.right - size.left);
 	const float height = float(size.bottom - size.top);
+	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 100.0f }, {}, Vector3::UnitY);
 	mProj = Matrix::CreateOrthographic(width, height, 0.01f, 1000.0f);
 }
 
@@ -74,7 +65,6 @@ void CollisionScene::OnResume()
 
 void CollisionScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
 {
-	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 100.0f }, {}, Vector3::UnitY);
 	const float dt = (float)timer.GetElapsedSeconds();
 	const float tt = (float)timer.GetTotalSeconds();
 	const float speed = 100.0f * dt;

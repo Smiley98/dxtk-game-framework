@@ -1,5 +1,7 @@
 #pragma once
 #include "DXTK.h"
+#include "BuildingRenderer.h"
+#include "PlayerRenderer.h"
 #include <array>
 #include <memory>
 
@@ -12,8 +14,9 @@ public:
 		//MAP,
 		//MAIN,
 		//TEST,
-		COLLISION,
+		//COLLISION,
 		//PHYSICS,
+		ENTITY,
 		NONE
 	};
 
@@ -66,19 +69,11 @@ protected:
 
 	virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) = 0;
 
-	// Shared assets. Scene is a convenient place to handle shared, as well as scene-specific assets.
-	// No point in adding needless indirection since assets won't be used outside of scenes.
-	static DirectX::SimpleMath::Vector3 sLightDirection;
-	static DirectX::SimpleMath::Vector3 sAmbient;
-	static DirectX::SimpleMath::Vector3 sDiffuse;
-	static DirectX::SimpleMath::Vector3 sSpecular;
-
-	static std::shared_ptr<DirectX::Model> sVan;
-	static std::shared_ptr<DirectX::BasicEffect> sVanShader;
-	static Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sVanTexture;
+	// Shared members
+	static BuildingRenderer sBuildingRenderer;
+	static PlayerRenderer sPlayerRenderer;
 
 	// Common members
-	std::unique_ptr<DirectX::CommonStates> mStates;
 	Matrix mView;
 	Matrix mProj;
 

@@ -13,6 +13,7 @@ TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();
 
+	mStates = std::make_unique<CommonStates>(device);
 	mFxFactory = std::make_unique<EffectFactory>(device);
 	mSprites = std::make_unique<SpriteBatch>(context);
 	mBatch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(context);
@@ -112,23 +113,23 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	const XMVECTORF32 xaxis = { 20.f, 0.f, 0.f };
 	const XMVECTORF32 yaxis = { 0.f, 0.f, 20.f };
 	DrawGrid(graphics, xaxis, yaxis, g_XMZero, 20, 20, Colors::Gray);
-	//DrawGrid(xaxis, yaxis, g_XMZero, 20, 20, Colors::Gray);
 
 	// Draw sprite
 	graphics->PIXBeginEvent(L"Draw sprite");
 	mSprites->Begin();
 	mSprites->Draw(mTexture2.Get(), XMFLOAT2(10, 75), nullptr, Colors::White);
 
+	// Draw text
 	mFont->DrawString(mSprites.get(), L"DirectXTK Simple Sample", XMFLOAT2(100, 10), Colors::Yellow);
 	mSprites->End();
 	graphics->PIXEndEvent();
 
 	// Draw 3D objects
-	graphics->PIXBeginEvent(L"Draw teapot");
-	XMMATRIX local = mWorld * Matrix::CreateTranslation(-2.f, -2.f, -4.f);
-	mShape->Draw(local, mView, mProj, Colors::White, mTexture1.Get());
-	graphics->PIXEndEvent();
-
+	{	graphics->PIXBeginEvent(L"Draw teapot");
+		XMMATRIX local = mWorld * Matrix::CreateTranslation(-2.f, -2.f, -4.f);
+		mShape->Draw(local, mView, mProj, Colors::White, mTexture1.Get());
+	}	graphics->PIXEndEvent();
+	
 	{	graphics->PIXBeginEvent(L"Draw sdkmesh");
 		const XMVECTORF32 scale = { 0.01f, 0.01f, 0.01f };
 		const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);

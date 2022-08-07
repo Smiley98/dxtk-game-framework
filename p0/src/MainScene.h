@@ -22,9 +22,5 @@ protected:
 	virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) override;
 
 private:
-	std::shared_ptr<DirectX::BasicEffect> mBuildingShader;
-
-	std::unique_ptr<DirectX::Model>	mTd;
-	SphereCollider mTdCollider;
-	CapsuleCollider mVanCollider;
+	
 };

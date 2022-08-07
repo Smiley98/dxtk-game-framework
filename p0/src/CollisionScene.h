@@ -18,12 +18,6 @@ public:
     void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
-	std::unique_ptr<DirectX::CommonStates> mStates;
-	Collision mCollision;
-
-	const float mRadius = 25.0f;
-	const float mHalfHeight = 75.0f;
-
 	SphereCollider mSphereSphereA;
 	SphereCollider mSphereSphereB;
 	DirectX::XMVECTOR mSphereSphereColor;
@@ -39,6 +33,9 @@ private:
 	SphereCollider mSphere2;
 	CapsuleCollider mCapsule2;
 	DirectX::XMVECTOR mColor2;
+
+	const float mRadius = 25.0f;
+	const float mHalfHeight = 75.0f;
 
 	void DebugSpheres(const Sphere& a, const Sphere& b, std::shared_ptr<DX::DeviceResources> graphics);
 	void DebugCapsules(const Capsule& a, const Capsule& b, std::shared_ptr<DX::DeviceResources> graphics);

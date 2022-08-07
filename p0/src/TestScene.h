@@ -28,6 +28,7 @@ private:
     std::unique_ptr<DirectX::SoundEffectInstance>   mEffect2;
 
     // DirectXTK graphics objects
+    std::unique_ptr<DirectX::CommonStates>                                  mStates;
     std::unique_ptr<DirectX::BasicEffect>                                   mBatchEffect;
     std::unique_ptr<DirectX::EffectFactory>                                 mFxFactory;
     std::unique_ptr<DirectX::GeometricPrimitive>                            mShape;

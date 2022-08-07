@@ -1,8 +1,27 @@
 #pragma once
-enum Tag
+
+namespace Tags
 {
-	NONE,
-	PLAYER,
-	BUILDING,
-	BULLET
-};
+	enum Tag
+	{
+		NONE,
+		PLAYER,
+		BUILDING,
+		BULLET
+	};
+}
+
+namespace Objects
+{
+	enum Building
+	{
+		TD,
+		CONDO
+	};
+
+	enum Player
+	{
+		VAN,
+		MECH
+	};
+}

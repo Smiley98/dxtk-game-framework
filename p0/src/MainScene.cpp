@@ -8,22 +8,6 @@ MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 {
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();
-
-	// TODO: Make a Buildings class that loads all building vbos
-	// Even though buildings only exist in the MainScene,
-	// its still more convenient to contain them within a class
-	mBuildingShader = std::make_shared<BasicEffect>(device);
-	mBuildingShader->EnableDefaultLighting();
-	mBuildingShader->SetLightDirection(0, sLightDirection);
-	mBuildingShader->SetAmbientLightColor(sAmbient);
-	mBuildingShader->SetDiffuseColor(sDiffuse);
-	mBuildingShader->SetSpecularColor(sSpecular);
-	mBuildingShader->SetSpecularPower(1024.0f);
-	mBuildingShader->SetTextureEnabled(false);
-
-	mTd = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", mBuildingShader);
-	Vector3 tdBounds = mTd->meshes.front()->boundingBox.Extents;
-	Vector3 vanBounds = sVan->meshes.front()->boundingBox.Extents;
 }
 
 MainScene::~MainScene()
