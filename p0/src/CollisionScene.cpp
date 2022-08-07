@@ -33,10 +33,10 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 	mCapsule2.g.r = mRadius;
 	mSphere2.g.r = mRadius;
 
-	StaticSphereId ssId = mCollision.AddStatic({ Vector3::Zero, 0.0f }, {});
-	DynamicSphereId dsId = mCollision.AddDynamic({ Vector3::Zero, 0.0f }, {});
-	StaticCapsuleId scId = mCollision.AddStatic({ {}, 0.0f, 0.0f }, {});
-	DynamicCapsuleId dcId = mCollision.AddDynamic({ {}, 0.0f, 0.0f }, {});
+	Collision::Id ssId = mCollision.AddStatic({ Vector3::Zero, 0.0f }, {});
+	Collision::Id dsId = mCollision.AddDynamic({ Vector3::Zero, 0.0f }, {});
+	Collision::Id scId = mCollision.AddStatic({ {}, 0.0f, 0.0f }, {});
+	Collision::Id dcId = mCollision.AddDynamic({ {}, 0.0f, 0.0f }, {});
 	mCollision.Remove(ssId);
 	mCollision.Remove(dsId);
 	mCollision.Remove(scId);

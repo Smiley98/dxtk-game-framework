@@ -23,13 +23,6 @@ struct ColliderInfo
 	Tag tag = Tag::NONE;	// Used to cast data
 };
 
-struct HitPair
-{
-	ColliderInfo a;
-	ColliderInfo b;
-	Vector3 mtv;
-};
-
 #pragma endregion
 
 #pragma region Math
@@ -188,29 +181,36 @@ struct DynamicCapsuleId
 // (Let the GameObject adjust its collider in response).
 class Collision
 {
-
 public:
-	inline StaticSphereId AddStatic(Sphere&& geometry, ColliderInfo&& info);
-	inline StaticCapsuleId AddStatic(Capsule&& geometry, ColliderInfo&& info);
-	inline DynamicSphereId AddDynamic(Sphere&& geometry, ColliderInfo&& info);
-	inline DynamicCapsuleId AddDynamic(Capsule&& geometry, ColliderInfo&& info);
-
-	inline void Remove(const StaticSphereId& id);
-	inline void Remove(const StaticCapsuleId& id);
-	inline void Remove(const DynamicSphereId& id);
-	inline void Remove(const DynamicCapsuleId& id);
-
-	// All static vs dynamic collisions
-	inline void CollideStatic(std::vector<HitPair>& collisions)
+	enum Type
 	{
-		
-	}
+		SPHERE_STATIC,
+		SPHERE_DYNAMIC,
+		CAPSULE_STATIC,
+		CAPSULE_DYNAMIC
+	};
 
-	// All dynamic vs dynamic collisions
-	inline void CollideDynamic(std::vector<HitPair>& collisions)
+	struct Id
 	{
+		uint32_t n = 0;
+		Type type;
+	};
 
-	}
+	struct HitPair
+	{
+		Id a;
+		Id b;
+		Vector3 mtv;
+	};
+
+	inline Id AddStatic(Sphere&& geometry, ColliderInfo&& info);
+	inline Id AddStatic(Capsule&& geometry, ColliderInfo&& info);
+	inline Id AddDynamic(Sphere&& geometry, ColliderInfo&& info);
+	inline Id AddDynamic(Capsule&& geometry, ColliderInfo&& info);
+
+	inline void Remove(const Id& id);
+
+	inline void Collide(std::vector<HitPair>& collisions);
 
 private:
 	UnorderedVector<SphereCollider> mStaticSpheres;
@@ -218,6 +218,11 @@ private:
 	UnorderedVector<CapsuleCollider> mStaticCapsules;
 	UnorderedVector<CapsuleCollider> mDynamicCapsules;
 };
+
+inline void Collision::Collide(std::vector<HitPair>& collisions)
+{
+
+}
 
 inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
 {
@@ -261,44 +266,42 @@ inline bool CapsuleCollider::IsColliding(const SphereCollider& collider, Vector3
 	return SphereCapsule(collider.g, g, mtv);
 }
 
-inline StaticSphereId Collision::AddStatic(Sphere&& geometry, ColliderInfo&& info)
+inline Collision::Id Collision::AddStatic(Sphere&& geometry, ColliderInfo&& info)
 {
-	return { mStaticSpheres.Add(geometry, info) };
+	return { mStaticSpheres.Add(geometry, info), Type::SPHERE_STATIC };
 }
 
-inline DynamicSphereId Collision::AddDynamic(Sphere&& geometry, ColliderInfo&& info)
+inline Collision::Id Collision::AddDynamic(Sphere&& geometry, ColliderInfo&& info)
 {
-	return { mDynamicSpheres.Add(geometry, info) };
+	return { mDynamicSpheres.Add(geometry, info), Type::SPHERE_DYNAMIC };
 }
 
-inline StaticCapsuleId Collision::AddStatic(Capsule&& geometry, ColliderInfo&& info)
+inline Collision::Id Collision::AddStatic(Capsule&& geometry, ColliderInfo&& info)
 {
-	return { mStaticCapsules.Add(geometry, info) };
+	return { mStaticCapsules.Add(geometry, info), Type::CAPSULE_STATIC };
 }
 
-inline DynamicCapsuleId Collision::AddDynamic(Capsule&& geometry, ColliderInfo&& info)
+inline Collision::Id Collision::AddDynamic(Capsule&& geometry, ColliderInfo&& info)
 {
-	return { mDynamicCapsules.Add(geometry, info) };
+	return { mDynamicCapsules.Add(geometry, info), Type::CAPSULE_DYNAMIC };
 }
 
-inline void Collision::Remove(const StaticSphereId& id)
+inline void Collision::Remove(const Id& id)
 {
-	mStaticSpheres.Remove(id.n);
+	switch (id.type)
+	{
+	case SPHERE_STATIC:
+		mStaticSpheres.Remove(id.n);
+		break;
+	case SPHERE_DYNAMIC:
+		mDynamicSpheres.Remove(id.n);
+		break;
+	case CAPSULE_STATIC:
+		mStaticCapsules.Remove(id.n);
+		break;
+	case CAPSULE_DYNAMIC:
+		mDynamicCapsules.Remove(id.n);
+		break;
+	}
 }
-
-inline void Collision::Remove(const DynamicSphereId& id)
-{
-	mDynamicSpheres.Remove(id.n);
-}
-
-inline void Collision::Remove(const StaticCapsuleId& id)
-{
-	mStaticCapsules.Remove(id.n);
-}
-
-inline void Collision::Remove(const DynamicCapsuleId& id)
-{
-	mDynamicCapsules.Remove(id.n);
-}
-
 #pragma endregion
