@@ -108,6 +108,9 @@
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\UnorderedVector.h" />
+    <ClInclude Include="src\CollisionMath.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

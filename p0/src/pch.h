@@ -71,6 +71,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
+#include "CollisionMath.h"
 
 namespace DX
 {
