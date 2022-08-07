@@ -34,17 +34,28 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 	mCapsule2.g.r = mRadius;
 	mSphere2.g.r = mRadius;
 
-	UnorderedVector uv;
-	uint32_t tests[4];
-	tests[0] = uv.Add(1, 2.0f);
-	tests[1] = uv.Add(3, 4.0f);
-	tests[2] = uv.Add(5, 6.0f);
-	tests[3] = uv.Add(7, 8.0f);
+	UnorderedVector<SphereCollider> a;
+	UnorderedVector<CapsuleCollider> b;
+	uint32_t testA[4], testB[4];
 
-	uv.Remove(tests[0]);
-	uv.Remove(tests[1]);
-	uv.Remove(tests[2]);
-	uv.Remove(tests[3]);
+	testA[0] = a.Add(mSphereSphereA);
+	testA[1] = a.Add(mSphereSphereB);
+	testA[2] = a.Add(mSphere1);
+	testA[3] = a.Add(mSphere2);
+	a.Remove(testA[0]);
+	a.Remove(testA[1]);
+	a.Remove(testA[2]);
+	a.Remove(testA[3]);
+
+	testB[0] = b.Add(mCapsuleCapsuleA);
+	testB[1] = b.Add(mCapsuleCapsuleB);
+	testB[2] = b.Add(mCapsule1);
+	testB[3] = b.Add(mCapsule2);
+	b.Remove(testB[0]);
+	b.Remove(testB[1]);
+	b.Remove(testB[2]);
+	b.Remove(testB[3]);
+
 	printf("Success!\n");
 }
 

@@ -7,31 +7,30 @@ namespace
 	uint32_t gId = 0;
 }
 
-struct Test
-{
-	int a;
-	float b;
-};
-
+template<typename T>
 class UnorderedVector
 {
 public:
 
-	inline uint32_t Add(int a, float b)
+	template<typename... Args>
+	inline uint32_t Add(Args&&... args)
 	{
-		mObjects.push_back({ a, b });
+		mObjects.push_back(std::forward<Args>(args)...);
 		mForward[++gId] = mObjects.size() - 1;
 		mBackward[mObjects.size() - 1] = gId;
 		return gId;
 	}
 
-	inline Test& Get(uint32_t id)
+	inline T& Get(uint32_t id)
 	{
 		return mObjects[mForward[id]];
 	}
 
 	inline void Remove(uint32_t id)
 	{
+		if (mForward.find(id) == mForward.end())
+			return;
+
 		// Handle self-removal
 		if (mForward[id] == mObjects.size() - 1)
 		{
@@ -57,13 +56,13 @@ public:
 		}
 	}
 
-	inline std::vector<Test> Objects()
+	inline std::vector<T>& Objects()
 	{
 		return mObjects;
 	}
 
 private:
-	std::vector<Test> mObjects;
+	std::vector<T> mObjects;
 	std::unordered_map<uint32_t, size_t> mForward;
 	std::unordered_map<size_t, uint32_t> mBackward;
 };
