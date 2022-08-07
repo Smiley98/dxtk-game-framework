@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "CollisionScene.h"
 #include "DebugRenderer.h"
-#include "UnorderedVector.h"
 
 using namespace DirectX;
 
@@ -34,28 +33,14 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 	mCapsule2.g.r = mRadius;
 	mSphere2.g.r = mRadius;
 
-	UnorderedVector<SphereCollider> a;
-	UnorderedVector<CapsuleCollider> b;
-	uint32_t testA[4], testB[4];
-
-	testA[0] = a.Add(mSphereSphereA);
-	testA[1] = a.Add(mSphereSphereB);
-	testA[2] = a.Add(mSphere1);
-	testA[3] = a.Add(mSphere2);
-	a.Remove(testA[0]);
-	a.Remove(testA[1]);
-	a.Remove(testA[2]);
-	a.Remove(testA[3]);
-
-	testB[0] = b.Add(mCapsuleCapsuleA);
-	testB[1] = b.Add(mCapsuleCapsuleB);
-	testB[2] = b.Add(mCapsule1);
-	testB[3] = b.Add(mCapsule2);
-	b.Remove(testB[0]);
-	b.Remove(testB[1]);
-	b.Remove(testB[2]);
-	b.Remove(testB[3]);
-
+	StaticSphereId ssId = mCollision.AddStatic({ Vector3::Zero, 0.0f }, {});
+	DynamicSphereId dsId = mCollision.AddDynamic({ Vector3::Zero, 0.0f }, {});
+	StaticCapsuleId scId = mCollision.AddStatic({ {}, 0.0f, 0.0f }, {});
+	DynamicCapsuleId dcId = mCollision.AddDynamic({ {}, 0.0f, 0.0f }, {});
+	mCollision.Remove(ssId);
+	mCollision.Remove(dsId);
+	mCollision.Remove(scId);
+	mCollision.Remove(dcId);
 	printf("Success!\n");
 }
 

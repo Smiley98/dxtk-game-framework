@@ -1,8 +1,6 @@
 #pragma once
 #include "Tags.h"
-#include <array>
-#include <vector>
-#include <unordered_map>
+#include "UnorderedVector.h"
 
 #pragma region Types
 
@@ -146,8 +144,8 @@ struct CapsuleCollider;
 
 struct SphereCollider
 {
-	ColliderInfo info;
 	Sphere g; // Geometry
+	ColliderInfo info;
 
 	inline bool IsColliding(const SphereCollider& collider) const;
 	inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const;
@@ -157,8 +155,8 @@ struct SphereCollider
 
 struct CapsuleCollider
 {
-	ColliderInfo info;
 	Capsule g; // Geometry
+	ColliderInfo info;
 
 	inline bool IsColliding(const CapsuleCollider& collider) const;
 	inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const;
@@ -166,33 +164,59 @@ struct CapsuleCollider
 	inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const;
 };
 
-// Not worrying about this at the moment. There's no gameplay yet so no point in making a HitPair mechanism.
-// An ECS will probably involve making a generic id system and O(1) removal system so wait for that!
+struct StaticSphereId
+{
+	uint32_t n = 0;
+};
+
+struct DynamicSphereId
+{
+	uint32_t n = 0;
+};
+
+struct StaticCapsuleId
+{
+	uint32_t n = 0;
+};
+
+struct DynamicCapsuleId
+{
+	uint32_t n = 0;
+};
+
+// All that's needed to resolve collisions is mtv and references to the colliders owners.
+// (Let the GameObject adjust its collider in response).
 class Collision
 {
+
 public:
-	SphereCollider& Add(const Sphere& geometry, ColliderInfo info);
-	CapsuleCollider& Add(const Capsule& geometry, ColliderInfo info);
+	inline StaticSphereId AddStatic(Sphere&& geometry, ColliderInfo&& info);
+	inline StaticCapsuleId AddStatic(Capsule&& geometry, ColliderInfo&& info);
+	inline DynamicSphereId AddDynamic(Sphere&& geometry, ColliderInfo&& info);
+	inline DynamicCapsuleId AddDynamic(Capsule&& geometry, ColliderInfo&& info);
 
-	void Remove(const SphereCollider& collider);
-	void Remove(const CapsuleCollider& collider);
+	inline void Remove(const StaticSphereId& id);
+	inline void Remove(const StaticCapsuleId& id);
+	inline void Remove(const DynamicSphereId& id);
+	inline void Remove(const DynamicCapsuleId& id);
 
-	// All that's needed to resolve collisions is mtv
-	// and references to the colliders owners.
-	// (Let the GameObject adjust its collider in response).
-	std::vector<HitPair> Collide();
+	// All static vs dynamic collisions
+	inline void CollideStatic(std::vector<HitPair>& collisions)
+	{
+		
+	}
+
+	// All dynamic vs dynamic collisions
+	inline void CollideDynamic(std::vector<HitPair>& collisions)
+	{
+
+	}
 
 private:
-	std::vector<SphereCollider> mSpheres;
-	std::vector<CapsuleCollider> mCapsules;
-	std::unordered_map<SphereCollider*, size_t> mSphereMap;
-	std::unordered_map<CapsuleCollider*, size_t> mCapsuleMap;
-
-	// TODO: static vs dynamic
-	//std::vector<SphereCollider> mStaticSpheres;
-	//std::vector<SphereCollider> mDynamicSpheres;
-	//std::vector<CapsuleCollider> mStaticCapsules;
-	//std::vector<CapsuleCollider> mDynamicCapsules;
+	UnorderedVector<SphereCollider> mStaticSpheres;
+	UnorderedVector<SphereCollider> mDynamicSpheres;
+	UnorderedVector<CapsuleCollider> mStaticCapsules;
+	UnorderedVector<CapsuleCollider> mDynamicCapsules;
 };
 
 inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
@@ -236,4 +260,45 @@ inline bool CapsuleCollider::IsColliding(const SphereCollider& collider, Vector3
 {
 	return SphereCapsule(collider.g, g, mtv);
 }
+
+inline StaticSphereId Collision::AddStatic(Sphere&& geometry, ColliderInfo&& info)
+{
+	return { mStaticSpheres.Add(geometry, info) };
+}
+
+inline DynamicSphereId Collision::AddDynamic(Sphere&& geometry, ColliderInfo&& info)
+{
+	return { mDynamicSpheres.Add(geometry, info) };
+}
+
+inline StaticCapsuleId Collision::AddStatic(Capsule&& geometry, ColliderInfo&& info)
+{
+	return { mStaticCapsules.Add(geometry, info) };
+}
+
+inline DynamicCapsuleId Collision::AddDynamic(Capsule&& geometry, ColliderInfo&& info)
+{
+	return { mDynamicCapsules.Add(geometry, info) };
+}
+
+inline void Collision::Remove(const StaticSphereId& id)
+{
+	mStaticSpheres.Remove(id.n);
+}
+
+inline void Collision::Remove(const DynamicSphereId& id)
+{
+	mDynamicSpheres.Remove(id.n);
+}
+
+inline void Collision::Remove(const StaticCapsuleId& id)
+{
+	mStaticCapsules.Remove(id.n);
+}
+
+inline void Collision::Remove(const DynamicCapsuleId& id)
+{
+	mDynamicCapsules.Remove(id.n);
+}
+
 #pragma endregion

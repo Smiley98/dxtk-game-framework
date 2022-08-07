@@ -15,7 +15,7 @@ public:
 	template<typename... Args>
 	inline uint32_t Add(Args&&... args)
 	{
-		mObjects.push_back(std::forward<Args>(args)...);
+		mObjects.push_back({ std::forward<Args&&>(args)... });
 		mForward[++gId] = mObjects.size() - 1;
 		mBackward[mObjects.size() - 1] = gId;
 		return gId;

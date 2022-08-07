@@ -19,6 +19,7 @@ public:
 
 private:
 	std::unique_ptr<DirectX::CommonStates> mStates;
+	Collision mCollision;
 
 	const float mRadius = 25.0f;
 	const float mHalfHeight = 75.0f;
