@@ -6,7 +6,7 @@ SphereCollider& Collision::Add(const Sphere& geometry, ColliderInfo info)
 {
 	mSpheres.push_back({ info, geometry });
 	SphereCollider& collider = mSpheres.back();
-	mSphereMap[&collider] = mSpheres.size();
+	mSphereMap[&collider] = mSpheres.size() - 1;
 	return collider;
 }
 
@@ -14,20 +14,18 @@ CapsuleCollider& Collision::Add(const Capsule& geometry, ColliderInfo info)
 {
 	mCapsules.push_back({ info, geometry });
 	CapsuleCollider& collider = mCapsules.back();
-	mCapsuleMap[&collider] = mCapsules.size();
+	mCapsuleMap[&collider] = mCapsules.size() - 1;
 	return collider;
 }
 
 void Collision::Remove(const SphereCollider& collider)
 {
 	size_t back = mSpheres.size() - 1;
-	//std::unordered_map<SphereCollider, size_t> mSphereIndices; <--- no need for id?
 }
 
 void Collision::Remove(const CapsuleCollider& collider)
 {
 	size_t back = mCapsules.size() - 1;
-	//std::unordered_map<CapsuleCollider, size_t> mCapsuleIndices; <--- no need for id?
 }
 
 std::vector<HitPair> Collision::Collide()

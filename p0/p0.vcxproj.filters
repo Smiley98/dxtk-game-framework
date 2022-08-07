@@ -107,6 +107,7 @@
     <ClInclude Include="src\TransformBase.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\UnorderedVector.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

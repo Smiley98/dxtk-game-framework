@@ -117,6 +117,7 @@
     <ClInclude Include="src\DXTK.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\MainScene.h" />
+    <ClInclude Include="src\UnorderedVector.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\CollisionScene.h" />
     <ClInclude Include="src\RigidTransform.h" />

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CollisionScene.h"
 #include "DebugRenderer.h"
+#include "UnorderedVector.h"
 
 using namespace DirectX;
 
@@ -32,6 +33,19 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 	mCapsule2.g.hh = mHalfHeight;
 	mCapsule2.g.r = mRadius;
 	mSphere2.g.r = mRadius;
+
+	UnorderedVector uv;
+	uint32_t tests[4];
+	tests[0] = uv.Add(1, 2.0f);
+	tests[1] = uv.Add(3, 4.0f);
+	tests[2] = uv.Add(5, 6.0f);
+	tests[3] = uv.Add(7, 8.0f);
+
+	uv.Remove(tests[0]);
+	uv.Remove(tests[1]);
+	uv.Remove(tests[2]);
+	uv.Remove(tests[3]);
+	printf("Success!\n");
 }
 
 CollisionScene::~CollisionScene()
