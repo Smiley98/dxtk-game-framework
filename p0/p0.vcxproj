@@ -97,7 +97,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BuildingRenderer.cpp" />
-    <ClCompile Include="src\Collision.cpp" />
     <ClCompile Include="src\DebugRenderer.cpp" />
     <ClCompile Include="src\DeviceResources.cpp" />
     <ClCompile Include="src\EntityScene.cpp" />

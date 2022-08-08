@@ -63,9 +63,6 @@
     <ClCompile Include="src\TestScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Collision.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
     <ClCompile Include="src\DebugRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>

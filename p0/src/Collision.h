@@ -11,20 +11,6 @@ struct CapsuleCollider;
 class Collision
 {
 public:
-	/*enum Type
-	{
-		SPHERE_STATIC,
-		SPHERE_DYNAMIC,
-		CAPSULE_STATIC,
-		CAPSULE_DYNAMIC
-	};
-
-	struct Id
-	{
-		uint32_t n = 0;
-		Type type;
-	};*/
-
 	struct Info
 	{
 		void* data = nullptr;				// Points to the object that owns this collider
@@ -44,30 +30,6 @@ public:
 	UnorderedVector<CapsuleCollider> mDynamicCapsules;
 
 	inline void Collide(std::vector<HitPair>& collisions);
-
-//I can't be bothered to re-write UnorderedVector's Add/Get/Remove methods...
-/*
-	inline Id AddStaticSphere(Sphere&& geometry, Info&& info);
-	inline Id AddDynamicSphere(Sphere&& geometry, Info&& info);
-	inline Id AddStaticCapsule(Capsule&& geometry, Info&& info);
-	inline Id AddDynamicCapsule(Capsule&& geometry, Info&& info);
-
-	inline SphereCollider& GetStaticSphere(const Id& id);
-	inline SphereCollider& GetDynamicSphere(const Id& id);
-	inline CapsuleCollider& GetStaticCapsule(const Id& id);
-	inline CapsuleCollider& GetDynamicCapsule(const Id& id);
-
-	inline void RemoveStaticSphere(const Id& id);
-	inline void RemoveDynamicSphere(const Id& id);
-	inline void RemoveStaticCapsule(const Id& id);
-	inline void RemoveDynamicCapsule(const Id& id);
-
-private:
-	UnorderedVector<SphereCollider> mStaticSpheres;
-	UnorderedVector<SphereCollider> mDynamicSpheres;
-	UnorderedVector<CapsuleCollider> mStaticCapsules;
-	UnorderedVector<CapsuleCollider> mDynamicCapsules;
-*/
 };
 
 struct SphereCollider
@@ -100,7 +62,7 @@ inline void Collision::Collide(std::vector<HitPair>& collisions)
 	std::vector<CapsuleCollider>& dynamicCapsules = mDynamicCapsules.Objects();
 	
 	// Static spheres vs dynamic spheres & dynamic capsules
-	for (int i = 0; i < staticSpheres.size() - 1; i++)
+	for (int i = 0; i < staticSpheres.size(); i++)
 	{
 		for (int j = 0; j < dynamicSpheres.size(); j++)
 		{
@@ -126,7 +88,7 @@ inline void Collision::Collide(std::vector<HitPair>& collisions)
 	}
 
 	// Static capsules vs dynamic spheres & dynamic capsules
-	for (int i = 0; i < staticCapsules.size() - 1; i++)
+	for (int i = 0; i < staticCapsules.size(); i++)
 	{
 		for (int j = 0; j < dynamicSpheres.size(); j++)
 		{
@@ -195,7 +157,71 @@ inline void Collision::Collide(std::vector<HitPair>& collisions)
 	}
 }
 
+inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
+{
+	return SphereSphere(collider.g, g);
+}
+
+inline bool SphereCollider::IsColliding(const CapsuleCollider& collider) const
+{
+	return SphereCapsule(g, collider.g);
+}
+
+inline bool SphereCollider::IsColliding(const SphereCollider& collider, Vector3& mtv) const
+{
+	return SphereSphere(collider.g, g, mtv);
+}
+
+inline bool SphereCollider::IsColliding(const CapsuleCollider& collider, Vector3& mtv) const
+{
+	bool isColliding = SphereCapsule(g, collider.g, mtv);
+	mtv = -mtv;
+	return isColliding;
+}
+
+inline bool CapsuleCollider::IsColliding(const CapsuleCollider& collider) const
+{
+	return CapsuleCapsule(collider.g, g);
+}
+
+inline bool CapsuleCollider::IsColliding(const SphereCollider& collider) const
+{
+	return SphereCapsule(collider.g, g);
+}
+
+inline bool CapsuleCollider::IsColliding(const CapsuleCollider& collider, Vector3& mtv) const
+{
+	return CapsuleCapsule(collider.g, g, mtv);
+}
+
+inline bool CapsuleCollider::IsColliding(const SphereCollider& collider, Vector3& mtv) const
+{
+	return SphereCapsule(collider.g, g, mtv);
+}
+
+//I can't be bothered to re-write UnorderedVector's Add/Get/Remove methods...
 /*
+	inline Id AddStaticSphere(Sphere&& geometry, Info&& info);
+	inline Id AddDynamicSphere(Sphere&& geometry, Info&& info);
+	inline Id AddStaticCapsule(Capsule&& geometry, Info&& info);
+	inline Id AddDynamicCapsule(Capsule&& geometry, Info&& info);
+
+	inline SphereCollider& GetStaticSphere(const Id& id);
+	inline SphereCollider& GetDynamicSphere(const Id& id);
+	inline CapsuleCollider& GetStaticCapsule(const Id& id);
+	inline CapsuleCollider& GetDynamicCapsule(const Id& id);
+
+	inline void RemoveStaticSphere(const Id& id);
+	inline void RemoveDynamicSphere(const Id& id);
+	inline void RemoveStaticCapsule(const Id& id);
+	inline void RemoveDynamicCapsule(const Id& id);
+
+private:
+	UnorderedVector<SphereCollider> mStaticSpheres;
+	UnorderedVector<SphereCollider> mDynamicSpheres;
+	UnorderedVector<CapsuleCollider> mStaticCapsules;
+	UnorderedVector<CapsuleCollider> mDynamicCapsules;
+
 inline Collision::Id Collision::AddStaticSphere(Sphere&& geometry, Info&& info)
 {
 	Id id;
@@ -277,44 +303,17 @@ inline void Collision::RemoveDynamicCapsule(const Id& id)
 }
 */
 
-inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
+// No need to make colliders self-referential
+/*enum Type
 {
-	return SphereSphere(collider.g, g);
-}
+	SPHERE_STATIC,
+	SPHERE_DYNAMIC,
+	CAPSULE_STATIC,
+	CAPSULE_DYNAMIC
+};
 
-inline bool SphereCollider::IsColliding(const CapsuleCollider& collider) const
+struct Id
 {
-	return SphereCapsule(g, collider.g);
-}
-
-inline bool SphereCollider::IsColliding(const SphereCollider& collider, Vector3& mtv) const
-{
-	return SphereSphere(collider.g, g, mtv);
-}
-
-inline bool SphereCollider::IsColliding(const CapsuleCollider& collider, Vector3& mtv) const
-{
-	bool isColliding = SphereCapsule(g, collider.g, mtv);
-	mtv = -mtv;
-	return isColliding;
-}
-
-inline bool CapsuleCollider::IsColliding(const CapsuleCollider& collider) const
-{
-	return CapsuleCapsule(collider.g, g);
-}
-
-inline bool CapsuleCollider::IsColliding(const SphereCollider& collider) const
-{
-	return SphereCapsule(collider.g, g);
-}
-
-inline bool CapsuleCollider::IsColliding(const CapsuleCollider& collider, Vector3& mtv) const
-{
-	return CapsuleCapsule(collider.g, g, mtv);
-}
-
-inline bool CapsuleCollider::IsColliding(const SphereCollider& collider, Vector3& mtv) const
-{
-	return SphereCapsule(collider.g, g, mtv);
-}
+	uint32_t n = 0;
+	Type type;
+};*/

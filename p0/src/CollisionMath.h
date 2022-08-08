@@ -82,7 +82,8 @@ inline bool SphereSphere(const Sphere& a, const Sphere& b, Vector3& mtv)
 	if (colliding)
 	{
 		constexpr float resolution = 1.0f + FLT_EPSILON * 16.0f;
-		AB /= lengthAB;
+		//AB /= lengthAB;
+		AB.Normalize();
 		mtv = resolution * AB * (radiiAB - lengthAB);
 	}
 	return colliding;

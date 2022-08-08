@@ -19,7 +19,7 @@ struct Player : public Entity
 
 		Capsule capsule;
 		capsule.r = bounds.x;
-		capsule.hh = bounds.y;
+		capsule.hh = bounds.y - capsule.r;
 
 		Collision::Info info;
 		info.tag = Tags::Tag::PLAYER;
@@ -28,7 +28,7 @@ struct Player : public Entity
 		colliderId = collision.mDynamicCapsules.Add(std::move(capsule), std::move(info));
 	}
 
-	void Update(Collision& collision)
+	void UpdateCollider(Collision& collision)
 	{
 		CapsuleCollider& c = collision.mDynamicCapsules.Get(colliderId);
 		c.g.t = transform;
@@ -51,7 +51,7 @@ struct Building : public Entity
 		colliderId = collision.mStaticSpheres.Add(std::move(sphere), std::move(info));
 	}
 
-	void Update(Collision& collision)
+	void UpdateCollider(Collision& collision)
 	{
 		SphereCollider& c = collision.mStaticSpheres.Get(colliderId);
 		c.g.t = transform.Translation();
@@ -75,6 +75,8 @@ public:
 
 private:
 	Collision mCollision;
+	DirectX::XMVECTOR mColor;
+
 	Player mVan;
 	Building mTd;
 
