@@ -1,14 +1,17 @@
 #pragma once
 #include "Scene.h"
 #include "Collision.h"
+#include <array>
+#define OBJECT_TEST false
 
-// Placeholder for now. In the future this will be data-oriented rather than monolithic xD
 struct Entity
 {
-	uint32_t colliderId;
+	Id colliderId;
 	Transform transform;
+	Vector3 color;
 };
 
+#if OBJECT_TEST
 struct Player : public Entity
 {
 	Objects::Player mType = Objects::VAN;
@@ -57,6 +60,7 @@ struct Building : public Entity
 		c.g.t = transform.Translation();
 	}
 };
+#endif
 
 class EntityScene :
 	public Scene
@@ -75,19 +79,12 @@ public:
 
 private:
 	Collision mCollision;
+	std::array<Entity, 16> mSpheres;
+	std::array<Entity, 16> mCapsules;
+	Capsule mEdges[4];
+#if OBJECT_TEST
 	DirectX::XMVECTOR mColor;
-
 	Player mVan;
 	Building mTd;
-
-	//Collision::Id ssId = mCollision.AddStatic({ Vector3::Zero, 0.0f }, {});
-	//Collision::Id dsId = mCollision.AddDynamic({ Vector3::Zero, 0.0f }, {});
-	//Collision::Id scId = mCollision.AddStatic({ {}, 0.0f, 0.0f }, {});
-	//Collision::Id dcId = mCollision.AddDynamic({ {}, 0.0f, 0.0f }, {});
-	//mCollision.Remove(ssId);
-	//mCollision.Remove(dsId);
-	//mCollision.Remove(scId);
-	//mCollision.Remove(dcId);
-	//printf("Success!\n");
+#endif
 };
-

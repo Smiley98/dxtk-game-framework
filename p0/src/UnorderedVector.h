@@ -2,9 +2,11 @@
 #include <vector>
 #include <unordered_map>
 
+using Id = uint32_t;
+
 namespace
 {
-	uint32_t gId = 0;
+	Id gId = 0;
 }
 
 template<typename T>
@@ -12,7 +14,7 @@ class UnorderedVector
 {
 public:
 	template<typename... Args>
-	inline uint32_t Add(Args&&... args)
+	inline Id Add(Args&&... args)
 	{
 		mObjects.push_back({ std::forward<Args&&>(args)... });
 		mForward[++gId] = mObjects.size() - 1;
@@ -20,12 +22,12 @@ public:
 		return gId;
 	}
 
-	inline T& Get(uint32_t id)
+	inline T& Get(Id id)
 	{
 		return mObjects[mForward[id]];
 	}
 
-	inline void Remove(uint32_t id)
+	inline void Remove(Id id)
 	{
 		if (mForward.find(id) == mForward.end())
 			return;
@@ -62,6 +64,6 @@ public:
 
 private:
 	std::vector<T> mObjects;
-	std::unordered_map<uint32_t, size_t> mForward;
-	std::unordered_map<size_t, uint32_t> mBackward;
+	std::unordered_map<Id, size_t> mForward;
+	std::unordered_map<size_t, Id> mBackward;
 };
