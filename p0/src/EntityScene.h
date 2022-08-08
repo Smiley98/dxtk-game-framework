@@ -8,7 +8,7 @@ struct Entity
 {
 	Id colliderId;
 	Transform transform;
-	Vector3 color;
+	Vector4 color;
 };
 
 #if OBJECT_TEST
@@ -79,9 +79,9 @@ public:
 
 private:
 	Collision mCollision;
-	std::array<Entity, 16> mSpheres;
-	std::array<Entity, 16> mCapsules;
-	Capsule mEdges[4];
+	std::array<Entity, 64> mSpheres;
+	std::array<Entity, 64> mCapsules;
+	//Capsule mEdges[4];
 #if OBJECT_TEST
 	DirectX::XMVECTOR mColor;
 	Player mVan;

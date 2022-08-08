@@ -35,22 +35,23 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	const float width = float(size.right - size.left);
 	const float height = float(size.bottom - size.top);
 
-	float edgesRadius = 50.0f;
-	mEdges[0].r = mEdges[1].r = mEdges[2].r = mEdges[3].r = edgesRadius;
-	mEdges[0].hh = mEdges[1].hh = height * 0.5f;
-	mEdges[2].hh = mEdges[3].hh = width * 0.5f;
-	mEdges[0].t.DeltaTranslate(-width * 0.5f, 0.0f);
-	mEdges[1].t.DeltaTranslate(width * 0.5f, 0.0f);
-	mEdges[2].t.DeltaTranslate(0.0f, -height * 0.5f);
-	mEdges[3].t.DeltaTranslate(0.0f, height * 0.5f);
-	mEdges[2].t.DeltaRotate(90.0f);
-	mEdges[3].t.DeltaRotate(90.0f);
+	//float edgesRadius = 50.0f;
+	//mEdges[0].r = mEdges[1].r = mEdges[2].r = mEdges[3].r = edgesRadius;
+	//mEdges[0].hh = mEdges[1].hh = height * 0.5f;
+	//mEdges[2].hh = mEdges[3].hh = width * 0.5f;
+	//mEdges[0].t.DeltaTranslate(-width * 0.5f, 0.0f);
+	//mEdges[1].t.DeltaTranslate(width * 0.5f, 0.0f);
+	//mEdges[2].t.DeltaTranslate(0.0f, -height * 0.5f);
+	//mEdges[3].t.DeltaTranslate(0.0f, height * 0.5f);
+	//mEdges[2].t.DeltaRotate(90.0f);
+	//mEdges[3].t.DeltaRotate(90.0f);
 	
-	for (int i = 0; i < 4; i++)
-	{
-		Collision::Info info;
-		mCollision.mStaticCapsules.Add(std::move(mEdges[i]), std::move(info));
-	}
+	// Must make these entities in order to not get memory corruption when calling Collide
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	Collision::Info info;
+	//	mCollision.mStaticCapsules.Add(std::move(mEdges[i]), std::move(info));
+	//}
 
 	float xMax = width * 0.4f;
 	float xMin = xMax * -1.0f;
@@ -62,7 +63,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		info.data = &entity;
 
 		Sphere sphere;
-		sphere.r = random(5.0f, 25.0f);
+		sphere.r = random(15.0f, 25.0f);
 		entity.colliderId = mCollision.mDynamicSpheres.Add(std::move(sphere), std::move(info));
 		entity.transform.Translate({ random(xMin, xMax), random(yMin, yMax), 0.0f });
 	}
@@ -136,6 +137,35 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 		entity.color = Colors::Green;
 	}
 
+	static float duration = 0.0f;
+	static std::vector<Vector3> starts;
+	static std::vector<Vector3> ends;
+	static std::vector<Entity*> entities;
+	static bool run = true;
+	if (run)
+	{
+		run = false;
+		std::vector<Collision::HitPair> collisions;
+		mCollision.Collide(collisions);
+		for (const Collision::HitPair& collision : collisions)
+		{
+			Entity& a = *reinterpret_cast<Entity*>(collision.infoA.data);
+			Entity& b = *reinterpret_cast<Entity*>(collision.infoA.data);
+			entities.push_back(reinterpret_cast<Entity*>(collision.infoB.data));
+			starts.push_back(b.transform.Translation());
+			ends.push_back(b.transform.Translation() + collision.mtv);
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < entities.size(); i++)
+		{
+			Vector3 p = Vector3::Lerp(starts[i], ends[i], std::min(duration, 1.0f));
+			entities[i]->transform.Translate(p);
+		}
+	}
+	duration += dt * 0.1f;
+
 	std::vector<Collision::HitPair> collisions;
 	mCollision.Collide(collisions);
 	for (const Collision::HitPair& collision : collisions)
@@ -144,7 +174,6 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 		Entity& b = *reinterpret_cast<Entity*>(collision.infoA.data);
 		a.color = Colors::Red;
 		b.color = Colors::Red;
-		b.transform.DeltaTranslate(collision.mtv * dt * 0.1f);
 	}
 
 #if OBJECT_TEST
@@ -172,24 +201,20 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	for (int i = 0; i < 4; i++)
-		Debug::Draw(mEdges[i], mView, mProj, graphics);
+	//for (int i = 0; i < 4; i++)
+	//	Debug::Draw(mEdges[i], mView, mProj, graphics);
 
 	for (Entity& entity : mSpheres)
-		Debug::Draw(mCollision.mDynamicSpheres.Get(entity.colliderId).g, mView, mProj, graphics, entity.color);
-
+	{
+		SphereCollider& collider = mCollision.mDynamicSpheres.Get(entity.colliderId);
+		Debug::Draw(collider.g, mView, mProj, graphics, entity.color, true);
+	}
+	
 	for (Entity& entity : mCapsules)
-		Debug::Draw(mCollision.mDynamicCapsules.Get(entity.colliderId).g, mView, mProj, graphics, entity.color);
-
-	//for (SphereCollider& collider : mCollision.mDynamicSpheres.Objects())
-	//{
-	//	Debug::Draw(collider.g, mView, mProj, graphics);
-	//}
-	//
-	//for (CapsuleCollider& collider : mCollision.mDynamicCapsules.Objects())
-	//{
-	//	Debug::Draw(collider.g, mView, mProj, graphics);
-	//}
+	{
+		CapsuleCollider& collider = mCollision.mDynamicCapsules.Get(entity.colliderId);
+		Debug::Draw(collider.g, mView, mProj, graphics, entity.color, true);
+	}
 
 #if OBJECT_TEST
 	CapsuleCollider& vanCollider = mCollision.mDynamicCapsules.Get(mVan.colliderId);
