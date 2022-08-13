@@ -45,6 +45,8 @@ public:
 
 private:
 	Collision::Colliders mColliders;
+	std::array<Collision::StaticCapsule, 2> mStatic;
+	std::array<Collision::DynamicCapsule, 2> mDynamic;
 	Player mVan;
 	Building mTd;
 	Vector4 mColor;
