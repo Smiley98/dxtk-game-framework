@@ -163,10 +163,10 @@ namespace Collision
 			id.n = mDynamicCapsules.Add(std::move(collider));
 		}
 
-		SphereCollider& Get(StaticSphere id) { return mStaticSpheres.Get(id.n); }
-		SphereCollider& Get(DynamicSphere id) { return mDynamicSpheres.Get(id.n); }
-		CapsuleCollider& Get(StaticCapsule id) { return mStaticCapsules.Get(id.n); }
-		CapsuleCollider& Get(DynamicCapsule id) { return mDynamicCapsules.Get(id.n); }
+		SphereCollider* Get(StaticSphere id) { return mStaticSpheres.Get(id.n); }
+		SphereCollider* Get(DynamicSphere id) { return mDynamicSpheres.Get(id.n); }
+		CapsuleCollider* Get(StaticCapsule id) { return mStaticCapsules.Get(id.n); }
+		CapsuleCollider* Get(DynamicCapsule id) { return mDynamicCapsules.Get(id.n); }
 
 		void Remove(StaticSphere id) { mStaticSpheres.Remove(id.n); }
 		void Remove(StaticCapsule id) { mStaticCapsules.Remove(id.n); }

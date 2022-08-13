@@ -39,19 +39,19 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		mColliders.Add(mDynamic[i], hh, r);
 	}
 
-	auto& s0 = mColliders.Get(mStatic[0]);
-	auto& s1 = mColliders.Get(mStatic[1]);
+	auto* s0 = mColliders.Get(mStatic[0]);
+	auto* s1 = mColliders.Get(mStatic[1]);
 	
-	auto& d0 = mColliders.Get(mDynamic[0]);
-	auto& d1 = mColliders.Get(mDynamic[1]);
+	auto* d0 = mColliders.Get(mDynamic[0]);
+	auto* d1 = mColliders.Get(mDynamic[1]);
 
-	s0.DeltaTranslate(-width * 0.25f, 0.0f);
-	s1.DeltaTranslate( width * 0.25f, 0.0f);
+	s0->DeltaTranslate(-width * 0.25f, 0.0f);
+	s1->DeltaTranslate( width * 0.25f, 0.0f);
 
-	d0.DeltaTranslate(-width * 0.25f - hh, 0.0f);
-	d1.DeltaTranslate( width * 0.25f + hh, 0.0f);
-	d0.DeltaRotate(-45.0f);
-	d1.DeltaRotate( 45.0f);
+	d0->DeltaTranslate(-width * 0.25f - hh, 0.0f);
+	d1->DeltaTranslate( width * 0.25f + hh, 0.0f);
+	d0->DeltaRotate(-45.0f);
+	d1->DeltaRotate( 45.0f);
 #endif
 }
 
@@ -97,7 +97,6 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 	const float dt = (float)timer.GetElapsedSeconds();
 	const float tt = (float)timer.GetTotalSeconds();
 	const float speed = 100.0f * dt;
-
 #if VAN
 	// Successful auto van-building resolution!
 	std::vector<Collision::HitPair> collisions;
@@ -119,13 +118,14 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 	}
 	mColor = mColliders.Get(mVan.id).IsColliding(mColliders.Get(mTd.id)) ? Colors::Red : Colors::Green;
 #else
-	// No void*, just additional proof that we can auto-resolve *shallow* collisions.
+	// Just additional proof that we can auto-resolve *shallow* collisions.
 	// Moving a player around a level will be the ultimate test :)
 	std::vector<Collision::HitPair> collisions;
 	mColliders.Collide(collisions);
 	for (size_t i = 0; i < collisions.size(); i++)
 	{
-		mColliders.Get(mDynamic[i]).DeltaTranslate(collisions[i].mtv);
+		mColliders.Get(mDynamic[i])->DeltaTranslate(collisions[i].mtv);
+		mColliders.Remove(mDynamic[i]);
 	}
 #endif
 }
@@ -141,15 +141,16 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
 	sBuildingRenderer.Render(Matrix::Identity, mView, mProj, graphics);
 #else
-
 	for (StaticCapsule collider : mStatic)
 	{
-		Debug::Draw(mColliders.Get(collider), mView, mProj, graphics);
+		Debug::Draw(*mColliders.Get(collider), mView, mProj, graphics);
 	}
 
 	for (DynamicCapsule collider : mDynamic)
 	{
-		Debug::Draw(mColliders.Get(collider), mView, mProj, graphics);
+		CapsuleCollider* capsule = mColliders.Get(collider);
+		if (capsule != nullptr)
+			Debug::Draw(*capsule, mView, mProj, graphics);
 	}
 #endif
 }

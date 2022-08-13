@@ -13,7 +13,7 @@ struct Player
 	{
 		Vector3 bounds = renderer.Bounds(mType);
 		colliders.Add(id, bounds.y - bounds.x, bounds.x, Tags::PLAYER, this);
-		transform = &colliders.Get(id);	// this makes me happy
+		transform = colliders.Get(id);
 	}
 };
 

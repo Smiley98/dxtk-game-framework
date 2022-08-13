@@ -21,9 +21,11 @@ public:
 		return gId;
 	}
 
-	inline T& Get(Id id)
+	inline T* Get(Id id)
 	{
-		return mObjects[mForward[id]];
+		if (mForward.find(id) == mForward.end())
+			return nullptr;
+		return &mObjects[mForward[id]];
 	}
 
 	inline void Remove(Id id)
