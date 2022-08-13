@@ -18,25 +18,22 @@ public:
     void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
-	SphereCollider mSphereSphereA;
-	SphereCollider mSphereSphereB;
+	Collision::SphereCollider mSphereSphereA;
+	Collision::SphereCollider mSphereSphereB;
 	DirectX::XMVECTOR mSphereSphereColor;
 
-	CapsuleCollider mCapsuleCapsuleA;
-	CapsuleCollider mCapsuleCapsuleB;
+	Collision::CapsuleCollider mCapsuleCapsuleA;
+	Collision::CapsuleCollider mCapsuleCapsuleB;
 	DirectX::XMVECTOR mCapsuleCapsuleColor;
 
-	SphereCollider mSphere1;
-	CapsuleCollider mCapsule1;
+	Collision::SphereCollider mSphere1;
+	Collision::CapsuleCollider mCapsule1;
 	DirectX::XMVECTOR mColor1;
 
-	SphereCollider mSphere2;
-	CapsuleCollider mCapsule2;
+	Collision::SphereCollider mSphere2;
+	Collision::CapsuleCollider mCapsule2;
 	DirectX::XMVECTOR mColor2;
 
-	const float mRadius = 25.0f;
-	const float mHalfHeight = 75.0f;
-
-	void DebugSpheres(const Sphere& a, const Sphere& b, std::shared_ptr<DX::DeviceResources> graphics);
-	void DebugCapsules(const Capsule& a, const Capsule& b, std::shared_ptr<DX::DeviceResources> graphics);
+	void DebugSpheres(const Collision::SphereCollider& a, const Collision::SphereCollider& b, std::shared_ptr<DX::DeviceResources> graphics);
+	void DebugCapsules(const Collision::CapsuleCollider& a, const Collision::CapsuleCollider& b, std::shared_ptr<DX::DeviceResources> graphics);
 };

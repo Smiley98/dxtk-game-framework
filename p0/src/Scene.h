@@ -14,9 +14,9 @@ public:
 		//MAP,
 		//MAIN,
 		//TEST,
-		//COLLISION,
+		COLLISION,
 		//PHYSICS,
-		ENTITY,
+		//ENTITY,
 		NONE
 	};
 

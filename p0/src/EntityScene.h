@@ -1,5 +1,7 @@
 #pragma once
 #include "Scene.h"
+
+/*
 #include "Collision.h"
 #include <array>
 #define OBJECT_TEST false
@@ -61,6 +63,7 @@ struct Building : public Entity
 	}
 };
 #endif
+*/
 
 class EntityScene :
 	public Scene
@@ -78,6 +81,7 @@ public:
 	void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
+/*
 	Collision mCollision;
 	std::array<Entity, 64> mSpheres;
 	std::array<Entity, 64> mCapsules;
@@ -87,4 +91,5 @@ private:
 	Player mVan;
 	Building mTd;
 #endif
+*/
 };

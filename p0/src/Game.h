@@ -49,5 +49,5 @@ private:
     std::shared_ptr<DirectX::Keyboard>      mKeyboard;
     std::shared_ptr<DirectX::Mouse>         mMouse;
     DX::StepTimer                           mTimer;
-    Scene::Type                             mScene = Scene::ENTITY;
+    Scene::Type                             mScene = Scene::COLLISION;
 };

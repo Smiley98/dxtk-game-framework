@@ -2,8 +2,11 @@
 #include "DXTK.h"
 #include <memory>
 
-struct Sphere;
-struct Capsule;
+namespace Collision
+{
+	class SphereCollider;
+	class CapsuleCollider;
+}
 
 namespace Debug
 {
@@ -19,9 +22,13 @@ namespace Debug
 	void Primitive(Geometry geometry, const DirectX::SimpleMath::Matrix& world, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
-	void Draw(const Sphere& sphere, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
-		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
+	void Draw(const Collision::SphereCollider& collider,
+		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics,
+		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
-	void Draw(const Capsule& capsule, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
-		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
+	void Draw(const Collision::CapsuleCollider& collider,
+		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics,
+		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 };

@@ -8,19 +8,25 @@ class TransformBase
 {
 public:
 
-	// Local forward (orientation)
-	inline Vector3 Forward()	const
+	// Set local forward (orientation)
+	inline void Orientate(const Vector3& orientation)
+	{
+		mRotation = Matrix::CreateFromYawPitchRoll(orientation).Up();
+	}
+
+	// Get local forward (orientation)
+	inline Vector3 Forward() const
 	{
 		return Matrix::CreateFromYawPitchRoll(mRotation).Up();
 	}
 
-	// Local right (forward x up)
+	// Get local right (forward x up)
 	inline Vector3 Right() const
 	{
 		return Forward().Cross(Vector3::UnitZ);
 	}
 
-	// Local up (forward x right)
+	// Get local up (forward x right)
 	inline Vector3 Up()	const
 	{
 		return Forward().Cross(Right());

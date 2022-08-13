@@ -13,10 +13,9 @@ template<typename T>
 class UnorderedVector
 {
 public:
-	template<typename... Args>
-	inline Id Add(Args&&... args)
+	inline Id Add(T&& object)
 	{
-		mObjects.push_back({ std::forward<Args&&>(args)... });
+		mObjects.push_back(object);
 		mForward[++gId] = mObjects.size() - 1;
 		mBackward[mObjects.size() - 1] = gId;
 		return gId;

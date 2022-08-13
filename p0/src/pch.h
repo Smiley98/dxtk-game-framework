@@ -64,13 +64,14 @@
 #include "Model.h"
 #include "Mouse.h"
 #include "PrimitiveBatch.h"
-#include "Transform.h"
 #include "SpriteBatch.h"
 #include "SpriteFont.h"
 #include "VertexTypes.h"
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
+
+// Includes Transform and SimpleMath
 #include "Collision.h"
 
 namespace DX

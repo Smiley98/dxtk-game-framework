@@ -9,6 +9,7 @@ float random(float min, float max)
 	return min + (rand() / ((float)RAND_MAX / (max - min)));
 }
 
+/*
 void UpdateSphereCollider(Entity& entity, Collision& collision)
 {
 	SphereCollider& collider = collision.mDynamicSpheres.Get(entity.colliderId);
@@ -20,9 +21,11 @@ void UpdateCapsuleCollider(Entity& entity, Collision& collision)
 	CapsuleCollider& collider = collision.mDynamicCapsules.Get(entity.colliderId);
 	collider.g.t = entity.transform;
 }
+*/
 
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
+	/*
 #if OBJECT_TEST
 	mVan.Load(sPlayerRenderer, mCollision);
 	mVan.transform.Translate({ -500.0f, -500.0f, 0.0f });
@@ -80,6 +83,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		entity.transform.Translate({ random(xMin, xMax), random(yMin, yMax), 0.0f });
 		entity.transform.DeltaRotate(random(0.0f, 90.0f));
 	}
+	*/
 }
 
 EntityScene::~EntityScene()
@@ -125,6 +129,7 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 	const float tt = (float)timer.GetTotalSeconds();
 	const float speed = 100.0f * dt;
 
+	/*
 	for (Entity& entity : mSpheres)
 	{
 		UpdateSphereCollider(entity, mCollision);
@@ -197,6 +202,7 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 	SphereCollider& tdCollider = mCollision.mStaticSpheres.Get(mTd.colliderId);
 	mColor = vanCollider.IsColliding(tdCollider) ? Colors::Red : Colors::Green;
 #endif
+	*/
 }
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -204,6 +210,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//for (int i = 0; i < 4; i++)
 	//	Debug::Draw(mEdges[i], mView, mProj, graphics);
 
+	/*
 	for (Entity& entity : mSpheres)
 	{
 		SphereCollider& collider = mCollision.mDynamicSpheres.Get(entity.colliderId);
@@ -224,4 +231,5 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	sPlayerRenderer.Render(mVan.transform.World(), mView, mProj, graphics);
 	sBuildingRenderer.Render(mTd.transform.World(), mView, mProj, graphics);
 #endif
+	*/
 }
