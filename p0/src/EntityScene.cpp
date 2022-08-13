@@ -9,31 +9,14 @@ float random(float min, float max)
 	return min + (rand() / ((float)RAND_MAX / (max - min)));
 }
 
-/*
-void UpdateSphereCollider(Entity& entity, Collision& collision)
-{
-	SphereCollider& collider = collision.mDynamicSpheres.Get(entity.colliderId);
-	collider.g.t = entity.transform.Translation();
-}
-
-void UpdateCapsuleCollider(Entity& entity, Collision& collision)
-{
-	CapsuleCollider& collider = collision.mDynamicCapsules.Get(entity.colliderId);
-	collider.g.t = entity.transform;
-}
-*/
-
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
-	/*
-#if OBJECT_TEST
-	mVan.Load(sPlayerRenderer, mCollision);
-	mVan.transform.Translate({ -500.0f, -500.0f, 0.0f });
-	mVan.transform.DeltaRotate(-45.0f);
-	mVan.UpdateCollider(mCollision);
-	mTd.Load(sBuildingRenderer, mCollision);
-#endif
+	mTd.Load(sBuildingRenderer, mColliders);
+	mVan.Load(sPlayerRenderer, mColliders);
+	mVan.transform->Translate({ -500.0f, -500.0f, 0.0f });
+	mVan.transform->DeltaRotate(-45.0f);
 
+	/*
 	const RECT size = graphics->GetOutputSize();
 	const float width = float(size.right - size.left);
 	const float height = float(size.bottom - size.top);
@@ -98,13 +81,10 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_PI / 180.0f;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-#if OBJECT_TEST
 	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
 	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
-#else
-	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 100.0f }, {}, Vector3::UnitY);
-	mProj = Matrix::CreateOrthographic(width, height, 0.01f, 1000.0f);
-#endif
+	//mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 100.0f }, {}, Vector3::UnitY);
+	//mProj = Matrix::CreateOrthographic(width, height, 0.01f, 1000.0f);
 }
 
 void EntityScene::OnBegin()
@@ -130,18 +110,6 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 	const float speed = 100.0f * dt;
 
 	/*
-	for (Entity& entity : mSpheres)
-	{
-		UpdateSphereCollider(entity, mCollision);
-		entity.color = Colors::Green;
-	}
-
-	for (Entity& entity : mCapsules)
-	{
-		UpdateCapsuleCollider(entity, mCollision);
-		entity.color = Colors::Green;
-	}
-
 	static float duration = 0.0f;
 	static std::vector<Vector3> starts;
 	static std::vector<Vector3> ends;
@@ -179,36 +147,38 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 		Entity& b = *reinterpret_cast<Entity*>(collision.infoA.data);
 		a.color = Colors::Red;
 		b.color = Colors::Red;
-	}
+	}*/
 
-#if OBJECT_TEST
 	// Successful auto van-building resolution!
 	std::vector<Collision::HitPair> collisions;
-	mCollision.Collide(collisions);
+	mColliders.Collide(collisions);
 	if (collisions.empty())
 	{
-		mVan.transform.DeltaTranslate(mVan.transform.Forward() * speed);
+		mVan.transform->DeltaTranslate(mVan.transform->Forward() * speed);
 	}
 	else
 	{
 		for (const Collision::HitPair& collision : collisions)
 		{
-			mVan.transform.DeltaTranslate(collision.mtv);
+			if (collision.b.tag == Tags::PLAYER)
+			{
+				Player& player = *reinterpret_cast<Player*>(collision.b.data);
+				player.transform->DeltaTranslate(collision.mtv);
+			}
 		}
 	}
-	mVan.UpdateCollider(mCollision);
-
-	CapsuleCollider& vanCollider = mCollision.mDynamicCapsules.Get(mVan.colliderId);
-	SphereCollider& tdCollider = mCollision.mStaticSpheres.Get(mTd.colliderId);
-	mColor = vanCollider.IsColliding(tdCollider) ? Colors::Red : Colors::Green;
-#endif
-	*/
+	mColor = mColliders.Get(mVan.id).IsColliding(mColliders.Get(mTd.id)) ? Colors::Red : Colors::Green;
 }
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	//for (int i = 0; i < 4; i++)
-	//	Debug::Draw(mEdges[i], mView, mProj, graphics);
+	using namespace Collision;
+	CapsuleCollider& vanCollider = mColliders.Get(mVan.id);
+	SphereCollider& tdCollider = mColliders.Get(mTd.id);
+	Debug::Draw(vanCollider, mView, mProj, graphics, mColor);
+	Debug::Draw(tdCollider, mView, mProj, graphics, mColor);
+	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
+	sBuildingRenderer.Render(Matrix::Identity, mView, mProj, graphics);
 
 	/*
 	for (Entity& entity : mSpheres)
@@ -222,14 +192,5 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		CapsuleCollider& collider = mCollision.mDynamicCapsules.Get(entity.colliderId);
 		Debug::Draw(collider.g, mView, mProj, graphics, entity.color, true);
 	}
-
-#if OBJECT_TEST
-	CapsuleCollider& vanCollider = mCollision.mDynamicCapsules.Get(mVan.colliderId);
-	SphereCollider& tdCollider = mCollision.mStaticSpheres.Get(mTd.colliderId);
-	Debug::Draw(vanCollider.g, mView, mProj, graphics, mColor);
-	Debug::Draw(tdCollider.g, mView, mProj, graphics, mColor);
-	sPlayerRenderer.Render(mVan.transform.World(), mView, mProj, graphics);
-	sBuildingRenderer.Render(mTd.transform.World(), mView, mProj, graphics);
-#endif
 	*/
 }

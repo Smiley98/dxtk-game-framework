@@ -1,69 +1,32 @@
 #pragma once
 #include "Scene.h"
-
-/*
 #include "Collision.h"
 #include <array>
-#define OBJECT_TEST false
 
-struct Entity
+struct Player
 {
-	Id colliderId;
-	Transform transform;
-	Vector4 color;
-};
-
-#if OBJECT_TEST
-struct Player : public Entity
-{
+	Collision::DynamicCapsule id;
 	Objects::Player mType = Objects::VAN;
+	RigidTransform* transform;
 
-	void Load(const PlayerRenderer& renderer, Collision& collision)
+	void Load(const PlayerRenderer& renderer, Collision::Colliders& colliders)
 	{
 		Vector3 bounds = renderer.Bounds(mType);
-
-		Capsule capsule;
-		capsule.r = bounds.x;
-		capsule.hh = bounds.y - capsule.r;
-
-		Collision::Info info;
-		info.tag = Tags::Tag::PLAYER;
-		info.data = this;
-		
-		colliderId = collision.mDynamicCapsules.Add(std::move(capsule), std::move(info));
-	}
-
-	void UpdateCollider(Collision& collision)
-	{
-		CapsuleCollider& c = collision.mDynamicCapsules.Get(colliderId);
-		c.g.t = transform;
+		colliders.Add(id, bounds.y - bounds.x, bounds.x, Tags::PLAYER, this);
+		transform = &colliders.Get(id);	// this makes me happy
 	}
 };
 
-struct Building : public Entity
+struct Building
 {
+	Collision::StaticSphere id;
 	Objects::Building mType = Objects::TD;
 
-	void Load(const BuildingRenderer& renderer, Collision& collision)
+	void Load(const BuildingRenderer& renderer, Collision::Colliders& colliders)
 	{
-		Sphere sphere;
-		sphere.r = renderer.Bounds(mType).x;
-
-		Collision::Info info;
-		info.tag = Tags::Tag::BUILDING;
-		info.data = this;
-
-		colliderId = collision.mStaticSpheres.Add(std::move(sphere), std::move(info));
-	}
-
-	void UpdateCollider(Collision& collision)
-	{
-		SphereCollider& c = collision.mStaticSpheres.Get(colliderId);
-		c.g.t = transform.Translation();
+		colliders.Add(id, renderer.Bounds(mType).x, Tags::BUILDING, this);
 	}
 };
-#endif
-*/
 
 class EntityScene :
 	public Scene
@@ -81,15 +44,8 @@ public:
 	void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
-/*
-	Collision mCollision;
-	std::array<Entity, 64> mSpheres;
-	std::array<Entity, 64> mCapsules;
-	//Capsule mEdges[4];
-#if OBJECT_TEST
-	DirectX::XMVECTOR mColor;
+	Collision::Colliders mColliders;
 	Player mVan;
 	Building mTd;
-#endif
-*/
+	Vector4 mColor;
 };
