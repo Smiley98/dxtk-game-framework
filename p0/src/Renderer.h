@@ -12,7 +12,7 @@ public:
 	};
 
 	virtual void Load(std::shared_ptr<DX::DeviceResources> graphics);
-	virtual void Unload() = 0;
+	virtual void Unload();
 
 	// Do instanced eventually
 	//virtual void Render(const std::vector<Matrix>& worlds, const Matrix& view, const Matrix& proj,

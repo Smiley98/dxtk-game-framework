@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "EntityScene.h"
 #include "DebugRenderer.h"
+#include "Map.h"
 
-#define VAN false
+#define VAN true
 
 namespace
 {
@@ -20,7 +21,7 @@ float Random(float min, float max)
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 #if VAN
-	mTd.Load(sBuildingRenderer, mColliders);
+	mBuilding = mMap.Add(Buildings::TD, mColliders);
 	mVan.Load(sPlayerRenderer, mColliders);
 	mVan.transform->Translate({ -500.0f, -500.0f, 0.0f });
 	mVan.transform->DeltaRotate(-45.0f);
@@ -116,7 +117,8 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 			}
 		}
 	}
-	mColor = mColliders.Get(mVan.id).IsColliding(mColliders.Get(mTd.id)) ? Colors::Red : Colors::Green;
+	;
+	mColor = mColliders.Get(mVan.id)->IsColliding(*mColliders.Get(mMap.Get(mBuilding)->collider)) ? Colors::Red : Colors::Green;
 #else
 	// Just additional proof that we can auto-resolve *shallow* collisions.
 	// Moving a player around a level will be the ultimate test :)
@@ -133,13 +135,14 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	using namespace Collision;
+	using namespace Objects;
 #if VAN
-	CapsuleCollider& vanCollider = mColliders.Get(mVan.id);
-	SphereCollider& tdCollider = mColliders.Get(mTd.id);
-	Debug::Draw(vanCollider, mView, mProj, graphics, mColor);
-	Debug::Draw(tdCollider, mView, mProj, graphics, mColor);
+	CapsuleCollider* vanCollider = mColliders.Get(mVan.id);
+	CapsuleCollider* buildingCollider = mColliders.Get(mMap.Get(mBuilding)->collider);
+	Debug::Draw(*vanCollider, mView, mProj, graphics, mColor);
+	Debug::Draw(*buildingCollider, mView, mProj, graphics, mColor);
 	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
-	sBuildingRenderer.Render(Matrix::Identity, mView, mProj, graphics);
+	Buildings::Draw(*mMap.Get(mBuilding), mView, mProj, graphics);
 #else
 	for (StaticCapsule collider : mStatic)
 	{

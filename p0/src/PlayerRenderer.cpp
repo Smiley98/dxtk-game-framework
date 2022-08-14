@@ -23,9 +23,9 @@ void PlayerRenderer::Load(std::shared_ptr<DX::DeviceResources> graphics)
 
 void PlayerRenderer::Unload()
 {
-	mShader.reset();
 	mTexture.Reset();
 	mVan.reset();
+	Renderer::Unload();
 }
 
 void PlayerRenderer::Render(const Matrix& world, const Matrix& view, const Matrix& proj,

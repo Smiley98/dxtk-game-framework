@@ -27,7 +27,7 @@ namespace DirectX
 	class SpriteFont;
 }
 
-#include "Transform.h"
+#include "Collision.h"
 #include "PrimitiveBatch.h"
 #include "VertexTypes.h"
 

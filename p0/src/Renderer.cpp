@@ -7,3 +7,9 @@ void Renderer::Load(std::shared_ptr<DX::DeviceResources> graphics)
 	mStates = std::make_unique<DirectX::CommonStates>(device);
 	mShader = std::make_shared<DirectX::BasicEffect>(device);
 }
+
+void Renderer::Unload()
+{
+	mShader.reset();
+	mStates.reset();
+}

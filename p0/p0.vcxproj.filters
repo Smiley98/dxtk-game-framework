@@ -34,6 +34,9 @@
     <Filter Include="Renderers">
       <UniqueIdentifier>{9b5dcc33-11e2-421d-9a25-8c4eae4a4f24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Systems">
+      <UniqueIdentifier>{5e8ce3ac-e0f9-4ec4-9598-ab562d541809}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\fonts\SegoeUI_18.spritefont">
@@ -78,8 +81,11 @@
     <ClCompile Include="src\EntityScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="src\BuildingRenderer.cpp">
-      <Filter>Renderers</Filter>
+    <ClCompile Include="src\Buildings.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Map.cpp">
+      <Filter>Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -129,8 +135,11 @@
     <ClInclude Include="src\EntityScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="src\BuildingRenderer.h">
-      <Filter>Renderers</Filter>
+    <ClInclude Include="src\Buildings.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Map.h">
+      <Filter>Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

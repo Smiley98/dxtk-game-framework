@@ -2,6 +2,7 @@
 #include "Renderer.h"
 #include "Tags.h"
 
+// Probably more intuitive to make a Player class and implement static methods for rendering.
 class PlayerRenderer :
 	public Renderer
 {

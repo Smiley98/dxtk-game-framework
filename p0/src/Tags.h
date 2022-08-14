@@ -13,12 +13,6 @@ namespace Tags
 
 namespace Objects
 {
-	enum Building
-	{
-		TD,
-		CONDO
-	};
-
 	enum Player
 	{
 		VAN,

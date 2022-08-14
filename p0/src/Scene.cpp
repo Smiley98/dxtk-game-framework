@@ -5,13 +5,14 @@
 #include "EntityScene.h"
 #include "MainScene.h"
 
+#include "Buildings.h"
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 std::array<Scene*, Scene::NONE> Scene::sScenes;
 Scene::Type Scene::sType = NONE;
 
-BuildingRenderer Scene::sBuildingRenderer;
 PlayerRenderer Scene::sPlayerRenderer;
 
 Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
@@ -25,7 +26,7 @@ Scene::~Scene()
 void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 {
 	sPlayerRenderer.Load(graphics);
-	sBuildingRenderer.Load(graphics);
+	Buildings::Load(graphics);
 
 	//sScenes[SPLASH] = new SplashScene(graphics, audio);
 	//sScenes[LOADOUT] = new LoadoutScene(graphics, audio);
@@ -39,7 +40,7 @@ void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_pt
 
 void Scene::Destroy()
 {
-	sBuildingRenderer.Unload();
+	Buildings::Unload();
 	sPlayerRenderer.Unload();
 
 	sType = NONE;

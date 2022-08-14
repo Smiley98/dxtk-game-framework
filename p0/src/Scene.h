@@ -1,6 +1,5 @@
 #pragma once
 #include "DXTK.h"
-#include "BuildingRenderer.h"
 #include "PlayerRenderer.h"
 #include <array>
 #include <memory>
@@ -70,7 +69,6 @@ protected:
 	virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) = 0;
 
 	// Shared members
-	static BuildingRenderer sBuildingRenderer;
 	static PlayerRenderer sPlayerRenderer;
 
 	// Common members

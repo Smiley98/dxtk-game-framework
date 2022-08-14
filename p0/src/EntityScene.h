@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "Collision.h"
+#include "Map.h"
 #include <array>
 
 struct Player
@@ -14,17 +15,6 @@ struct Player
 		Vector3 bounds = renderer.Bounds(mType);
 		colliders.Add(id, bounds.y - bounds.x, bounds.x, Tags::PLAYER, this);
 		transform = colliders.Get(id);
-	}
-};
-
-struct Building
-{
-	Collision::StaticSphere id;
-	Objects::Building mType = Objects::TD;
-
-	void Load(const BuildingRenderer& renderer, Collision::Colliders& colliders)
-	{
-		colliders.Add(id, renderer.Bounds(mType).x, Tags::BUILDING, this);
 	}
 };
 
@@ -47,7 +37,8 @@ private:
 	Collision::Colliders mColliders;
 	std::array<Collision::StaticCapsule, 2> mStatic;
 	std::array<Collision::DynamicCapsule, 2> mDynamic;
+	Map mMap;
 	Player mVan;
-	Building mTd;
+	BuildingId mBuilding;
 	Vector4 mColor;
 };
