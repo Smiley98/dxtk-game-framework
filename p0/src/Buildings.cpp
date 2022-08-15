@@ -36,6 +36,11 @@ void Buildings::Load(std::shared_ptr<DX::DeviceResources> graphics)
 	sModels[TD] = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", sShader);
 	sModels[APARTMENT] = Model::CreateFromVBO(device, L"assets/meshes/apartment.vbo", sShader);
 	sModels[BMO] = Model::CreateFromVBO(device, L"assets/meshes/bmo.vbo", sShader);
+	sModels[CONDO] = Model::CreateFromVBO(device, L"assets/meshes/condo.vbo", sShader);
+	sModels[DUPLEX] = Model::CreateFromVBO(device, L"assets/meshes/duplex.vbo", sShader);
+	sModels[OFFICE] = Model::CreateFromVBO(device, L"assets/meshes/office.vbo", sShader);
+	sModels[PENTA] = Model::CreateFromVBO(device, L"assets/meshes/penta.vbo", sShader);
+	sModels[PINK] = Model::CreateFromVBO(device, L"assets/meshes/pink.vbo", sShader);
 }
 
 void Buildings::Unload()

@@ -35,24 +35,20 @@ BuildingId Map::Add(Buildings::Type type, Collision::Colliders& colliders)
 	{
 	case Buildings::TD:
 	case Buildings::BMO:
+	case Buildings::CONDO:
+	case Buildings::OFFICE:
+	case Buildings::PENTA:
+	case Buildings::PINK:
 		halfHeight = bounds.z - radius;
 		colliders.Add(building->collider, halfHeight, radius, Tags::BUILDING, building);
 		collider = colliders.Get(building->collider);
 		collider->Translate({ 0.0f, 0.0f, halfHeight });
 		collider->Rotate({ 90.0f, 0.0f, 0.0f });
 		break;
+
 	case Buildings::APARTMENT:
-		colliders.Add(building->collider, halfHeight, radius, Tags::BUILDING, building);
-		break;
-	case Buildings::CONDO:
-		break;
 	case Buildings::DUPLEX:
-		break;
-	case Buildings::OFFICE:
-		break;
-	case Buildings::PINK:
-		break;
-	case Buildings::PENTA:
+		colliders.Add(building->collider, halfHeight, radius, Tags::BUILDING, building);
 		break;
 	};
 

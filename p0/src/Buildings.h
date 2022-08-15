@@ -12,8 +12,8 @@ public:
 		CONDO,
 		DUPLEX,
 		OFFICE,
-		PINK,
 		PENTA,
+		PINK,
 		COUNT
 	};
 
