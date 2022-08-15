@@ -21,7 +21,7 @@ float Random(float min, float max)
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 #if VAN
-	mBuilding = mMap.Add(Buildings::TD, mColliders);
+	mBuilding = mMap.Add(Buildings::APARTMENT, mColliders);
 	mVan.Load(sPlayerRenderer, mColliders);
 	mVan.transform->Translate({ -500.0f, -500.0f, 0.0f });
 	mVan.transform->DeltaRotate(-45.0f);
@@ -117,7 +117,6 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& g
 			}
 		}
 	}
-	;
 	mColor = mColliders.Get(mVan.id)->IsColliding(*mColliders.Get(mMap.Get(mBuilding)->collider)) ? Colors::Red : Colors::Green;
 #else
 	// Just additional proof that we can auto-resolve *shallow* collisions.
