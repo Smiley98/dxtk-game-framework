@@ -36,6 +36,7 @@ public:
 	// Instanced renderer
 	//void Draw(const std::vector<Building>& buildings, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics);
 
+	static const DirectX::Model& Model(Type type);
 	static Vector3 Bounds(Type type);
 	static float Durability(Type type);
 

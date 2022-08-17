@@ -1,13 +1,6 @@
 #include "pch.h"
 #include "Map.h"
 
-/*
-	Building Create(Type type)
-	{
-		
-	}
-*/
-
 BuildingId Map::Add(Buildings::Type type, Collision::Colliders& colliders)
 {
 	BuildingId result;
@@ -65,10 +58,29 @@ Buildings::Building* Map::Get(BuildingId building)
 	return mBuildings[building.type].Get(building.id);
 }
 
-void MintyAftershave::Load()
+void Map::Render(const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
 {
+	for (size_t i = 0; i < mBuildings.size(); i++)
+	{
+		// DirectX::Model doesn't have a Draw() method for instanced rendering...
+		//std::vector<Buildings::Building>& buildings = mBuildings[i].Objects();
+		//if (!buildings.empty())
+		//{
+		//	Buildings::Type type = buildings.front().type;
+		//	std::vector<Matrix> positions(buildings.size());
+		//	for (const Buildings::Building& building : buildings)
+		//	{
+		//		positions.push_back(Matrix::CreateTranslation(building.position));
+		//	}
+		//}
+
+		for (const Buildings::Building& building : mBuildings[i].Objects())
+		{
+			Buildings::Draw(building, view, proj, graphics);
+		}
+	}
 }
 
-void MintyAftershave::Unload()
+void MintyAftershave::Reset()
 {
 }

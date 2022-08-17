@@ -35,10 +35,6 @@ public:
 
 private:
 	Collision::Colliders mColliders;
-	std::array<Collision::StaticCapsule, 2> mStatic;
-	std::array<Collision::DynamicCapsule, 2> mDynamic;
 	MintyAftershave mMap;
 	Player mVan;
-	BuildingId mBuilding;
-	Vector4 mColor;
 };

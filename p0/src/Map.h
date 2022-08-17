@@ -20,8 +20,11 @@ public:
 	void Remove(BuildingId building);
 	Buildings::Building* Get(BuildingId building);
 
-	virtual void Load() = 0;
-	virtual void Unload() = 0;
+	void Render(const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics);
+
+	// These may not need to be virtual -- common code for resetting durabilities, and positions if from file.
+	//virtual void Load() = 0;
+	//virtual void Unload() = 0;
 
 private:
 	std::array<UnorderedVector<Buildings::Building>, Buildings::COUNT> mBuildings;
@@ -31,6 +34,5 @@ class MintyAftershave :
 	public Map
 {
 public:
-	virtual void Load() override;
-	virtual void Unload() override;
+	void Reset();
 };

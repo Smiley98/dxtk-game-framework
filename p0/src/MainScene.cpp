@@ -21,6 +21,8 @@ void MainScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	float fovAngleY = 60.0f * XM_PI / 180.0f;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
 	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
+	//mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 100.0f }, {}, Vector3::UnitY);
+	//mProj = Matrix::CreateOrthographic(width, height, 0.01f, 1000.0f);
 }
 
 void MainScene::OnBegin()

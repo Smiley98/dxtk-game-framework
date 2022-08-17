@@ -58,6 +58,11 @@ void Buildings::Draw(const Building& building, const Matrix& view, const Matrix&
 	sModels[building.type]->Draw(graphics->GetD3DDeviceContext(), *sStates, Matrix::CreateTranslation(building.position), view, proj);
 }
 
+const DirectX::Model& Buildings::Model(Type type)
+{
+	return *sModels[type];
+}
+
 Vector3 Buildings::Bounds(Type type)
 {
 	return sModels[type]->meshes.front()->boundingBox.Extents;
