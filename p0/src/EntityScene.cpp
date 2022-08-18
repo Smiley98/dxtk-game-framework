@@ -28,10 +28,10 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 
 	const int rows = 4;
 	const int cols = 8;
-	const float xStep = (width  * 0.9f) / cols;
-	const float yStep = (height * 0.8f) / rows;
-	float x = xStep;
-	float y = yStep;
+	const float xStep = mWorldWidth / cols;
+	const float yStep = mWorldHeight / rows;
+	float x = xStep * 0.5f;
+	float y = yStep * 0.5f;
 	for (int i = 0; i < rows; i++)
 	{
 		for (int j = 0; j < cols; j++)
@@ -42,7 +42,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 			mColliders.Get(building->collider)->Translate(building->position);
 			x += xStep;
 		}
-		x = xStep;
+		x = xStep * 0.5f;
 		y += yStep;
 	}
 }
@@ -60,8 +60,8 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	float fovAngleY = 60.0f * XM_PI / 180.0f;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
 	mView = Matrix::CreateLookAt(
-		{ width * 0.5f, height * 0.5f, 1000.0f },
-		{ width * 0.5f, height * 0.5f, 0.0f },
+		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
+		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
 		Vector3::UnitY);
 	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
 }

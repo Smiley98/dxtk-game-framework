@@ -24,15 +24,22 @@ void Buildings::Load(std::shared_ptr<DX::DeviceResources> graphics)
 	auto device = graphics->GetD3DDevice();
 	sStates = std::make_unique<CommonStates>(device);
 	sShader = std::make_shared<BasicEffect>(device);
+
+	// DXTK BasicEffect constructor source:
+	/*
+	lightingEnabled(false),
+    preferPerPixelLighting(false),
+    vertexColorEnabled(false),
+    textureEnabled(false),
+    biasedVertexNormals(false)
+	*/
 	
 	sShader->EnableDefaultLighting();
-	sShader->SetLightDirection(0, { 0.0f, 0.0f, -1.0f });
-	sShader->SetAmbientLightColor(Vector3::One * 0.5f);
-	sShader->SetDiffuseColor(Vector3::One * 0.75f);
-	sShader->SetSpecularColor(Vector3::One * 0.1f);
-	sShader->SetSpecularPower(1024.0f);
-	sShader->SetTextureEnabled(false);
-	
+	sShader->SetLightEnabled(2, false);
+	sShader->SetLightEnabled(1, false);
+	sShader->SetLightDirection(0, Vector3{ 0.0f, 0.0f, -1.0f });
+	sShader->SetAmbientLightColor(Vector3{ 0.75f });
+
 	sModels[TD] = Model::CreateFromVBO(device, L"assets/meshes/td.vbo", sShader);
 	sModels[APARTMENT] = Model::CreateFromVBO(device, L"assets/meshes/apartment.vbo", sShader);
 	sModels[BMO] = Model::CreateFromVBO(device, L"assets/meshes/bmo.vbo", sShader);

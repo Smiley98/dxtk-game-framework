@@ -67,11 +67,11 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
             return 1;
 
         // Uncomment to use primary monitor instead of custom monitor (left-most for my testing setup)
+        RECT screen;
         //HMONITOR monitor = MonitorFromWindow(GetDesktopWindow(), MONITOR_DEFAULTTOPRIMARY);
         //MONITORINFO monitorInfo = { sizeof(monitorInfo) };
         //GetMonitorInfo(monitor, &monitorInfo);
         //screen = monitorInfo.rcMonitor;
-        RECT screen;
         EnumDisplayMonitors(NULL, nullptr, MonitorEnumProc, reinterpret_cast<LONG_PTR>(&screen));
 
         HWND hwnd = CreateWindowExW(0, L"DirectXTKSimpleSampleWindowClass", gAppName, WS_POPUP | WS_VISIBLE,

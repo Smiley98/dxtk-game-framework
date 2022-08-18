@@ -37,4 +37,7 @@ private:
 	Collision::Colliders mColliders;
 	MintyAftershave mMap;
 	Player mVan;
+
+	float mWorldWidth = 1600;
+	float mWorldHeight = 900;
 };
