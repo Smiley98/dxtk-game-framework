@@ -7,12 +7,12 @@
 struct Player
 {
 	Collision::DynamicCapsule id;
-	Objects::Player mType = Objects::VAN;
+	Objects::Player type = Objects::VAN;
 	RigidTransform* transform;
 
 	void Load(const PlayerRenderer& renderer, Collision::Colliders& colliders)
 	{
-		Vector3 bounds = renderer.Bounds(mType);
+		Vector3 bounds = renderer.Bounds(type);
 		colliders.Add(id, bounds.y - bounds.x, bounds.x, Tags::PLAYER, this);
 		transform = colliders.Get(id);
 	}

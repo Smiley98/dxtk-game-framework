@@ -1,24 +1,24 @@
 #include "pch.h"
 #include "Map.h"
 
-BuildingId Map::Add(Buildings::Type type, Collision::Colliders& colliders)
+BuildingId Map::Add(Building::Type type, Collision::Colliders& colliders)
 {
 	BuildingId result;
-	assert(type < Buildings::COUNT);
+	assert(type < Building::COUNT);
 	result.type = type;
-	UnorderedVector<Buildings::Building>& buildings = mBuildings[type];
+	UnorderedVector<Building>& buildings = mBuildings[type];
 
 	{
-		Buildings::Building building;
+		Building building;
 		building.type = type;
-		building.hitpoints = Buildings::Durability(type);
+		building.hitpoints = Building::Durability(type);
 		// *Insert additional building information here*
 		result.id = buildings.Add(std::move(building));
 	}
 
 	
-	Vector3 bounds = Buildings::Bounds(type);
-	Buildings::Building* building = buildings.Get(result.id);
+	Vector3 bounds = Building::Bounds(type);
+	Building* building = buildings.Get(result.id);
 	Collision::CapsuleCollider* collider = nullptr;
 
 	// Collider half height is either y or z depending on the building, hence the need for this switch.
@@ -26,12 +26,12 @@ BuildingId Map::Add(Buildings::Type type, Collision::Colliders& colliders)
 	float halfHeight = bounds.y - radius;
 	switch (type)
 	{
-	case Buildings::TD:
-	case Buildings::BMO:
-	case Buildings::CONDO:
-	case Buildings::OFFICE:
-	case Buildings::PENTA:
-	case Buildings::PINK:
+	case Building::TD:
+	case Building::BMO:
+	case Building::CONDO:
+	case Building::OFFICE:
+	case Building::PENTA:
+	case Building::PINK:
 		halfHeight = bounds.z - radius;
 		colliders.Add(building->collider, halfHeight, radius, Tags::BUILDING, building);
 		collider = colliders.Get(building->collider);
@@ -39,8 +39,8 @@ BuildingId Map::Add(Buildings::Type type, Collision::Colliders& colliders)
 		collider->Rotate({ 90.0f, 0.0f, 0.0f });
 		break;
 
-	case Buildings::APARTMENT:
-	case Buildings::DUPLEX:
+	case Building::APARTMENT:
+	case Building::DUPLEX:
 		colliders.Add(building->collider, halfHeight, radius, Tags::BUILDING, building);
 		break;
 	};
@@ -53,7 +53,7 @@ void Map::Remove(BuildingId building)
 	mBuildings[building.type].Remove(building.id);
 }
 
-Buildings::Building* Map::Get(BuildingId building)
+Building* Map::Get(BuildingId building)
 {
 	return mBuildings[building.type].Get(building.id);
 }
@@ -74,9 +74,9 @@ void Map::Render(const Matrix& view, const Matrix& proj, std::shared_ptr<DX::Dev
 		//	}
 		//}
 
-		for (const Buildings::Building& building : mBuildings[i].Objects())
+		for (const Building& building : mBuildings[i].Objects())
 		{
-			Buildings::Draw(building, view, proj, graphics);
+			Building::Draw(building, view, proj, graphics);
 		}
 	}
 }

@@ -36,8 +36,8 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	{
 		for (int j = 0; j < cols; j++)
 		{
-			BuildingId id = mMap.Add(Buildings::TD, mColliders);
-			Buildings::Building* building = mMap.Get(id);
+			BuildingId id = mMap.Add(Building::TD, mColliders);
+			Building* building = mMap.Get(id);
 			building->position = { x, y, 0.0f };
 			mColliders.Get(building->collider)->Translate(building->position);
 			x += xStep;

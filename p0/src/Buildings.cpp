@@ -5,10 +5,10 @@
 
 using namespace DirectX;
 
-std::unique_ptr<DirectX::CommonStates> Buildings::sStates;
-std::shared_ptr<DirectX::BasicEffect> Buildings::sShader;
-std::array<std::unique_ptr<DirectX::Model>, Buildings::COUNT> Buildings::sModels;
-std::array<float, Buildings::COUNT> Buildings::sDurabilities {
+std::unique_ptr<DirectX::CommonStates> Building::sStates;
+std::shared_ptr<DirectX::BasicEffect> Building::sShader;
+std::array<std::unique_ptr<DirectX::Model>, Building::COUNT> Building::sModels;
+std::array<float, Building::COUNT> Building::sDurabilities {
 	100.0f,	// TD
 	100.0f,	// APARTMENT
 	100.0f, // BMO
@@ -19,7 +19,7 @@ std::array<float, Buildings::COUNT> Buildings::sDurabilities {
 	100.0f, // PENTA
 };
 
-void Buildings::Load(std::shared_ptr<DX::DeviceResources> graphics)
+void Building::Load(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto device = graphics->GetD3DDevice();
 	sStates = std::make_unique<CommonStates>(device);
@@ -50,7 +50,7 @@ void Buildings::Load(std::shared_ptr<DX::DeviceResources> graphics)
 	sModels[PINK] = Model::CreateFromVBO(device, L"assets/meshes/pink.vbo", sShader);
 }
 
-void Buildings::Unload()
+void Building::Unload()
 {
 	for (size_t i = 0; i < sModels.size(); i++)
 	{
@@ -60,22 +60,22 @@ void Buildings::Unload()
 	sStates.reset();
 }
 
-void Buildings::Draw(const Building& building, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
+void Building::Draw(const Building& building, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
 {
 	sModels[building.type]->Draw(graphics->GetD3DDeviceContext(), *sStates, Matrix::CreateTranslation(building.position), view, proj);
 }
 
-const DirectX::Model& Buildings::Model(Type type)
+const DirectX::Model& Building::Model(Type type)
 {
 	return *sModels[type];
 }
 
-Vector3 Buildings::Bounds(Type type)
+Vector3 Building::Bounds(Type type)
 {
 	return sModels[type]->meshes.front()->boundingBox.Extents;
 }
 
-float Buildings::Durability(Type type)
+float Building::Durability(Type type)
 {
 	return sDurabilities[type];
 }

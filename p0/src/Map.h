@@ -5,7 +5,7 @@
 struct BuildingId
 {
 	Id id;
-	Buildings::Type type;
+	Building::Type type;
 };
 
 // Hard-code Minty Aftershave first before making any file tools.
@@ -16,9 +16,9 @@ class Map
 {
 public:
 // The Colliders object shguld reside in the scene since it needs to be shared between players, projectiles, and buildings.
-	BuildingId Add(Buildings::Type type, Collision::Colliders& colliders);
+	BuildingId Add(Building::Type type, Collision::Colliders& colliders);
 	void Remove(BuildingId building);
-	Buildings::Building* Get(BuildingId building);
+	Building* Get(BuildingId building);
 
 	void Render(const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics);
 
@@ -27,7 +27,7 @@ public:
 	//virtual void Unload() = 0;
 
 private:
-	std::array<UnorderedVector<Buildings::Building>, Buildings::COUNT> mBuildings;
+	std::array<UnorderedVector<Building>, Building::COUNT> mBuildings;
 };
 
 class MintyAftershave :

@@ -1,9 +1,12 @@
 #pragma once
 #include "Collision.h"
 
-class Buildings
+class Building
 {
 public:
+
+	// Type is used to index into constants like durabilities and models.
+	// We could even have common collider bounds, but that's too extreme.
 	enum Type : size_t
 	{
 		TD,
@@ -15,17 +18,11 @@ public:
 		PENTA,
 		PINK,
 		COUNT
-	};
+	} type;
 
-	struct Building
-	{
-		// Type is used to index into constants like durabilities and models.
-		// We could even have common collider bounds, but that's too extreme.
-		Type type;
-		Collision::StaticCapsule collider;
-		Vector3 position;
-		float hitpoints;
-	};
+	Collision::StaticCapsule collider;
+	Vector3 position;
+	float hitpoints;
 
 	static void Load(std::shared_ptr<DX::DeviceResources> graphics);
 	static void Unload();

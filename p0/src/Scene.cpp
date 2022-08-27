@@ -26,7 +26,7 @@ Scene::~Scene()
 void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 {
 	sPlayerRenderer.Load(graphics);
-	Buildings::Load(graphics);
+	Building::Load(graphics);
 
 	//sScenes[SPLASH] = new SplashScene(graphics, audio);
 	//sScenes[LOADOUT] = new LoadoutScene(graphics, audio);
@@ -40,7 +40,7 @@ void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_pt
 
 void Scene::Destroy()
 {
-	Buildings::Unload();
+	Building::Unload();
 	sPlayerRenderer.Unload();
 
 	sType = NONE;
