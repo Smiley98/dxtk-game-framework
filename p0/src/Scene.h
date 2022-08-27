@@ -1,5 +1,6 @@
 #pragma once
 #include "DXTK.h"
+#include "Input.h"
 #include "PlayerRenderer.h"
 #include <array>
 #include <memory>
@@ -38,13 +39,7 @@ public:
 	static void Pause();
 	static void Resume();
 
-	static void Update(
-		const DX::StepTimer& timer,
-		const DirectX::GamePad& gamePad,
-		const DirectX::Keyboard& keyboard,
-		const DirectX::Mouse& mouse
-	);
-
+	static void Update(const DX::StepTimer& timer, DX::Input& input);
 	static void Render(std::shared_ptr<DX::DeviceResources> graphics);
 
 	static Type Current();
@@ -59,13 +54,7 @@ protected:
 	virtual void OnPause() = 0;
 	virtual void OnResume() = 0;
 
-	virtual void OnUpdate(
-		const DX::StepTimer& timer,
-		const DirectX::GamePad& gamePad,
-		const DirectX::Keyboard& keyboard,
-		const DirectX::Mouse& mouse
-	) = 0;
-
+	virtual void OnUpdate(const DX::StepTimer& timer, DX::Input& input) = 0;
 	virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) = 0;
 
 	// Shared members

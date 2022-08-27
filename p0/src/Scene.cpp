@@ -86,14 +86,9 @@ void Scene::Resume()
 	scene->mPaused = false;
 }
 
-void Scene::Update(
-	const DX::StepTimer& timer,
-	const DirectX::GamePad& gamePad,
-	const DirectX::Keyboard& keyboard,
-	const DirectX::Mouse& mouse
-)
+void Scene::Update(const DX::StepTimer& timer, DX::Input& input)
 {
-	sScenes[sType]->OnUpdate(timer, gamePad, keyboard, mouse);
+	sScenes[sType]->OnUpdate(timer, input);
 }
 
 void Scene::Render(std::shared_ptr<DX::DeviceResources> graphics)

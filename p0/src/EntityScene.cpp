@@ -82,14 +82,24 @@ void EntityScene::OnResume()
 {
 }
 
-void EntityScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
+void EntityScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
 {
 	const float dt = (float)timer.GetElapsedSeconds();
 	const float tt = (float)timer.GetTotalSeconds();
-	const float speed = 100.0f * dt;
+	const float lv = 250.0f * dt;	// linear velocity
+	const float av = 100.0f * dt;	// angular velocity
 
-	mVan.transform->Rotate({0.0f, 0.0f, tt * -20.0f });
-	mVan.transform->DeltaTranslate(mVan.transform->Forward() * speed);
+	GamePad::State state = input.gamePad.GetState(0);
+
+	if (state.IsLeftThumbStickLeft())
+		mVan.transform->DeltaRotate(av);
+	if (state.IsLeftThumbStickRight())
+		mVan.transform->DeltaRotate(-av);
+
+	if (state.IsAPressed())
+		mVan.transform->DeltaTranslate(mVan.transform->Forward() * av);
+	if (state.IsXPressed())
+		mVan.transform->DeltaTranslate(mVan.transform->Forward() * -av);
 
 	std::vector<Collision::HitPair> collisions;
 	mColliders.Collide(collisions);

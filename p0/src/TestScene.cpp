@@ -94,7 +94,7 @@ void TestScene::OnResume()
 {
 }
 
-void TestScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
+void TestScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
 {
 	const Vector3 eye(0.0f, 0.7f, 1.5f);
 	const Vector3 at(0.0f, -0.1f, 0.0f);

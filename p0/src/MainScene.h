@@ -18,7 +18,7 @@ protected:
 	virtual void OnPause() override;
 	virtual void OnResume() override;
 
-	virtual void OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse) override;
+	virtual void OnUpdate(const DX::StepTimer& timer, DX::Input& input) override;
 	virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) override;
 
 private:

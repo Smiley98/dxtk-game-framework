@@ -45,9 +45,7 @@ private:
     // Shared resources 
     std::shared_ptr<DX::DeviceResources>    mDeviceResources;
     std::shared_ptr<DirectX::AudioEngine>   mAudioEngine;
-    std::shared_ptr<DirectX::GamePad>       mGamePad;
-    std::shared_ptr<DirectX::Keyboard>      mKeyboard;
-    std::shared_ptr<DirectX::Mouse>         mMouse;
     DX::StepTimer                           mTimer;
+    DX::Input                               mInput;
     Scene::Type                             mScene = Scene::ENTITY;
 };

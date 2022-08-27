@@ -26,10 +26,7 @@ Game::~Game()
 // since Scene expects them to be initialized by then.
 void Game::Initialize(HWND window, int width, int height)
 {
-    mGamePad = std::make_shared<GamePad>();
-    mKeyboard = std::make_shared<Keyboard>();
-    mMouse = std::make_shared<Mouse>();
-    mMouse->SetWindow(window);
+    mInput.mouse.SetWindow(window);
 
     AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
 #ifdef _DEBUG
@@ -63,7 +60,7 @@ void Game::Tick()
 // Updates the world.
 void Game::Update(const DX::StepTimer& timer)
 {
-    auto const pad = mGamePad->GetState(0);
+    auto const pad = mInput.gamePad.GetState(0);
     if (pad.IsConnected())
     {
         if (pad.IsViewPressed())
@@ -72,13 +69,13 @@ void Game::Update(const DX::StepTimer& timer)
         }
     }
 
-    auto const kb = mKeyboard->GetState();
+    auto const kb = mInput.keyboard.GetState();
     if (kb.Escape)
     {
         ExitGame();
     }
 
-    Scene::Update(timer, *mGamePad, *mKeyboard, *mMouse);
+    Scene::Update(timer, mInput);
 }
 
 // Draws the scene.

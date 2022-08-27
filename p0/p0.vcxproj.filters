@@ -141,6 +141,7 @@
     <ClInclude Include="src\Map.h">
       <Filter>Systems</Filter>
     </ClInclude>
+    <ClInclude Include="src\Input.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

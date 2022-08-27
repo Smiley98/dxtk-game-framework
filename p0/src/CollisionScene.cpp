@@ -67,7 +67,7 @@ void CollisionScene::OnResume()
 {
 }
 
-void CollisionScene::OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse)
+void CollisionScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
 {
 	const float dt = (float)timer.GetElapsedSeconds();
 	const float tt = (float)timer.GetTotalSeconds();

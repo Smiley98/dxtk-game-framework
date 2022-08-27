@@ -30,7 +30,7 @@ public:
 	void OnEnd() final;
 	void OnPause() final;
 	void OnResume() final;
-	void OnUpdate(const DX::StepTimer& timer, const DirectX::GamePad& gamePad, const DirectX::Keyboard& keyboard, const DirectX::Mouse& mouse) final;
+	void OnUpdate(const DX::StepTimer& timer, DX::Input& input) final;
 	void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
