@@ -24,7 +24,8 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 
 	mVan.Load(sPlayerRenderer, mColliders);
 	mVan.transform->DeltaTranslate(width * 0.25f, height * 0.5f);
-	mVan.transform->SetYaw(-90.0f);
+	//mVan.transform->SetYaw(60.0f);
+	//Vector3 forward = mVan.transform->Forward();
 
 	const int rows = 4;
 	const int cols = 8;
