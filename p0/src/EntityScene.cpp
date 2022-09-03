@@ -24,7 +24,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 
 	mVan.Load(sPlayerRenderer, mColliders);
 	mVan.transform->DeltaTranslate(width * 0.25f, height * 0.5f);
-	mVan.transform->DeltaRotate({ 0.0f, 0.0f, -90.0f });
+	mVan.transform->SetYaw(-90.0f);
 
 	const int rows = 4;
 	const int cols = 8;
@@ -92,9 +92,9 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
 	GamePad::State state = input.gamePad.GetState(0);
 
 	if (state.IsLeftThumbStickLeft())
-		mVan.transform->DeltaRotate(av);
+		mVan.transform->DeltaYaw(av);
 	if (state.IsLeftThumbStickRight())
-		mVan.transform->DeltaRotate(-av);
+		mVan.transform->DeltaYaw(-av);
 
 	if (state.IsAPressed())
 		mVan.transform->DeltaTranslate(mVan.transform->Forward() * av);

@@ -11,8 +11,7 @@ public:
 	// Get local forward (orientation)
 	inline Vector3 Forward() const
 	{
-		//return Matrix::CreateFromYawPitchRoll(mRotation).Up();
-		return Matrix::CreateFromYawPitchRoll({ mRotation.x, 0.0f, mRotation.z }).Up();
+		return Matrix::CreateFromYawPitchRoll({ mRotation.x, 0.0f, mRotation.y }).Up();
 	}
 
 	// Get local right (forward x up)
@@ -34,10 +33,20 @@ public:
 	}
 
 	// Get rotation (as euler angles in degrees)
-	inline Vector3 Rotation() const
+	inline Vector2 Rotation() const
 	{
 		constexpr float DEGREES = 180.0f / DirectX::XM_PI;
 		return mRotation * DEGREES;
+	}
+
+	inline float Pitch()
+	{
+		return mRotation.x;
+	}
+
+	inline float Yaw()
+	{
+		return mRotation.y;
 	}
 
 	// Set translation
@@ -46,24 +55,10 @@ public:
 		mTranslation = translation;
 	}
 
-	// Set rotation (as euler angles in degrees)
-	inline void Rotate(const Vector3& degreesYXZ)
-	{
-		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
-		mRotation = degreesYXZ * RADIANS;
-	}
-
 	// Append translation
 	inline void DeltaTranslate(const Vector3& translation)
 	{
 		mTranslation += translation;
-	}
-
-	// Append rotation
-	inline void DeltaRotate(const Vector3& degreesYXZ)
-	{
-		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
-		mRotation += degreesYXZ * RADIANS;
 	}
 
 	// Append 2d translation
@@ -72,14 +67,49 @@ public:
 		mTranslation += { x, y, mTranslation.z };
 	}
 
-	// Append 2d rotation
-	inline void DeltaRotate(float degreesZ)
+	// Set rotation as pitch and yaw
+	inline void Rotate(const Vector2& degrees)
 	{
 		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
-		mRotation.z += degreesZ * RADIANS;
+		mRotation = degrees * RADIANS;
+	}
+
+	// Set pitch
+	inline void SetPitch(float degrees)
+	{
+		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+		mRotation.x = degrees * RADIANS;
+	}
+
+	// Set yaw
+	inline void SetYaw(float degrees)
+	{
+		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+		mRotation.y = degrees * RADIANS;
+	}
+
+	// Append pitch & yaw
+	inline void DeltaRotate(const Vector2& degrees)
+	{
+		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+		mRotation += degrees * RADIANS;
+	}
+
+	// Append pitch
+	inline void DeltaPitch(float degrees)
+	{
+		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+		mRotation.x += degrees * RADIANS;
+	}
+
+	// Append yaw
+	inline void DeltaYaw(float degrees)
+	{
+		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+		mRotation.y += degrees * RADIANS;
 	}
 
 protected:
 	Vector3 mTranslation;
-	Vector3 mRotation;
+	Vector2 mRotation;	// x = pitch, y = yaw
 };

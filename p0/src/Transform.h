@@ -12,7 +12,7 @@ public:
 		using namespace DirectX;
 		return XMMatrixTransformation(
 			g_XMZero, Quaternion::Identity, mScaling,
-			g_XMZero, Quaternion::CreateFromYawPitchRoll({ mRotation.x, 0.0f, mRotation.z }),
+			g_XMZero, Quaternion::CreateFromYawPitchRoll({ mRotation.x, 0.0f, mRotation.y }),
 			mTranslation);
 	}
 

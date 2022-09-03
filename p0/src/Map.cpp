@@ -36,7 +36,7 @@ BuildingId Map::Add(Building::Type type, Collision::Colliders& colliders)
 		colliders.Add(building->collider, halfHeight, radius, Tags::BUILDING, building);
 		collider = colliders.Get(building->collider);
 		collider->Translate({ 0.0f, 0.0f, halfHeight });
-		collider->Rotate({ 90.0f, 0.0f, 0.0f });
+		collider->SetPitch(90.0f);
 		break;
 
 	case Building::APARTMENT:

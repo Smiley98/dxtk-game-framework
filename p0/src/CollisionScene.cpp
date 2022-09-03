@@ -28,13 +28,13 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 	mSphereSphereA.position = { -500.0f, 0.0f, 0.0f };
 
 	mCapsuleCapsuleA.Translate({ 500.0, 0.0f, 0.0f });
-	mCapsuleCapsuleB.DeltaRotate(90.0f);
+	mCapsuleCapsuleB.SetYaw(90.0f);
 	
 	mCapsule1.Translate({ 0.0f, 250.0f, 0.0f });
-	mCapsule1.DeltaRotate(90.0f);
+	mCapsule1.SetYaw(90.0f);
 	mSphere1.position = { 0.0f, 250.0f, 0.0f };
 	
-	mCapsule2.DeltaRotate(-45.0f);
+	mCapsule2.SetYaw(-45.0f);
 	mCapsule2.Translate({ -500, -500, 0.0f });
 }
 
@@ -85,7 +85,7 @@ void CollisionScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
 	{
 		const Vector3 origin{ mCapsuleCapsuleA.Translation().x, hh + r, 0.0f };
 		mCapsuleCapsuleB.Translate(origin + Vector3 { cos(tt) * speed, 0.0f, 0.0f });
-		mCapsuleCapsuleB.DeltaRotate({ 0.0f, 0.0f, speed });
+		mCapsuleCapsuleB.DeltaYaw(speed);
 
 		Vector3 mtv;
 		if (mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA, mtv))
