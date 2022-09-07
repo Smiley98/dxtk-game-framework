@@ -29,7 +29,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mVan.transform->DeltaTranslate(width * 0.25f, height * 0.5f);
 	//mCamera.position = { width * 0.5f, height * 0.5f };
 
-	Timers::Add("test", 1.0, [this]() {
+	Timers::Add({ "test" }, 1.0, [this]() {
 		Print(mVan.transform->Forward());
 	});
 
