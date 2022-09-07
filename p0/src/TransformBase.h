@@ -16,12 +16,14 @@ public:
 	// Get local forward (orientation)
 	inline Vector3 Forward() const
 	{
-		//float cx = cos(mRotation.x);
-		//float cy = cos(mRotation.y);
-		//float sx = sin(mRotation.x);
-		//float sy = sin(mRotation.y);
+		float cx = cos(mRotation.x);
+		float cy = cos(mRotation.y);
+		float sx = sin(mRotation.x);
+		float sy = sin(mRotation.y);
 		//Vector3 forward{ cy * cx, sy * cx, sx };
-		// above gives me Right, and when crossed with -Z it gives forward but collision checks fail...
+		//Vector3 forward{ sx, cy * cx, sy * cx };
+		//return forward;
+		 
 		return Matrix::CreateFromYawPitchRoll({ mRotation.x, 0.0f, mRotation.y }).Up();
 	}
 

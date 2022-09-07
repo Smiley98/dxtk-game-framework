@@ -38,6 +38,14 @@ private:
 	MintyAftershave mMap;
 	Player mVan;
 
+	struct Camera
+	{
+		Transform transform;
+		float angle = 0.0f;
+		const float fov = 60.0f;
+		const float range = 400.0f;
+	} mCamera;
+
 	float mWorldWidth = 1600;
 	float mWorldHeight = 900;
 };

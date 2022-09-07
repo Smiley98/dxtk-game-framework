@@ -36,8 +36,25 @@ namespace Debug
 		}
 	}
 
+	void Line(const Vector3& a, const Vector3& b, float thickness,
+		const Matrix& view, const Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color)
+	{
+		float x = (b - a).Length() * 0.5f;
+		float y = thickness;
+
+		// instead of doing this sorcery (atan2 between a and origin + a and b), we should figure out Orientate()!
+		// (find midpoint of segment (b - a) * 0.5f, find direction vector, then move to position and orientation.
+		//float a = atan2(a.y, a.x);
+		//float b = atan2(b.y - a.y, b.x - a.x);
+
+		auto context = graphics->GetD3DDeviceContext();
+		auto box = GeometricPrimitive::CreateBox(context, { x, y, 1.0f });
+		//box->Draw()
+	}
+
 	void Draw(const Collision::SphereCollider& collider,
-		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color, bool wireframe)
 	{
 		auto shape = GeometricPrimitive::CreateSphere(graphics->GetD3DDeviceContext(), collider.Radius() * 2.0f);
@@ -45,7 +62,7 @@ namespace Debug
 	}
 
 	void Draw(const Collision::CapsuleCollider& collider,
-		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color, bool wireframe)
 	{
 		auto context = graphics->GetD3DDeviceContext();

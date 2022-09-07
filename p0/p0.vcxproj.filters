@@ -87,6 +87,7 @@
     <ClCompile Include="src\Map.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -142,6 +143,7 @@
       <Filter>Systems</Filter>
     </ClInclude>
     <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

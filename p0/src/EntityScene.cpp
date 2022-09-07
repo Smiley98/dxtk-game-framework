@@ -2,6 +2,8 @@
 #include "EntityScene.h"
 #include "DebugRenderer.h"
 #include "Map.h"
+#include "Utility.h"
+#define MAP false
 
 namespace
 {
@@ -24,9 +26,9 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 
 	mVan.Load(sPlayerRenderer, mColliders);
 	mVan.transform->DeltaTranslate(width * 0.25f, height * 0.5f);
-	//mVan.transform->SetYaw(60.0f);
-	//Vector3 forward = mVan.transform->Forward();
+	//mCamera.position = { width * 0.5f, height * 0.5f };
 
+#if MAP
 	const int rows = 4;
 	const int cols = 8;
 	const float xStep = mWorldWidth / cols;
@@ -46,6 +48,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		x = xStep * 0.5f;
 		y += yStep;
 	}
+#endif
 }
 
 EntityScene::~EntityScene()
@@ -102,6 +105,10 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
 	if (state.IsXPressed())
 		mVan.transform->DeltaTranslate(mVan.transform->Forward() * -av);
 
+	Vector3 forward = mVan.transform->Forward();
+	Print(forward);
+
+#if MAP
 	std::vector<Collision::HitPair> collisions;
 	mColliders.Collide(collisions);
 	for (const Collision::HitPair& collision : collisions)
@@ -112,10 +119,27 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
 			player.transform->DeltaTranslate(collision.mtv);
 		}
 	}
+#endif
 }
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
+	
+	//Transform transform;
+	//transform.Scale({ mCamera.range, 10.0f, 1.0f });
+	//transform.Translate({ 500.0f, 500.0f, 0.0f });
+	//transform.DeltaYaw(mCamera.angle + mCamera.fov * 0.5f);
+	//Debug::Primitive(Debug::BOX, transform.World(), mView, mProj, graphics);
+	//transform.DeltaYaw(mCamera.angle - mCamera.fov);
+	//Debug::Primitive(Debug::BOX, transform.World(), mView, mProj, graphics);
+
+	// cone faces upwards so deal with rotation later and just use boxes for now
+	//Debug::Primitive(Debug::CONE,
+	//	Matrix::CreateScale(100.0f) *
+	//	Matrix::CreateTranslation(mCamera.position),
+	//	mView, mProj, graphics);
+#if MAP
 	mMap.Render(mView, mProj, graphics);
+#endif
 }

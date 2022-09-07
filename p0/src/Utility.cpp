@@ -1,0 +1,26 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include "Utility.h"
+#include <debugapi.h>
+
+using namespace DirectX::SimpleMath;
+
+void Print(const Vector2& vector)
+{
+	char buffer[64];
+	sprintf(buffer, "x: %f, y: %f\n", vector.x, vector.y);
+	OutputDebugStringA(buffer);
+}
+
+void Print(const Vector3& vector)
+{
+	char buffer[64];
+	sprintf(buffer, "x: %f, y: %f, z: %f\n", vector.x, vector.y, vector.z);
+	OutputDebugStringA(buffer);
+}
+
+void Print(const Vector4& vector)
+{
+	char buffer[64];
+	sprintf(buffer, "x: %f, y: %f, z: %f, w: %f \n", vector.x, vector.y, vector.z, vector.w);
+	OutputDebugStringA(buffer);
+}
