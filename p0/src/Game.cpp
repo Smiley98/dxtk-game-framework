@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Game.h"
+#include "Timers.h"
 
 extern void ExitGame() noexcept;
 
@@ -50,6 +51,8 @@ void Game::Tick()
     {
         Update(mTimer);
     });
+
+    Timers::Tick();
 
     if (!mAudioEngine->IsCriticalError())
         mAudioEngine->Update();

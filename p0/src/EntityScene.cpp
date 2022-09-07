@@ -3,6 +3,7 @@
 #include "DebugRenderer.h"
 #include "Map.h"
 #include "Utility.h"
+#include "Timers.h"
 #define MAP false
 
 namespace
@@ -27,6 +28,10 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mVan.Load(sPlayerRenderer, mColliders);
 	mVan.transform->DeltaTranslate(width * 0.25f, height * 0.5f);
 	//mCamera.position = { width * 0.5f, height * 0.5f };
+
+	Timers::Add("test", 1.0, [this]() {
+		Print(mVan.transform->Forward());
+	});
 
 #if MAP
 	const int rows = 4;
@@ -104,9 +109,6 @@ void EntityScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
 		mVan.transform->DeltaTranslate(mVan.transform->Forward() * av);
 	if (state.IsXPressed())
 		mVan.transform->DeltaTranslate(mVan.transform->Forward() * -av);
-
-	Vector3 forward = mVan.transform->Forward();
-	Print(forward);
 
 #if MAP
 	std::vector<Collision::HitPair> collisions;
