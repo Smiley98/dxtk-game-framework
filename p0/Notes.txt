@@ -8,6 +8,3 @@ ModelMesh Draw
     deviceContext->RSSetState(ccw ? states.CullCounterClockwise() : states.CullClockwise());
 
 Basically everything works as expected out of the box.
-
-I'm still not 100% confident because I think there's a mis-match between how I exported my faces in blender vs how I'm loading them.
-Also the van is horrible overall so I should install blender and clean it up even though its not causing problems at the moment.

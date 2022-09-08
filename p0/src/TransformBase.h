@@ -6,20 +6,21 @@ using namespace DirectX::SimpleMath;
 
 class TransformBase
 {
-public:
+	// Quaternion::LookRotation with Y-forward Z-Up
+	inline Quaternion LookRotationInternal(const Vector3& forward, const Vector3& up);
 
-	// WIP
-	//inline void Orientate(const Vector3& forward)
-	//{
-	//	// This function "works" if only y is used. I'm at a loss for decomposing a direction to pitch and yaw...
-	//	Vector3 euler = Matrix::CreateWorld(mTranslation, forward, Vector3::UnitZ).ToEuler();
-	//	//mRotation.x = euler.y;
-	//	mRotation.y = euler.x;
-	//}
+public:
+	// Set local forward (orientation)
+	inline void SetForward(const Vector3& forward)
+	{
+		Vector3 euler = LookRotationInternal(forward, Vector3::UnitZ).ToEuler();
+		mRotation.x = euler.x;
+		mRotation.y = euler.z;
+	}
 
 	// Get local forward (orientation)
 	inline Vector3 Forward() const
-	{		 
+	{
 		return Matrix::CreateFromYawPitchRoll({ mRotation.x, 0.0f, mRotation.y }).Up();
 	}
 
@@ -122,3 +123,32 @@ protected:
 	Vector3 mTranslation;
 	Vector2 mRotation;	// x = pitch, y = yaw
 };
+
+// That awkward moment when a math library allows you to specify an up vector only to disregard it internally...
+Quaternion TransformBase::LookRotationInternal(const Vector3& forward, const Vector3& up)
+{
+	Quaternion result;
+	{
+		using namespace DirectX;
+		Quaternion q1;
+
+		//Quaternion::FromToRotation(Vector3::Forward, forward, q1);
+		Quaternion::FromToRotation(Vector3::UnitY, forward, q1);
+
+		const XMVECTOR C = XMVector3Cross(forward, up);
+		if (XMVector3NearEqual(XMVector3LengthSq(C), g_XMZero, g_XMEpsilon))
+		{
+			// forward and up are co-linear
+			return q1;
+		}
+
+		//const XMVECTOR U = XMQuaternionMultiply(q1, Vector3::Up);
+		const XMVECTOR U = XMQuaternionMultiply(q1, Vector3::UnitZ);
+
+		Quaternion q2;
+		Quaternion::FromToRotation(U, up, q2);
+
+		XMStoreFloat4(&result, XMQuaternionMultiply(q2, q1));
+	}
+	return result;
+}

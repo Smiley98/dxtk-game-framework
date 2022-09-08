@@ -3,7 +3,7 @@
 #include "DebugRenderer.h"
 #include "Map.h"
 #include "Utility.h"
-#define MAP false
+#define MAP true
 
 namespace
 {
@@ -27,8 +27,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mVan.Load(sPlayerRenderer, mColliders);
 	mVan.transform->DeltaTranslate(width * 0.25f, height * 0.5f);
 	mVan.transform->DeltaYaw(45.0f);
-	//mVan.transform->DeltaPitch(45.0f);
-	//mVan.transform->Orientate(mVan.transform->Forward());
+	mVan.transform->SetForward(mVan.transform->Forward());
 
 	AddTimer("test", 1.0f, [this]() {
 		Print(mVan.transform->Forward());
@@ -128,7 +127,9 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
-	Debug::Line({ 100.0f, 100.0f, 100.0f }, { 200.0f, 200.0f, 200.0f }, 10.0f, mView, mProj, graphics);
+	
+	//Debug::Line({ 100.0f, 100.0f, 100.0f }, { 200.0f, 200.0f, 200.0f }, 10.0f, mView, mProj, graphics);
+	
 	//Transform transform;
 	//transform.Scale({ mCamera.range, 10.0f, 1.0f });
 	//transform.Translate({ 500.0f, 500.0f, 0.0f });
