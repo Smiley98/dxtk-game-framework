@@ -37,7 +37,6 @@ private:
 	Collision::Colliders mColliders;
 	MintyAftershave mMap;
 	Player mVan;
-	//DX::StepTimer mLogTimer;
 
 	struct Camera
 	{

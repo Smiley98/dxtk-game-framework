@@ -8,22 +8,18 @@ class TransformBase
 {
 public:
 
-	// apply acos and asin to the Forward() formula?
+	// WIP
 	//inline void Orientate(const Vector3& forward)
 	//{
+	//	// This function "works" if only y is used. I'm at a loss for decomposing a direction to pitch and yaw...
+	//	Vector3 euler = Matrix::CreateWorld(mTranslation, forward, Vector3::UnitZ).ToEuler();
+	//	//mRotation.x = euler.y;
+	//	mRotation.y = euler.x;
 	//}
 
 	// Get local forward (orientation)
 	inline Vector3 Forward() const
-	{
-		float cx = cos(mRotation.x);
-		float cy = cos(mRotation.y);
-		float sx = sin(mRotation.x);
-		float sy = sin(mRotation.y);
-		//Vector3 forward{ cy * cx, sy * cx, sx };
-		//Vector3 forward{ sx, cy * cx, sy * cx };
-		//return forward;
-		 
+	{		 
 		return Matrix::CreateFromYawPitchRoll({ mRotation.x, 0.0f, mRotation.y }).Up();
 	}
 

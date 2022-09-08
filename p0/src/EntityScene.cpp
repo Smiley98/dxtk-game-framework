@@ -26,7 +26,9 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 
 	mVan.Load(sPlayerRenderer, mColliders);
 	mVan.transform->DeltaTranslate(width * 0.25f, height * 0.5f);
-	//mCamera.position = { width * 0.5f, height * 0.5f };
+	mVan.transform->DeltaYaw(45.0f);
+	//mVan.transform->DeltaPitch(45.0f);
+	//mVan.transform->Orientate(mVan.transform->Forward());
 
 	AddTimer("test", 1.0f, [this]() {
 		Print(mVan.transform->Forward());
@@ -53,6 +55,8 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		y += yStep;
 	}
 #endif
+
+	//mCamera.position = { width * 0.5f, height * 0.5f };
 }
 
 EntityScene::~EntityScene()
