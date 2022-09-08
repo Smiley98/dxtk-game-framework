@@ -128,7 +128,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
-	
+	Debug::Line({ 100.0f, 100.0f, 100.0f }, { 200.0f, 200.0f, 200.0f }, 10.0f, mView, mProj, graphics);
 	//Transform transform;
 	//transform.Scale({ mCamera.range, 10.0f, 1.0f });
 	//transform.Translate({ 500.0f, 500.0f, 0.0f });

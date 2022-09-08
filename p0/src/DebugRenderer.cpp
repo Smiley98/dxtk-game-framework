@@ -40,17 +40,15 @@ namespace Debug
 		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color)
 	{
-		float x = (b - a).Length() * 0.5f;
-		float y = thickness;
-
-		// instead of doing this sorcery (atan2 between a and origin + a and b), we should figure out Orientate()!
-		// (find midpoint of segment (b - a) * 0.5f, find direction vector, then move to position and orientation.
-		//float a = atan2(a.y, a.x);
-		//float b = atan2(b.y - a.y, b.x - a.x);
-
-		auto context = graphics->GetD3DDeviceContext();
-		auto box = GeometricPrimitive::CreateBox(context, { x, y, 1.0f });
-		//box->Draw()
+		//Vector3 line = b - a;
+		//float length = line.Length() * 0.5f;
+		//Quaternion orientation = Quaternion::FromToRotation(a, b);
+		//Matrix world = XMMatrixTransformation(
+		//	g_XMZero, Quaternion::Identity, g_XMOne,
+		//	g_XMZero, orientation, line * 0.5f);
+		//
+		//auto box = GeometricPrimitive::CreateBox(graphics->GetD3DDeviceContext(), { thickness, length, 1.0f });
+		//box->Draw(world, view, proj, color);
 	}
 
 	void Draw(const Collision::SphereCollider& collider,
