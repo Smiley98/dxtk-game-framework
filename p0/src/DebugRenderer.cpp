@@ -40,15 +40,16 @@ namespace Debug
 		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color)
 	{
-		//Vector3 line = b - a;
-		//float length = line.Length() * 0.5f;
-		//Quaternion orientation = Quaternion::FromToRotation(a, b);
-		//Matrix world = XMMatrixTransformation(
-		//	g_XMZero, Quaternion::Identity, g_XMOne,
-		//	g_XMZero, orientation, line * 0.5f);
-		//
-		//auto box = GeometricPrimitive::CreateBox(graphics->GetD3DDeviceContext(), { thickness, length, 1.0f });
-		//box->Draw(world, view, proj, color);
+		Vector3 line = b - a;
+		float length = line.Length();
+		line.Normalize();
+
+		RigidTransform transform;
+		transform.Translate(a + line * length * 0.5f);
+		transform.SetForward(line);
+		
+		auto box = GeometricPrimitive::CreateBox(graphics->GetD3DDeviceContext(), { thickness, length, 1.0f });
+		box->Draw(transform.World(), view, proj, color);
 	}
 
 	void Draw(const Collision::SphereCollider& collider,
