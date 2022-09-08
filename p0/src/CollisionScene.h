@@ -14,7 +14,7 @@ public:
     void OnEnd() final;
     void OnPause() final;
     void OnResume() final;
-    void OnUpdate(const DX::StepTimer& timer, DX::Input& input) final;
+    void OnUpdate(float dt, float tt, DX::Input& input) final;
     void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:

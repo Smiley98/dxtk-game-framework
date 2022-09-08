@@ -41,11 +41,9 @@ void MainScene::OnResume()
 {
 }
 
-void MainScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
+void MainScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
 	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
-	const float dt = (float)timer.GetElapsedSeconds();
-	const float tt = (float)timer.GetTotalSeconds();
 }
 
 void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)

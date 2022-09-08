@@ -3,7 +3,6 @@
 #include "DebugRenderer.h"
 #include "Map.h"
 #include "Utility.h"
-#include "Timers.h"
 #define MAP false
 
 namespace
@@ -29,9 +28,9 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mVan.transform->DeltaTranslate(width * 0.25f, height * 0.5f);
 	//mCamera.position = { width * 0.5f, height * 0.5f };
 
-	Timers::Add({ "test" }, 1.0, [this]() {
+	AddTimer("test", 1.0f, [this]() {
 		Print(mVan.transform->Forward());
-	});
+	}, true);
 
 #if MAP
 	const int rows = 4;
@@ -91,10 +90,8 @@ void EntityScene::OnResume()
 {
 }
 
-void EntityScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
+void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
-	const float dt = (float)timer.GetElapsedSeconds();
-	const float tt = (float)timer.GetTotalSeconds();
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
 

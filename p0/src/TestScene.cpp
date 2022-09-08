@@ -94,12 +94,12 @@ void TestScene::OnResume()
 {
 }
 
-void TestScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
+void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
 	const Vector3 eye(0.0f, 0.7f, 1.5f);
 	const Vector3 at(0.0f, -0.1f, 0.0f);
 	mView = Matrix::CreateLookAt(eye, at, Vector3::UnitY);
-	mWorld = Matrix::CreateRotationY(float(timer.GetTotalSeconds() * XM_PIDIV4));
+	mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);
 }

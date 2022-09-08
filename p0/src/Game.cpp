@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Game.h"
-#include "Timers.h"
 
 extern void ExitGame() noexcept;
 
@@ -44,24 +43,24 @@ void Game::Initialize(HWND window, int width, int height)
     Scene::Run(mScene);
 }
 
-// Executes the basic game loop.
+// Main runs this function as frequently as possible -- whenever the Win32 event queue is empty
 void Game::Tick()
 {
-    mTimer.Tick([&]()
-    {
-        Update(mTimer);
+    // Timer ticks as fast as possible but calls update at the desired rate.
+    mTimer.Tick([&] {
+        Update();
+        
+        // Probably don't need to process audio at light-speed xD
+        if (!mAudioEngine->IsCriticalError())
+            mAudioEngine->Update();
     });
-
-    Timers::Tick();
-
-    if (!mAudioEngine->IsCriticalError())
-        mAudioEngine->Update();
-
+    
+    // Render whenever possible!
     Render();
 }
 
 // Updates the world.
-void Game::Update(const DX::StepTimer& timer)
+void Game::Update()
 {
     auto const pad = mInput.gamePad.GetState(0);
     if (pad.IsConnected())
@@ -78,7 +77,7 @@ void Game::Update(const DX::StepTimer& timer)
         ExitGame();
     }
 
-    Scene::Update(timer, mInput);
+    Scene::Update((float)mTimer.GetElapsedSeconds(), (float)mTimer.GetTotalSeconds(), mInput);
 }
 
 // Draws the scene.

@@ -88,7 +88,6 @@
       <Filter>Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\Utility.cpp" />
-    <ClCompile Include="src\Timers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -145,7 +144,7 @@
     </ClInclude>
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Utility.h" />
-    <ClInclude Include="src\Timers.h" />
+    <ClInclude Include="src\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

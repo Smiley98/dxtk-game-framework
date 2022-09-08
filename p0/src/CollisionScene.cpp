@@ -67,10 +67,8 @@ void CollisionScene::OnResume()
 {
 }
 
-void CollisionScene::OnUpdate(const DX::StepTimer& timer, DX::Input& input)
+void CollisionScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
-	const float dt = (float)timer.GetElapsedSeconds();
-	const float tt = (float)timer.GetTotalSeconds();
 	const float speed = 100.0f * dt;
 
 	{

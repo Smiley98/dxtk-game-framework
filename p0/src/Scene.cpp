@@ -65,6 +65,7 @@ void Scene::Run(Type type)
 
 void Scene::Change(Type type)
 {
+	sScenes[sType]->mTimers.clear();
 	sScenes[sType]->OnEnd();
 	sType = type;
 	sScenes[sType]->OnBegin();
@@ -86,9 +87,17 @@ void Scene::Resume()
 	scene->mPaused = false;
 }
 
-void Scene::Update(const DX::StepTimer& timer, DX::Input& input)
+void Scene::Update(float dt, float tt, DX::Input& input)
 {
-	sScenes[sType]->OnUpdate(timer, input);
+	sScenes[sType]->OnUpdate(dt, tt, input);
+
+	auto& timers = sScenes[sType]->mTimers;
+	for (auto& [key, val] : timers)
+	{
+		val.Update(dt);
+		if (val.IsExpired() /* && !val.IsRepeat() <-- unnecessary because repeating timers never expire*/)
+			timers.erase(key);
+	}
 }
 
 void Scene::Render(std::shared_ptr<DX::DeviceResources> graphics)
@@ -99,4 +108,15 @@ void Scene::Render(std::shared_ptr<DX::DeviceResources> graphics)
 Scene::Type Scene::Current()
 {
 	return sType;
+}
+
+void Scene::AddTimer(const std::string& name, float duration, TimerCallback callback, bool repeat)
+{
+	Timer timer(duration, callback, repeat);
+	mTimers.insert({ name, std::move(timer) });
+}
+
+void Scene::RemoveTimer(const std::string& name)
+{
+	mTimers.erase(name);
 }
