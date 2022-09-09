@@ -36,15 +36,12 @@ public:
 private:
 	Collision::Colliders mColliders;
 	MintyAftershave mMap;
-	Player mVan;
-	Transform mHeadlights;
 
-	struct Camera
-	{
-		Transform transform;
-		const float fov = 60.0f;
-		const float range = 400.0f;
-	} mCamera;
+	Player mVan;
+
+	Transform mHeadlights;
+	const float fov = 60.0f;
+	const float range = 400.0f;
 
 	float mWorldWidth = 1600;
 	float mWorldHeight = 900;

@@ -4,6 +4,7 @@
 #include "Map.h"
 #include "Utility.h"
 #define MAP false
+#define TIMER false
 
 namespace
 {
@@ -18,17 +19,6 @@ inline float Random(float min, float max)
 	return min + (rand() / ((float)RAND_MAX / (max - min)));
 }
 
-// This is a 2.5D engine so it makes more sense to do sphere-in-cone or sphere-in-triangle
-//inline bool InFOV(const RigidTransform& target, const RigidTransform& viewer, float fov)
-//{
-//	Vector3 toTarget = target.Translation() - viewer.Translation();
-//	float distance = toTarget.Length();
-//	toTarget /= distance;
-//
-//	// true if NOT in FOV:
-//	//Math::dot(toSprite, Math::direction(viewer.m_angle)) <= cosf(Math::radians(viewer.m_fov) * 0.5f)
-//}
-
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 	const RECT size = graphics->GetOutputSize();
@@ -36,18 +26,12 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	const float height = float(size.bottom - size.top);
 
 	mVan.Load(sPlayerRenderer, mColliders);
-	mVan.transform->DeltaTranslate(250.0f, 250.0f);
-	mVan.transform->DeltaYaw(45.0f);
-	mVan.transform->SetForward(mVan.transform->Forward());
 
+#if TIMER
 	AddTimer("test", 1.0f, [this]() {
 		Print(mVan.transform->Forward());
 	}, true);
-
-	// Barycentric coordinates essentially map 3d to 2d ie 3d positions to 2d texture coordinates
-	//Vector3 x = Vector3::Barycentric(a, b, c, 0.0f, 0.0f);
-	//Vector3 y = Vector3::Barycentric(a, b, c, 1.0f, 0.0f);
-	//Vector3 z = Vector3::Barycentric(a, b, c, 0.0f, 1.0f);
+#endif
 
 #if MAP
 	const int rows = 4;
@@ -70,8 +54,6 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		y += yStep;
 	}
 #endif
-
-	mCamera.transform.DeltaTranslate(width * 0.5f, height * 0.5f);
 }
 
 EntityScene::~EntityScene()
@@ -117,8 +99,6 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 	GamePad::State state = input.gamePad.GetState(0);
 
-	mCamera.transform.SetYaw(90.0f + cosf(tt) * 0.4f * DEGREES);
-
 	if (state.IsLeftThumbStickLeft())
 		mVan.transform->DeltaYaw(av);
 	if (state.IsLeftThumbStickRight())
@@ -145,21 +125,21 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	//sPlayerRenderer.Render(mCamera.transform.World(), mView, mProj, graphics);
-	//sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
-	sMiscRenderer.Triangle({ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
+	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
 
 	Vector3 forward = mVan.transform->Forward();
 	Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
 	Vector3 top = mVan.transform->Translation() + forward * bounds.y;
 	Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
 	top.z = bot.z = bounds.z * 2.0f;
-	//Debug::Line(bot, top, 10.0f, mView, mProj, graphics);
 
 	mHeadlights.SetForward(forward);
 	mHeadlights.Translate(top);
 	mHeadlights.Scale(100.0f);
-	//sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
+	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
+	
+	//Debug::Line(bot, top, 10.0f, mView, mProj, graphics);
+	//sMiscRenderer.Triangle({ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
 
 #if MAP
 	mMap.Render(mView, mProj, graphics);
