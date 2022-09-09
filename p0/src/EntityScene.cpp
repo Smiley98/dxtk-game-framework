@@ -36,13 +36,18 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	const float height = float(size.bottom - size.top);
 
 	mVan.Load(sPlayerRenderer, mColliders);
-	mVan.transform->DeltaTranslate(width * 0.25f, height * 0.5f);
+	mVan.transform->DeltaTranslate(250.0f, 250.0f);
 	mVan.transform->DeltaYaw(45.0f);
 	mVan.transform->SetForward(mVan.transform->Forward());
 
 	AddTimer("test", 1.0f, [this]() {
 		Print(mVan.transform->Forward());
 	}, true);
+
+	// Barycentric coordinates essentially map 3d to 2d ie 3d positions to 2d texture coordinates
+	//Vector3 x = Vector3::Barycentric(a, b, c, 0.0f, 0.0f);
+	//Vector3 y = Vector3::Barycentric(a, b, c, 1.0f, 0.0f);
+	//Vector3 z = Vector3::Barycentric(a, b, c, 0.0f, 1.0f);
 
 #if MAP
 	const int rows = 4;
@@ -140,19 +145,21 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	//sPlayerRenderer.Render(mCamera.transform.World(), mView, mProj, graphics);
-	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
+	//sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
+	//sMiscRenderer.Triangle({ 250.0f, 250.0f, 100.0f }, { 500.0f, 250.0f, 100.0f }, { 375.0f, 500.0f, 100.0f }, mView, mProj, graphics);
+	sMiscRenderer.Triangle({ 250.0f, 250.0f, 100.0f }, { 500.0f, 250.0f, 100.0f }, { 375.0f, 500.0f, 100.0f }, mView, mProj, graphics);
 
 	Vector3 forward = mVan.transform->Forward();
 	Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
 	Vector3 top = mVan.transform->Translation() + forward * bounds.y;
 	Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
 	top.z = bot.z = bounds.z * 2.0f;
-	Debug::Line(bot, top, 10.0f, mView, mProj, graphics);
+	//Debug::Line(bot, top, 10.0f, mView, mProj, graphics);
 
 	mHeadlights.SetForward(forward);
 	mHeadlights.Translate(top);
 	mHeadlights.Scale(100.0f);
-	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
+	//sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
 
 #if MAP
 	mMap.Render(mView, mProj, graphics);

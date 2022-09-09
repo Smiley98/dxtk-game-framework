@@ -108,6 +108,11 @@ namespace Collision
 		return SphereSphere(nearestA, nearestB, rA, rB, mtv);
 	}
 
+	//inline bool SphereTriangle(const Vector3& tA, float rA, const Vector3& p0, const Vector3& p1, const Vector3& p2)
+	//{
+	//
+	//}
+
 	// Creating from top & bot is less efficient due to the additional rotation calculations.
 	// Moreover, the math maps nicely to RigidTransform and hh and r are models y and x.
 	//float hh = (top - bot).Length() * 0.5f - radius);
