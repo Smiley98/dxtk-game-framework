@@ -2,6 +2,7 @@
 #include "DXTK.h"
 #include "Input.h"
 #include "PlayerRenderer.h"
+#include "MiscRenderer.h"
 #include "Timer.h"
 #include <array>
 #include <memory>
@@ -66,6 +67,7 @@ protected:
 
 	// Shared members
 	static PlayerRenderer sPlayerRenderer;
+	static MiscRenderer sMiscRenderer;
 
 	// Common members
 	Matrix mView;

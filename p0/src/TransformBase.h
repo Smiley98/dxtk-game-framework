@@ -4,6 +4,9 @@
 // but I'm on the verge of losing my mind every time I declare a DirectX::SimpleMath::Vector3...
 using namespace DirectX::SimpleMath;
 
+constexpr float DEGREES = 180.0f / DirectX::XM_PI;
+constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+
 class TransformBase
 {
 	// Quaternion::LookRotation with Y-forward Z-Up
@@ -45,7 +48,6 @@ public:
 	// Get rotation (as euler angles in degrees)
 	inline Vector2 Rotation() const
 	{
-		constexpr float DEGREES = 180.0f / DirectX::XM_PI;
 		return mRotation * DEGREES;
 	}
 
@@ -80,42 +82,36 @@ public:
 	// Set rotation as pitch and yaw
 	inline void Rotate(const Vector2& degrees)
 	{
-		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
 		mRotation = degrees * RADIANS;
 	}
 
 	// Set pitch
 	inline void SetPitch(float degrees)
 	{
-		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
 		mRotation.x = degrees * RADIANS;
 	}
 
 	// Set yaw
 	inline void SetYaw(float degrees)
 	{
-		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
 		mRotation.y = degrees * RADIANS;
 	}
 
 	// Append pitch & yaw
 	inline void DeltaRotate(const Vector2& degrees)
 	{
-		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
 		mRotation += degrees * RADIANS;
 	}
 
 	// Append pitch
 	inline void DeltaPitch(float degrees)
 	{
-		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
 		mRotation.x += degrees * RADIANS;
 	}
 
 	// Append yaw
 	inline void DeltaYaw(float degrees)
 	{
-		constexpr float RADIANS = DirectX::XM_PI / 180.0f;
 		mRotation.y += degrees * RADIANS;
 	}
 

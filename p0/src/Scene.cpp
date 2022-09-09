@@ -14,6 +14,7 @@ std::array<Scene*, Scene::NONE> Scene::sScenes;
 Scene::Type Scene::sType = NONE;
 
 PlayerRenderer Scene::sPlayerRenderer;
+MiscRenderer Scene::sMiscRenderer;
 
 Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 {
@@ -26,6 +27,7 @@ Scene::~Scene()
 void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 {
 	sPlayerRenderer.Load(graphics);
+	sMiscRenderer.Load(graphics);
 	Building::Load(graphics);
 
 	//sScenes[SPLASH] = new SplashScene(graphics, audio);
@@ -42,6 +44,7 @@ void Scene::Destroy()
 {
 	Building::Unload();
 	sPlayerRenderer.Unload();
+	sMiscRenderer.Unload();
 
 	sType = NONE;
 	for (Scene* scene : sScenes)

@@ -5,9 +5,9 @@ using namespace DirectX;
 
 void PlayerRenderer::Load(std::shared_ptr<DX::DeviceResources> graphics)
 {
+	Renderer::Load(graphics);
 	auto device = graphics->GetD3DDevice();
 
-	Renderer::Load(graphics);
 	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, mTexture.ReleaseAndGetAddressOf()));
 	mShader = std::make_shared<BasicEffect>(device);
 	mShader->EnableDefaultLighting();

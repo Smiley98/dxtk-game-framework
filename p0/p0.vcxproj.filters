@@ -88,6 +88,9 @@
       <Filter>Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\Utility.cpp" />
+    <ClCompile Include="src\MiscRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -145,6 +148,9 @@
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Utility.h" />
     <ClInclude Include="src\Timer.h" />
+    <ClInclude Include="src\MiscRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

@@ -37,11 +37,11 @@ private:
 	Collision::Colliders mColliders;
 	MintyAftershave mMap;
 	Player mVan;
+	Transform mHeadlights;
 
 	struct Camera
 	{
 		Transform transform;
-		float angle = 0.0f;
 		const float fov = 60.0f;
 		const float range = 400.0f;
 	} mCamera;

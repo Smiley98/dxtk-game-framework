@@ -104,6 +104,7 @@
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MainScene.cpp" />
+    <ClCompile Include="src\MiscRenderer.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -130,6 +131,7 @@
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\MainScene.h" />
+    <ClInclude Include="src\MiscRenderer.h" />
     <ClInclude Include="src\PlayerRenderer.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Timer.h" />

@@ -13,10 +13,21 @@ namespace
 
 using namespace DirectX;
 
-float Random(float min, float max)
+inline float Random(float min, float max)
 {
 	return min + (rand() / ((float)RAND_MAX / (max - min)));
 }
+
+// This is a 2.5D engine so it makes more sense to do sphere-in-cone or sphere-in-triangle
+//inline bool InFOV(const RigidTransform& target, const RigidTransform& viewer, float fov)
+//{
+//	Vector3 toTarget = target.Translation() - viewer.Translation();
+//	float distance = toTarget.Length();
+//	toTarget /= distance;
+//
+//	// true if NOT in FOV:
+//	//Math::dot(toSprite, Math::direction(viewer.m_angle)) <= cosf(Math::radians(viewer.m_fov) * 0.5f)
+//}
 
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
@@ -55,7 +66,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	}
 #endif
 
-	//mCamera.position = { width * 0.5f, height * 0.5f };
+	mCamera.transform.DeltaTranslate(width * 0.5f, height * 0.5f);
 }
 
 EntityScene::~EntityScene()
@@ -100,6 +111,8 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 	GamePad::State state = input.gamePad.GetState(0);
 
+	mCamera.transform.SetYaw(90.0f + cosf(tt) * 0.4f * DEGREES);
+
 	if (state.IsLeftThumbStickLeft())
 		mVan.transform->DeltaYaw(av);
 	if (state.IsLeftThumbStickRight())
@@ -126,7 +139,9 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
+	//sPlayerRenderer.Render(mCamera.transform.World(), mView, mProj, graphics);
 	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
+
 	Vector3 forward = mVan.transform->Forward();
 	Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
 	Vector3 top = mVan.transform->Translation() + forward * bounds.y;
@@ -134,12 +149,11 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	top.z = bot.z = bounds.z * 2.0f;
 	Debug::Line(bot, top, 10.0f, mView, mProj, graphics);
 
-	// cone faces upwards so deal with rotation later and just use boxes for now
-	// probably best to export a Y-forward cone from blender
-	//Debug::Primitive(Debug::CONE,
-	//	Matrix::CreateScale(100.0f) *
-	//	Matrix::CreateTranslation(mCamera.position),
-	//	mView, mProj, graphics);
+	mHeadlights.SetForward(forward);
+	mHeadlights.Translate(top);
+	mHeadlights.Scale(100.0f);
+	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
+
 #if MAP
 	mMap.Render(mView, mProj, graphics);
 #endif

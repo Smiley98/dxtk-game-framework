@@ -33,6 +33,12 @@ public:
 		mScaling = scaling;
 	}
 
+	// Set uniform scale
+	inline void Scale(float scaling)
+	{
+		mScaling = { scaling };
+	}
+
 	// Append scale
 	inline void DeltaScale(const Vector3& scaling)
 	{
