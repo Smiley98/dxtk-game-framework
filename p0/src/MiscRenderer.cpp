@@ -41,14 +41,6 @@ void MiscRenderer::Triangle(const Vector3& p0, const Vector3& p1, const Vector3&
 	GeometricPrimitive::VertexType v1;
 	GeometricPrimitive::VertexType v2;
 
-	//v0.position = { 0.5f, 0.5f, 0.5f};
-	//v1.position = { 0.5f, -0.5f, 0.5f };
-	//v2.position = { -0.5f, -0.5f, 0.5f };
-
-	//v0.position = { 175.0f, 50.0f, -1.0f };
-	//v1.position = { 50.0f, -50.0f, -1.0f };
-	//v2.position = { -50.0f, -50.0f, -1.0f };
-
 	v0.position = p0;
 	v1.position = p1;
 	v2.position = p2;
@@ -65,6 +57,5 @@ void MiscRenderer::Triangle(const Vector3& p0, const Vector3& p1, const Vector3&
 	auto context = graphics->GetD3DDeviceContext();
 	auto triangle = GeometricPrimitive::CreateCustom(context, vertices, indices);
 
-	//triangle->Draw(Matrix::CreateScale(100.0f), view, proj);
 	triangle->Draw(Matrix::Identity, view, proj);
 }
