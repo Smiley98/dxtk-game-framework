@@ -86,10 +86,11 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_PI / 180.0f;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-	mView = Matrix::CreateLookAt(
-		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
-		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
-		Vector3::UnitY);
+	//mView = Matrix::CreateLookAt(
+	//	{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
+	//	{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
+	//	Vector3::UnitY);
+	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
 	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
 }
 
@@ -146,8 +147,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	//sPlayerRenderer.Render(mCamera.transform.World(), mView, mProj, graphics);
 	//sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
-	//sMiscRenderer.Triangle({ 250.0f, 250.0f, 100.0f }, { 500.0f, 250.0f, 100.0f }, { 375.0f, 500.0f, 100.0f }, mView, mProj, graphics);
-	sMiscRenderer.Triangle({ 250.0f, 250.0f, 100.0f }, { 500.0f, 250.0f, 100.0f }, { 375.0f, 500.0f, 100.0f }, mView, mProj, graphics);
+	sMiscRenderer.Triangle({ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
 
 	Vector3 forward = mVan.transform->Forward();
 	Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
