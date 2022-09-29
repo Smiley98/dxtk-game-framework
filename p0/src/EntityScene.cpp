@@ -77,8 +77,8 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	//	{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
 	//	Vector3::UnitY);
 	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
-	mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.01f, 10000.0f);
-	//mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
+	//mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.01f, 10000.0f);
+	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
 }
 
 void EntityScene::OnBegin()
@@ -130,6 +130,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
+	//sMiscRenderer.Triangle({ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
 	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
 	Building::Draw(mBuilding, mView, mProj, graphics);
 
@@ -137,16 +138,18 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
 	Vector3 top = mVan.transform->Translation() + forward * bounds.y;
 	Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
-	top.z = bot.z = bounds.z * 2.0f;
 
 	float length = 100.0f;
 	mHeadlights.SetForward(forward);
 	mHeadlights.Translate(top);
 	mHeadlights.Scale(length);
 	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
-
 	Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
-	//sMiscRenderer.Triangle({ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
+
+	//*top.z = bot.z = bounds.z * 2.0f;*
+	// This was done so that we could render a line about the van to prevent it from being occluded
+	// Doing so screws up the FOV check so I've removed it
+	// TODO -- Transform2D and Transform3D so these issues don't happen
 
 #if MAP
 	mMap.Render(mView, mProj, graphics);

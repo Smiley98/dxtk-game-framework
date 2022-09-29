@@ -87,7 +87,8 @@ namespace Debug
 		right.DeltaYaw(fov * 0.5f);
 
 		XMVECTOR color = Collision::InRange(viewer, target, length, fov) ? Colors::Red : Colors::Green;
-		Line(viewer.Translation(), target, 10.0f, view, proj, graphics, color);
+		//Line(viewer.Translation(), target, 10.0f, view, proj, graphics, color);
+		//Line(viewer.Translation(), viewer.Translation() + viewer.Forward() * length, 10.0f, view, proj, graphics, color);
 		Line(viewer.Translation(), viewer.Translation() + left.Forward() * length, 10.0f, view, proj, graphics, color);
 		Line(viewer.Translation(), viewer.Translation() + right.Forward() * length, 10.0f, view, proj, graphics, color);
 	}
