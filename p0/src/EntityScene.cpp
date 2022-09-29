@@ -3,7 +3,6 @@
 #include "DebugRenderer.h"
 #include "Map.h"
 #include "Utility.h"
-#include "Curves.h"
 #define MAP false
 #define TIMER false
 #define SPLINE true
@@ -26,6 +25,8 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	const RECT size = graphics->GetOutputSize();
 	const float width = float(size.right - size.left);
 	const float height = float(size.bottom - size.top);
+
+	mSpeedTable = CreateSpeedTable(mSpline, 16);
 
 	mVan.Load(sPlayerRenderer, mColliders);
 	mVan.transform->SetYaw(-45.0f);
@@ -105,21 +106,22 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	const float av = 100.0f * dt;	// angular velocity
 
 #if SPLINE
-	Vector3 p0, p1, p2, p3;
-	IndexCatmull(mSpline, i, p0, p1, p2, p3);
-	Vector3 a = Vector3::CatmullRom(p0, p1, p2, p3, t);
-	Vector3 b = Vector3::CatmullRom(p0, p1, p2, p3, t + dt);
-	Vector3 forward = b - a;
-	forward.Normalize();
-	mVan.transform->Translate(a);
-	mVan.transform->SetForward(forward);
+	Vector3 p = ControlledCatmull(d, lv, interval, sample, mSpline, mSpeedTable);
+	mVan.transform->Translate(p);
+	//Vector3 a = Catmull(t, interval, mSpline);
+	//Vector3 b = Catmull(t + dt, interval, mSpline);
+	//Vector3 forward = b - a;
+	//forward.Normalize();
+	//mVan.transform->Translate(a);
+	//mVan.transform->SetForward(forward);
+	// LOL the van does a front-flip! Use quaternion from-to to fix this in the future
 
-	if (t >= 1.0f)
-	{
-		t = 0.0f;
-		i++;
-	}
-	t += dt;
+	//if (t >= 1.0f)
+	//{
+	//	t = 0.0f;
+	//	i++;
+	//}
+	//t += dt;
 #else
 	GamePad::State state = input.gamePad.GetState(0);
 

@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Collision.h"
 #include "Map.h"
+#include "Curves.h"
 
 struct Player
 {
@@ -46,13 +47,14 @@ private:
 	float mWorldWidth = 1600;
 	float mWorldHeight = 900;
 
-	std::array<Vector3, 4> mSpline = {
+	std::vector<Vector3> mSpline = {
 		Vector3{ 500.0f, -300.0f, 0.0f },
 		Vector3{ -500.0f, -300.0f, 100.0f },
 		Vector3{ -500.0f, 300.0f, 100.0f },
 		Vector3{ 500.0f, 300.0f, 0.0f }
 	};
+	SpeedTable mSpeedTable;
 
-	float t = 0.0f;
-	size_t i = 0;
+	float t = 0.0f, d = 0.0f;
+	size_t interval = 0, sample = 0;
 };

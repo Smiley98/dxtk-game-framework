@@ -130,6 +130,7 @@
     <ClInclude Include="src\EntityScene.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\Interpolation.h" />
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\MainScene.h" />
     <ClInclude Include="src\MiscRenderer.h" />
