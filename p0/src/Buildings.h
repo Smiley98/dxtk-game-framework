@@ -23,6 +23,7 @@ public:
 	Collision::StaticCapsule collider;
 	Vector3 position;
 	float hitpoints;
+	Color color;
 
 	static void Load(std::shared_ptr<DX::DeviceResources> graphics);
 	static void Unload();

@@ -35,7 +35,7 @@ void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_pt
 	//sScenes[MAP] = new MapScene(graphics, audio);
 	//sScenes[MAIN] = new MainScene(graphics, audio);
 	//sScenes[TEST] = new TestScene(graphics, audio);
-	//sScenes[COLLISION] = new CollisionScene(graphics, audio);
+	sScenes[COLLISION] = new CollisionScene(graphics, audio);
 	//sScenes[PHYSICS] = new PhysicsScene(graphics, audio);
 	sScenes[ENTITY] = new EntityScene(graphics, audio);
 }

@@ -26,6 +26,10 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	const float height = float(size.bottom - size.top);
 
 	mVan.Load(sPlayerRenderer, mColliders);
+	mVan.transform->SetYaw(-45.0f);
+
+	mBuilding.type = Building::Type::TD;
+	mBuilding.position = { -500.0f, 300.0f, 0.0f };
 
 #if TIMER
 	AddTimer("test", 1.0f, [this]() {
@@ -133,12 +137,25 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
 	top.z = bot.z = bounds.z * 2.0f;
 
+	float length = 100.0f;
 	mHeadlights.SetForward(forward);
 	mHeadlights.Translate(top);
-	mHeadlights.Scale(100.0f);
+	mHeadlights.Scale(length);
 	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
+
+	RigidTransform left, right;
+	left = right = *mVan.transform;
+	left.DeltaYaw(-fov * 0.5f);
+	right.DeltaYaw(fov * 0.5f);
+	left.Translate(top);
+	right.Translate(top);
+
+	Debug::Line(bot, top, 10.0f, mView, mProj, graphics);
+	Debug::Line(left.Translation(), left.Translation() + left.Forward() * length * 2.0f, 10.0f, mView, mProj, graphics);
+	Debug::Line(right.Translation(), right.Translation() + right.Forward() * length * 2.0f, 10.0f, mView, mProj, graphics);
+
+	Building::Draw(mBuilding, mView, mProj, graphics);
 	
-	//Debug::Line(bot, top, 10.0f, mView, mProj, graphics);
 	//sMiscRenderer.Triangle({ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
 
 #if MAP

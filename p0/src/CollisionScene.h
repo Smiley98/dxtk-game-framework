@@ -20,19 +20,19 @@ public:
 private:
 	Collision::SphereCollider mSphereSphereA;
 	Collision::SphereCollider mSphereSphereB;
-	DirectX::XMVECTOR mSphereSphereColor;
+	Color mSphereSphereColor;
 
 	Collision::CapsuleCollider mCapsuleCapsuleA;
 	Collision::CapsuleCollider mCapsuleCapsuleB;
-	DirectX::XMVECTOR mCapsuleCapsuleColor;
+	Color mCapsuleCapsuleColor;
 
 	Collision::SphereCollider mSphere1;
 	Collision::CapsuleCollider mCapsule1;
-	DirectX::XMVECTOR mColor1;
+	Color mColor1;
 
 	Collision::SphereCollider mSphere2;
 	Collision::CapsuleCollider mCapsule2;
-	DirectX::XMVECTOR mColor2;
+	Color mColor2;
 
 	void DebugSpheres(const Collision::SphereCollider& a, const Collision::SphereCollider& b, std::shared_ptr<DX::DeviceResources> graphics);
 	void DebugCapsules(const Collision::CapsuleCollider& a, const Collision::CapsuleCollider& b, std::shared_ptr<DX::DeviceResources> graphics);

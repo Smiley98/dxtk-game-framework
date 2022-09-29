@@ -108,6 +108,18 @@ namespace Collision
 		return SphereSphere(nearestA, nearestB, rA, rB, mtv);
 	}
 
+	inline bool InRange(const TransformBase& viewer, const TransformBase& target, float length, float fov /*(degrees)*/)
+	{
+		if ((target.Translation() - viewer.Translation()).Length() > length)
+			return false;
+
+		Vector3 viewerDirection = viewer.Forward();
+		Vector3 targetDirection = (target.Translation() - viewer.Translation());
+		targetDirection.Normalize();
+
+		return targetDirection.Dot(viewerDirection) > cosf(RADIANS * fov * 0.5f);
+	}
+
 	//inline bool SphereTriangle(const Vector3& tA, float rA, const Vector3& p0, const Vector3& p1, const Vector3& p2)
 	//{
 	//

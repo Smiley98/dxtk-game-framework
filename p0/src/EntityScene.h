@@ -2,7 +2,6 @@
 #include "Scene.h"
 #include "Collision.h"
 #include "Map.h"
-#include <array>
 
 struct Player
 {
@@ -38,6 +37,7 @@ private:
 	MintyAftershave mMap;
 
 	Player mVan;
+	Building mBuilding;
 
 	Transform mHeadlights;
 	const float fov = 60.0f;

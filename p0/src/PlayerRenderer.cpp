@@ -42,5 +42,7 @@ Vector3 PlayerRenderer::Bounds(Objects::Player type) const
 		return mVan->meshes.front()->boundingBox.Extents;
 	case Objects::MECH:
 		return {};
+	default:
+		return {};
 	}
 }
