@@ -70,17 +70,3 @@ inline Vector3 ControlledCatmull(float& distance, float deltaDistance, size_t& i
     }
     return Catmull(DistanceToInterpolation(distance, speedTable, interval, sample), interval, points);
 }
-
-/*class UniformSpline
-{
-public:
-    inline SpeedTable Create(const std::vector<Vector3>& points, size_t intervals)
-    {
-        return CreateSpeedTable(points, intervals);
-    }
-
-    inline Vector3 
-
-private:
-
-};*/

@@ -105,23 +105,14 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
 
-#if SPLINE
-	Vector3 p = ControlledCatmull(d, lv, interval, sample, mSpline, mSpeedTable);
-	mVan.transform->Translate(p);
-	//Vector3 a = Catmull(t, interval, mSpline);
-	//Vector3 b = Catmull(t + dt, interval, mSpline);
-	//Vector3 forward = b - a;
-	//forward.Normalize();
-	//mVan.transform->Translate(a);
-	//mVan.transform->SetForward(forward);
 	// LOL the van does a front-flip! Use quaternion from-to to fix this in the future
-
-	//if (t >= 1.0f)
-	//{
-	//	t = 0.0f;
-	//	i++;
-	//}
-	//t += dt;
+#if SPLINE
+	Vector3 a = ControlledCatmull(d, lv, interval, sample, mSpline, mSpeedTable);
+	Vector3 b = Catmull(DistanceToInterpolation(d + lv, mSpeedTable, interval, sample), interval, mSpline);
+	Vector3 forward = b - a;
+	forward.Normalize();
+	mVan.transform->Translate(a);
+	mVan.transform->SetForward(forward);
 #else
 	GamePad::State state = input.gamePad.GetState(0);
 
