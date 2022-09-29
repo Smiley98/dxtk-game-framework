@@ -107,7 +107,13 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 #if SPLINE
 	Vector3 p0, p1, p2, p3;
 	IndexCatmull(mSpline, i, p0, p1, p2, p3);
-	mVan.transform->Translate(Vector3::CatmullRom(p0, p1, p2, p3, t));
+	Vector3 a = Vector3::CatmullRom(p0, p1, p2, p3, t);
+	Vector3 b = Vector3::CatmullRom(p0, p1, p2, p3, t + dt);
+	Vector3 forward = b - a;
+	forward.Normalize();
+	mVan.transform->Translate(a);
+	mVan.transform->SetForward(forward);
+
 	if (t >= 1.0f)
 	{
 		t = 0.0f;
@@ -145,8 +151,8 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	//sMiscRenderer.Triangle({ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
+	//Building::Draw(mBuilding, mView, mProj, graphics);
 	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
-	Building::Draw(mBuilding, mView, mProj, graphics);
 
 	Vector3 forward = mVan.transform->Forward();
 	Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
@@ -157,8 +163,8 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mHeadlights.SetForward(forward);
 	mHeadlights.Translate(top);
 	mHeadlights.Scale(length);
-	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
-	Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
+	//sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
+	//Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
 
 	for (const Vector3& position : mSpline)
 	{

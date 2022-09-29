@@ -47,10 +47,10 @@ private:
 	float mWorldHeight = 900;
 
 	std::array<Vector3, 4> mSpline = {
-		Vector3{ 100.0f, -100.0f, 0.0f },
-		Vector3{ -100.0f, -100.0f, 0.0f },
-		Vector3{ -100.0f, 100.0f, 0.0f },
-		Vector3{ 100.0f, 100.0f, 0.0f }
+		Vector3{ 500.0f, -300.0f, 0.0f },
+		Vector3{ -500.0f, -300.0f, 100.0f },
+		Vector3{ -500.0f, 300.0f, 100.0f },
+		Vector3{ 500.0f, 300.0f, 0.0f }
 	};
 
 	float t = 0.0f;
