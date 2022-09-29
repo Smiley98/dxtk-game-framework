@@ -77,7 +77,8 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	//	{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
 	//	Vector3::UnitY);
 	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
-	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
+	mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.01f, 10000.0f);
+	//mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
 }
 
 void EntityScene::OnBegin()
@@ -130,6 +131,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
+	Building::Draw(mBuilding, mView, mProj, graphics);
 
 	Vector3 forward = mVan.transform->Forward();
 	Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
@@ -143,19 +145,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mHeadlights.Scale(length);
 	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
 
-	RigidTransform left, right;
-	left = right = *mVan.transform;
-	left.DeltaYaw(-fov * 0.5f);
-	right.DeltaYaw(fov * 0.5f);
-	left.Translate(top);
-	right.Translate(top);
-
-	Debug::Line(bot, top, 10.0f, mView, mProj, graphics);
-	Debug::Line(left.Translation(), left.Translation() + left.Forward() * length * 2.0f, 10.0f, mView, mProj, graphics);
-	Debug::Line(right.Translation(), right.Translation() + right.Forward() * length * 2.0f, 10.0f, mView, mProj, graphics);
-
-	Building::Draw(mBuilding, mView, mProj, graphics);
-	
+	Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
 	//sMiscRenderer.Triangle({ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
 
 #if MAP

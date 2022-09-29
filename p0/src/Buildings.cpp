@@ -62,6 +62,8 @@ void Building::Unload()
 
 void Building::Draw(const Building& building, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
 {
+	// Placeholder for now. Gonna need custom shaders if we want to colour the entire building with a single variable...
+	sShader->SetAmbientLightColor(building.color);
 	sModels[building.type]->Draw(graphics->GetD3DDeviceContext(), *sStates, Matrix::CreateTranslation(building.position), view, proj);
 }
 
