@@ -3,8 +3,10 @@
 #include "DebugRenderer.h"
 #include "Map.h"
 #include "Utility.h"
+#include "Curves.h"
 #define MAP false
 #define TIMER false
+#define SPLINE true
 
 namespace
 {
@@ -102,6 +104,17 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
 
+#if SPLINE
+	Vector3 p0, p1, p2, p3;
+	IndexCatmull(mSpline, i, p0, p1, p2, p3);
+	mVan.transform->Translate(Vector3::CatmullRom(p0, p1, p2, p3, t));
+	if (t >= 1.0f)
+	{
+		t = 0.0f;
+		i++;
+	}
+	t += dt;
+#else
 	GamePad::State state = input.gamePad.GetState(0);
 
 	if (state.IsLeftThumbStickLeft())
@@ -113,6 +126,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 		mVan.transform->DeltaTranslate(mVan.transform->Forward() * av);
 	if (state.IsXPressed())
 		mVan.transform->DeltaTranslate(mVan.transform->Forward() * -av);
+#endif
 
 #if MAP
 	std::vector<Collision::HitPair> collisions;
@@ -145,6 +159,12 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mHeadlights.Scale(length);
 	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
 	Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
+
+	for (const Vector3& position : mSpline)
+	{
+		Debug::Primitive(Debug::SPHERE, Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(position), mView, mProj, graphics);
+	}
+
 
 	//*top.z = bot.z = bounds.z * 2.0f;*
 	// This was done so that we could render a line about the van to prevent it from being occluded

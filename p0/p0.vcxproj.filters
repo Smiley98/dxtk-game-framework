@@ -151,6 +151,9 @@
     <ClInclude Include="src\MiscRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="src\Curves.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">
