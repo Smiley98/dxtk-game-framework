@@ -54,10 +54,9 @@ inline float DistanceToInterpolation(float distance, const SpeedTable& speedTabl
     return Lerp(current.t, next.t, (distance - current.d) / (next.d - current.d));
 }
 
-inline Vector3 ControlledCatmull(float& distance, float deltaDistance, size_t& interval, size_t& sample,
+inline void UpdateCatmull(float& distance, size_t& interval, size_t& sample,
     const std::vector<Vector3>& points, const SpeedTable& speedTable)
 {
-    distance += deltaDistance;
     const size_t sampleCount = speedTable[0].size();
     while (distance > speedTable[interval][(sample + 1) % sampleCount].d)
     {
@@ -68,5 +67,4 @@ inline Vector3 ControlledCatmull(float& distance, float deltaDistance, size_t& i
             distance = 0.0f;
         }
     }
-    return Catmull(DistanceToInterpolation(distance, speedTable, interval, sample), interval, points);
 }

@@ -107,8 +107,10 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 	// LOL the van does a front-flip! Use quaternion from-to to fix this in the future
 #if SPLINE
-	Vector3 a = ControlledCatmull(d, lv, interval, sample, mSpline, mSpeedTable);
-	Vector3 b = Catmull(DistanceToInterpolation(d + lv, mSpeedTable, interval, sample), interval, mSpline);
+	Vector3 a = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
+	d += lv;
+	UpdateCatmull(d, interval, sample, mSpline, mSpeedTable);
+	Vector3 b = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
 	Vector3 forward = b - a;
 	forward.Normalize();
 	mVan.transform->Translate(a);
