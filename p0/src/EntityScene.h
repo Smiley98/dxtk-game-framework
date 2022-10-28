@@ -3,6 +3,63 @@
 #include "Collision.h"
 #include "Map.h"
 #include "Curves.h"
+#include <unordered_map>
+
+class GameObject
+{
+public:
+	GameObject* const Parent()
+	{
+		return mParent;
+	}
+
+	void SetParent(GameObject* parent)
+	{
+		if (mParent != nullptr)
+			mParent->RemoveChild(mName);
+
+		parent->AddChild(this);
+		mParent = parent;
+	}
+
+	GameObject* Child(const std::string& name)
+	{
+		return mChildren.at(name);
+	}
+
+	void AddChild(GameObject* child)
+	{
+		child->mParent = this;
+		mChildren.insert({ child->Name(), child });
+	}
+
+	void RemoveChild(const std::string& name)
+	{
+		mChildren.at(name)->mParent = nullptr;
+		mChildren.erase(name);
+	}
+
+	std::string Name()
+	{
+		return mName;
+	}
+
+	void SetName(const std::string& name)
+	{
+		if (mParent != nullptr)
+			mParent->RemoveChild(mName);
+		mName = name;
+		if (mParent != nullptr)
+			mParent->AddChild(this);
+	}
+
+private:
+	RigidTransform mTransform;
+	std::string mName;
+
+	GameObject* mParent = nullptr;
+	std::unordered_map<std::string, GameObject*> mChildren;
+};
 
 struct Player
 {
@@ -57,4 +114,6 @@ private:
 
 	float t = 0.0f, d = 0.0f;
 	size_t interval = 0, sample = 0;
+
+	GameObject mParent, mChildA, mChildB;
 };

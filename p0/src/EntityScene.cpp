@@ -26,6 +26,13 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	const float width = float(size.right - size.left);
 	const float height = float(size.bottom - size.top);
 
+	mParent.SetName("Parent");
+	mChildA.SetName("Child A");
+	mChildB.SetName("Child B");
+
+	mParent.AddChild(&mChildA);
+	mParent.AddChild(&mChildB);
+
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
 
 	mVan.Load(sPlayerRenderer, mColliders);
