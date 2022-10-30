@@ -80,8 +80,12 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 
+	//mTransform.Translate(16.0f, 9.0f);
+	//mTransform.RotateZ(45.0f);
+	mTransform.Scale(0.1f);
+
 	AddTimer("test", 1.0f, [this]() {
-		Print(mTransform.Rotation());
+		Print(mTransform.Forward());
 	}, true);
 }
 
@@ -106,7 +110,6 @@ void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 	mView = Matrix::CreateLookAt(eye, at, Vector3::Up);
 	mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
 	
-	mTransform.Scale(0.1f);
 	//mTransform.DeltaRotate(Vector3 { dt * 50.0f });
 	//mTransform.DeltaRotateX(dt * 50.0f);
 	//mTransform.DeltaRotateY(dt * 50.0f);
@@ -114,7 +117,8 @@ void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 	//mTransform.Rotate(Vector3 { tt * 50.0f });
 	//mTransform.RotateX(tt * 50.0f);
 	//mTransform.RotateY(tt * 50.0f);
-	mTransform.RotateZ(tt * 50.0f);
+	//mTransform.RotateZ(tt * 50.0f);
+	mTransform.DeltaTranslate(mTransform.Forward() * dt * 50.0f);
 
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);

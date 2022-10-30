@@ -17,21 +17,7 @@ namespace
 			return Matrix::CreateScale(mScale) *
 				Matrix::CreateFromQuaternion(mOrientation) *
 				Matrix::CreateTranslation(mTranslation);
-
-			//using namespace DirectX;
-			//return XMMatrixTransformation(
-			//	g_XMZero, Quaternion::Identity, mScale,
-			//	g_XMZero, mOrientation,
-			//	mTranslation);
-		}
-
-		Vector3 LocalPosition()
-		{
-			return DirectX::XMVector4Transform(Vector4::UnitW, LocalMatrix());
-			// return { LocalTransform() * Vector4::UnitW) };
-			// No overload for matrix * vector.
-			// XMVector4Transform() transposes the matrix. Perhaps this is to deal with DX vs OGL coordinates...
-			// (manual scale * rotation * translation might not work).
+			//return DirectX::XMMatrixAffineTransformation(mScale, Quaternion::Identity, mOrientation, mTranslation);
 		}
 
 		Vector3 Forward()
@@ -232,7 +218,6 @@ namespace
 		Vector3 mRotation = Vector3::Zero;
 		Vector3 mScale = Vector3::One;
 
-		// Rotation of q1 followed by q2 = q2 * q1
 		Quaternion mOrientation = Quaternion::Identity;
 
 		void InternalDeltaRotate(const Vector3& radians)
@@ -278,3 +263,17 @@ namespace
 		}
 	};
 }
+
+// Architecture:
+// *Rotation of q1 followed by q2 = q2 * q1*
+// *Vector AB = B - A*
+// Must maintain both euler and quaternion deltas
+// (otherwise objects will "flip" in arbitrary rotations > 180 degrees).
+
+// Optimizing for speed by storing translation, rotation and scale matrices + dirty flags doesn't make sense because
+// it is not worth the 3x memory increase, adds complexity, and isn't as effective as you'd hope since data is being
+// transported between float and vector registers.
+
+// SimpleMath vs XDirectXMath (XM):
+// Projection and camera matrices are right-handed in SimpleMath but left-handed in XM.
+// Note that positive rotation in RHS is ccw and world matrices are handedness-independent!
