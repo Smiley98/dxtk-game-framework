@@ -1,229 +1,243 @@
 #pragma once
 #include "SimpleMath.h"
 
-using namespace DirectX::SimpleMath;
-constexpr float DEGREES = 180.0f / DirectX::XM_PI;
-constexpr float RADIANS = DirectX::XM_PI / 180.0f;
-
-class Transform3
+namespace
 {
-public:
+	using namespace DirectX::SimpleMath;
+	constexpr float DEGREES = 180.0f / DirectX::XM_PI;
+	constexpr float RADIANS = DirectX::XM_PI / 180.0f;
+	constexpr float TWO_PI = DirectX::XM_2PI;
 
-	Matrix LocalTransform()
+	class Transform3
 	{
-		return Matrix::CreateScale(mScale) *
-			Matrix::CreateFromQuaternion(mOrientation) *
-			Matrix::CreateTranslation(mTranslation);
+	public:
 
-		//using namespace DirectX;
-		//return XMMatrixTransformation(
-		//	g_XMZero, Quaternion::Identity, mScale,
-		//	g_XMZero, mOrientation,
-		//	mTranslation);
-	}
+		Matrix LocalMatrix()
+		{
+			return Matrix::CreateScale(mScale) *
+				Matrix::CreateFromQuaternion(mOrientation) *
+				Matrix::CreateTranslation(mTranslation);
 
-	Vector3 LocalPosition()
-	{
-		return DirectX::XMVector4Transform(Vector4::UnitW, LocalTransform());
-		// return { LocalTransform() * Vector4::UnitW) };
-		// No overload for matrix * vector.
-		// XMVector4Transform() transposes the matrix. Perhaps this is to deal with DX vs OGL coordinates...
-		// (manual scale * rotation * translation might not work).
-	}
+			//using namespace DirectX;
+			//return XMMatrixTransformation(
+			//	g_XMZero, Quaternion::Identity, mScale,
+			//	g_XMZero, mOrientation,
+			//	mTranslation);
+		}
 
-	Vector3 Forward()
-	{
-		return Matrix::CreateFromQuaternion(mOrientation).Forward();
-	}
+		Vector3 LocalPosition()
+		{
+			return DirectX::XMVector4Transform(Vector4::UnitW, LocalMatrix());
+			// return { LocalTransform() * Vector4::UnitW) };
+			// No overload for matrix * vector.
+			// XMVector4Transform() transposes the matrix. Perhaps this is to deal with DX vs OGL coordinates...
+			// (manual scale * rotation * translation might not work).
+		}
 
-	Vector3 Backward()
-	{
-		return Matrix::CreateFromQuaternion(mOrientation).Backward();
-	}
+		Vector3 Forward()
+		{
+			return Matrix::CreateFromQuaternion(mOrientation).Forward();
+		}
 
-	Vector3 Left()
-	{
-		return Matrix::CreateFromQuaternion(mOrientation).Left();
-	}
+		Vector3 Backward()
+		{
+			return Matrix::CreateFromQuaternion(mOrientation).Backward();
+		}
 
-	Vector3 Right()
-	{
-		return Matrix::CreateFromQuaternion(mOrientation).Right();
-	}
+		Vector3 Left()
+		{
+			return Matrix::CreateFromQuaternion(mOrientation).Left();
+		}
 
-	Vector3 Up()
-	{
-		return Matrix::CreateFromQuaternion(mOrientation).Up();
-	}
+		Vector3 Right()
+		{
+			return Matrix::CreateFromQuaternion(mOrientation).Right();
+		}
 
-	Vector3 Down()
-	{
-		return Matrix::CreateFromQuaternion(mOrientation).Down();
-	}
+		Vector3 Up()
+		{
+			return Matrix::CreateFromQuaternion(mOrientation).Up();
+		}
 
-	Vector3 Translation()
-	{
-		return mTranslation;
-	}
+		Vector3 Down()
+		{
+			return Matrix::CreateFromQuaternion(mOrientation).Down();
+		}
 
-	Vector3 Rotation()
-	{
-		return mRotation * DEGREES;
-	}
+		Vector3 Translation()
+		{
+			return mTranslation;
+		}
 
-	Quaternion Orientation()
-	{
-		return mOrientation;
-	}
+		Vector3 Rotation()
+		{
+			return mRotation * DEGREES;
+		}
 
-	Vector3 Scaling()
-	{
-		return mScale;
-	}
+		Quaternion Orientation()
+		{
+			return mOrientation;
+		}
 
-	void Translate(const Vector3& translation)
-	{
-		mTranslation = translation;
-	}
+		Vector3 Scaling()
+		{
+			return mScale;
+		}
 
-	void Translate(const Vector2& translation)
-	{
-		mTranslation.x = translation.x;
-		mTranslation.y = translation.y;
-	}
+		void Translate(const Vector3& translation)
+		{
+			mTranslation = translation;
+		}
 
-	void TranslateX(float x)
-	{
-		mTranslation.x = x;
-	}
+		void Translate(const Vector2& translation)
+		{
+			mTranslation.x = translation.x;
+			mTranslation.y = translation.y;
+		}
 
-	void TranslateY(float y)
-	{
-		mTranslation.y = y;
-	}
+		void TranslateX(float x)
+		{
+			mTranslation.x = x;
+		}
 
-	void TranslateZ(float z)
-	{
-		mTranslation.z = z;
-	}
+		void TranslateY(float y)
+		{
+			mTranslation.y = y;
+		}
 
-	void DeltaTranslate(const Vector3& translation)
-	{
-		mTranslation += translation;
-	}
+		void TranslateZ(float z)
+		{
+			mTranslation.z = z;
+		}
 
-	void DeltaTranslate(const Vector2& translation)
-	{
-		mTranslation.x += translation.x;
-		mTranslation.y += translation.y;
-	}
+		void DeltaTranslate(const Vector3& translation)
+		{
+			mTranslation += translation;
+		}
 
-	void DeltaTranslateX(float x)
-	{
-		mTranslation.x += x;
-	}
+		void DeltaTranslate(const Vector2& translation)
+		{
+			mTranslation.x += translation.x;
+			mTranslation.y += translation.y;
+		}
 
-	void DeltaTranslateY(float y)
-	{
-		mTranslation.y += y;
-	}
+		void DeltaTranslateX(float x)
+		{
+			mTranslation.x += x;
+		}
 
-	void DeltaTranslateZ(float z)
-	{
-		mTranslation.z += z;
-	}
+		void DeltaTranslateY(float y)
+		{
+			mTranslation.y += y;
+		}
 
-	void Rotate(const Vector3& degrees)
-	{
-		InternalDeltaRotate(degrees * RADIANS - mRotation);
-	}
+		void DeltaTranslateZ(float z)
+		{
+			mTranslation.z += z;
+		}
 
-	void RotateX(float degrees)
-	{
-		float x = degrees * RADIANS;
-		float dx = x - mRotation.x;
-		InternalDeltaRotateX(dx);
-	}
+		void Rotate(const Vector3& degrees)
+		{
+			InternalDeltaRotate(degrees * RADIANS - mRotation);
+		}
 
-	void RotateY(float degrees)
-	{
-		float y = degrees * RADIANS;
-		float dy = y - mRotation.y;
-		InternalDeltaRotateY(dy);
-	}
+		void RotateX(float degrees)
+		{
+			float x = degrees * RADIANS;
+			float dx = x - mRotation.x;
+			InternalDeltaRotateX(dx);
+		}
 
-	void RotateZ(float degrees)
-	{
-		float z = degrees * RADIANS;
-		float dz = z - mRotation.z;
-		InternalDeltaRotateZ(dz);
-	}
+		void RotateY(float degrees)
+		{
+			float y = degrees * RADIANS;
+			float dy = y - mRotation.y;
+			InternalDeltaRotateY(dy);
+		}
 
-	void DeltaRotate(const Vector3& degrees)
-	{
-		InternalDeltaRotate(degrees * RADIANS);
-	}
+		void RotateZ(float degrees)
+		{
+			float z = degrees * RADIANS;
+			float dz = z - mRotation.z;
+			InternalDeltaRotateZ(dz);
+		}
 
-	void DeltaRotateX(float degrees)
-	{
-		float x = degrees * RADIANS;
-		InternalDeltaRotateX(x);
-	}
+		void DeltaRotate(const Vector3& degrees)
+		{
+			InternalDeltaRotate(degrees * RADIANS);
+		}
 
-	void DeltaRotateY(float degrees)
-	{
-		float y = degrees * RADIANS;
-		InternalDeltaRotateY(y);
-	}
+		void DeltaRotateX(float degrees)
+		{
+			float x = degrees * RADIANS;
+			InternalDeltaRotateX(x);
+		}
 
-	void DeltaRotateZ(float degrees)
-	{
-		float z = degrees * RADIANS;
-		InternalDeltaRotateZ(z);
-	}
+		void DeltaRotateY(float degrees)
+		{
+			float y = degrees * RADIANS;
+			InternalDeltaRotateY(y);
+		}
 
-	void Scale(const Vector3& scale)
-	{
-		mScale = scale;
-	}
+		void DeltaRotateZ(float degrees)
+		{
+			float z = degrees * RADIANS;
+			InternalDeltaRotateZ(z);
+		}
 
-private:
-	Vector3 mTranslation = Vector3::Zero;
-	Vector3 mRotation = Vector3::Zero;
-	Vector3 mScale = Vector3::One;
+		void Scale(const Vector3& scale)
+		{
+			mScale = scale;
+		}
 
-	// Rotation of q1 followed by q2 = q2 * q1
-	Quaternion mOrientation = Quaternion::Identity;
+	private:
+		Vector3 mTranslation = Vector3::Zero;
+		Vector3 mRotation = Vector3::Zero;
+		Vector3 mScale = Vector3::One;
 
-	void InternalDeltaRotate(const Vector3& radians)
-	{
-		Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians);
-		Quaternion q1 = mOrientation;
-		Quaternion::Concatenate(q1, q2, mOrientation);
-		mRotation += radians;
-	}
+		// Rotation of q1 followed by q2 = q2 * q1
+		Quaternion mOrientation = Quaternion::Identity;
 
-	void InternalDeltaRotateX(float radians)
-	{
-		Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, radians, 0.0f);
-		Quaternion q1 = mOrientation;
-		Quaternion::Concatenate(q1, q2, mOrientation);
-		mRotation.x += radians;
-	}
+		void InternalDeltaRotate(const Vector3& radians)
+		{
+			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians);
+			Quaternion q1 = mOrientation;
+			Quaternion::Concatenate(q1, q2, mOrientation);
 
-	void InternalDeltaRotateY(float radians)
-	{
-		Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians, 0.0f, 0.0f);
-		Quaternion q1 = mOrientation;
-		Quaternion::Concatenate(q1, q2, mOrientation);
-		mRotation.y += radians;
-	}
+			mRotation += radians;
+			mRotation.x = fmodf(mRotation.x, TWO_PI);
+			mRotation.y = fmodf(mRotation.y, TWO_PI);
+			mRotation.z = fmodf(mRotation.z, TWO_PI);
+		}
 
-	void InternalDeltaRotateZ(float radians)
-	{
-		Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, radians);
-		Quaternion q1 = mOrientation;
-		Quaternion::Concatenate(q1, q2, mOrientation);
-		mRotation.z += radians;
-	}
-};
+		void InternalDeltaRotateX(float radians)
+		{
+			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, radians, 0.0f);
+			Quaternion q1 = mOrientation;
+			Quaternion::Concatenate(q1, q2, mOrientation);
+
+			mRotation.x += radians;
+			mRotation.x = fmodf(mRotation.x, TWO_PI);
+		}
+
+		void InternalDeltaRotateY(float radians)
+		{
+			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians, 0.0f, 0.0f);
+			Quaternion q1 = mOrientation;
+			Quaternion::Concatenate(q1, q2, mOrientation);
+
+			mRotation.y += radians;
+			mRotation.y = fmodf(mRotation.y, TWO_PI);
+		}
+
+		void InternalDeltaRotateZ(float radians)
+		{
+			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, radians);
+			Quaternion q1 = mOrientation;
+			Quaternion::Concatenate(q1, q2, mOrientation);
+
+			mRotation.z += radians;
+			mRotation.z = fmodf(mRotation.z, TWO_PI);
+		}
+	};
+}

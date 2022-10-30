@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TestScene.h"
+#include "Utility.h"
 
 using namespace DirectX;
 
@@ -78,6 +79,10 @@ void TestScene::OnBegin()
 {
 	//mEffect1->Play(true);
 	//mEffect2->Play();
+
+	AddTimer("test", 1.0f, [this]() {
+		Print(mTransform.Rotation());
+	}, true);
 }
 
 void TestScene::OnEnd()
@@ -98,8 +103,18 @@ void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
 	const Vector3 eye(0.0f, 0.7f, 1.5f);
 	const Vector3 at(0.0f, -0.1f, 0.0f);
-	mView = Matrix::CreateLookAt(eye, at, Vector3::UnitY);
+	mView = Matrix::CreateLookAt(eye, at, Vector3::Up);
 	mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
+	
+	//mTransform.DeltaRotate(Vector3 { dt * 50.0f });
+	//mTransform.DeltaRotateX(dt * 50.0f);
+	//mTransform.DeltaRotateY(dt * 50.0f);
+	//mTransform.DeltaRotateZ(dt * 50.0f);
+	//mTransform.Rotate(Vector3 { tt * 50.0f });
+	//mTransform.RotateX(tt * 50.0f);
+	//mTransform.RotateY(tt * 50.0f);
+	//mTransform.RotateZ(tt * 50.0f);
+
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);
 }
@@ -126,8 +141,10 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	// Draw 3D objects
 	{	graphics->PIXBeginEvent(L"Draw teapot");
-		XMMATRIX local = mWorld * Matrix::CreateTranslation(0.0f, -2.0f, -4.0f);
-		mShape->Draw(local, mView, mProj, Colors::White, mTexture1.Get());
+		//XMMATRIX local = mWorld * Matrix::CreateTranslation(0.0f, -2.0f, -4.0f);
+		//mShape->Draw(local, mView, mProj, Colors::White, mTexture1.Get());
+		mTransform.Translate({ 0.0f, -2.0f, -4.0f });
+		mShape->Draw(mTransform.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
 	}	graphics->PIXEndEvent();
 	
 	//{	graphics->PIXBeginEvent(L"Draw sdkmesh");
