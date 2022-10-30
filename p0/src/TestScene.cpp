@@ -37,13 +37,13 @@ TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	// Load textures
 	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/seafloor.dds", nullptr, mTexture1.ReleaseAndGetAddressOf()));
 	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/windowslogo.dds", nullptr, mTexture2.ReleaseAndGetAddressOf()));
-	//DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, mTextureVan.ReleaseAndGetAddressOf()));
-	//
-	//mVanEffect = std::make_shared<BasicEffect>(device);
-	//mVanEffect->SetTextureEnabled(true);
-	//mVanEffect->SetTexture(mTextureVan.Get());
-	//
-	//mVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", mVanEffect);
+	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, mTextureVan.ReleaseAndGetAddressOf()));
+	
+	mVanEffect = std::make_shared<BasicEffect>(device);
+	mVanEffect->SetTextureEnabled(true);
+	mVanEffect->SetTexture(mTextureVan.Get());
+	
+	mVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", mVanEffect);
 }
 
 TestScene::~TestScene()
@@ -101,11 +101,12 @@ void TestScene::OnResume()
 
 void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
-	const Vector3 eye(0.0f, 0.7f, 1.5f);
-	const Vector3 at(0.0f, -0.1f, 0.0f);
+	const Vector3 eye(0.0f, 0.0f, 50.0f);
+	const Vector3 at(0.0f, 0.0f, 0.0f);
 	mView = Matrix::CreateLookAt(eye, at, Vector3::Up);
 	mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
 	
+	mTransform.Scale(0.1f);
 	//mTransform.DeltaRotate(Vector3 { dt * 50.0f });
 	//mTransform.DeltaRotateX(dt * 50.0f);
 	//mTransform.DeltaRotateY(dt * 50.0f);
@@ -113,7 +114,7 @@ void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 	//mTransform.Rotate(Vector3 { tt * 50.0f });
 	//mTransform.RotateX(tt * 50.0f);
 	//mTransform.RotateY(tt * 50.0f);
-	//mTransform.RotateZ(tt * 50.0f);
+	mTransform.RotateZ(tt * 50.0f);
 
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);
@@ -140,12 +141,12 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	graphics->PIXEndEvent();
 
 	// Draw 3D objects
-	{	graphics->PIXBeginEvent(L"Draw teapot");
-		//XMMATRIX local = mWorld * Matrix::CreateTranslation(0.0f, -2.0f, -4.0f);
-		//mShape->Draw(local, mView, mProj, Colors::White, mTexture1.Get());
-		mTransform.Translate({ 0.0f, -2.0f, -4.0f });
-		mShape->Draw(mTransform.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
-	}	graphics->PIXEndEvent();
+
+	//XMMATRIX local = mWorld * Matrix::CreateTranslation(0.0f, -2.0f, -4.0f);
+	//{	graphics->PIXBeginEvent(L"Draw teapot");
+	//	mTransform.Translate({ 0.0f, -2.0f, -4.0f });
+	//	mShape->Draw(mTransform.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
+	//}	graphics->PIXEndEvent();
 	
 	//{	graphics->PIXBeginEvent(L"Draw sdkmesh");
 	//	const XMVECTORF32 scale = { 0.01f, 0.01f, 0.01f };
@@ -155,13 +156,13 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//	mModel->Draw(context, *mStates, local, mView, mProj);
 	//}	graphics->PIXEndEvent();
 
-	//{	graphics->PIXBeginEvent(L"Draw vbo (van)");
-	//	const Vector3 scale(0.1f);
-	//	const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
-	//	const XMVECTORF32 translate = { 2.f, -1.f, -4.f };
-	//	XMMATRIX local = mWorld * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-	//	mVan->Draw(context, *mStates, local, mView, mProj);
-	//}	graphics->PIXEndEvent();
+	//const Vector3 scale(0.1f);
+	//const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
+	//const XMVECTORF32 translate = { 2.f, -1.f, -4.f };
+	//XMMATRIX local = mWorld * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+	{	graphics->PIXBeginEvent(L"Draw vbo (van)");
+		mVan->Draw(context, *mStates, mTransform.LocalMatrix(), mView, mProj);
+	}	graphics->PIXEndEvent();
 
 	graphics->PIXEndEvent();
 }

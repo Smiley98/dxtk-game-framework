@@ -89,10 +89,21 @@ namespace
 			mTranslation = translation;
 		}
 
+		void Translate(float x, float y, float z)
+		{
+			mTranslation = { x, y, z };
+		}
+
 		void Translate(const Vector2& translation)
 		{
 			mTranslation.x = translation.x;
 			mTranslation.y = translation.y;
+		}
+
+		void Translate(float x, float y)
+		{
+			mTranslation.x = x;
+			mTranslation.y = y;
 		}
 
 		void TranslateX(float x)
@@ -115,10 +126,21 @@ namespace
 			mTranslation += translation;
 		}
 
+		void DeltaTranslate(float x, float y, float z)
+		{
+			mTranslation += { x, y, z };
+		}
+
 		void DeltaTranslate(const Vector2& translation)
 		{
 			mTranslation.x += translation.x;
 			mTranslation.y += translation.y;
+		}
+
+		void DeltaTranslate(float x, float y)
+		{
+			mTranslation.x += x;
+			mTranslation.y += y;
 		}
 
 		void DeltaTranslateX(float x)
@@ -139,6 +161,11 @@ namespace
 		void Rotate(const Vector3& degrees)
 		{
 			InternalDeltaRotate(degrees * RADIANS - mRotation);
+		}
+
+		void Rotate(float degreesX, float degreesY, float degreesZ)
+		{
+			InternalDeltaRotate(Vector3{ degreesX, degreesY, degreesZ } * RADIANS - mRotation);
 		}
 
 		void RotateX(float degrees)
@@ -167,6 +194,11 @@ namespace
 			InternalDeltaRotate(degrees * RADIANS);
 		}
 
+		void DeltaRotate(float degreesX, float degreesY, float degreesZ)
+		{
+			InternalDeltaRotate(Vector3{ degreesX, degreesY, degreesZ } * RADIANS);
+		}
+
 		void DeltaRotateX(float degrees)
 		{
 			float x = degrees * RADIANS;
@@ -188,6 +220,11 @@ namespace
 		void Scale(const Vector3& scale)
 		{
 			mScale = scale;
+		}
+
+		void Scale(float scale)
+		{
+			mScale = { scale };
 		}
 
 	private:

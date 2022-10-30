@@ -34,19 +34,18 @@ private:
     std::unique_ptr<DirectX::EffectFactory>                                 mFxFactory;
     std::unique_ptr<DirectX::GeometricPrimitive>                            mShape;
     std::unique_ptr<DirectX::Model>                                         mModel;
-    //std::unique_ptr<DirectX::Model>                                         mVan;
-    //std::shared_ptr<DirectX::BasicEffect>                                   mVanEffect;
+    std::unique_ptr<DirectX::Model>                                         mVan;
+    std::shared_ptr<DirectX::BasicEffect>                                   mVanEffect;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  mBatch;
     std::unique_ptr<DirectX::SpriteBatch>                                   mSprites;
     std::unique_ptr<DirectX::SpriteFont>                                    mFont;
     Matrix                                                                  mWorld;
-
     Transform3 mTransform;
 
     // D3D11 objects
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture1;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture2;
-    //Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTextureVan;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTextureVan;
     Microsoft::WRL::ComPtr<ID3D11InputLayout>                               mBatchInputLayout;
 
     void XM_CALLCONV DrawGrid(std::shared_ptr<DX::DeviceResources> graphics, DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
