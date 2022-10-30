@@ -157,6 +157,9 @@
     <ClInclude Include="src\Interpolation.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\Transform3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

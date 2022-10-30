@@ -137,6 +137,7 @@
     <ClInclude Include="src\PlayerRenderer.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Timer.h" />
+    <ClInclude Include="src\Transform3.h" />
     <ClInclude Include="src\UnorderedVector.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\CollisionScene.h" />
