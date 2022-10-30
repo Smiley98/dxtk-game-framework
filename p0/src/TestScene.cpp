@@ -5,10 +5,10 @@ using namespace DirectX;
 
 TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
-	mWaveBank = std::make_unique<WaveBank>(audio.get(), L"assets/sounds/adpcmdroid.xwb");
-	mSoundEffect = std::make_unique<SoundEffect>(audio.get(), L"assets/music/MusicMono_adpcm.wav");
-	mEffect1 = mSoundEffect->CreateInstance();
-	mEffect2 = mWaveBank->CreateInstance(10);
+	//mWaveBank = std::make_unique<WaveBank>(audio.get(), L"assets/sounds/adpcmdroid.xwb");
+	//mSoundEffect = std::make_unique<SoundEffect>(audio.get(), L"assets/music/MusicMono_adpcm.wav");
+	//mEffect1 = mSoundEffect->CreateInstance();
+	//mEffect2 = mWaveBank->CreateInstance(10);
 
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();
@@ -36,13 +36,13 @@ TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	// Load textures
 	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/seafloor.dds", nullptr, mTexture1.ReleaseAndGetAddressOf()));
 	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/windowslogo.dds", nullptr, mTexture2.ReleaseAndGetAddressOf()));
-	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, mTextureVan.ReleaseAndGetAddressOf()));
-
-	mVanEffect = std::make_shared<BasicEffect>(device);
-	mVanEffect->SetTextureEnabled(true);
-	mVanEffect->SetTexture(mTextureVan.Get());
-
-	mVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", mVanEffect);
+	//DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, mTextureVan.ReleaseAndGetAddressOf()));
+	//
+	//mVanEffect = std::make_shared<BasicEffect>(device);
+	//mVanEffect->SetTextureEnabled(true);
+	//mVanEffect->SetTexture(mTextureVan.Get());
+	//
+	//mVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", mVanEffect);
 }
 
 TestScene::~TestScene()
@@ -76,14 +76,14 @@ void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 
 void TestScene::OnBegin()
 {
-	mEffect1->Play(true);
-	mEffect2->Play();
+	//mEffect1->Play(true);
+	//mEffect2->Play();
 }
 
 void TestScene::OnEnd()
 {
-	mEffect1->Stop();
-	mEffect2->Stop();
+	//mEffect1->Stop();
+	//mEffect2->Stop();
 }
 
 void TestScene::OnPause()
@@ -126,25 +126,25 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	// Draw 3D objects
 	{	graphics->PIXBeginEvent(L"Draw teapot");
-		XMMATRIX local = mWorld * Matrix::CreateTranslation(-2.f, -2.f, -4.f);
+		XMMATRIX local = mWorld * Matrix::CreateTranslation(0.0f, -2.0f, -4.0f);
 		mShape->Draw(local, mView, mProj, Colors::White, mTexture1.Get());
 	}	graphics->PIXEndEvent();
 	
-	{	graphics->PIXBeginEvent(L"Draw sdkmesh");
-		const XMVECTORF32 scale = { 0.01f, 0.01f, 0.01f };
-		const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
-		const XMVECTORF32 translate = { 3.f, -2.f, -4.f };
-		XMMATRIX local = mWorld * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-		mModel->Draw(context, *mStates, local, mView, mProj);
-	}	graphics->PIXEndEvent();
+	//{	graphics->PIXBeginEvent(L"Draw sdkmesh");
+	//	const XMVECTORF32 scale = { 0.01f, 0.01f, 0.01f };
+	//	const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
+	//	const XMVECTORF32 translate = { 3.f, -2.f, -4.f };
+	//	XMMATRIX local = mWorld * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+	//	mModel->Draw(context, *mStates, local, mView, mProj);
+	//}	graphics->PIXEndEvent();
 
-	{	graphics->PIXBeginEvent(L"Draw vbo (van)");
-		const Vector3 scale(0.1f);
-		const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
-		const XMVECTORF32 translate = { 2.f, -1.f, -4.f };
-		XMMATRIX local = mWorld * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-		mVan->Draw(context, *mStates, local, mView, mProj);
-	}	graphics->PIXEndEvent();
+	//{	graphics->PIXBeginEvent(L"Draw vbo (van)");
+	//	const Vector3 scale(0.1f);
+	//	const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
+	//	const XMVECTORF32 translate = { 2.f, -1.f, -4.f };
+	//	XMMATRIX local = mWorld * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+	//	mVan->Draw(context, *mStates, local, mView, mProj);
+	//}	graphics->PIXEndEvent();
 
 	graphics->PIXEndEvent();
 }

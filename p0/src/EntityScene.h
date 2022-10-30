@@ -53,8 +53,71 @@ public:
 			mParent->AddChild(this);
 	}
 
+	Matrix Local()
+	{
+		return mLocalTransform.World();
+	}
+
+	Matrix World()
+	{
+		if (mParent != nullptr)
+		{
+			return World() * mLocalTransform.World();
+		}
+		return mLocalTransform.World();
+	}
+
+	void TranslateLocal(const Vector3& localTranslation)
+	{
+		mLocalTransform.Translate(localTranslation);
+	}
+
+	void TranslateWorld(const Vector3& worldTranslation)
+	{
+		if (mParent != nullptr)
+		{
+			// Determine difference between parent ie if parent at (5, 5) and translation = (3, 3) then
+			// localTranslation = (-2, -2) which makes sense because the child should be below left of parent
+			Vector3 localTranslation = worldTranslation - mParent->mLocalTransform.Translation();
+			mLocalTransform.Translate(localTranslation);
+		}
+		
+		// Local = world if root (no parent)
+		mLocalTransform.Translate(worldTranslation);
+	}
+
+	void RotateLocal(const Vector2& degrees)
+	{
+		mLocalTransform.Rotate(degrees);
+	}
+
+	void SetPitchLocal(float degrees)
+	{
+		mLocalTransform.SetPitch(degrees);
+	}
+
+	void SetYawLocal(float degrees)
+	{
+		mLocalTransform.SetYaw(degrees);
+	}
+
+	void DeltaRotateLocal(const Vector2& degrees)
+	{
+		mLocalTransform.Rotate(degrees);
+	}
+
+	void DeltaPitchLocal(float degrees)
+	{
+		mLocalTransform.DeltaPitch(degrees);
+	}
+
+	void DeltaYawLocal(float degrees)
+	{
+		mLocalTransform.DeltaYaw(degrees);
+	}
+
 private:
-	RigidTransform mTransform;
+	RigidTransform mLocalTransform;
 	std::string mName;
 
 	GameObject* mParent = nullptr;

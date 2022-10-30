@@ -5,7 +5,8 @@
 #include "Utility.h"
 #define MAP false
 #define TIMER false
-#define SPLINE true
+#define SPLINE false
+#define INPUT true
 
 namespace
 {
@@ -122,7 +123,9 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	forward.Normalize();
 	mVan.transform->Translate(a);
 	mVan.transform->SetForward(forward);
-#else
+#endif
+
+#if INPUT
 	GamePad::State state = input.gamePad.GetState(0);
 
 	if (state.IsLeftThumbStickLeft())
@@ -172,7 +175,6 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		Debug::Primitive(Debug::SPHERE, Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(position), mView, mProj, graphics);
 	}
-
 
 	//*top.z = bot.z = bounds.z * 2.0f;*
 	// This was done so that we could render a line about the van to prevent it from being occluded

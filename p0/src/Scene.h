@@ -18,7 +18,7 @@ public:
 		//LOADOUT,
 		//MAP,
 		//MAIN,
-		//TEST,
+		TEST,
 		COLLISION,
 		//PHYSICS,
 		ENTITY,
