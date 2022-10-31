@@ -58,7 +58,7 @@ public:
 	{
 		if (mParent != nullptr)
 		{
-			return mParent->World() * mTransform.LocalMatrix();
+			return mTransform.LocalMatrix() * mParent->World();
 		}
 		return mTransform.LocalMatrix();
 	}
@@ -72,29 +72,32 @@ public:
 	{
 		if (mParent != nullptr)
 		{
-			// Determine difference between parent ie if parent at (5, 5) and translation = (3, 3) then
-			// localTranslation = (-2, -2) which makes sense because the child should be below left of parent
+			// Compute local translation based on world translation relative to the parent.
 			Vector3 localTranslation = worldTranslation - mParent->mTransform.Translation();
 			mTransform.Translate(localTranslation);
 		}
-
-		// Local = world if root (no parent)
-		mTransform.Translate(worldTranslation);
+		else
+		{
+			// Local = world if there's no parent.
+			mTransform.Translate(worldTranslation);
+		}
 	}
 
 	void RotateLocal(float yaw)
 	{
-		// Find delta
-		//mTransform.RotateZ(yaw);
+		mTransform.RotateY(yaw);
 	}
 
 	void RotateWorld(float yaw)
 	{
 		if (mParent != nullptr)
 		{
-
+			// Find delta
 		}
-		mTransform.RotateY(yaw);
+		else
+		{
+			mTransform.RotateY(yaw);
+		}
 	}
 
 private:

@@ -97,8 +97,10 @@ void TestScene::OnBegin()
 	mParent.AddChild(&mChildB);
 
 	mParent.TranslateLocal({ 0.0f, 0.0f, 250.0f });
-	mChildA.TranslateLocal({ -100.0f, 0.0f, -100.0f });
-	mChildB.TranslateLocal({ 100.0f, 0.0f, -100.0f });
+	mChildA.TranslateLocal({ -25.0f, 0.0f, -100.0f });
+	mChildB.TranslateLocal({ 25.0f, 0.0f, -100.0f });
+	mChildA.RotateLocal(30.0f);
+	mChildB.RotateLocal(-30.0f);
 }
 
 void TestScene::OnEnd()
@@ -118,10 +120,13 @@ void TestScene::OnResume()
 void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
 	mView = Matrix::CreateLookAt({ 0.0f, 500.0f, mNear }, Vector3::Zero, Vector3::Up);
-	mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
-	
-	mTransform.RotateY(tt * 50.0f);
-	mTransform.DeltaTranslate(mTransform.Forward() * dt * 100.0f);
+
+	//mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
+	//mTransform.RotateY(tt * 50.0f);
+	//mTransform.DeltaTranslate(mTransform.Forward() * dt * 100.0f);
+
+	mParent.RotateLocal(tt * 50.0f);
+	//mParent.TranslateLocal(mTransform.Forward() * dt * 100.0f);
 
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);
@@ -132,22 +137,17 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	graphics->PIXBeginEvent(L"Render");
 	auto context = graphics->GetD3DDeviceContext();
 
-	// Draw procedurally generated dynamic grid
 	const XMVECTORF32 xaxis = { 20.f, 0.f, 0.f };
 	const XMVECTORF32 yaxis = { 0.f, 0.f, 20.f };
 	DrawGrid(graphics, xaxis, yaxis, g_XMZero, 20, 20, Colors::Gray);
 
-	// Draw sprite
 	graphics->PIXBeginEvent(L"Draw sprite");
 	mSprites->Begin();
 	mSprites->Draw(mTexture2.Get(), XMFLOAT2(10, 75), nullptr, Colors::White);
 
-	// Draw text
 	mFont->DrawString(mSprites.get(), L"DirectXTK Simple Sample", XMFLOAT2(100, 10), Colors::Yellow);
 	mSprites->End();
 	graphics->PIXEndEvent();
-
-	// Draw 3D objects
 
 	//XMMATRIX local = mWorld * Matrix::CreateTranslation(0.0f, -2.0f, -4.0f);
 	//{	graphics->PIXBeginEvent(L"Draw teapot");
