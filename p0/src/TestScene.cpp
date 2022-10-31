@@ -80,13 +80,10 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 
-// This test fails if rotation on all 3 axes but succeeds if on only 2 (which is all we need for p0)!
-	//mTransform.Rotate(45.0f, 45.0f, 0.0f);
+	//mTransform.Orientate(Quaternion::CreateFromYawPitchRoll(M_PI_4, M_PI_4, 0.0f));
 	//Print(mTransform.Forward());
 	//Print(mTransform.Rotation());
-	//Print(mTransform.Orientation());
 
-// Updating translation based on Forward() is not a useful test because we know the getter works. Its the setter that's whack.
 	//AddTimer("test", 1.0f, [this]() {
 	//	Print(mTransform.Forward());
 	//	Print(mTransform.Rotation());
@@ -112,8 +109,8 @@ void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 	mView = Matrix::CreateLookAt({ 0.0f, 500.0f, mNear }, Vector3::Zero, Vector3::Up);
 	mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
 	
-	//mTransform.RotateY(tt * 50.0f);
-	//mTransform.DeltaTranslate(mTransform.Forward() * dt * 100.0f);
+	mTransform.RotateY(tt * 50.0f);
+	mTransform.DeltaTranslate(mTransform.Forward() * dt * 100.0f);
 
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);

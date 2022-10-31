@@ -55,12 +55,11 @@ namespace
 			return mScale;
 		}
 
-		void SetForward(const Vector3& forward)
+		void Orientate(const Quaternion& q2)
 		{
-			Vector3 right = forward.Cross(Vector3::Up);
-			Vector3 up = forward.Cross(right);
-			Matrix rotation{ -right, -up, forward };
-			InternalDeltaRotate(rotation.ToEuler() - mRotation);
+			Quaternion q1 = mOrientation;
+			Quaternion::Concatenate(q1, q2, mOrientation);
+			mRotation = q2.ToEuler() - mRotation;
 		}
 
 		void Translate(const Vector3& translation)
@@ -277,5 +276,17 @@ namespace
 //}
 
 // Unity's solution that should work but doesn't (even after changing internal Vector3::Forward to Vector3::UnitZ).
-// mOrientation = Quaternion::LookRotation(forward, Vector3::Up);
-// mRotation = mOrientation.ToEuler();
+//void SetForward(const Vector3& forward)
+//{
+//	mOrientation = Quaternion::LookRotation(forward, Vector3::Up);
+//	mRotation = mOrientation.ToEuler();
+//}
+
+// My jank solution that works for pitch and yaw.
+//void SetForward(const Vector3& forward)
+//{
+//	Vector3 right = forward.Cross(Vector3::Up);
+//	Vector3 up = forward.Cross(right);
+//	Matrix rotation{ -right, -up, forward };
+//	InternalDeltaRotate(rotation.ToEuler() - mRotation);
+//}
