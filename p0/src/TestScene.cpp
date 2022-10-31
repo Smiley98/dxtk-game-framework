@@ -90,14 +90,7 @@ void TestScene::OnBegin()
 	Print(mTransform.Forward());
 	Print(mTransform.Rotation());
 	Print(mTransform.Orientation());
-	
-	//mTransform.SetForward(mTransform.Forward());
-	//Print(mTransform.Forward());
-	//Print(mTransform.Rotation());
-	//
-	//mTransform.SetForward(mTransform.Forward());
-	//Print(mTransform.Forward());
-	//Print(mTransform.Rotation());
+	Print(mTransform.Rotation());
 
 // Updating translation based on Forward() is not a useful test because we know the getter works. Its the setter that's whack.
 	//AddTimer("test", 1.0f, [this]() {

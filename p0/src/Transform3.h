@@ -29,13 +29,11 @@ namespace
 		Vector3 Right()
 		{
 			return Vector3::Transform(Vector3::UnitX, mOrientation);
-			//return Vector3::Transform(Vector3::Right, mOrientation);
 		}
 
 		Vector3 Up()
 		{
 			return Vector3::Transform(Vector3::UnitY, mOrientation);
-			//return Vector3::Transform(Vector3::Up, mOrientation);
 		}
 
 		Vector3 Translation()
@@ -62,24 +60,13 @@ namespace
 		// Transform(vec4, quat) just calls vec3 rotate and copies w.
 		void SetForward(const Vector3& forward)
 		{
-			// Jank solution precursor
 			Vector3 right = forward.Cross(Vector3::Up);
 			Vector3 up = forward.Cross(right);
 			Matrix rotation{ -right, -up, forward };
-			
-			// Jank solution (correct orientation but eulers get slightly screwed).
 			InternalDeltaRotate(rotation.ToEuler() - mRotation);
 
-			// Alternative jank solution (correct orientation but eulers get considerably screwed).
-			//mOrientation = Quaternion::CreateFromRotationMatrix(rotation);
-			//mRotation = mOrientation.ToEuler();
-
-			// Unity's solution that should work but doesn't
+			// Unity's solution that should work but doesn't (even after changing internal Vector3::Forward to Vector3::UnitZ).
 			//mOrientation = Quaternion::LookRotation(forward, Vector3::Up);
-			//mRotation = mOrientation.ToEuler();
-			
-			// Busted beyond repair
-			//mOrientation = Quaternion::FromToRotation(Vector3::UnitZ, Vector3::UnitY);
 			//mRotation = mOrientation.ToEuler();
 		}
 
@@ -91,18 +78,6 @@ namespace
 		void Translate(float x, float y, float z)
 		{
 			mTranslation = { x, y, z };
-		}
-
-		void Translate(const Vector2& translation)
-		{
-			mTranslation.x = translation.x;
-			mTranslation.y = translation.y;
-		}
-
-		void Translate(float x, float y)
-		{
-			mTranslation.x = x;
-			mTranslation.y = y;
 		}
 
 		void TranslateX(float x)
@@ -130,18 +105,6 @@ namespace
 			mTranslation += { x, y, z };
 		}
 
-		void DeltaTranslate(const Vector2& translation)
-		{
-			mTranslation.x += translation.x;
-			mTranslation.y += translation.y;
-		}
-
-		void DeltaTranslate(float x, float y)
-		{
-			mTranslation.x += x;
-			mTranslation.y += y;
-		}
-
 		void DeltaTranslateX(float x)
 		{
 			mTranslation.x += x;
@@ -164,7 +127,9 @@ namespace
 
 		void Rotate(float degreesX, float degreesY, float degreesZ)
 		{
-			InternalDeltaRotate(Vector3{ degreesX, degreesY, degreesZ } * RADIANS - mRotation);
+			mOrientation = Quaternion::CreateFromYawPitchRoll(Vector3{ degreesX, degreesY, degreesZ } * RADIANS);
+			mRotation = mOrientation.ToEuler();
+			//InternalDeltaRotate(Vector3{ degreesX, degreesY, degreesZ } * RADIANS - mRotation);
 		}
 
 		void RotateX(float degrees)
@@ -282,6 +247,31 @@ namespace
 			//Quaternion::Concatenate(q1, q2, result); <-- Matches SimpleMath
 			Quaternion::Concatenate(q1, q2, result);
 		}
+
+		Quaternion LookRotation(const Vector3& forward, const Vector3& up) noexcept
+		{
+			using namespace DirectX;
+			Quaternion result;
+
+			Quaternion q1;
+			Quaternion::FromToRotation(Vector3::UnitZ, forward, q1);
+
+			const XMVECTOR C = XMVector3Cross(forward, up);
+			if (XMVector3NearEqual(XMVector3LengthSq(C), g_XMZero, g_XMEpsilon))
+			{
+				// forward and up are co-linear
+				result = q1;
+				return result;
+			}
+
+			const XMVECTOR U = XMQuaternionMultiply(q1, Vector3::Up);
+
+			Quaternion q2;
+			Quaternion::FromToRotation(U, up, q2);
+
+			XMStoreFloat4(&result, XMQuaternionMultiply(q2, q1));
+			return result;
+		}
 	};
 }
 
@@ -300,3 +290,28 @@ namespace
 // Forward() is more useful than SetForward(). If I wanna set orientation based on direction, I should compute the difference
 // between the orientation quaternions of two transforms.
 // Note that SetForward() seems to succeed if only pitch and yaw change which should suffice for this project.
+
+// Dead code (cause we're not working with y-forward anymore):
+//void Translate(const Vector2& translation)
+//{
+//	mTranslation.x = translation.x;
+//	mTranslation.y = translation.y;
+//}
+//
+//void Translate(float x, float y)
+//{
+//	mTranslation.x = x;
+//	mTranslation.y = y;
+//}
+// 
+//void DeltaTranslate(const Vector2& translation)
+//{
+//	mTranslation.x += translation.x;
+//	mTranslation.y += translation.y;
+//}
+//
+//void DeltaTranslate(float x, float y)
+//{
+//	mTranslation.x += x;
+//	mTranslation.y += y;
+//}
