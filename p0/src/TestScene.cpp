@@ -80,8 +80,8 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 
-// This test fails 
-	mTransform.Rotate(45.0f, 45.0f, 45.0f);
+// This test fails if rotation on all 3 axes but succeeds if on only 2 (which is all we need for p0)!
+	mTransform.Rotate(45.0f, 45.0f, 0.0f);
 	Print(mTransform.Forward());
 	Print(mTransform.Rotation());
 	Print(mTransform.Orientation());

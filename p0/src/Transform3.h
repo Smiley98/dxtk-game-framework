@@ -23,16 +23,19 @@ namespace
 		Vector3 Forward()
 		{
 			return Vector3::Transform(Vector3::UnitZ, mOrientation);
+			//return Vector3::Transform(Vector3::Forward, mOrientation);
 		}
 
 		Vector3 Right()
 		{
 			return Vector3::Transform(Vector3::UnitX, mOrientation);
+			//return Vector3::Transform(Vector3::Right, mOrientation);
 		}
 
 		Vector3 Up()
 		{
 			return Vector3::Transform(Vector3::UnitY, mOrientation);
+			//return Vector3::Transform(Vector3::Up, mOrientation);
 		}
 
 		Vector3 Translation()
@@ -55,7 +58,8 @@ namespace
 			return mScale;
 		}
 
-		// Perhaps we're losing information Forward()?
+		// Confirmed we're not losing information in Forward().
+		// Transform(vec4, quat) just calls vec3 rotate and copies w.
 		void SetForward(const Vector3& forward)
 		{
 			// Jank solution precursor
@@ -64,7 +68,7 @@ namespace
 			Matrix rotation{ -right, -up, forward };
 			
 			// Jank solution (correct orientation but eulers get slightly screwed).
-			//InternalDeltaRotate(rotation.ToEuler() - mRotation);
+			InternalDeltaRotate(rotation.ToEuler() - mRotation);
 
 			// Alternative jank solution (correct orientation but eulers get considerably screwed).
 			//mOrientation = Quaternion::CreateFromRotationMatrix(rotation);
@@ -291,3 +295,8 @@ namespace
 // *Vector AB = B - A*
 // Must maintain both euler and quaternion deltas
 // (otherwise objects will "flip" in arbitrary rotations > 180 degrees).
+
+// TODO:
+// Forward() is more useful than SetForward(). If I wanna set orientation based on direction, I should compute the difference
+// between the orientation quaternions of two transforms.
+// Note that SetForward() seems to succeed if only pitch and yaw change which should suffice for this project.
