@@ -1,5 +1,6 @@
 #pragma once
 #include "SimpleMath.h"
+#include "Utility.h"
 
 namespace
 {
@@ -21,17 +22,17 @@ namespace
 
 		Vector3 Forward()
 		{
-			return Matrix::CreateFromQuaternion(mOrientation).Backward();
+			return Vector3::Transform(Vector3::UnitZ, mOrientation);
 		}
 
 		Vector3 Right()
 		{
-			return Matrix::CreateFromQuaternion(mOrientation).Right();
+			return Vector3::Transform(Vector3::UnitX, mOrientation);
 		}
 
 		Vector3 Up()
 		{
-			return Matrix::CreateFromQuaternion(mOrientation).Up();
+			return Vector3::Transform(Vector3::UnitY, mOrientation);
 		}
 
 		Vector3 Translation()
@@ -54,10 +55,24 @@ namespace
 			return mScale;
 		}
 
+		// What if the problem is in the getter?
+		// Similar to .ToEuler(), .CreateFrom() loses deltas.
+		// Hence, what about pOut = q * pIn * q'!?
 		void SetForward(const Vector3& forward)
 		{
-			Quaternion::FromToRotation(Vector3::UnitZ, forward, mOrientation);
-			mRotation = mOrientation.ToEuler();
+			Vector3 right = forward.Cross(Vector3::Up);
+			Vector3 up = forward.Cross(right);
+			Matrix rotation{ right, up, forward };
+			
+			// Attempt 1
+			//Vector3 a = rotation.ToEuler() * DEGREES;
+			//Vector3 b = mRotation * DEGREES;
+			//Print(a - b);
+			//InternalDeltaRotate(rotation.ToEuler() - mRotation);
+
+			// Attempt 2
+			//mOrientation = Quaternion::CreateFromRotationMatrix(rotation);
+			//mRotation = mOrientation.ToEuler();
 		}
 
 		void Translate(const Vector3& translation)
@@ -227,7 +242,7 @@ namespace
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, radians, 0.0f);
 			Quaternion q1 = mOrientation;
 			Quaternion::Concatenate(q2, q1, mOrientation);
-
+			
 			mRotation.x += radians;
 			mRotation.x = fmodf(mRotation.x, TWO_PI);
 		}
@@ -250,29 +265,6 @@ namespace
 
 			mRotation.z += radians;
 			mRotation.z = fmodf(mRotation.z, TWO_PI);
-		}
-
-		void InternalLookRotation(const Vector3& forward, const Vector3& up, Quaternion& result) noexcept
-		{
-			using namespace DirectX;
-
-			Quaternion q1;
-			Quaternion::FromToRotation(Vector3::UnitZ, forward, q1);
-
-			const XMVECTOR C = XMVector3Cross(forward, up);
-			if (XMVector3NearEqual(XMVector3LengthSq(C), g_XMZero, g_XMEpsilon))
-			{
-				// forward and up are co-linear
-				result = q1;
-				return;
-			}
-
-			const XMVECTOR U = XMQuaternionMultiply(q1, Vector3::Up);
-
-			Quaternion q2;
-			Quaternion::FromToRotation(U, up, q2);
-
-			XMStoreFloat4(&result, XMQuaternionMultiply(q2, q1));
 		}
 	};
 }

@@ -80,22 +80,21 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 
-	mTransform.TranslateZ(100.0f);
-
-	mTransform.Rotate(45.0f, 45.0f, 45.0f);
+	mTransform.Rotate(0.0f, 45.0f, 0.0f);
 	Print(mTransform.Forward());
 	Print(mTransform.Rotation());
-
+	 
 	mTransform.SetForward(mTransform.Forward());
 	Print(mTransform.Forward());
 	Print(mTransform.Rotation());
 
-	mTransform.SetForward(mTransform.Forward());
-	Print(mTransform.Forward());
-	Print(mTransform.Rotation());
+	//float x = cosf(M_PI_4);
+	//mTransform.SetForward({ x, x, x });
+	//Print(mTransform.Forward());
+	//Print(mTransform.Rotation());
 
 	//AddTimer("test", 1.0f, [this]() {
-	//	Print(mTransform.Scaling());
+	//	Print(mTransform.Forward());
 	//}, true);
 }
 
