@@ -23,7 +23,6 @@ namespace
 		Vector3 Forward()
 		{
 			return Vector3::Transform(Vector3::UnitZ, mOrientation);
-			//return Vector3::Transform(Vector3::Forward, mOrientation);
 		}
 
 		Vector3 Right()
@@ -56,18 +55,12 @@ namespace
 			return mScale;
 		}
 
-		// Confirmed we're not losing information in Forward().
-		// Transform(vec4, quat) just calls vec3 rotate and copies w.
 		void SetForward(const Vector3& forward)
 		{
 			Vector3 right = forward.Cross(Vector3::Up);
 			Vector3 up = forward.Cross(right);
 			Matrix rotation{ -right, -up, forward };
 			InternalDeltaRotate(rotation.ToEuler() - mRotation);
-
-			// Unity's solution that should work but doesn't (even after changing internal Vector3::Forward to Vector3::UnitZ).
-			//mOrientation = Quaternion::LookRotation(forward, Vector3::Up);
-			//mRotation = mOrientation.ToEuler();
 		}
 
 		void Translate(const Vector3& translation)
@@ -127,9 +120,7 @@ namespace
 
 		void Rotate(float degreesX, float degreesY, float degreesZ)
 		{
-			mOrientation = Quaternion::CreateFromYawPitchRoll(Vector3{ degreesX, degreesY, degreesZ } * RADIANS);
-			mRotation = mOrientation.ToEuler();
-			//InternalDeltaRotate(Vector3{ degreesX, degreesY, degreesZ } * RADIANS - mRotation);
+			InternalDeltaRotate(Vector3{ degreesX, degreesY, degreesZ } * RADIANS - mRotation);
 		}
 
 		void RotateX(float degrees)
@@ -202,7 +193,7 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians);
 			Quaternion q1 = mOrientation;
-			ConcatenateHelper(q2, q1, mOrientation);
+			Quaternion::Concatenate(q1, q2, mOrientation);
 
 			mRotation += radians;
 			mRotation.x = fmodf(mRotation.x, TWO_PI);
@@ -214,7 +205,7 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, radians, 0.0f);
 			Quaternion q1 = mOrientation;
-			ConcatenateHelper(q2, q1, mOrientation);
+			Quaternion::Concatenate(q1, q2, mOrientation);
 			
 			mRotation.x += radians;
 			mRotation.x = fmodf(mRotation.x, TWO_PI);
@@ -224,7 +215,7 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians, 0.0f, 0.0f);
 			Quaternion q1 = mOrientation;
-			ConcatenateHelper(q2, q1, mOrientation);
+			Quaternion::Concatenate(q1, q2, mOrientation);
 
 			mRotation.y += radians;
 			mRotation.y = fmodf(mRotation.y, TWO_PI);
@@ -234,43 +225,10 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, radians);
 			Quaternion q1 = mOrientation;
-			ConcatenateHelper(q2, q1, mOrientation);
+			Quaternion::Concatenate(q1, q2, mOrientation);
 
 			mRotation.z += radians;
 			mRotation.z = fmodf(mRotation.z, TWO_PI);
-		}
-
-		// Created so I can swap q2 * q1 vs q1 * q1 in a single line xD
-		void ConcatenateHelper(const Quaternion& q2, const Quaternion& q1, Quaternion& result)
-		{
-			//Quaternion::Concatenate(q2, q1, result); <-- Matches XM
-			//Quaternion::Concatenate(q1, q2, result); <-- Matches SimpleMath
-			Quaternion::Concatenate(q1, q2, result);
-		}
-
-		Quaternion LookRotation(const Vector3& forward, const Vector3& up) noexcept
-		{
-			using namespace DirectX;
-			Quaternion result;
-
-			Quaternion q1;
-			Quaternion::FromToRotation(Vector3::UnitZ, forward, q1);
-
-			const XMVECTOR C = XMVector3Cross(forward, up);
-			if (XMVector3NearEqual(XMVector3LengthSq(C), g_XMZero, g_XMEpsilon))
-			{
-				// forward and up are co-linear
-				result = q1;
-				return result;
-			}
-
-			const XMVECTOR U = XMQuaternionMultiply(q1, Vector3::Up);
-
-			Quaternion q2;
-			Quaternion::FromToRotation(U, up, q2);
-
-			XMStoreFloat4(&result, XMQuaternionMultiply(q2, q1));
-			return result;
 		}
 	};
 }
@@ -285,6 +243,8 @@ namespace
 // *Vector AB = B - A*
 // Must maintain both euler and quaternion deltas
 // (otherwise objects will "flip" in arbitrary rotations > 180 degrees).
+// Quaternion::Concatenate(q2, q1, result); <-- Matches XM
+// Quaternion::Concatenate(q1, q2, result); <-- Matches SimpleMath
 
 // TODO:
 // Forward() is more useful than SetForward(). If I wanna set orientation based on direction, I should compute the difference
@@ -315,3 +275,7 @@ namespace
 //	mTranslation.x += x;
 //	mTranslation.y += y;
 //}
+
+// Unity's solution that should work but doesn't (even after changing internal Vector3::Forward to Vector3::UnitZ).
+// mOrientation = Quaternion::LookRotation(forward, Vector3::Up);
+// mRotation = mOrientation.ToEuler();

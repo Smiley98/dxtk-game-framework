@@ -81,16 +81,10 @@ void TestScene::OnBegin()
 	//mEffect2->Play();
 
 // This test fails if rotation on all 3 axes but succeeds if on only 2 (which is all we need for p0)!
-	mTransform.Rotate(45.0f, 45.0f, 0.0f);
-	Print(mTransform.Forward());
-	Print(mTransform.Rotation());
-	Print(mTransform.Orientation());
-	
-	mTransform.SetForward(mTransform.Forward());
-	Print(mTransform.Forward());
-	Print(mTransform.Rotation());
-	Print(mTransform.Orientation());
-	Print(mTransform.Rotation());
+	//mTransform.Rotate(45.0f, 45.0f, 0.0f);
+	//Print(mTransform.Forward());
+	//Print(mTransform.Rotation());
+	//Print(mTransform.Orientation());
 
 // Updating translation based on Forward() is not a useful test because we know the getter works. Its the setter that's whack.
 	//AddTimer("test", 1.0f, [this]() {
