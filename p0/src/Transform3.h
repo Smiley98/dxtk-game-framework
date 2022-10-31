@@ -55,15 +55,27 @@ namespace
 			return mScale;
 		}
 
+		// Perhaps we're losing information Forward()?
 		void SetForward(const Vector3& forward)
 		{
+			// Jank solution precursor
 			Vector3 right = forward.Cross(Vector3::Up);
 			Vector3 up = forward.Cross(right);
 			Matrix rotation{ -right, -up, forward };
-			InternalDeltaRotate(rotation.ToEuler() - mRotation);
+			
+			// Jank solution (correct orientation but eulers get slightly screwed).
+			//InternalDeltaRotate(rotation.ToEuler() - mRotation);
 
-			// Alternative solution
+			// Alternative jank solution (correct orientation but eulers get considerably screwed).
 			//mOrientation = Quaternion::CreateFromRotationMatrix(rotation);
+			//mRotation = mOrientation.ToEuler();
+
+			// Unity's solution that should work but doesn't
+			//mOrientation = Quaternion::LookRotation(forward, Vector3::Up);
+			//mRotation = mOrientation.ToEuler();
+			
+			// Busted beyond repair
+			//mOrientation = Quaternion::FromToRotation(Vector3::UnitZ, Vector3::UnitY);
 			//mRotation = mOrientation.ToEuler();
 		}
 

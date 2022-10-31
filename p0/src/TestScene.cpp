@@ -81,14 +81,16 @@ void TestScene::OnBegin()
 	//mEffect2->Play();
 
 // This test fails 
-	//mTransform.Rotate(45.0f, 45.0f, 45.0f);
-	//Print(mTransform.Forward());
-	//Print(mTransform.Rotation());
-	//
-	//mTransform.SetForward(mTransform.Forward());
-	//Print(mTransform.Forward());
-	//Print(mTransform.Rotation());
-	//
+	mTransform.Rotate(45.0f, 45.0f, 45.0f);
+	Print(mTransform.Forward());
+	Print(mTransform.Rotation());
+	Print(mTransform.Orientation());
+	
+	mTransform.SetForward(mTransform.Forward());
+	Print(mTransform.Forward());
+	Print(mTransform.Rotation());
+	Print(mTransform.Orientation());
+	
 	//mTransform.SetForward(mTransform.Forward());
 	//Print(mTransform.Forward());
 	//Print(mTransform.Rotation());
@@ -97,11 +99,11 @@ void TestScene::OnBegin()
 	//Print(mTransform.Forward());
 	//Print(mTransform.Rotation());
 
-// This test passes (looping path by translating by forward in update)
-	AddTimer("test", 1.0f, [this]() {
-		Print(mTransform.Forward());
-		Print(mTransform.Rotation());
-	}, true);
+// Updating translation based on Forward() is not a useful test because we know the getter works. Its the setter that's whack.
+	//AddTimer("test", 1.0f, [this]() {
+	//	Print(mTransform.Forward());
+	//	Print(mTransform.Rotation());
+	//}, true);
 }
 
 void TestScene::OnEnd()
@@ -123,8 +125,8 @@ void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 	mView = Matrix::CreateLookAt({ 0.0f, 500.0f, mNear }, Vector3::Zero, Vector3::Up);
 	mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
 	
-	mTransform.RotateY(tt * 50.0f);
-	mTransform.DeltaTranslate(mTransform.Forward() * dt * 100.0f);
+	//mTransform.RotateY(tt * 50.0f);
+	//mTransform.DeltaTranslate(mTransform.Forward() * dt * 100.0f);
 
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);
