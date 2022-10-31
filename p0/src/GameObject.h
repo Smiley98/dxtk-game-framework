@@ -58,7 +58,7 @@ public:
 	{
 		if (mParent != nullptr)
 		{
-			return World() * mTransform.LocalMatrix();
+			return mParent->World() * mTransform.LocalMatrix();
 		}
 		return mTransform.LocalMatrix();
 	}
@@ -90,7 +90,11 @@ public:
 
 	void RotateWorld(float yaw)
 	{
-		mTransform.RotateZ(yaw);
+		if (mParent != nullptr)
+		{
+
+		}
+		mTransform.RotateY(yaw);
 	}
 
 private:

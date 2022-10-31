@@ -95,6 +95,10 @@ void TestScene::OnBegin()
 
 	mParent.AddChild(&mChildA);
 	mParent.AddChild(&mChildB);
+
+	mParent.TranslateLocal({ 0.0f, 0.0f, 250.0f });
+	mChildA.TranslateLocal({ -100.0f, 0.0f, -100.0f });
+	mChildB.TranslateLocal({ 100.0f, 0.0f, -100.0f });
 }
 
 void TestScene::OnEnd()
@@ -163,9 +167,13 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//const XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
 	//const XMVECTORF32 translate = { 2.f, -1.f, -4.f };
 	//XMMATRIX local = mWorld * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-	{	graphics->PIXBeginEvent(L"Draw vbo (van)");
-		mVan->Draw(context, *mStates, mTransform.LocalMatrix(), mView, mProj);
-	}	graphics->PIXEndEvent();
+	//{	graphics->PIXBeginEvent(L"Draw vbo (van)");
+	//	mVan->Draw(context, *mStates, mTransform.LocalMatrix(), mView, mProj);
+	//}	graphics->PIXEndEvent();
+
+	mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
+	mVan->Draw(context, *mStates, mChildA.World(), mView, mProj);
+	mVan->Draw(context, *mStates, mChildB.World(), mView, mProj);
 
 	graphics->PIXEndEvent();
 }
