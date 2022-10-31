@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#include "Transform3.h"
+#include "GameObject.h"
 
 class TestScene :
     public Scene
@@ -41,6 +41,8 @@ private:
     std::unique_ptr<DirectX::SpriteFont>                                    mFont;
     Matrix                                                                  mWorld;
     Transform3 mTransform;
+
+    GameObject mParent, mChildA, mChildB;
 
     // D3D11 objects
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture1;

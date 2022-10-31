@@ -88,6 +88,13 @@ void TestScene::OnBegin()
 	//	Print(mTransform.Forward());
 	//	Print(mTransform.Rotation());
 	//}, true);
+
+	mParent.SetName("Parent");
+	mChildA.SetName("Child A");
+	mChildB.SetName("Child B");
+
+	mParent.AddChild(&mChildA);
+	mParent.AddChild(&mChildB);
 }
 
 void TestScene::OnEnd()

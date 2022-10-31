@@ -5,8 +5,8 @@
 #include "Utility.h"
 #define MAP false
 #define TIMER false
-#define SPLINE false
-#define INPUT true
+#define SPLINE true
+#define INPUT false
 
 namespace
 {
@@ -26,13 +26,6 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	const RECT size = graphics->GetOutputSize();
 	const float width = float(size.right - size.left);
 	const float height = float(size.bottom - size.top);
-
-	mParent.SetName("Parent");
-	mChildA.SetName("Child A");
-	mChildB.SetName("Child B");
-
-	mParent.AddChild(&mChildA);
-	mParent.AddChild(&mChildB);
 
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
 
