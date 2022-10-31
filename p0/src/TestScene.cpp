@@ -80,19 +80,23 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 
-	//mTransform.TranslateZ(100.0f);
-	//
-	//mTransform.RotateY(45.0f);
-	//Print(mTransform.Forward());
-	//
-	//Vector3 forwards{ cosf(M_PI_4), 0.0f, sinf(M_PI_4) };
-	//Print(forwards);
-	//mTransform.SetForwards(forwards);
+	mTransform.TranslateZ(100.0f);
 
-	AddTimer("test", 1.0f, [this]() {
-		//Print(mTransform.Forward());
-		Print(mTransform.Rotation());
-	}, true);
+	mTransform.Rotate(45.0f, 45.0f, 45.0f);
+	Print(mTransform.Forward());
+	Print(mTransform.Rotation());
+
+	mTransform.SetForward(mTransform.Forward());
+	Print(mTransform.Forward());
+	Print(mTransform.Rotation());
+
+	mTransform.SetForward(mTransform.Forward());
+	Print(mTransform.Forward());
+	Print(mTransform.Rotation());
+
+	//AddTimer("test", 1.0f, [this]() {
+	//	Print(mTransform.Scaling());
+	//}, true);
 }
 
 void TestScene::OnEnd()

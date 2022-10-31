@@ -17,7 +17,6 @@ namespace
 			return Matrix::CreateScale(mScale) *
 				Matrix::CreateFromQuaternion(mOrientation) *
 				Matrix::CreateTranslation(mTranslation);
-			//return DirectX::XMMatrixAffineTransformation(mScale, Quaternion::Identity, mOrientation, mTranslation);
 		}
 
 		Vector3 Forward()
@@ -55,9 +54,9 @@ namespace
 			return mScale;
 		}
 
-		void SetForwards(const Vector3& forward)
+		void SetForward(const Vector3& forward)
 		{
-			mOrientation = Quaternion::LookRotation(-forward, Vector3::Up);
+			Quaternion::FromToRotation(Vector3::UnitZ, forward, mOrientation);
 			mRotation = mOrientation.ToEuler();
 		}
 
@@ -252,19 +251,45 @@ namespace
 			mRotation.z += radians;
 			mRotation.z = fmodf(mRotation.z, TWO_PI);
 		}
+
+		void InternalLookRotation(const Vector3& forward, const Vector3& up, Quaternion& result) noexcept
+		{
+			using namespace DirectX;
+
+			Quaternion q1;
+			Quaternion::FromToRotation(Vector3::UnitZ, forward, q1);
+
+			const XMVECTOR C = XMVector3Cross(forward, up);
+			if (XMVector3NearEqual(XMVector3LengthSq(C), g_XMZero, g_XMEpsilon))
+			{
+				// forward and up are co-linear
+				result = q1;
+				return;
+			}
+
+			const XMVECTOR U = XMQuaternionMultiply(q1, Vector3::Up);
+
+			Quaternion q2;
+			Quaternion::FromToRotation(U, up, q2);
+
+			XMStoreFloat4(&result, XMQuaternionMultiply(q2, q1));
+		}
 	};
 }
 
 // Architecture:
+// Optimizing for speed by storing translation, rotation and scale matrices + dirty flags doesn't make sense because
+// it is not worth the 3x memory increase, adds complexity, and isn't as effective as you'd hope since data is being
+// transported between float and vector registers.
+
+// Math:
 // *Rotation of q1 followed by q2 = q2 * q1*
 // *Vector AB = B - A*
 // Must maintain both euler and quaternion deltas
 // (otherwise objects will "flip" in arbitrary rotations > 180 degrees).
 
-// Optimizing for speed by storing translation, rotation and scale matrices + dirty flags doesn't make sense because
-// it is not worth the 3x memory increase, adds complexity, and isn't as effective as you'd hope since data is being
-// transported between float and vector registers.
-
-// SimpleMath vs XDirectXMath (XM):
-// Projection and camera matrices are right-handed in SimpleMath but left-handed in XM.
-// Note that positive rotation in RHS is ccw and world matrices are handedness-independent!
+// Cryptic Math:
+// Quaternion::LookRotation() uses Vector3::Forward which is NEGATIVE Z.
+// Matrix::Forward() is NEGATIVE Z.
+// Quaternion::Concatenate() is q1 * q2 but XMQuaternionMultiply() is q2 * q1.
+// Basically, half of "SimpleMath" is fipped inside-out for no apparent reason so I've fixed everything to use +z.
