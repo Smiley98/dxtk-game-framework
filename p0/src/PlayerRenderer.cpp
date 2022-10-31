@@ -18,7 +18,7 @@ void PlayerRenderer::Load(std::shared_ptr<DX::DeviceResources> graphics)
 	mShader->SetSpecularPower(256.0f);
 	mShader->SetTextureEnabled(true);
 	mShader->SetTexture(mTexture.Get());
-	mVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", mShader);
+	mVan = Model::CreateFromVBO(device, L"assets/meshes/vanY.vbo", mShader);
 }
 
 void PlayerRenderer::Unload()

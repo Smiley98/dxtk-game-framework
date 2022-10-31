@@ -22,17 +22,7 @@ namespace
 
 		Vector3 Forward()
 		{
-			return Matrix::CreateFromQuaternion(mOrientation).Forward();
-		}
-
-		Vector3 Backward()
-		{
 			return Matrix::CreateFromQuaternion(mOrientation).Backward();
-		}
-
-		Vector3 Left()
-		{
-			return Matrix::CreateFromQuaternion(mOrientation).Left();
 		}
 
 		Vector3 Right()
@@ -43,11 +33,6 @@ namespace
 		Vector3 Up()
 		{
 			return Matrix::CreateFromQuaternion(mOrientation).Up();
-		}
-
-		Vector3 Down()
-		{
-			return Matrix::CreateFromQuaternion(mOrientation).Down();
 		}
 
 		Vector3 Translation()
@@ -68,6 +53,12 @@ namespace
 		Vector3 Scaling()
 		{
 			return mScale;
+		}
+
+		void SetForwards(const Vector3& forward)
+		{
+			mOrientation = Quaternion::LookRotation(-forward, Vector3::Up);
+			mRotation = mOrientation.ToEuler();
 		}
 
 		void Translate(const Vector3& translation)
@@ -224,7 +215,7 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians);
 			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q1, q2, mOrientation);
+			Quaternion::Concatenate(q2, q1, mOrientation);
 
 			mRotation += radians;
 			mRotation.x = fmodf(mRotation.x, TWO_PI);
@@ -236,7 +227,7 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, radians, 0.0f);
 			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q1, q2, mOrientation);
+			Quaternion::Concatenate(q2, q1, mOrientation);
 
 			mRotation.x += radians;
 			mRotation.x = fmodf(mRotation.x, TWO_PI);
@@ -246,7 +237,7 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians, 0.0f, 0.0f);
 			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q1, q2, mOrientation);
+			Quaternion::Concatenate(q2, q1, mOrientation);
 
 			mRotation.y += radians;
 			mRotation.y = fmodf(mRotation.y, TWO_PI);
@@ -256,7 +247,7 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, radians);
 			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q1, q2, mOrientation);
+			Quaternion::Concatenate(q2, q1, mOrientation);
 
 			mRotation.z += radians;
 			mRotation.z = fmodf(mRotation.z, TWO_PI);

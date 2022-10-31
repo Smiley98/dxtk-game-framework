@@ -43,7 +43,7 @@ TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	mVanEffect->SetTextureEnabled(true);
 	mVanEffect->SetTexture(mTextureVan.Get());
 	
-	mVan = Model::CreateFromVBO(device, L"assets/meshes/van.vbo", mVanEffect);
+	mVan = Model::CreateFromVBO(device, L"assets/meshes/vanZ.vbo", mVanEffect);
 }
 
 TestScene::~TestScene()
@@ -68,8 +68,8 @@ void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	mProj = Matrix::CreatePerspectiveFieldOfView(
 		fovAngleY,
 		aspectRatio,
-		0.01f,
-		100.0f
+		mNear,
+		mFar
 	);
 
 	mBatchEffect->SetProjection(mProj);
@@ -80,12 +80,18 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 
-	//mTransform.Translate(16.0f, 9.0f);
-	//mTransform.RotateZ(45.0f);
-	mTransform.Scale(0.1f);
+	//mTransform.TranslateZ(100.0f);
+	//
+	//mTransform.RotateY(45.0f);
+	//Print(mTransform.Forward());
+	//
+	//Vector3 forwards{ cosf(M_PI_4), 0.0f, sinf(M_PI_4) };
+	//Print(forwards);
+	//mTransform.SetForwards(forwards);
 
 	AddTimer("test", 1.0f, [this]() {
-		Print(mTransform.Forward());
+		//Print(mTransform.Forward());
+		Print(mTransform.Rotation());
 	}, true);
 }
 
@@ -105,9 +111,7 @@ void TestScene::OnResume()
 
 void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
-	const Vector3 eye(0.0f, 0.0f, 50.0f);
-	const Vector3 at(0.0f, 0.0f, 0.0f);
-	mView = Matrix::CreateLookAt(eye, at, Vector3::Up);
+	mView = Matrix::CreateLookAt({ 0.0f, 500.0f, mNear }, Vector3::Zero, Vector3::Up);
 	mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
 	
 	//mTransform.DeltaRotate(Vector3 { dt * 50.0f });
@@ -118,7 +122,7 @@ void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 	//mTransform.RotateX(tt * 50.0f);
 	//mTransform.RotateY(tt * 50.0f);
 	//mTransform.RotateZ(tt * 50.0f);
-	mTransform.DeltaTranslate(mTransform.Forward() * dt * 50.0f);
+	//mTransform.DeltaTranslate(mTransform.Forward() * dt * 50.0f);
 
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);

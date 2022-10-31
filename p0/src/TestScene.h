@@ -48,5 +48,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTextureVan;
     Microsoft::WRL::ComPtr<ID3D11InputLayout>                               mBatchInputLayout;
 
+    float mNear = 0.001f;
+    float mFar = 10000.0f;
+
     void XM_CALLCONV DrawGrid(std::shared_ptr<DX::DeviceResources> graphics, DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 };
