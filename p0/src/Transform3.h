@@ -62,17 +62,19 @@ namespace
 		{
 			Vector3 right = forward.Cross(Vector3::Up);
 			Vector3 up = forward.Cross(right);
-			Matrix rotation{ right, up, forward };
+			Matrix rotation{ -right, -up, forward };
 			
 			// Attempt 1
 			//Vector3 a = rotation.ToEuler() * DEGREES;
 			//Vector3 b = mRotation * DEGREES;
 			//Print(a - b);
-			//InternalDeltaRotate(rotation.ToEuler() - mRotation);
+			InternalDeltaRotate(rotation.ToEuler() - mRotation);
 
 			// Attempt 2
 			//mOrientation = Quaternion::CreateFromRotationMatrix(rotation);
 			//mRotation = mOrientation.ToEuler();
+
+			//mOrientation = Quaternion::FromToRotation(Vector3::UnitZ, forward);
 		}
 
 		void Translate(const Vector3& translation)
@@ -229,7 +231,7 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians);
 			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q2, q1, mOrientation);
+			ConcatenateHelper(q2, q1, mOrientation);
 
 			mRotation += radians;
 			mRotation.x = fmodf(mRotation.x, TWO_PI);
@@ -241,7 +243,7 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, radians, 0.0f);
 			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q2, q1, mOrientation);
+			ConcatenateHelper(q2, q1, mOrientation);
 			
 			mRotation.x += radians;
 			mRotation.x = fmodf(mRotation.x, TWO_PI);
@@ -251,7 +253,7 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians, 0.0f, 0.0f);
 			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q2, q1, mOrientation);
+			ConcatenateHelper(q2, q1, mOrientation);
 
 			mRotation.y += radians;
 			mRotation.y = fmodf(mRotation.y, TWO_PI);
@@ -261,10 +263,18 @@ namespace
 		{
 			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, radians);
 			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q2, q1, mOrientation);
+			ConcatenateHelper(q2, q1, mOrientation);
 
 			mRotation.z += radians;
 			mRotation.z = fmodf(mRotation.z, TWO_PI);
+		}
+
+		// Created so I can swap q2 * q1 vs q1 * q1 in a single line xD
+		void ConcatenateHelper(const Quaternion& q2, const Quaternion& q1, Quaternion& result)
+		{
+			//Quaternion::Concatenate(q2, q1, result); <-- Matches XM
+			//Quaternion::Concatenate(q1, q2, result); <-- Matches SimpleMath
+			Quaternion::Concatenate(q1, q2, result);
 		}
 	};
 }
@@ -279,9 +289,3 @@ namespace
 // *Vector AB = B - A*
 // Must maintain both euler and quaternion deltas
 // (otherwise objects will "flip" in arbitrary rotations > 180 degrees).
-
-// Cryptic Math:
-// Quaternion::LookRotation() uses Vector3::Forward which is NEGATIVE Z.
-// Matrix::Forward() is NEGATIVE Z.
-// Quaternion::Concatenate() is q1 * q2 but XMQuaternionMultiply() is q2 * q1.
-// Basically, half of "SimpleMath" is fipped inside-out for no apparent reason so I've fixed everything to use +z.

@@ -80,22 +80,10 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 
-	mTransform.Rotate(0.0f, 45.0f, 0.0f);
-	Print(mTransform.Forward());
-	Print(mTransform.Rotation());
-	 
-	mTransform.SetForward(mTransform.Forward());
-	Print(mTransform.Forward());
-	Print(mTransform.Rotation());
-
-	//float x = cosf(M_PI_4);
-	//mTransform.SetForward({ x, x, x });
-	//Print(mTransform.Forward());
-	//Print(mTransform.Rotation());
-
-	//AddTimer("test", 1.0f, [this]() {
-	//	Print(mTransform.Forward());
-	//}, true);
+	AddTimer("test", 1.0f, [this]() {
+		Print(mTransform.Forward());
+		Print(mTransform.Rotation());
+	}, true);
 }
 
 void TestScene::OnEnd()
@@ -117,15 +105,8 @@ void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 	mView = Matrix::CreateLookAt({ 0.0f, 500.0f, mNear }, Vector3::Zero, Vector3::Up);
 	mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
 	
-	//mTransform.DeltaRotate(Vector3 { dt * 50.0f });
-	//mTransform.DeltaRotateX(dt * 50.0f);
-	//mTransform.DeltaRotateY(dt * 50.0f);
-	//mTransform.DeltaRotateZ(dt * 50.0f);
-	//mTransform.Rotate(Vector3 { tt * 50.0f });
-	//mTransform.RotateX(tt * 50.0f);
-	//mTransform.RotateY(tt * 50.0f);
-	//mTransform.RotateZ(tt * 50.0f);
-	//mTransform.DeltaTranslate(mTransform.Forward() * dt * 50.0f);
+	mTransform.RotateY(tt * 50.0f);
+	mTransform.DeltaTranslate(mTransform.Forward() * dt * 100.0f);
 
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);
