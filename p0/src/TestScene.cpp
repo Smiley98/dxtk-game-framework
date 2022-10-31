@@ -80,6 +80,24 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 
+// This test fails 
+	//mTransform.Rotate(45.0f, 45.0f, 45.0f);
+	//Print(mTransform.Forward());
+	//Print(mTransform.Rotation());
+	//
+	//mTransform.SetForward(mTransform.Forward());
+	//Print(mTransform.Forward());
+	//Print(mTransform.Rotation());
+	//
+	//mTransform.SetForward(mTransform.Forward());
+	//Print(mTransform.Forward());
+	//Print(mTransform.Rotation());
+	//
+	//mTransform.SetForward(mTransform.Forward());
+	//Print(mTransform.Forward());
+	//Print(mTransform.Rotation());
+
+// This test passes (looping path by translating by forward in update)
 	AddTimer("test", 1.0f, [this]() {
 		Print(mTransform.Forward());
 		Print(mTransform.Rotation());

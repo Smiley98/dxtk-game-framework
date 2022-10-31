@@ -55,26 +55,16 @@ namespace
 			return mScale;
 		}
 
-		// What if the problem is in the getter?
-		// Similar to .ToEuler(), .CreateFrom() loses deltas.
-		// Hence, what about pOut = q * pIn * q'!?
 		void SetForward(const Vector3& forward)
 		{
 			Vector3 right = forward.Cross(Vector3::Up);
 			Vector3 up = forward.Cross(right);
 			Matrix rotation{ -right, -up, forward };
-			
-			// Attempt 1
-			//Vector3 a = rotation.ToEuler() * DEGREES;
-			//Vector3 b = mRotation * DEGREES;
-			//Print(a - b);
 			InternalDeltaRotate(rotation.ToEuler() - mRotation);
 
-			// Attempt 2
+			// Alternative solution
 			//mOrientation = Quaternion::CreateFromRotationMatrix(rotation);
 			//mRotation = mOrientation.ToEuler();
-
-			//mOrientation = Quaternion::FromToRotation(Vector3::UnitZ, forward);
 		}
 
 		void Translate(const Vector3& translation)
