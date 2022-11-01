@@ -90,20 +90,28 @@ void TestScene::OnBegin()
 	//}, true);
 
 	mParent.SetName("Parent");
-	mChildA.SetName("Child A");
-	mChildB.SetName("Child B");
+	mChild1.SetName("Child 1");
+	mChild2.SetName("Child 2");
 
-	mParent.AddChild(&mChildA);
-	mParent.AddChild(&mChildB);
+	mParent.AddChild(&mChild1);
+	mParent.AddChild(&mChild2);
 
-	mParent.TranslateLocal({ 0.0f, 0.0f, 250.0f });
-	mChildA.TranslateLocal({ -25.0f, 0.0f, -100.0f });
-	mChildB.TranslateLocal({ 25.0f, 0.0f, -100.0f });
-	mChildA.RotateLocal(30.0f);
-	mChildB.RotateLocal(-30.0f);
+	mParent.TranslateLocal({ 0.0f, 0.0f, 150.0f });
+	mChild1.TranslateLocal({ -25.0f, 0.0f, -100.0f });
+	mChild2.TranslateLocal({ 25.0f, 0.0f, -100.0f });
+	mChild1.RotateLocal({ 0.0f, 30.0f , 0.0f });
+	mChild2.RotateLocal({ 0.0f, -30.0f, 0.0f });
 
 	// Works!
-	//mChildB.TranslateWorld({ 100.0f, 0.0f, 0.0f });
+	//mParent.RotateLocal({ 0.0f, 10.0f, 0.0f });
+	//mChild2.TranslateWorld({ 100.0f, 0.0f, 0.0f });
+	//mChild2.OrientateWorld(Quaternion::CreateFromYawPitchRoll(M_PI_2, 0.0f, 0.0f));
+	//mChild2.RotateWorld({ 0.0f, 90.0f, 0.0f });
+
+	// Explanation:
+	// Since child B is still attached to parent, instead of actually translating it 100 units right,
+	// we translate it { 100, 0, -250 } since desired is { 100, 0, 0 } and parent is { 0, 0, 250 }.
+	// world to local = world * inverse(parent->World()).
 }
 
 void TestScene::OnEnd()
@@ -124,12 +132,10 @@ void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
 	mView = Matrix::CreateLookAt({ 0.0f, 500.0f, mNear }, Vector3::Zero, Vector3::Up);
 
-	//mWorld = Matrix::CreateRotationY(tt * XM_PIDIV4);
 	//mTransform.RotateY(tt * 50.0f);
 	//mTransform.DeltaTranslate(mTransform.Forward() * dt * 100.0f);
 
-	mParent.RotateLocal(tt * 50.0f);
-	//mParent.TranslateLocal(mTransform.Forward() * dt * 100.0f);
+	//mParent.RotateLocal({ 0.0f, tt * 50.0f, 0.0f });
 
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);
@@ -174,11 +180,11 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//	mVan->Draw(context, *mStates, mTransform.LocalMatrix(), mView, mProj);
 	//}	graphics->PIXEndEvent();
 
-	mVan->Draw(context, *mStates, mTransform.LocalMatrix(), mView, mProj);
+	//mVan->Draw(context, *mStates, mTransform.LocalMatrix(), mView, mProj);
 
-	//mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
-	//mVan->Draw(context, *mStates, mChildA.World(), mView, mProj);
-	//mVan->Draw(context, *mStates, mChildB.World(), mView, mProj);
+	mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
+	mVan->Draw(context, *mStates, mChild1.World(), mView, mProj);
+	mVan->Draw(context, *mStates, mChild2.World(), mView, mProj);
 
 	graphics->PIXEndEvent();
 }

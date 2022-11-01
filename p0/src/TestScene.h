@@ -42,7 +42,7 @@ private:
     Matrix                                                                  mWorld;
     Transform3 mTransform;
 
-    GameObject mParent, mChildA, mChildB;
+    GameObject mParent, mChild1, mChild2;
 
     // D3D11 objects
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture1;

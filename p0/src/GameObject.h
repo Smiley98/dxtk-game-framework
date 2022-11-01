@@ -111,29 +111,51 @@ public:
 		{
 			// Compute local translation based on world translation relative to the parent.
 			Vector3 localTranslation = worldTranslation - mParent->WorldTranslation();
-			mTransform.Translate(localTranslation);
+			TranslateLocal(localTranslation);
 		}
 		else
 		{
 			// Local = world if there's no parent.
-			mTransform.Translate(worldTranslation);
+			TranslateLocal(worldTranslation);
 		}
 	}
 
-	void RotateLocal(float yaw)
+	void OrientateLocal(const Quaternion& localOrientation)
 	{
-		mTransform.RotateY(yaw);
+		mTransform.Orientate(localOrientation);
 	}
 
-	void RotateWorld(float yaw)
+	void OrientateWorld(const Quaternion& worldOrientation)
 	{
 		if (mParent != nullptr)
 		{
-			// Find delta
+			// Compute local orientation based on world orientation relative to the parent.
+			Quaternion inverseParentOrientation = mParent->WorldOrientation();
+			inverseParentOrientation.Conjugate();
+			OrientateLocal(Quaternion::Concatenate(worldOrientation, inverseParentOrientation));
 		}
 		else
 		{
-			mTransform.RotateY(yaw);
+			// Local = world if there's no parent.
+			OrientateLocal(worldOrientation);
+		}
+	}
+
+	void RotateLocal(const Vector3& localRotation)
+	{
+		mTransform.Rotate(localRotation);
+	}
+
+	void RotateWorld(const Vector3& worldRotation)
+	{
+		if (mParent != nullptr)
+		{
+			Vector3 localRotation = worldRotation - mParent->WorldRotation();
+			RotateLocal(localRotation);
+		}
+		else
+		{
+			RotateLocal(worldRotation);
 		}
 	}
 

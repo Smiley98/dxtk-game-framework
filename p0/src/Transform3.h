@@ -181,6 +181,7 @@ namespace
 		}
 
 	private:
+		// TODO -- since we have some room left, we should implement parenting here since we only need parent* and no children[].
 		Vector3 mTranslation = Vector3::Zero;
 		Vector3 mRotation = Vector3::Zero;
 		Vector3 mScale = Vector3::One;
