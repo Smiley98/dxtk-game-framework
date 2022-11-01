@@ -55,14 +55,10 @@ namespace
 			return mScale;
 		}
 
-		void Orientate(const Quaternion& q2)
+		void Orientate(const Quaternion& orientation)
 		{
-			// Not sure if this is correct.
-			// If we wanted to go from q1 to q2, we would need to use conjugate, not concatenate.
-			//mOrientation.RotateTowards(q2, DirectX::XM_2PI); <-- test this soon!
-			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q1, q2, mOrientation);
-			mRotation = q2.ToEuler() - mRotation;
+			mOrientation = orientation;
+			mRotation = orientation.ToEuler();
 		}
 
 		void Translate(const Vector3& translation)
@@ -229,41 +225,9 @@ namespace
 // transported between float and vector registers.
 
 // Math:
-// *Rotation of q1 followed by q2 = q2 * q1*
-// *Vector AB = B - A*
-// Must maintain both euler and quaternion deltas
-// (otherwise objects will "flip" in arbitrary rotations > 180 degrees).
-// ***Noticed that Quaternion operator* behaves as expected unlike Concatenate(). Look into this!***
-
-// TODO:
-// Forward() is more useful than SetForward(). If I wanna set orientation based on direction, I should compute the difference
-// between the orientation quaternions of two transforms.
-// Note that SetForward() seems to succeed if only pitch and yaw change which should suffice for this project.
-
-// Dead code (cause we're not working with y-forward anymore):
-//void Translate(const Vector2& translation)
-//{
-//	mTranslation.x = translation.x;
-//	mTranslation.y = translation.y;
-//}
-//
-//void Translate(float x, float y)
-//{
-//	mTranslation.x = x;
-//	mTranslation.y = y;
-//}
-// 
-//void DeltaTranslate(const Vector2& translation)
-//{
-//	mTranslation.x += translation.x;
-//	mTranslation.y += translation.y;
-//}
-//
-//void DeltaTranslate(float x, float y)
-//{
-//	mTranslation.x += x;
-//	mTranslation.y += y;
-//}
+// Rotation of q1 followed by q2 = q2 * q1
+// Concatenate(q1, q2) is equivalent to q2 * q1
+// Must maintain both euler and quaternion deltas otherwise objects will "flip" in arbitrary rotations > 180 degrees!
 
 // Unity's solution that should work but doesn't (even after changing internal Vector3::Forward to Vector3::UnitZ).
 //void SetForward(const Vector3& forward)

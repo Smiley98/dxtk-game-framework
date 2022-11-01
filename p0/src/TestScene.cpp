@@ -103,7 +103,7 @@ void TestScene::OnBegin()
 	mChildB.RotateLocal(-30.0f);
 
 	// Works!
-	mChildB.TranslateWorld({ 100.0f, 0.0f, 0.0f });
+	//mChildB.TranslateWorld({ 100.0f, 0.0f, 0.0f });
 }
 
 void TestScene::OnEnd()
@@ -174,9 +174,11 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//	mVan->Draw(context, *mStates, mTransform.LocalMatrix(), mView, mProj);
 	//}	graphics->PIXEndEvent();
 
-	mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
-	mVan->Draw(context, *mStates, mChildA.World(), mView, mProj);
-	mVan->Draw(context, *mStates, mChildB.World(), mView, mProj);
+	mVan->Draw(context, *mStates, mTransform.LocalMatrix(), mView, mProj);
+
+	//mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
+	//mVan->Draw(context, *mStates, mChildA.World(), mView, mProj);
+	//mVan->Draw(context, *mStates, mChildB.World(), mView, mProj);
 
 	graphics->PIXEndEvent();
 }
