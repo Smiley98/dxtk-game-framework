@@ -101,6 +101,9 @@ void TestScene::OnBegin()
 	mChildB.TranslateLocal({ 25.0f, 0.0f, -100.0f });
 	mChildA.RotateLocal(30.0f);
 	mChildB.RotateLocal(-30.0f);
+
+	// Works!
+	mChildB.TranslateWorld({ 100.0f, 0.0f, 0.0f });
 }
 
 void TestScene::OnEnd()

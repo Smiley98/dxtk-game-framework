@@ -57,6 +57,9 @@ namespace
 
 		void Orientate(const Quaternion& q2)
 		{
+			// Not sure if this is correct.
+			// If we wanted to go from q1 to q2, we would need to use conjugate, not concatenate.
+			//mOrientation.RotateTowards(q2, DirectX::XM_2PI); <-- test this soon!
 			Quaternion q1 = mOrientation;
 			Quaternion::Concatenate(q1, q2, mOrientation);
 			mRotation = q2.ToEuler() - mRotation;
@@ -190,10 +193,7 @@ namespace
 
 		void InternalDeltaRotate(const Vector3& radians)
 		{
-			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians);
-			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q1, q2, mOrientation);
-
+			mOrientation *= Quaternion::CreateFromYawPitchRoll(radians);
 			mRotation += radians;
 			mRotation.x = fmodf(mRotation.x, TWO_PI);
 			mRotation.y = fmodf(mRotation.y, TWO_PI);
@@ -202,30 +202,21 @@ namespace
 
 		void InternalDeltaRotateX(float radians)
 		{
-			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, radians, 0.0f);
-			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q1, q2, mOrientation);
-			
+			mOrientation *= Quaternion::CreateFromYawPitchRoll(0.0f, radians, 0.0f);
 			mRotation.x += radians;
 			mRotation.x = fmodf(mRotation.x, TWO_PI);
 		}
 
 		void InternalDeltaRotateY(float radians)
 		{
-			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(radians, 0.0f, 0.0f);
-			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q1, q2, mOrientation);
-
+			mOrientation *= Quaternion::CreateFromYawPitchRoll(radians, 0.0f, 0.0f);
 			mRotation.y += radians;
 			mRotation.y = fmodf(mRotation.y, TWO_PI);
 		}
 
 		void InternalDeltaRotateZ(float radians)
 		{
-			Quaternion q2 = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, radians);
-			Quaternion q1 = mOrientation;
-			Quaternion::Concatenate(q1, q2, mOrientation);
-
+			mOrientation *= Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, radians);
 			mRotation.z += radians;
 			mRotation.z = fmodf(mRotation.z, TWO_PI);
 		}
@@ -242,8 +233,7 @@ namespace
 // *Vector AB = B - A*
 // Must maintain both euler and quaternion deltas
 // (otherwise objects will "flip" in arbitrary rotations > 180 degrees).
-// Quaternion::Concatenate(q2, q1, result); <-- Matches XM
-// Quaternion::Concatenate(q1, q2, result); <-- Matches SimpleMath
+// ***Noticed that Quaternion operator* behaves as expected unlike Concatenate(). Look into this!***
 
 // TODO:
 // Forward() is more useful than SetForward(). If I wanna set orientation based on direction, I should compute the difference
