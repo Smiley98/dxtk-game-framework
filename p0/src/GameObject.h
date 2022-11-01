@@ -159,6 +159,25 @@ public:
 		}
 	}
 
+	void ScaleLocal(const Vector3& localScale)
+	{
+		mTransform.Scale(localScale);
+	}
+
+	void ScaleWorld(const Vector3& worldScale)
+	{
+
+		if (mParent != nullptr)
+		{
+			Vector3 localScale = worldScale / mParent->WorldScale();
+			ScaleLocal(localScale);
+		}
+		else
+		{
+			ScaleLocal(worldScale);
+		}
+	}
+
 private:
 	Transform3 mTransform;
 	std::string mName;

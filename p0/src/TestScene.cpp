@@ -107,6 +107,8 @@ void TestScene::OnBegin()
 	//mChild2.TranslateWorld({ 100.0f, 0.0f, 0.0f });
 	//mChild2.OrientateWorld(Quaternion::CreateFromYawPitchRoll(M_PI_2, 0.0f, 0.0f));
 	//mChild2.RotateWorld({ 0.0f, 90.0f, 0.0f });
+	//mParent.ScaleLocal(Vector3::One * 0.5f);
+	//mChild2.ScaleWorld(Vector3::One * 2.0f);
 
 	// Explanation:
 	// Since child B is still attached to parent, instead of actually translating it 100 units right,
