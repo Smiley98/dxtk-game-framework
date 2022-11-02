@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "TestScene.h"
 #include "Utility.h"
+#include "Transformations.h"
 
 using namespace DirectX;
 
@@ -80,15 +81,24 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 
-	//mTransform.Orientate(Quaternion::CreateFromYawPitchRoll(M_PI_4, M_PI_4, 0.0f));
-	//Print(mTransform.Forward());
-	//Print(mTransform.Rotation());
+	// This works as expected. It produces a rotation of (45, 45, 0).
+	Quaternion rotation = Quaternion::CreateFromYawPitchRoll(M_PI_4, M_PI_4, 0.0f);
+	mRotation = rotation;
 
-	AddTimer("test", 0.1f, [this]() {
-		//Print(mTransform.Forward());
-		//Print(mTransform.Rotation());
-		Print(mRotation.ToEuler() * DirectX::XM_DEGREES);
-	}, true);
+	// This does not work. It produces a rotation of (67, 67, 38).
+	Vector3 forward = Vector3::Transform(Vector3::Forward, rotation);
+	mRotation = Quaternion::LookRotation(forward, Vector3::Up);
+
+	Print(rotation);
+	Print(mRotation);
+	Print(rotation.ToEuler()  * DirectX::XM_DEGREES );
+	Print(mRotation.ToEuler() * DirectX::XM_DEGREES);
+
+	//AddTimer("test", 0.1f, [this]() {
+	//	//Print(mTransform.Forward());
+	//	//Print(mTransform.Rotation());
+	//	Print(mRotation.ToEuler() * DirectX::XM_DEGREES);
+	//}, true);
 
 	mParent.SetName("Parent");
 	mChild1.SetName("Child 1");
@@ -102,14 +112,10 @@ void TestScene::OnBegin()
 	mChild2.TranslateLocal({ 25.0f, 0.0f, -100.0f });
 	mChild1.RotateLocal({ 0.0f, 30.0f , 0.0f });
 	mChild2.RotateLocal({ 0.0f, -30.0f, 0.0f });
-
-	//mRotation = Quaternion::LookRotation(Vector3::Forward, Vector3::Up);
-	//mRotation = Quaternion::CreateFromYawPitchRoll(M_PI_4, 0.0f, 0.0f);
 	
 	// Points 45 left and 45 down, but eulers are 66, 66 and 33.
-	// Working exclusively in quaternions is probably fine!
-	Vector3 forward = Vector3::Transform(Vector3::Forward, Quaternion::CreateFromYawPitchRoll(M_PI_4, M_PI_4, 0.0f));
-	mRotation = Quaternion::LookRotation(forward, Vector3::Up);
+	//mRotation = Quaternion::LookRotation(Vector3::Forward, Vector3::Up);
+	//mRotation = Quaternion::CreateFromYawPitchRoll(M_PI_4, 0.0f, 0.0f);
 
 	// Works!
 	//mParent.RotateLocal({ 0.0f, 10.0f, 0.0f });

@@ -40,11 +40,11 @@ Matrix AffineTransformation(const AffineTransform2& affineTransformation)
 Vector3 Forward(const Quaternion& rotation)
 {
 #if Y_FORWARD
-	return Vector3::Transform(Vector3::UnitY, rotation);
+	return Vector3::Transform(Vector3::Up, rotation);
 #endif
 
 #if Z_FORWARD
-	return Vector3::Transform(Vector3::UnitZ, rotation);
+	return Vector3::Transform(Vector3::Forward, rotation);
 #endif
 }
 
@@ -52,16 +52,16 @@ Vector3 Right(const Quaternion& rotation)
 {
 	// X is right regardless so only Y and Z need to be swapped between forward and up.
 	// Not supporting other permutations such as Z-forward as seen in LHS (using RHS).
-	return Vector3::Transform(Vector3::UnitX, rotation);
+	return Vector3::Transform(Vector3::Right, rotation);
 }
 
 Vector3 Up(const Quaternion& rotation)
 {
 #if Y_FORWARD
-	return Vector3::Transform(Vector3::UnitZ, rotation);
+	return Vector3::Transform(Vector3::Forward, rotation);
 #endif
 
 #if Z_FORWARD
-	return Vector3::Transform(Vector3::UnitY, rotation);
+	return Vector3::Transform(Vector3::Up, rotation);
 #endif
 }
