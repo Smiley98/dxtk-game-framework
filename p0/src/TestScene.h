@@ -42,6 +42,8 @@ private:
     Matrix                                                                  mWorld;
     Transform3 mTransform;
 
+    Quaternion mRotation;
+
     GameObject mParent, mChild1, mChild2;
 
     // D3D11 objects

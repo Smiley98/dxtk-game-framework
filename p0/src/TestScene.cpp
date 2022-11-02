@@ -84,10 +84,11 @@ void TestScene::OnBegin()
 	//Print(mTransform.Forward());
 	//Print(mTransform.Rotation());
 
-	//AddTimer("test", 1.0f, [this]() {
-	//	Print(mTransform.Forward());
-	//	Print(mTransform.Rotation());
-	//}, true);
+	AddTimer("test", 0.1f, [this]() {
+		//Print(mTransform.Forward());
+		//Print(mTransform.Rotation());
+		Print(mRotation.ToEuler() * DirectX::XM_DEGREES);
+	}, true);
 
 	mParent.SetName("Parent");
 	mChild1.SetName("Child 1");
@@ -101,6 +102,14 @@ void TestScene::OnBegin()
 	mChild2.TranslateLocal({ 25.0f, 0.0f, -100.0f });
 	mChild1.RotateLocal({ 0.0f, 30.0f , 0.0f });
 	mChild2.RotateLocal({ 0.0f, -30.0f, 0.0f });
+
+	//mRotation = Quaternion::LookRotation(Vector3::Forward, Vector3::Up);
+	//mRotation = Quaternion::CreateFromYawPitchRoll(M_PI_4, 0.0f, 0.0f);
+	
+	// Points 45 left and 45 down, but eulers are 66, 66 and 33.
+	// Working exclusively in quaternions is probably fine!
+	Vector3 forward = Vector3::Transform(Vector3::Forward, Quaternion::CreateFromYawPitchRoll(M_PI_4, M_PI_4, 0.0f));
+	mRotation = Quaternion::LookRotation(forward, Vector3::Up);
 
 	// Works!
 	//mParent.RotateLocal({ 0.0f, 10.0f, 0.0f });
@@ -138,6 +147,10 @@ void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 	//mTransform.DeltaTranslate(mTransform.Forward() * dt * 100.0f);
 
 	//mParent.RotateLocal({ 0.0f, tt * 50.0f, 0.0f });
+	
+	// Both of these are oriented correctly. Only caveat is they flip from + to - after 180 degrees.
+	//mRotation *= Quaternion::CreateFromYawPitchRoll(DirectX::XM_DEGREES * dt * 0.01f, 0.0f, 0.0f);
+	//mRotation = Quaternion::CreateFromYawPitchRoll(DirectX::XM_DEGREES * tt * 0.01f, 0.0f, 0.0f);
 
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);
@@ -183,10 +196,11 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//}	graphics->PIXEndEvent();
 
 	//mVan->Draw(context, *mStates, mTransform.LocalMatrix(), mView, mProj);
+	mVan->Draw(context, *mStates, Matrix::CreateFromQuaternion(mRotation), mView, mProj);
 
-	mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
-	mVan->Draw(context, *mStates, mChild1.World(), mView, mProj);
-	mVan->Draw(context, *mStates, mChild2.World(), mView, mProj);
+	//mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
+	//mVan->Draw(context, *mStates, mChild1.World(), mView, mProj);
+	//mVan->Draw(context, *mStates, mChild2.World(), mView, mProj);
 
 	graphics->PIXEndEvent();
 }

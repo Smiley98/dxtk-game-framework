@@ -117,7 +117,7 @@ namespace Collision
 		Vector3 targetDirection = (target - viewer.Translation());
 		targetDirection.Normalize();
 
-		return targetDirection.Dot(viewerDirection) > cosf(RADIANS * fov * 0.5f);
+		return targetDirection.Dot(viewerDirection) > cosf(DirectX::XM_RADIANS * fov * 0.5f);
 	}
 
 	//inline bool SphereTriangle(const Vector3& tA, float rA, const Vector3& p0, const Vector3& p1, const Vector3& p2)

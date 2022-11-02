@@ -1,11 +1,10 @@
 #pragma once
 #include "SimpleMath.h"
+#include "MathConstants.h"
+
 // Yes header namespace declarations are a "bad practice",
 // but I'm on the verge of losing my mind every time I declare a DirectX::SimpleMath::Vector3...
 using namespace DirectX::SimpleMath;
-
-constexpr float DEGREES = 180.0f / DirectX::XM_PI;
-constexpr float RADIANS = DirectX::XM_PI / 180.0f;
 
 class TransformBase
 {
@@ -48,7 +47,7 @@ public:
 	// Get rotation (as euler angles in degrees)
 	inline Vector2 Rotation() const
 	{
-		return mRotation * DEGREES;
+		return mRotation * DirectX::XM_DEGREES;
 	}
 
 	inline float Pitch()
@@ -82,37 +81,37 @@ public:
 	// Set rotation as pitch and yaw
 	inline void Rotate(const Vector2& degrees)
 	{
-		mRotation = degrees * RADIANS;
+		mRotation = degrees * DirectX::XM_RADIANS;
 	}
 
 	// Set pitch
 	inline void SetPitch(float degrees)
 	{
-		mRotation.x = degrees * RADIANS;
+		mRotation.x = degrees * DirectX::XM_RADIANS;
 	}
 
 	// Set yaw
 	inline void SetYaw(float degrees)
 	{
-		mRotation.y = degrees * RADIANS;
+		mRotation.y = degrees * DirectX::XM_RADIANS;
 	}
 
 	// Append pitch & yaw
 	inline void DeltaRotate(const Vector2& degrees)
 	{
-		mRotation += degrees * RADIANS;
+		mRotation += degrees * DirectX::XM_RADIANS;
 	}
 
 	// Append pitch
 	inline void DeltaPitch(float degrees)
 	{
-		mRotation.x += degrees * RADIANS;
+		mRotation.x += degrees * DirectX::XM_RADIANS;
 	}
 
 	// Append yaw
 	inline void DeltaYaw(float degrees)
 	{
-		mRotation.y += degrees * RADIANS;
+		mRotation.y += degrees * DirectX::XM_RADIANS;
 	}
 
 protected:

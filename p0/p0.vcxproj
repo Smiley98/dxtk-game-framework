@@ -114,6 +114,7 @@
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\TestScene.cpp" />
+    <ClCompile Include="src\Transform2.cpp" />
     <ClCompile Include="src\Utility.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -134,11 +135,14 @@
     <ClInclude Include="src\Interpolation.h" />
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\MainScene.h" />
+    <ClInclude Include="src\MathConstants.h" />
     <ClInclude Include="src\MiscRenderer.h" />
     <ClInclude Include="src\PlayerRenderer.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Timer.h" />
+    <ClInclude Include="src\Transform2.h" />
     <ClInclude Include="src\Transform3.h" />
+    <ClInclude Include="src\TransformationMath.h" />
     <ClInclude Include="src\UnorderedVector.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\CollisionScene.h" />
