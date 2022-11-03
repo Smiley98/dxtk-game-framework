@@ -81,38 +81,20 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 
-	/*
-	public Vector3 forward
-    {
-        get
-        {
-            return rotation * Vector3.forward;
-        }
-        set
-        {
-            rotation = Quaternion.LookRotation(value);
-        }
-    }
-	*/
+	Quaternion rotation1 = Quaternion::CreateFromYawPitchRoll(M_PI_4, M_PI_4, M_PI_4);
+	Vector3 forward = Vector3::Transform(Vector3::UnitZ, rotation1);
+	Vector3 right = Vector3::Transform(Vector3::UnitX, rotation1);
+	Vector3 up = forward.Cross(right);
+	Matrix matrix = Matrix(right, up, forward);
+	Quaternion rotation2 = Quaternion::CreateFromRotationMatrix(matrix);
 
-	// I can't even tell if this math library is broken or not.
-	// SM says y-x-z, XM says z-y-x. The SM docs says SM & XM are the same order...
-	// I've wasted so much time trying to figure out what's going on that I'd be better off switching to glm!
-	mRotation = Quaternion::CreateFromYawPitchRoll(M_PI_4, M_PI_4, 0.0f);
+	Print(rotation1);
+	Print(rotation2);
+	Print(rotation1.ToEuler() * DirectX::XM_DEGREES);
+	Print(rotation2.ToEuler() * DirectX::XM_DEGREES);
 
-	Vector3 forward1 = Matrix::CreateFromQuaternion(mRotation).Forward();
-	Vector3 up1 = Matrix::CreateFromQuaternion(mRotation).Up();
-	mRotation1 = Quaternion::LookRotation(forward1, up1);
-
-	Vector3 forward2 = Vector3::Transform(Vector3::Forward, mRotation);
-	Vector3 up2 = Vector3::Transform(Vector3::Up, mRotation);
-	mRotation2 = Quaternion::LookRotation(forward2, up2);
-
-	// A and B produce the same result.
-	Print(mRotation1);
-	Print(mRotation2);
-	Print(mRotation1.ToEuler() * DirectX::XM_DEGREES);
-	Print(mRotation2.ToEuler() * DirectX::XM_DEGREES);
+	mRotation1 = rotation1;
+	mRotation2 = rotation2;
 
 	//AddTimer("test", 0.1f, [this]() {}, true);
 
@@ -195,7 +177,7 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mSprites->End();
 	graphics->PIXEndEvent();
 
-	mVan->Draw(context, *mStates, Matrix::CreateFromQuaternion(mRotation), mView, mProj);
+	//mVan->Draw(context, *mStates, Matrix::CreateFromQuaternion(mRotation), mView, mProj);
 
 	mVan->Draw(context, *mStates, Matrix::CreateFromQuaternion(mRotation1) *
 		Matrix::CreateTranslation({ -100.0f, 0.0f, 0.0f }), mView, mProj);

@@ -222,20 +222,18 @@ private:
 // Math:
 // Rotation of q1 followed by q2 = q2 * q1
 // Concatenate(q1, q2) is equivalent to q2 * q1
-// Must maintain both euler and quaternion deltas otherwise objects will "flip" in arbitrary rotations > 180 degrees!
 
-// Unity's solution that should work but doesn't (even after changing internal Vector3::Forward to Vector3::UnitZ).
-//void SetForward(const Vector3& forward)
-//{
-//	mOrientation = Quaternion::LookRotation(forward, Vector3::Up);
-//	mRotation = mOrientation.ToEuler();
-//}
-
-// My jank solution that works for pitch and yaw.
-//void SetForward(const Vector3& forward)
-//{
-//	Vector3 right = forward.Cross(Vector3::Up);
-//	Vector3 up = forward.Cross(right);
-//	Matrix rotation{ -right, -up, forward };
-//	InternalDeltaRotate(rotation.ToEuler() - mRotation);
-//}
+// I should test in Unity to ensure quaternions actually behave the way I expect there!
+/*
+public Vector3 forward
+{
+	get
+	{
+		return rotation * Vector3.forward;
+	}
+	set
+	{
+		rotation = Quaternion.LookRotation(value);
+	}
+}
+*/
