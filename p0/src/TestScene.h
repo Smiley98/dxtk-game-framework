@@ -43,6 +43,8 @@ private:
     Transform3 mTransform;
 
     Quaternion mRotation;
+    Quaternion mRotation1;
+    Quaternion mRotation2;
 
     GameObject mParent, mChild1, mChild2;
 
