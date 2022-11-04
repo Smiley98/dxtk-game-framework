@@ -84,8 +84,8 @@ void TestScene::OnBegin()
 	//mEffect2->Play();
 	
 	AddTimer("test", 1.0f, [this]() {
-		Print(mTransform1.Orientation().ToEuler());
-		Print(mTransform2.Orientation().ToEuler());
+		Print(mTransform1.Rotation().ToEuler());
+		Print(mTransform2.Rotation().ToEuler());
 	}, true);
 
 	mTransform1.TranslateX(-5.0f);

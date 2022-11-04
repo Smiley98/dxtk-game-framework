@@ -72,23 +72,14 @@ public:
 		return mTransform.Translation();
 	}
 
-	Quaternion WorldOrientation()
+	Quaternion WorldRotation()
 	{
 		if (mParent != nullptr)
 		{
-			return mTransform.Orientation() * mParent->WorldOrientation();
+			return mTransform.Rotation() * mParent->WorldRotation();
 		}
-		return mTransform.Orientation();
+		return mTransform.Rotation();
 	}
-
-	//Vector3 WorldRotation()
-	//{
-	//	if (mParent != nullptr)
-	//	{
-	//		return mTransform.Rotation() + mParent->WorldRotation();
-	//	}
-	//	return mTransform.Rotation();
-	//}
 
 	Vector3 WorldScale()
 	{
@@ -120,24 +111,24 @@ public:
 		}
 	}
 
-	void OrientateLocal(const Quaternion& localOrientation)
+	void RotateLocal(const Quaternion& localRotation)
 	{
-		mTransform.Orientate(localOrientation);
+		mTransform.Rotate(localRotation);
 	}
 
-	void OrientateWorld(const Quaternion& worldOrientation)
+	void RotateWorld(const Quaternion& worldRotation)
 	{
 		if (mParent != nullptr)
 		{
-			// Compute local orientation based on world orientation relative to the parent.
-			Quaternion inverseParentOrientation = mParent->WorldOrientation();
-			inverseParentOrientation.Conjugate();
-			OrientateLocal(Quaternion::Concatenate(worldOrientation, inverseParentOrientation));
+			// Compute local rotation based on world orientation relative to the parent.
+			Quaternion inverseParentRotation = mParent->WorldRotation();
+			inverseParentRotation.Conjugate();
+			RotateLocal(Quaternion::Concatenate(worldRotation, inverseParentRotation));
 		}
 		else
 		{
 			// Local = world if there's no parent.
-			OrientateLocal(worldOrientation);
+			RotateLocal(worldRotation);
 		}
 	}
 
@@ -145,19 +136,6 @@ public:
 	{
 		mTransform.Rotate(localRotation);
 	}
-
-	//void RotateWorld(const Vector3& worldRotation)
-	//{
-	//	if (mParent != nullptr)
-	//	{
-	//		Vector3 localRotation = worldRotation - mParent->WorldRotation();
-	//		RotateLocal(localRotation);
-	//	}
-	//	else
-	//	{
-	//		RotateLocal(worldRotation);
-	//	}
-	//}
 
 	void ScaleLocal(const Vector3& localScale)
 	{

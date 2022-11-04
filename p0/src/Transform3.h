@@ -11,23 +11,23 @@ public:
 	Matrix LocalMatrix()
 	{
 		return Matrix::CreateScale(mScale) *
-			Matrix::CreateFromQuaternion(mOrientation) *
+			Matrix::CreateFromQuaternion(mRotation) *
 			Matrix::CreateTranslation(mTranslation);
 	}
 
 	Vector3 Forward()
 	{
-		return Vector3::Transform(Vector3::UnitZ, mOrientation);
+		return Vector3::Transform(Vector3::UnitZ, mRotation);
 	}
 
 	Vector3 Right()
 	{
-		return Vector3::Transform(Vector3::UnitX, mOrientation);
+		return Vector3::Transform(Vector3::UnitX, mRotation);
 	}
 
 	Vector3 Up()
 	{
-		return Vector3::Transform(Vector3::UnitY, mOrientation);
+		return Vector3::Transform(Vector3::UnitY, mRotation);
 	}
 
 	Vector3 Translation()
@@ -35,25 +35,14 @@ public:
 		return mTranslation;
 	}
 
-	//Vector3 Rotation()
-	//{
-	//	return mRotation * DirectX::XM_DEGREES;
-	//}
-
-	Quaternion Orientation()
+	Quaternion Rotation()
 	{
-		return mOrientation;
+		return mRotation;
 	}
 
 	Vector3 Scaling()
 	{
 		return mScale;
-	}
-
-	void Orientate(const Quaternion& orientation)
-	{
-		mOrientation = orientation;
-		//mRotation = orientation.ToEuler();
 	}
 
 	void Translate(const Vector3& translation)
@@ -106,79 +95,64 @@ public:
 		mTranslation.z += z;
 	}
 
+	void Rotate(const Quaternion& rotation)
+	{
+		mRotation = rotation;
+	}
+
 	void Rotate(const Vector3& degrees)
 	{
 		Quaternion to = Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS);
-		Quaternion inverseFrom = mOrientation;
+		Quaternion inverseFrom = mRotation;
 		inverseFrom.Conjugate();
 		Quaternion delta = Quaternion::Concatenate(inverseFrom, to);
-		mOrientation *= delta;
-
-		//mOrientation = Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS);
-		//InternalDeltaRotate(degrees * DirectX::XM_RADIANS - mRotation);
+		mRotation *= delta;
+		//mRotation = Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS);
 	}
 
 	void Rotate(float degreesX, float degreesY, float degreesZ)
 	{
 		Rotate({ degreesX, degreesY, degreesZ });
-		//InternalDeltaRotate(Vector3{ degreesX, degreesY, degreesZ } * DirectX::XM_RADIANS - mRotation);
 	}
 
-	void RotateX(float degrees)
+	void RotateX(float degreesX)
 	{
-		mOrientation = Quaternion::CreateFromYawPitchRoll(0.0f, degrees * DirectX::XM_RADIANS, 0.0f);
-		//float x = degrees * DirectX::XM_RADIANS;
-		//float dx = x - mRotation.x;
-		//InternalDeltaRotateX(dx);
+		mRotation = Quaternion::CreateFromYawPitchRoll(0.0f, degreesX * DirectX::XM_RADIANS, 0.0f);
 	}
 
-	void RotateY(float degrees)
+	void RotateY(float degreesY)
 	{
-		mOrientation = Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS, 0.0f, 0.0f);
-		//float y = degrees * DirectX::XM_RADIANS;
-		//float dy = y - mRotation.y;
-		//InternalDeltaRotateY(dy);
+		mRotation = Quaternion::CreateFromYawPitchRoll(degreesY * DirectX::XM_RADIANS, 0.0f, 0.0f);
 	}
 
-	void RotateZ(float degrees)
+	void RotateZ(float degreesZ)
 	{
-		mOrientation = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, degrees * DirectX::XM_RADIANS);
-		//float z = degrees * DirectX::XM_RADIANS;
-		//float dz = z - mRotation.z;
-		//InternalDeltaRotateZ(dz);
+		mRotation = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, degreesZ * DirectX::XM_RADIANS);
 	}
 
 	void DeltaRotate(const Vector3& degrees)
 	{
-		mOrientation *= Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS);
-		//InternalDeltaRotate(degrees * DirectX::XM_RADIANS);
+		mRotation *= Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS);
 	}
 
 	void DeltaRotate(float degreesX, float degreesY, float degreesZ)
 	{
 		DeltaRotate({ degreesX, degreesY, degreesZ });
-		//InternalDeltaRotate(Vector3{ degreesX, degreesY, degreesZ } *DirectX::XM_RADIANS);
 	}
 
-	void DeltaRotateX(float degrees)
+	void DeltaRotateX(float degreesX)
 	{
-		mOrientation *= Quaternion::CreateFromYawPitchRoll(0.0f, degrees * DirectX::XM_RADIANS, 0.0f);
-		//float x = degrees * DirectX::XM_RADIANS;
-		//InternalDeltaRotateX(x);
+		mRotation *= Quaternion::CreateFromYawPitchRoll(0.0f, degreesX * DirectX::XM_RADIANS, 0.0f);
 	}
 
-	void DeltaRotateY(float degrees)
+	void DeltaRotateY(float degreesY)
 	{
-		mOrientation *= Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS, 0.0f, 0.0f);
-		//float y = degrees * DirectX::XM_RADIANS;
-		//InternalDeltaRotateY(y);
+		mRotation *= Quaternion::CreateFromYawPitchRoll(degreesY * DirectX::XM_RADIANS, 0.0f, 0.0f);
 	}
 
-	void DeltaRotateZ(float degrees)
+	void DeltaRotateZ(float degreesZ)
 	{
-		mOrientation *= Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, degrees * DirectX::XM_RADIANS);
-		//float z = degrees * DirectX::XM_RADIANS;
-		//InternalDeltaRotateZ(z);
+		mRotation *= Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, degreesZ * DirectX::XM_RADIANS);
 	}
 
 	void Scale(const Vector3& scale)
@@ -192,51 +166,8 @@ public:
 	}
 
 private:
-	Quaternion mOrientation = Quaternion::Identity;
+	Quaternion mRotation = Quaternion::Identity;
 	Vector3 mTranslation = Vector3::Zero;
 	Vector3 mScale = Vector3::One;
 	Transform* mParent = nullptr;
 };
-
-// Architecture:
-// Optimizing for speed by storing translation, rotation and scale matrices + dirty flags doesn't make sense because
-// it is not worth the 3x memory increase, adds complexity, and isn't as effective as you'd hope since data is being
-// transported between float and vector registers.
-
-// Math:
-// Rotation of q1 followed by q2 = q2 * q1
-// Concatenate(q1, q2) is equivalent to q2 * q1
-
-// Removed euler capabilities because you can't add/subtract eulers and overall they're not useful.
-/*
-Vector3 mRotation = Vector3::Zero;
-void InternalDeltaRotate(const Vector3& radians)
-{
-	mOrientation *= Quaternion::CreateFromYawPitchRoll(radians);
-	mRotation += radians;
-	mRotation.x = fmodf(mRotation.x, DirectX::XM_2PI);
-	mRotation.y = fmodf(mRotation.y, DirectX::XM_2PI);
-	mRotation.z = fmodf(mRotation.z, DirectX::XM_2PI);
-}
-
-void InternalDeltaRotateX(float radians)
-{
-	mOrientation *= Quaternion::CreateFromYawPitchRoll(0.0f, radians, 0.0f);
-	mRotation.x += radians;
-	mRotation.x = fmodf(mRotation.x, DirectX::XM_2PI);
-}
-
-void InternalDeltaRotateY(float radians)
-{
-	mOrientation *= Quaternion::CreateFromYawPitchRoll(radians, 0.0f, 0.0f);
-	mRotation.y += radians;
-	mRotation.y = fmodf(mRotation.y, DirectX::XM_2PI);
-}
-
-void InternalDeltaRotateZ(float radians)
-{
-	mOrientation *= Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, radians);
-	mRotation.z += radians;
-	mRotation.z = fmodf(mRotation.z, DirectX::XM_2PI);
-}
-*/
