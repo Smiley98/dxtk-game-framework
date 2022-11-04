@@ -2,9 +2,6 @@
 #include "SimpleMath.h"
 using namespace DirectX::SimpleMath;
 
-#define Y_FORWARD false
-#define Z_FORWARD true
-
 struct RigidTransform2
 {
 	//DirectX::SimpleMath::Vector3 translation = DirectX::SimpleMath::Vector3::Zero;
@@ -39,29 +36,16 @@ Matrix AffineTransformation(const AffineTransform2& affineTransformation)
 
 Vector3 Forward(const Quaternion& rotation)
 {
-#if Y_FORWARD
-	return Vector3::Transform(Vector3::Up, rotation);
-#endif
-
-#if Z_FORWARD
-	return Vector3::Transform(Vector3::Forward, rotation);
-#endif
+	return Vector3::Transform(Vector3::UnitZ, rotation);
 }
 
 Vector3 Right(const Quaternion& rotation)
 {
-	// X is right regardless so only Y and Z need to be swapped between forward and up.
-	// Not supporting other permutations such as Z-forward as seen in LHS (using RHS).
-	return Vector3::Transform(Vector3::Right, rotation);
+	return Vector3::Transform(Vector3::UnitX, rotation);
 }
 
 Vector3 Up(const Quaternion& rotation)
 {
-#if Y_FORWARD
-	return Vector3::Transform(Vector3::Forward, rotation);
-#endif
-
-#if Z_FORWARD
-	return Vector3::Transform(Vector3::Up, rotation);
-#endif
+	return Vector3::Transform(Vector3::UnitY, rotation);
 }
+

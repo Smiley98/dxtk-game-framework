@@ -8,3 +8,26 @@ ModelMesh Draw
     deviceContext->RSSetState(ccw ? states.CullCounterClockwise() : states.CullClockwise());
 
 Basically everything works as expected out of the box.
+
+// Works
+Quaternion rotation1 = Quaternion::CreateFromYawPitchRoll(M_PI_4, M_PI_4, M_PI_4);
+Vector3 x = Vector3::Transform(Vector3::UnitX, rotation1);
+Vector3 y = Vector3::Transform(Vector3::UnitY, rotation1);
+Vector3 z = Vector3::Transform(Vector3::UnitZ, rotation1);
+Matrix matrix = Matrix(x, y, z);
+
+// Doesn't work
+Quaternion rotation2 = Quaternion::CreateFromRotationMatrix(matrix);
+Vector3 forward = Vector3::Transform(Vector3::Forward, rotation1);
+Vector3 right = forward.Cross(Vector3::Up);
+Vector3 up = forward.Cross(right);
+Matrix matrix = Matrix(right, up, forward);
+Quaternion rotation2 = Quaternion::CreateFromRotationMatrix(matrix);
+
+// Logs
+mRotation1 = rotation1;
+mRotation2 = rotation2;
+Print(rotation1);
+Print(rotation2);
+Print(rotation1.ToEuler() * DirectX::XM_DEGREES);
+Print(rotation2.ToEuler() * DirectX::XM_DEGREES);

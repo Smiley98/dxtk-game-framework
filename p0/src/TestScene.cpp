@@ -65,7 +65,7 @@ void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 		fovAngleY *= 2.0f;
 	}
 
-	// This sample makes use of a right-handed coordinate system using row-major matrices.
+	mView = Matrix::CreateLookAt({ 0.0f, 50.0f, mNear }, Vector3::Zero, Vector3::Up);
 	mProj = Matrix::CreatePerspectiveFieldOfView(
 		fovAngleY,
 		aspectRatio,
@@ -74,29 +74,22 @@ void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	);
 
 	mBatchEffect->SetProjection(mProj);
+	mBatchEffect->SetView(mView);
+	mBatchEffect->SetWorld(Matrix::Identity);
 }
 
 void TestScene::OnBegin()
 {
 	//mEffect1->Play(true);
 	//mEffect2->Play();
+	
+	AddTimer("test", 1.0f, [this]() {
+		Print(mTransform1.Orientation().ToEuler());
+		Print(mTransform2.Orientation().ToEuler());
+	}, true);
 
-	Quaternion rotation1 = Quaternion::CreateFromYawPitchRoll(M_PI_4, M_PI_4, M_PI_4);
-	Vector3 forward = Vector3::Transform(Vector3::UnitZ, rotation1);
-	Vector3 right = Vector3::Transform(Vector3::UnitX, rotation1);
-	Vector3 up = forward.Cross(right);
-	Matrix matrix = Matrix(right, up, forward);
-	Quaternion rotation2 = Quaternion::CreateFromRotationMatrix(matrix);
-
-	Print(rotation1);
-	Print(rotation2);
-	Print(rotation1.ToEuler() * DirectX::XM_DEGREES);
-	Print(rotation2.ToEuler() * DirectX::XM_DEGREES);
-
-	mRotation1 = rotation1;
-	mRotation2 = rotation2;
-
-	//AddTimer("test", 0.1f, [this]() {}, true);
+	mTransform1.TranslateX(-5.0f);
+	mTransform2.TranslateX(5.0f);
 
 	mParent.SetName("Parent");
 	mChild1.SetName("Child 1");
@@ -110,16 +103,11 @@ void TestScene::OnBegin()
 	mChild2.TranslateLocal({ 25.0f, 0.0f, -100.0f });
 	mChild1.RotateLocal({ 0.0f, 30.0f , 0.0f });
 	mChild2.RotateLocal({ 0.0f, -30.0f, 0.0f });
-	
-	// Points 45 left and 45 down, but eulers are 66, 66 and 33.
-	//mRotation = Quaternion::LookRotation(Vector3::Forward, Vector3::Up);
-	//mRotation = Quaternion::CreateFromYawPitchRoll(M_PI_4, 0.0f, 0.0f);
 
 	// Works!
 	//mParent.RotateLocal({ 0.0f, 10.0f, 0.0f });
 	//mChild2.TranslateWorld({ 100.0f, 0.0f, 0.0f });
 	//mChild2.OrientateWorld(Quaternion::CreateFromYawPitchRoll(M_PI_2, 0.0f, 0.0f));
-	//mChild2.RotateWorld({ 0.0f, 90.0f, 0.0f });
 	//mParent.ScaleLocal(Vector3::One * 0.5f);
 	//mChild2.ScaleWorld(Vector3::One * 2.0f);
 
@@ -145,19 +133,16 @@ void TestScene::OnResume()
 
 void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
-	mView = Matrix::CreateLookAt({ 0.0f, 500.0f, mNear }, Vector3::Zero, Vector3::Up);
+	mTransform1.DeltaRotate(Vector3{ dt * 50.0f });
+	mTransform2.Rotate(Vector3{ tt * 50.0f });
 
-	//mTransform.RotateY(tt * 50.0f);
-	//mTransform.DeltaTranslate(mTransform.Forward() * dt * 100.0f);
+	// As long as we use deltas (either internally or externally) things work.
+	//Quaternion q2 = Quaternion::CreateFromYawPitchRoll(Vector3::One * dt * DirectX::XM_RADIANS * 50.0f);
+	//Quaternion q1 = mTransform2.Orientation();
+	//mTransform2.Orientate(Quaternion::Concatenate(q1, q2));
 
+	// This is now broken because Transform::Rotate() is broken.
 	//mParent.RotateLocal({ 0.0f, tt * 50.0f, 0.0f });
-	
-	// Both of these are oriented correctly. Only caveat is they flip from + to - after 180 degrees.
-	//mRotation *= Quaternion::CreateFromYawPitchRoll(DirectX::XM_DEGREES * dt * 0.01f, 0.0f, 0.0f);
-	//mRotation = Quaternion::CreateFromYawPitchRoll(DirectX::XM_DEGREES * tt * 0.01f, 0.0f, 0.0f);
-
-	mBatchEffect->SetView(mView);
-	mBatchEffect->SetWorld(Matrix::Identity);
 }
 
 void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -177,13 +162,8 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mSprites->End();
 	graphics->PIXEndEvent();
 
-	//mVan->Draw(context, *mStates, Matrix::CreateFromQuaternion(mRotation), mView, mProj);
-
-	mVan->Draw(context, *mStates, Matrix::CreateFromQuaternion(mRotation1) *
-		Matrix::CreateTranslation({ -100.0f, 0.0f, 0.0f }), mView, mProj);
-
-	mVan->Draw(context, *mStates, Matrix::CreateFromQuaternion(mRotation2) *
-		Matrix::CreateTranslation({ 100.0f, 0.0f, 0.0f }), mView, mProj);
+	mShape->Draw(mTransform1.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mTransform2.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
 
 	//mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
 	//mVan->Draw(context, *mStates, mChild1.World(), mView, mProj);

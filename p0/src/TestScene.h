@@ -39,13 +39,8 @@ private:
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  mBatch;
     std::unique_ptr<DirectX::SpriteBatch>                                   mSprites;
     std::unique_ptr<DirectX::SpriteFont>                                    mFont;
-    Matrix                                                                  mWorld;
-    Transform3 mTransform;
 
-    Quaternion mRotation;
-    Quaternion mRotation1;
-    Quaternion mRotation2;
-
+    Transform3 mTransform1, mTransform2;
     GameObject mParent, mChild1, mChild2;
 
     // D3D11 objects

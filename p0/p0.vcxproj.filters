@@ -91,9 +91,6 @@
     <ClCompile Include="src\MiscRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Transform2.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -164,9 +161,6 @@
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\GameObject.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Transform2.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Transformations.h">

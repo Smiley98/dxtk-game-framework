@@ -81,14 +81,14 @@ public:
 		return mTransform.Orientation();
 	}
 
-	Vector3 WorldRotation()
-	{
-		if (mParent != nullptr)
-		{
-			return mTransform.Rotation() + mParent->WorldRotation();
-		}
-		return mTransform.Rotation();
-	}
+	//Vector3 WorldRotation()
+	//{
+	//	if (mParent != nullptr)
+	//	{
+	//		return mTransform.Rotation() + mParent->WorldRotation();
+	//	}
+	//	return mTransform.Rotation();
+	//}
 
 	Vector3 WorldScale()
 	{
@@ -146,18 +146,18 @@ public:
 		mTransform.Rotate(localRotation);
 	}
 
-	void RotateWorld(const Vector3& worldRotation)
-	{
-		if (mParent != nullptr)
-		{
-			Vector3 localRotation = worldRotation - mParent->WorldRotation();
-			RotateLocal(localRotation);
-		}
-		else
-		{
-			RotateLocal(worldRotation);
-		}
-	}
+	//void RotateWorld(const Vector3& worldRotation)
+	//{
+	//	if (mParent != nullptr)
+	//	{
+	//		Vector3 localRotation = worldRotation - mParent->WorldRotation();
+	//		RotateLocal(localRotation);
+	//	}
+	//	else
+	//	{
+	//		RotateLocal(worldRotation);
+	//	}
+	//}
 
 	void ScaleLocal(const Vector3& localScale)
 	{
