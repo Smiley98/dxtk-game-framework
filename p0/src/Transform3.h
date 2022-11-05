@@ -108,11 +108,8 @@ public:
 
 	void Rotate(const Vector3& degrees)
 	{
-		RotateY(degrees.y);
-		RotateX(degrees.x);
-		RotateZ(degrees.z);
-		//mRotation *= Delta(mRotation,
-		//	Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS));
+		mRotation *= Delta(mRotation,
+			Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS));
 	}
 
 	void RotateX(float degreesX)

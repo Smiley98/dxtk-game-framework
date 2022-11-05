@@ -5,27 +5,6 @@
 
 using namespace DirectX;
 
-Quaternion Delta(Quaternion from, Quaternion to)
-{
-	from.Conjugate();
-	return Quaternion::Concatenate(from, to);
-}
-
-Quaternion DeltaRotateZ(Quaternion rotation, float degreesZ)
-{
-	rotation *= Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, degreesZ * DirectX::XM_PI / 180.0f);
-	return rotation;
-}
-
-Quaternion RotateZ(Quaternion rotation, float degreesZ)
-{
-	Quaternion delta =
-		Delta(rotation, Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, degreesZ * DirectX::XM_PI / 180.0f));
-	
-	rotation *= delta;
-	return rotation;
-}
-
 TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 	//mWaveBank = std::make_unique<WaveBank>(audio.get(), L"assets/sounds/adpcmdroid.xwb");
@@ -107,12 +86,14 @@ void TestScene::OnBegin()
 	//AddTimer("test", 1.0f, [this]() {}, true);
 
 	float step = 30.0f;
-	for (float i = step; i < 300.0f; i += step)
+	for (float i = step; i <= 360.0f; i += step)
 	{
-		mRotation1 = DeltaRotateZ(mRotation1, step);
-		Print(mRotation1.ToEuler() * DirectX::XM_DEGREES);
-		mRotation2 = RotateZ(mRotation2, i);
-		Print(mRotation2.ToEuler() * DirectX::XM_DEGREES);
+		// Delta matches Rotate for single axis, mis-match for 2+ axes.
+		// Rotate also gets hit with fp errors for per-frame (small) time-steps so leaning towards nuking it.
+		mTransform1.DeltaRotate({ step, step, 0.0f });
+		Print(mTransform1.Rotation().ToEuler() * DirectX::XM_DEGREES);
+		mTransform2.Rotate({ i, i, 0.0f });
+		Print(mTransform2.Rotation().ToEuler() * DirectX::XM_DEGREES);
 	}
 
 	mTransform1.TranslateX(-5.0f);
@@ -184,11 +165,8 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mSprites->End();
 	graphics->PIXEndEvent();
 
-	mShape->Draw(Matrix::CreateFromQuaternion(mRotation1) * Matrix::CreateTranslation({-5.0f, 0.f, 0.0f}), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(Matrix::CreateFromQuaternion(mRotation2) * Matrix::CreateTranslation({5.0f, 0.f, 0.0f}), mView, mProj, Colors::White, mTexture1.Get());
-
-	//mShape->Draw(mTransform1.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
-	//mShape->Draw(mTransform2.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mTransform1.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mTransform2.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
 
 	//mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
 	//mVan->Draw(context, *mStates, mChild1.World(), mView, mProj);
