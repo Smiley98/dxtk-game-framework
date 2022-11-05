@@ -1,6 +1,7 @@
 #pragma once
 #include "SimpleMath.h"
 #include "MathConstants.h"
+#include "Utility.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -100,44 +101,46 @@ public:
 		mRotation = rotation;
 	}
 
-	void Rotate(const Vector3& degrees)
-	{
-		Quaternion to = Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS);
-		Quaternion inverseFrom = mRotation;
-		inverseFrom.Conjugate();
-		Quaternion delta = Quaternion::Concatenate(inverseFrom, to);
-		mRotation *= delta;
-		//mRotation = Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS);
-	}
-
 	void Rotate(float degreesX, float degreesY, float degreesZ)
 	{
 		Rotate({ degreesX, degreesY, degreesZ });
 	}
 
+	void Rotate(const Vector3& degrees)
+	{
+		RotateY(degrees.y);
+		RotateX(degrees.x);
+		RotateZ(degrees.z);
+		//mRotation *= Delta(mRotation,
+		//	Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS));
+	}
+
 	void RotateX(float degreesX)
 	{
-		mRotation = Quaternion::CreateFromYawPitchRoll(0.0f, degreesX * DirectX::XM_RADIANS, 0.0f);
+		mRotation *= Delta(mRotation,
+			Quaternion::CreateFromYawPitchRoll(0.0f, degreesX * DirectX::XM_RADIANS, 0.0f));
 	}
 
 	void RotateY(float degreesY)
 	{
-		mRotation = Quaternion::CreateFromYawPitchRoll(degreesY * DirectX::XM_RADIANS, 0.0f, 0.0f);
+		mRotation *= Delta(mRotation,
+			Quaternion::CreateFromYawPitchRoll(degreesY * DirectX::XM_RADIANS, 0.0f, 0.0f));
 	}
 
 	void RotateZ(float degreesZ)
 	{
-		mRotation = Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, degreesZ * DirectX::XM_RADIANS);
-	}
-
-	void DeltaRotate(const Vector3& degrees)
-	{
-		mRotation *= Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS);
+		mRotation *= Delta(mRotation,
+			Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, degreesZ * DirectX::XM_RADIANS));
 	}
 
 	void DeltaRotate(float degreesX, float degreesY, float degreesZ)
 	{
 		DeltaRotate({ degreesX, degreesY, degreesZ });
+	}
+
+	void DeltaRotate(const Vector3& degrees)
+	{
+		mRotation *= Quaternion::CreateFromYawPitchRoll(degrees * DirectX::XM_RADIANS);
 	}
 
 	void DeltaRotateX(float degreesX)
@@ -163,6 +166,12 @@ public:
 	void Scale(float scale)
 	{
 		mScale = { scale };
+	}
+
+	static Quaternion Delta(Quaternion from, const Quaternion& to)
+	{
+		from.Conjugate();
+		return Quaternion::Concatenate(from, to);
 	}
 
 private:

@@ -40,6 +40,8 @@ private:
     std::unique_ptr<DirectX::SpriteBatch>                                   mSprites;
     std::unique_ptr<DirectX::SpriteFont>                                    mFont;
 
+    Quaternion mRotation1, mRotation2;
+
     Transform3 mTransform1, mTransform2;
     GameObject mParent, mChild1, mChild2;
 

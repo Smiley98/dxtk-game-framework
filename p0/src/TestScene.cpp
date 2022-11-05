@@ -5,6 +5,27 @@
 
 using namespace DirectX;
 
+Quaternion Delta(Quaternion from, Quaternion to)
+{
+	from.Conjugate();
+	return Quaternion::Concatenate(from, to);
+}
+
+Quaternion DeltaRotateZ(Quaternion rotation, float degreesZ)
+{
+	rotation *= Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, degreesZ * DirectX::XM_PI / 180.0f);
+	return rotation;
+}
+
+Quaternion RotateZ(Quaternion rotation, float degreesZ)
+{
+	Quaternion delta =
+		Delta(rotation, Quaternion::CreateFromYawPitchRoll(0.0f, 0.0f, degreesZ * DirectX::XM_PI / 180.0f));
+	
+	rotation *= delta;
+	return rotation;
+}
+
 TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 	//mWaveBank = std::make_unique<WaveBank>(audio.get(), L"assets/sounds/adpcmdroid.xwb");
@@ -65,7 +86,7 @@ void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 		fovAngleY *= 2.0f;
 	}
 
-	mView = Matrix::CreateLookAt({ 0.0f, 50.0f, mNear }, Vector3::Zero, Vector3::Up);
+	mView = Matrix::CreateLookAt({ 0.0f, 10.0f, mNear }, Vector3::Zero, Vector3::Up);
 	mProj = Matrix::CreatePerspectiveFieldOfView(
 		fovAngleY,
 		aspectRatio,
@@ -83,26 +104,32 @@ void TestScene::OnBegin()
 	//mEffect1->Play(true);
 	//mEffect2->Play();
 	
-	AddTimer("test", 1.0f, [this]() {
-		Print(mTransform1.Rotation().ToEuler());
-		Print(mTransform2.Rotation().ToEuler());
-	}, true);
+	//AddTimer("test", 1.0f, [this]() {}, true);
+
+	float step = 30.0f;
+	for (float i = step; i < 300.0f; i += step)
+	{
+		mRotation1 = DeltaRotateZ(mRotation1, step);
+		Print(mRotation1.ToEuler() * DirectX::XM_DEGREES);
+		mRotation2 = RotateZ(mRotation2, i);
+		Print(mRotation2.ToEuler() * DirectX::XM_DEGREES);
+	}
 
 	mTransform1.TranslateX(-5.0f);
 	mTransform2.TranslateX(5.0f);
 
-	mParent.SetName("Parent");
-	mChild1.SetName("Child 1");
-	mChild2.SetName("Child 2");
-
-	mParent.AddChild(&mChild1);
-	mParent.AddChild(&mChild2);
-
-	mParent.TranslateLocal({ 0.0f, 0.0f, 150.0f });
-	mChild1.TranslateLocal({ -25.0f, 0.0f, -100.0f });
-	mChild2.TranslateLocal({ 25.0f, 0.0f, -100.0f });
-	mChild1.RotateLocal({ 0.0f, 30.0f , 0.0f });
-	mChild2.RotateLocal({ 0.0f, -30.0f, 0.0f });
+	//mParent.SetName("Parent");
+	//mChild1.SetName("Child 1");
+	//mChild2.SetName("Child 2");
+	//
+	//mParent.AddChild(&mChild1);
+	//mParent.AddChild(&mChild2);
+	//
+	//mParent.TranslateLocal({ 0.0f, 0.0f, 150.0f });
+	//mChild1.TranslateLocal({ -25.0f, 0.0f, -100.0f });
+	//mChild2.TranslateLocal({ 25.0f, 0.0f, -100.0f });
+	//mChild1.RotateLocal({ 0.0f, 30.0f , 0.0f });
+	//mChild2.RotateLocal({ 0.0f, -30.0f, 0.0f });
 
 	// Works!
 	//mParent.RotateLocal({ 0.0f, 10.0f, 0.0f });
@@ -133,16 +160,11 @@ void TestScene::OnResume()
 
 void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
-	mTransform1.DeltaRotate(Vector3{ dt * 50.0f });
-	mTransform2.Rotate(Vector3{ tt * 50.0f });
+	//mRotation1 = DeltaRotateZ(mRotation1, dt * 100.0f);
+	//mRotation2 = RotateZ(mRotation2, tt * 100.0f);
 
-	// As long as we use deltas (either internally or externally) things work.
-	//Quaternion q2 = Quaternion::CreateFromYawPitchRoll(Vector3::One * dt * DirectX::XM_RADIANS * 50.0f);
-	//Quaternion q1 = mTransform2.Orientation();
-	//mTransform2.Orientate(Quaternion::Concatenate(q1, q2));
-
-	// This is now broken because Transform::Rotate() is broken.
-	//mParent.RotateLocal({ 0.0f, tt * 50.0f, 0.0f });
+	//mTransform1.DeltaRotate(Vector3{ dt * 50.0f });
+	//mTransform2.Rotate(Vector3{ tt * 50.0f });
 }
 
 void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -162,8 +184,11 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mSprites->End();
 	graphics->PIXEndEvent();
 
-	mShape->Draw(mTransform1.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(mTransform2.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(Matrix::CreateFromQuaternion(mRotation1) * Matrix::CreateTranslation({-5.0f, 0.f, 0.0f}), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(Matrix::CreateFromQuaternion(mRotation2) * Matrix::CreateTranslation({5.0f, 0.f, 0.0f}), mView, mProj, Colors::White, mTexture1.Get());
+
+	//mShape->Draw(mTransform1.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
+	//mShape->Draw(mTransform2.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
 
 	//mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
 	//mVan->Draw(context, *mStates, mChild1.World(), mView, mProj);
