@@ -58,7 +58,7 @@ void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
 
-	mView = Matrix::CreateLookAt({ 0.0f, 10.0f, mNear }, Vector3::Zero, Vector3::Up);
+	mView = Matrix::CreateLookAt({ 0.0f, 50.0f, mNear }, Vector3::Zero, Vector3::Up);
 	mProj = Matrix::CreatePerspectiveFieldOfView(
 		fovAngleY,
 		aspectRatio,
@@ -75,45 +75,27 @@ void TestScene::OnBegin()
 {
 	//mEffect1->Play(true);
 	//mEffect2->Play();
-	
 	//AddTimer("test", 1.0f, [this]() {}, true);
 
-	float step = 30.0f;
-	for (float i = step; i <= 360.0f; i += step)
-	{
-		mTransform1.DeltaRotate({ step, step, step });
-		Print(mTransform1.Rotation().ToEuler() * DirectX::XM_DEGREES);
-		mTransform2.Rotate({ i, i, i });
-		Print(mTransform2.Rotation().ToEuler() * DirectX::XM_DEGREES);
-	}
+	mChild1.SetParent(&mParent);
+	mChild2.SetParent(&mParent);
 
-	mTransform1.TranslateX(-5.0f);
-	mTransform2.TranslateX(5.0f);
+	mParent.Translate(0.0f, 0.0f, 10.0f);
+	mChild1.Translate(-2.5f, 0.0f, -5.0f);
+	mChild2.Translate(2.5f, 0.0f, -5.0f);
+	mChild1.RotateY(30.0f);
+	mChild2.RotateY(-30.0f);
 
-	//mParent.SetName("Parent");
-	//mChild1.SetName("Child 1");
-	//mChild2.SetName("Child 2");
-	//
-	//mParent.AddChild(&mChild1);
-	//mParent.AddChild(&mChild2);
-	//
-	//mParent.TranslateLocal({ 0.0f, 0.0f, 150.0f });
-	//mChild1.TranslateLocal({ -25.0f, 0.0f, -100.0f });
-	//mChild2.TranslateLocal({ 25.0f, 0.0f, -100.0f });
-	//mChild1.RotateLocal({ 0.0f, 30.0f , 0.0f });
-	//mChild2.RotateLocal({ 0.0f, -30.0f, 0.0f });
+	mParent.RotateY(10.0f);
+	mChild2.WorldTranslate(0.0f, 0.0f, 0.0f);
+	mChild2.WorldRotateY(90.0f);
 
-	// Works!
-	//mParent.RotateLocal({ 0.0f, 10.0f, 0.0f });
-	//mChild2.TranslateWorld({ 100.0f, 0.0f, 0.0f });
-	//mChild2.OrientateWorld(Quaternion::CreateFromYawPitchRoll(M_PI_2, 0.0f, 0.0f));
-	//mParent.ScaleLocal(Vector3::One * 0.5f);
-	//mChild2.ScaleWorld(Vector3::One * 2.0f);
-
-	// Explanation:
-	// Since child B is still attached to parent, instead of actually translating it 100 units right,
-	// we translate it { 100, 0, -250 } since desired is { 100, 0, 0 } and parent is { 0, 0, 250 }.
-	// world to local = world * inverse(parent->World()).
+	Print(mChild2.Euler());
+	Print(mChild2.WorldEuler());
+	Print(mChild2.Translation());
+	Print(mChild2.WorldTranslation());
+	//mParent.Scale(Vector3::One * 0.5f);
+	//mChild2.WorldScale(Vector3::One * 2.0f);
 }
 
 void TestScene::OnEnd()
@@ -132,8 +114,9 @@ void TestScene::OnResume()
 
 void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
-	mTransform1.DeltaRotate(Vector3{ dt * 50.0f });
-	mTransform2.Rotate(Vector3{ tt * 50.0f });
+	//mParent.RotateY(tt * 50.0f);
+	mChild1.RotateX(tt * 50.0f);
+	mChild2.RotateZ(tt * 50.0f);
 }
 
 void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -153,12 +136,10 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mSprites->End();
 	graphics->PIXEndEvent();
 
-	mShape->Draw(mTransform1.Local(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(mTransform2.Local(), mView, mProj, Colors::White, mTexture1.Get());
-
-	//mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
-	//mVan->Draw(context, *mStates, mChild1.World(), mView, mProj);
-	//mVan->Draw(context, *mStates, mChild2.World(), mView, mProj);
+	mShape->Draw(Matrix::Identity, mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mParent.World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mChild1.World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mChild2.World(), mView, mProj, Colors::White, mTexture1.Get());
 
 	graphics->PIXEndEvent();
 }

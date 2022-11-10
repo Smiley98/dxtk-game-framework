@@ -40,8 +40,7 @@ private:
     std::unique_ptr<DirectX::SpriteBatch>                                   mSprites;
     std::unique_ptr<DirectX::SpriteFont>                                    mFont;
 
-    Transform3 mTransform1, mTransform2;
-    GameObject mParent, mChild1, mChild2;
+    Transform3 mParent, mChild1, mChild2;
 
     // D3D11 objects
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture1;
