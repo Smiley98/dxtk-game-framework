@@ -58,13 +58,6 @@ void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
 
-	// This is a simple example of change that can be made when the app is in
-	// portrait or snapped view.
-	if (aspectRatio < 1.0f)
-	{
-		fovAngleY *= 2.0f;
-	}
-
 	mView = Matrix::CreateLookAt({ 0.0f, 10.0f, mNear }, Vector3::Zero, Vector3::Up);
 	mProj = Matrix::CreatePerspectiveFieldOfView(
 		fovAngleY,
@@ -88,11 +81,9 @@ void TestScene::OnBegin()
 	float step = 30.0f;
 	for (float i = step; i <= 360.0f; i += step)
 	{
-		// Delta matches Rotate for single axis, mis-match for 2+ axes.
-		// Rotate also gets hit with fp errors for per-frame (small) time-steps so leaning towards nuking it.
-		mTransform1.DeltaRotate({ step, step, 0.0f });
+		mTransform1.DeltaRotate({ step, step, step });
 		Print(mTransform1.Rotation().ToEuler() * DirectX::XM_DEGREES);
-		mTransform2.Rotate({ i, i, 0.0f });
+		mTransform2.Rotate({ i, i, i });
 		Print(mTransform2.Rotation().ToEuler() * DirectX::XM_DEGREES);
 	}
 
@@ -141,11 +132,8 @@ void TestScene::OnResume()
 
 void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
-	//mRotation1 = DeltaRotateZ(mRotation1, dt * 100.0f);
-	//mRotation2 = RotateZ(mRotation2, tt * 100.0f);
-
-	//mTransform1.DeltaRotate(Vector3{ dt * 50.0f });
-	//mTransform2.Rotate(Vector3{ tt * 50.0f });
+	mTransform1.DeltaRotate(Vector3{ dt * 50.0f });
+	mTransform2.Rotate(Vector3{ tt * 50.0f });
 }
 
 void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
