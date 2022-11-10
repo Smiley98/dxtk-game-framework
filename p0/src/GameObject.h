@@ -51,16 +51,16 @@ public:
 
 	Matrix Local()
 	{
-		return mTransform.LocalMatrix();
+		return mTransform.Local();
 	}
 
 	Matrix World()
 	{
 		if (mParent != nullptr)
 		{
-			return mTransform.LocalMatrix() * mParent->World();
+			return mTransform.Local() * mParent->World();
 		}
-		return mTransform.LocalMatrix();
+		return mTransform.Local();
 	}
 
 	Vector3 WorldTranslation()

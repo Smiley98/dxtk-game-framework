@@ -153,8 +153,8 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mSprites->End();
 	graphics->PIXEndEvent();
 
-	mShape->Draw(mTransform1.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(mTransform2.LocalMatrix(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mTransform1.Local(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mTransform2.Local(), mView, mProj, Colors::White, mTexture1.Get());
 
 	//mVan->Draw(context, *mStates, mParent.World(), mView, mProj);
 	//mVan->Draw(context, *mStates, mChild1.World(), mView, mProj);

@@ -8,45 +8,57 @@ using namespace DirectX::SimpleMath;
 class Transform3
 {
 public:
+	Transform3* const Parent() const
+	{
+		return mParent;
+	}
 
-	Matrix LocalMatrix()
+	void SetParent(Transform3* parent)
+	{
+		mParent = parent;
+	}
+
+//***************
+// Local methods
+//***************
+	Matrix Local() const
 	{
 		return Matrix::CreateScale(mScale) *
 			Matrix::CreateFromQuaternion(mRotation) *
 			Matrix::CreateTranslation(mTranslation);
 	}
 
-	Vector3 Forward()
+	Vector3 Forward() const
 	{
 		return Vector3::Transform(Vector3::UnitZ, mRotation);
 	}
 
-	Vector3 Right()
+	Vector3 Right() const
 	{
 		return Vector3::Transform(Vector3::UnitX, mRotation);
 	}
 
-	Vector3 Up()
+	Vector3 Up() const
 	{
 		return Vector3::Transform(Vector3::UnitY, mRotation);
 	}
 
-	Vector3 Translation()
+	Vector3 Translation() const
 	{
 		return mTranslation;
 	}
 
-	Quaternion Rotation()
+	Quaternion Rotation() const
 	{
 		return mRotation;
 	}
 
-	Vector3 Euler()
+	Vector3 Euler() const
 	{
 		return mEuler * DirectX::XM_DEGREES;
 	}
 
-	Vector3 Scaling()
+	Vector3 Scaling() const
 	{
 		return mScale;
 	}
@@ -132,6 +144,11 @@ public:
 		InternalDeltaRotate({ 0.0f, 0.0f, degreesZ * DirectX::XM_RADIANS - mEuler.z });
 	}
 
+	void DeltaRotate(const Quaternion& rotation)
+	{
+		InternalDeltaRotate(rotation.ToEuler());
+	}
+
 	void DeltaRotate(const Vector3& degrees)
 	{
 		InternalDeltaRotate(degrees * DirectX::XM_RADIANS);
@@ -167,14 +184,189 @@ public:
 		mScale = { scale };
 	}
 
-	static Quaternion Delta(Quaternion from, const Quaternion& to)
+	void ScaleX(float x)
 	{
-		from.Conjugate();
-		return Quaternion::Concatenate(from, to);
+		mScale.x = x;
+	}
+
+	void ScaleY(float y)
+	{
+		mScale.y = y;
+	}
+
+	void ScaleZ(float z)
+	{
+		mScale.z = z;
+	}
+
+//***************
+// World methods
+//***************
+	Matrix World() const
+	{
+		return mParent != nullptr ? Local() * mParent->World() : Local();
+	}
+
+	Vector3 WorldForward() const
+	{
+		return Vector3::Transform(Vector3::UnitZ, WorldRotation());
+	}
+
+	Vector3 WorldRight() const
+	{
+		return Vector3::Transform(Vector3::UnitX, WorldRotation());
+	}
+
+	Vector3 WorldUp() const
+	{
+		return Vector3::Transform(Vector3::UnitY, WorldRotation());
+	}
+
+	Vector3 WorldTranslation() const
+	{
+		return mParent != nullptr ? Translation() + mParent->WorldTranslation() : Translation();
+	}
+
+	Quaternion WorldRotation() const
+	{
+		return mParent != nullptr ? Rotation() * mParent->WorldRotation() : Rotation();
+	}
+
+	Vector3 WorldEuler() const
+	{
+		return mParent != nullptr ? Euler() + mParent->WorldEuler() : Euler();
+	}
+
+	Vector3 WorldScaling() const
+	{
+		return mParent != nullptr ? Scaling() * mParent->WorldScaling() : Scaling();
+	}
+
+	void WorldTranslate(const Vector3& translation)
+	{
+		if (mParent != nullptr)
+			Translate(translation - mParent->WorldTranslation());
+		else
+			Translate(translation);
+	}
+
+	void WorldTranslate(float x, float y, float z)
+	{
+		WorldTranslate({ x, y, z });
+	}
+
+	void WorldTranslateX(float x)
+	{
+		if (mParent != nullptr)
+			Translate(x - mParent->WorldTranslation().x, mTranslation.y, mTranslation.z);
+		else
+			Translate({ x, mTranslation.y, mTranslation.z });
+	}
+
+	void WorldTranslateY(float y)
+	{
+		if (mParent != nullptr)
+			Translate(mTranslation.x, y - mParent->WorldTranslation().y, mTranslation.z);
+		else
+			Translate({ mTranslation.x, y, mTranslation.z });
+	}
+
+	void WorldTranslateZ(float z)
+	{
+		if (mParent != nullptr)
+			Translate(mTranslation.x, mTranslation.y, z - mParent->WorldTranslation().z);
+		else
+			Translate({ mTranslation.x, mTranslation.y, z });
+	}
+
+	void WorldRotate(const Quaternion& rotation)
+	{
+		if (mParent != nullptr)
+		{
+			Quaternion inverseParentRotation = mParent->WorldRotation();
+			inverseParentRotation.Conjugate();
+			Rotate(Quaternion::Concatenate(rotation, inverseParentRotation));
+		}
+		else
+			Rotate(rotation);
+	}
+
+	void WorldRotate(const Vector3& degrees)
+	{
+		if (mParent != nullptr)
+			Rotate(degrees - mParent->WorldEuler());
+		else
+			Rotate(degrees);
+	}
+
+	void WorldRotate(float degreesX, float degreesY, float degreesZ)
+	{
+		WorldRotate(Vector3{ degreesX, degreesY, degreesZ });
+	}
+
+	void WorldRotateX(float degreesX)
+	{
+		if (mParent != nullptr)
+			RotateX(degreesX - mParent->WorldEuler().x);
+		else
+			RotateX(degreesX);
+	}
+
+	void WorldRotateY(float degreesY)
+	{
+		if (mParent != nullptr)
+			RotateY(degreesY - mParent->WorldEuler().y);
+		else
+			RotateY(degreesY);
+	}
+
+	void WorldRotateZ(float degreesZ)
+	{
+		if (mParent != nullptr)
+			RotateY(degreesZ - mParent->WorldEuler().z);
+		else
+			RotateY(degreesZ);
+	}
+
+	void WorldScale(const Vector3& scale)
+	{
+		if (mParent != nullptr)
+			Scale(scale / mParent->WorldScaling());
+		else
+			Scale(scale);
+	}
+
+	void WorldScale(float scale)
+	{
+		WorldScale({ scale, scale, scale });
+	}
+
+	void WorldScaleX(float x)
+	{
+		if (mParent != nullptr)
+			ScaleX(mScale.x / mParent->WorldScaling().x);
+		else
+			ScaleX(x);
+	}
+
+	void WorldScaleY(float y)
+	{
+		if (mParent != nullptr)
+			ScaleY(mScale.y / mParent->WorldScaling().y);
+		else
+			ScaleY(y);
+	}
+
+	void WorldScaleZ(float z)
+	{
+		if (mParent != nullptr)
+			ScaleZ(mScale.z / mParent->WorldScaling().z);
+		else
+			ScaleZ(z);
 	}
 
 private:
-	Transform* mParent = nullptr;
+	Transform3* mParent = nullptr;
 	Quaternion mRotation = Quaternion::Identity;
 	Vector3 mTranslation = Vector3::Zero;
 	Vector3 mEuler = Vector3::Zero;
