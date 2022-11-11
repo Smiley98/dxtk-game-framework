@@ -1,5 +1,5 @@
 #pragma once
-
+#define WIN32_LEAN_AND_MEAN
 #include <wrl/client.h>
 #include <d3d11_1.h>
 #include <dxgi1_6.h>

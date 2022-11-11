@@ -54,18 +54,12 @@ TestScene::~TestScene()
 
 void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 {
+	float n = 0.001f, f = 1000.0f;
 	const RECT size = graphics->GetOutputSize();
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
-
-	mView = Matrix::CreateLookAt({ 0.0f, 50.0f, mNear }, Vector3::Zero, Vector3::Up);
-	mProj = Matrix::CreatePerspectiveFieldOfView(
-		fovAngleY,
-		aspectRatio,
-		mNear,
-		mFar
-	);
-
+	mView = Matrix::CreateLookAt({ 0.0f, 50.0f, n }, Vector3::Zero, Vector3::Up);
+	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, n, f);
 	mBatchEffect->SetProjection(mProj);
 	mBatchEffect->SetView(mView);
 	mBatchEffect->SetWorld(Matrix::Identity);
@@ -127,6 +121,7 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mSprites->End();
 	graphics->PIXEndEvent();
 
+	mShape->Draw(Matrix::Identity, mView, mProj, Colors::White, mTexture1.Get());
 	mShape->Draw(mParent.World(), mView, mProj, Colors::White, mTexture1.Get());
 	mShape->Draw(mChild1.World(), mView, mProj, Colors::White, mTexture1.Get());
 	mShape->Draw(mChild2.World(), mView, mProj, Colors::White, mTexture1.Get());
@@ -180,3 +175,10 @@ void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphi
 
 	graphics->PIXEndEvent();
 }
+
+// LHS seems more intuitive than RHS, but the depth buffer gets screwed with LHS...
+// Removing DXTK once I get my prototypes sorted because the SM vs XM mis-match is getting unreasonable.
+//mView = XMMatrixLookAtRH({ 0.0f, 50.0f, 50.0f }, Vector3::Zero, Vector3::Up);
+//mProj = XMMatrixPerspectiveFovRH(fovAngleY, aspectRatio, near, far);
+//mView = XMMatrixLookAtLH({ 0.0f, 50.0f, 50.0f }, Vector3::Zero, Vector3::Up);
+//mProj = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, n, f);
