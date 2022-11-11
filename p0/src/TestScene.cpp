@@ -81,21 +81,12 @@ void TestScene::OnBegin()
 	mChild2.SetParent(&mParent);
 
 	mParent.Translate(0.0f, 0.0f, 10.0f);
-	mChild1.Translate(-2.5f, 0.0f, -5.0f);
-	mChild2.Translate(2.5f, 0.0f, -5.0f);
-	mChild1.RotateY(30.0f);
-	mChild2.RotateY(-30.0f);
-
-	mParent.RotateY(10.0f);
-	mChild2.WorldTranslate(0.0f, 0.0f, 0.0f);
-	mChild2.WorldRotateY(90.0f);
-
-	Print(mChild2.Euler());
-	Print(mChild2.WorldEuler());
-	Print(mChild2.Translation());
-	Print(mChild2.WorldTranslation());
-	//mParent.Scale(Vector3::One * 0.5f);
-	//mChild2.WorldScale(Vector3::One * 2.0f);
+	mChild1.Translate(-5.0f, 0.0f, 10.0f);
+	mChild2.Translate(5.0f, 0.0f, 10.0f);
+	mChild1.RotateY(-30.0f);
+	mChild2.RotateY(30.0f);
+	mChild1.Scale(2.0f);
+	mChild2.Scale(2.0f);
 }
 
 void TestScene::OnEnd()
@@ -114,7 +105,7 @@ void TestScene::OnResume()
 
 void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
-	//mParent.RotateY(tt * 50.0f);
+	mParent.RotateY(tt * 50.0f);
 	mChild1.RotateX(tt * 50.0f);
 	mChild2.RotateZ(tt * 50.0f);
 }
@@ -136,7 +127,6 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	mSprites->End();
 	graphics->PIXEndEvent();
 
-	mShape->Draw(Matrix::Identity, mView, mProj, Colors::White, mTexture1.Get());
 	mShape->Draw(mParent.World(), mView, mProj, Colors::White, mTexture1.Get());
 	mShape->Draw(mChild1.World(), mView, mProj, Colors::White, mTexture1.Get());
 	mShape->Draw(mChild2.World(), mView, mProj, Colors::White, mTexture1.Get());
