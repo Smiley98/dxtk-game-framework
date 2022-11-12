@@ -28,17 +28,19 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
 
-	mVan.Load(sPlayerRenderer, mColliders);
-	mVan.transform->SetYaw(-45.0f);
+	//mVan.Load(sPlayerRenderer, mColliders);
+	//mVan.transform->SetYaw(-45.0f);
 
 	mBuilding.type = Building::Type::TD;
 	mBuilding.position = { -500.0f, 300.0f, 0.0f };
 
-	mTransform.Translate(500.0f, 300.0f, 0.0f);
+	mHeadlights.SetParent(&mVan);
+	mHeadlights.TranslateY(80.0f);
+	mHeadlights.Scale(100.0f);
 
 	//AddTimer("test", 1.0f, [this]() {
-	//	Print(mTransform.Euler());
-	//	Print(mTransform.Forward());
+	//	Print(mVan.Euler());
+	//	Print(mVan.Forward());
 	//}, true);
 
 #if MAP
@@ -113,22 +115,22 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	Vector3 b = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
 	Vector3 forward = b - a;
 	forward.Normalize();
-	mTransform.Translate(a);
-	mTransform.Orientate(forward);
+	mVan.Translate(a);
+	mVan.Orientate(forward);
 #endif
 
 #if INPUT
 	GamePad::State state = input.gamePad.GetState(0);
 
 	if (state.IsLeftThumbStickLeft())
-		mTransform.DeltaRotateZ(av);
+		mVan.DeltaRotateZ(av);
 	if (state.IsLeftThumbStickRight())
-		mTransform.DeltaRotateZ(-av);
+		mVan.DeltaRotateZ(-av);
 
 	if (state.IsAPressed())
-		mTransform.DeltaTranslate(mTransform.Forward() * av);
+		mVan.DeltaTranslate(mVan.Forward() * av);
 	if (state.IsXPressed())
-		mTransform.DeltaTranslate(mTransform.Forward() * -av);
+		mVan.DeltaTranslate(mVan.Forward() * -av);
 #endif
 
 #if MAP
@@ -147,34 +149,35 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	sPlayerRenderer.Render(mTransform.World(), mView, mProj, graphics);
-
-	//sMiscRenderer.Triangle({ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
-	//Building::Draw(mBuilding, mView, mProj, graphics);
-	//sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
-
-	Vector3 forward = mVan.transform->Forward();
-	Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
-	Vector3 top = mVan.transform->Translation() + forward * bounds.y;
-	Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
-
-	float length = 100.0f;
-	mHeadlights.SetForward(forward);
-	mHeadlights.Translate(top);
-	mHeadlights.Scale(length);
-	//sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
-	//Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
-
+	sPlayerRenderer.Render(mVan.World(), mView, mProj, graphics);
+	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
+	
+#if SPLINE
 	for (const Vector3& position : mSpline)
 		Debug::Primitive(Debug::SPHERE,
 			Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(position), mView, mProj, graphics);
-
-	//*top.z = bot.z = bounds.z * 2.0f;*
-	// This was done so that we could render a line about the van to prevent it from being occluded
-	// Doing so screws up the FOV check so I've removed it
-	// TODO -- Transform2D and Transform3D so these issues don't happen
+#endif
 
 #if MAP
 	mMap.Render(mView, mProj, graphics);
 #endif
 }
+
+// Headlight-rendering calculations before forward kinematics.
+//Vector3 forward = mVan.transform->Forward();
+//Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
+//Vector3 top = mVan.transform->Translation() + forward * bounds.y;
+//Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
+//float length = 100.0f;
+//mHeadlights.SetForward(forward);
+//mHeadlights.Translate(top);
+//mHeadlights.Scale(length);
+
+// Note that InRange() is three-dimensional so be aware of the z-component (2d != 3d).
+//*top.z = bot.z = bounds.z * 2.0f;
+//Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
+
+// Rendering tests
+//sMiscRenderer.Triangle(
+//{ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
+//Building::Draw(mBuilding, mView, mProj, graphics);
