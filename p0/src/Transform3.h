@@ -1,6 +1,7 @@
 #pragma once
 #include "SimpleMath.h"
 #include "MathConstants.h"
+#define Y_FORWARD true
 
 using namespace DirectX::SimpleMath;
 
@@ -72,7 +73,11 @@ public:
 
 	Vector3 Forward() const
 	{
+#if Y_FORWARD
+		return Vector3::Transform(Vector3::UnitY, mRotation);
+#else
 		return Vector3::Transform(Vector3::UnitZ, mRotation);
+#endif
 	}
 
 	Vector3 Right() const
@@ -82,7 +87,11 @@ public:
 
 	Vector3 Up() const
 	{
+#if Y_FORWARD
+		return Vector3::Transform(Vector3::UnitZ, mRotation);
+#else
 		return Vector3::Transform(Vector3::UnitY, mRotation);
+#endif
 	}
 
 	Vector3 Translation() const
@@ -156,6 +165,21 @@ public:
 	void DeltaTranslateZ(float z)
 	{
 		mTranslation.z += z;
+	}
+
+	void Orientate(const Vector3& forward)
+	{
+#if Y_FORWARD
+		Vector3 right = forward.Cross(Vector3::UnitZ);
+		Vector3 up = forward.Cross(right);
+		Matrix orientation(right, forward, -up);
+#else
+		Vector3 right = forward.Cross(Vector3::UnitY);
+		Vector3 up = forward.Cross(right);
+		Matrix orientation(right, up, forward);
+#endif
+		mRotation = Quaternion::CreateFromRotationMatrix(orientation);
+		mEuler = mRotation.ToEuler();
 	}
 
 	void Rotate(const Quaternion& rotation)
@@ -251,6 +275,9 @@ private:
 	Vector3 mEuler = Vector3::Zero;
 	Vector3 mScale = Vector3::One;
 
+	// DirectX is RHS so X right, Y up and Z forward. We can have the game take place on the xy plane without issue:
+	// Just export models with Y-Forward Z-Up and move the camera 1000 units along z!
+	// Having a near plane of 0.1 or greater drastically improves precision for far-away objects.
 	void InternalDeltaRotate(const Vector3& radians)
 	{
 		mRotation *= Quaternion::CreateFromYawPitchRoll(radians);

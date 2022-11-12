@@ -3,7 +3,7 @@
 #include "Collision.h"
 #include "Map.h"
 #include "Curves.h"
-#include <unordered_map>
+#include "Transform3.h"
 
 struct Player
 {
@@ -40,6 +40,7 @@ private:
 
 	Player mVan;
 	Building mBuilding;
+	Transform3 mTransform;
 
 	Transform mHeadlights;
 	const float fov = 60.0f;

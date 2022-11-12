@@ -4,7 +4,6 @@
 #include "Map.h"
 #include "Utility.h"
 #define MAP false
-#define TIMER false
 #define SPLINE true
 #define INPUT false
 
@@ -35,11 +34,12 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mBuilding.type = Building::Type::TD;
 	mBuilding.position = { -500.0f, 300.0f, 0.0f };
 
-#if TIMER
-	AddTimer("test", 1.0f, [this]() {
-		Print(mVan.transform->Forward());
-	}, true);
-#endif
+	mTransform.Translate(500.0f, 300.0f, 0.0f);
+
+	//AddTimer("test", 1.0f, [this]() {
+	//	Print(mTransform.Euler());
+	//	Print(mTransform.Forward());
+	//}, true);
 
 #if MAP
 	const int rows = 4;
@@ -70,19 +70,19 @@ EntityScene::~EntityScene()
 
 void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	const RECT size = graphics->GetOutputSize();
-	const float width = float(size.right - size.left);
-	const float height = float(size.bottom - size.top);
-	const float aspectRatio = float(size.right) / float(size.bottom);
-	float fovAngleY = 60.0f * XM_PI / 180.0f;
-	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
+	//mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
 	//mView = Matrix::CreateLookAt(
 	//	{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
 	//	{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
 	//	Vector3::UnitY);
+	const RECT size = graphics->GetOutputSize();
+	const float width = float(size.right - size.left);
+	const float height = float(size.bottom - size.top);
+	const float aspectRatio = float(size.right) / float(size.bottom);
+	float fovAngleY = 60.0f * XM_RADIANS;
+	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
 	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
-	//mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.01f, 10000.0f);
-	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
+	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
 }
 
 void EntityScene::OnBegin()
@@ -106,7 +106,6 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
 
-	// LOL the van does a front-flip! Use quaternion from-to to fix this in the future
 #if SPLINE
 	Vector3 a = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
 	d += lv;
@@ -114,22 +113,22 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	Vector3 b = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
 	Vector3 forward = b - a;
 	forward.Normalize();
-	mVan.transform->Translate(a);
-	mVan.transform->SetForward(forward);
+	mTransform.Translate(a);
+	mTransform.Orientate(forward);
 #endif
 
 #if INPUT
 	GamePad::State state = input.gamePad.GetState(0);
 
 	if (state.IsLeftThumbStickLeft())
-		mVan.transform->DeltaYaw(av);
+		mTransform.DeltaRotateZ(av);
 	if (state.IsLeftThumbStickRight())
-		mVan.transform->DeltaYaw(-av);
+		mTransform.DeltaRotateZ(-av);
 
 	if (state.IsAPressed())
-		mVan.transform->DeltaTranslate(mVan.transform->Forward() * av);
+		mTransform.DeltaTranslate(mTransform.Forward() * av);
 	if (state.IsXPressed())
-		mVan.transform->DeltaTranslate(mVan.transform->Forward() * -av);
+		mTransform.DeltaTranslate(mTransform.Forward() * -av);
 #endif
 
 #if MAP
@@ -148,9 +147,11 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
+	sPlayerRenderer.Render(mTransform.World(), mView, mProj, graphics);
+
 	//sMiscRenderer.Triangle({ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
 	//Building::Draw(mBuilding, mView, mProj, graphics);
-	sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
+	//sPlayerRenderer.Render(mVan.transform->World(), mView, mProj, graphics);
 
 	Vector3 forward = mVan.transform->Forward();
 	Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
@@ -165,9 +166,8 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
 
 	for (const Vector3& position : mSpline)
-	{
-		Debug::Primitive(Debug::SPHERE, Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(position), mView, mProj, graphics);
-	}
+		Debug::Primitive(Debug::SPHERE,
+			Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(position), mView, mProj, graphics);
 
 	//*top.z = bot.z = bounds.z * 2.0f;*
 	// This was done so that we could render a line about the van to prevent it from being occluded

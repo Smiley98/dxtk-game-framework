@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "TestScene.h"
-#include "Utility.h"
-#include "Transformations.h"
 
 using namespace DirectX;
 
@@ -16,8 +14,8 @@ TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	auto device = graphics->GetD3DDevice();
 
 	mStates = std::make_unique<CommonStates>(device);
-	mFxFactory = std::make_unique<EffectFactory>(device);
-	mSprites = std::make_unique<SpriteBatch>(context);
+	//mFxFactory = std::make_unique<EffectFactory>(device);
+	//mSprites = std::make_unique<SpriteBatch>(context);
 	mBatch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(context);
 	mBatchEffect = std::make_unique<BasicEffect>(device);
 	mBatchEffect->SetVertexColorEnabled(true);
@@ -28,23 +26,16 @@ TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 			mBatchInputLayout.ReleaseAndGetAddressOf())
 	);
 
-	mFont = std::make_unique<SpriteFont>(device, L"assets/fonts/SegoeUI_18.spritefont");
+	//mFont = std::make_unique<SpriteFont>(device, L"assets/fonts/SegoeUI_18.spritefont");
 	mShape = GeometricPrimitive::CreateTeapot(context, 4.f, 8);
 
 	// SDKMESH has to use clockwise winding with right-handed coordinates, so textures are flipped in U
-	mFxFactory->SetDirectory(L"assets/models");
-	mModel = Model::CreateFromSDKMESH(device, L"assets/models/tiny.sdkmesh", *mFxFactory);
+	//mFxFactory->SetDirectory(L"assets/models");
+	//mModel = Model::CreateFromSDKMESH(device, L"assets/models/tiny.sdkmesh", *mFxFactory);
 
 	// Load textures
 	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/seafloor.dds", nullptr, mTexture1.ReleaseAndGetAddressOf()));
-	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/windowslogo.dds", nullptr, mTexture2.ReleaseAndGetAddressOf()));
-	DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/van.dds", nullptr, mTextureVan.ReleaseAndGetAddressOf()));
-	
-	mVanEffect = std::make_shared<BasicEffect>(device);
-	mVanEffect->SetTextureEnabled(true);
-	mVanEffect->SetTexture(mTextureVan.Get());
-	
-	mVan = Model::CreateFromVBO(device, L"assets/meshes/vanZ.vbo", mVanEffect);
+	//DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"assets/textures/windowslogo.dds", nullptr, mTexture2.ReleaseAndGetAddressOf()));
 }
 
 TestScene::~TestScene()
@@ -54,10 +45,10 @@ TestScene::~TestScene()
 
 void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	float n = 0.001f, f = 1000.0f;
 	const RECT size = graphics->GetOutputSize();
 	const float aspectRatio = float(size.right) / float(size.bottom);
-	float fovAngleY = 70.0f * XM_PI / 180.0f;
+	float fovAngleY = 70.0f * XM_RADIANS;
+	float n = 0.001f, f = 1000.0f;
 	mView = Matrix::CreateLookAt({ 0.0f, 50.0f, n }, Vector3::Zero, Vector3::Up);
 	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, n, f);
 	mBatchEffect->SetProjection(mProj);
@@ -73,14 +64,13 @@ void TestScene::OnBegin()
 
 	mChild1.SetParent(&mParent);
 	mChild2.SetParent(&mParent);
-
+	mChild1.Scale(2.0f);
+	mChild2.Scale(2.0f);
+	mChild1.RotateY(-30.0f);
+	mChild2.RotateY(30.0f);
 	mParent.Translate(0.0f, 0.0f, 10.0f);
 	mChild1.Translate(-5.0f, 0.0f, 10.0f);
 	mChild2.Translate(5.0f, 0.0f, 10.0f);
-	mChild1.RotateY(-30.0f);
-	mChild2.RotateY(30.0f);
-	mChild1.Scale(2.0f);
-	mChild2.Scale(2.0f);
 }
 
 void TestScene::OnEnd()
@@ -113,15 +103,14 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	const XMVECTORF32 yaxis = { 0.f, 0.f, 20.f };
 	DrawGrid(graphics, xaxis, yaxis, g_XMZero, 20, 20, Colors::Gray);
 
-	graphics->PIXBeginEvent(L"Draw sprite");
-	mSprites->Begin();
-	mSprites->Draw(mTexture2.Get(), XMFLOAT2(10, 75), nullptr, Colors::White);
+	//graphics->PIXBeginEvent(L"Draw sprite");
+	//mSprites->Begin();
+	//mSprites->Draw(mTexture2.Get(), XMFLOAT2(10, 75), nullptr, Colors::White);
+	//
+	//mFont->DrawString(mSprites.get(), L"DirectXTK Simple Sample", XMFLOAT2(100, 10), Colors::Yellow);
+	//mSprites->End();
+	//graphics->PIXEndEvent();
 
-	mFont->DrawString(mSprites.get(), L"DirectXTK Simple Sample", XMFLOAT2(100, 10), Colors::Yellow);
-	mSprites->End();
-	graphics->PIXEndEvent();
-
-	mShape->Draw(Matrix::Identity, mView, mProj, Colors::White, mTexture1.Get());
 	mShape->Draw(mParent.World(), mView, mProj, Colors::White, mTexture1.Get());
 	mShape->Draw(mChild1.World(), mView, mProj, Colors::White, mTexture1.Get());
 	mShape->Draw(mChild2.World(), mView, mProj, Colors::White, mTexture1.Get());

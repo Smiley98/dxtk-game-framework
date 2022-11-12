@@ -163,9 +163,6 @@
     <ClInclude Include="src\GameObject.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Transformations.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\MathConstants.h">
       <Filter>Math</Filter>
     </ClInclude>
