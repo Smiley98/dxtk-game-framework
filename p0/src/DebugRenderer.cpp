@@ -75,6 +75,7 @@ namespace Debug
 		sphere->Draw(Matrix::CreateTranslation(lower), view, proj, color, nullptr, wireframe);
 		cylinder->Draw(collider.World(), view, proj, color, nullptr, wireframe);
 	}
+
 	void InRange(const TransformBase& viewer, const Vector3& target, float length, float fov,
 		const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
 	{
@@ -91,5 +92,30 @@ namespace Debug
 		//Line(viewer.Translation(), viewer.Translation() + viewer.Forward() * length, 10.0f, view, proj, graphics, color);
 		Line(viewer.Translation(), viewer.Translation() + left.Forward() * length, 10.0f, view, proj, graphics, color);
 		Line(viewer.Translation(), viewer.Translation() + right.Forward() * length, 10.0f, view, proj, graphics, color);
+	}
+
+	void Draw(const Collision2::SphereCollider& collider,
+		const Matrix& view, const Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color, bool wireframe)
+	{
+		auto shape = GeometricPrimitive::CreateSphere(graphics->GetD3DDeviceContext(), collider.Radius() * 2.0f);
+		shape->Draw(collider.transform->World(), view, proj, color, nullptr, wireframe);
+	}
+
+	void Draw(const Collision2::CapsuleCollider& collider,
+		const Matrix& view, const Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color, bool wireframe)
+	{
+		auto context = graphics->GetD3DDeviceContext();
+		auto cylinder = GeometricPrimitive::CreateCylinder(context, collider.HalfHeight() * 2.0f, collider.Radius() * 2.0f);
+		auto sphere = GeometricPrimitive::CreateSphere(context, collider.Radius() * 2.0f);
+
+		Vector3 upper;
+		Vector3 lower;
+		Collision2::CylinderBounds(*collider.transform, collider.HalfHeight(), upper, lower);
+
+		sphere->Draw(Matrix::CreateTranslation(upper), view, proj, color, nullptr, wireframe);
+		sphere->Draw(Matrix::CreateTranslation(lower), view, proj, color, nullptr, wireframe);
+		cylinder->Draw(collider.transform->World(), view, proj, color, nullptr, wireframe);
 	}
 }

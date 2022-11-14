@@ -28,6 +28,7 @@ namespace DirectX
 }
 
 #include "Collision.h"
+#include "Collision2.h"
 #include "PrimitiveBatch.h"
 #include "VertexTypes.h"
 

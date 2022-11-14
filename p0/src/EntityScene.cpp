@@ -52,11 +52,19 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 			//building->position = { x, y, 0.0f };
 			//mColliders.Get(building->collider)->Translate(building->position);
 			building->transform.Translate(x, y, 0.0f);
+			Print(building->transform.World().Forward());
 			x += xStep;
 		}
 		x = xStep * 0.5f;
 		y += yStep;
 	}
+
+	std::vector<Collision2::CapsuleCollider>& capsules = mColliders2.mStaticCapsules.Objects();
+	for (Collision2::CapsuleCollider& i : capsules)
+	{
+		Print(i.transform->World().Forward());
+	}
+	Print("Test");
 #endif
 }
 
@@ -145,18 +153,25 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 #if MAP
 	//std::vector<Collision::HitPair> collisions;
 	//mColliders.Collide(collisions);
-	std::vector<Collision2::HitPair> collisions;
-	mColliders2.Collide(collisions);
-	for (const Collision2::HitPair& collision : collisions)
-	{
-		if (collision.b.tag == Tags::PLAYER)
-		{
-			//Player& player = *reinterpret_cast<Player*>(collision.b.data);
-			//player.transform->DeltaTranslate(collision.mtv);
-			Player2& player = *reinterpret_cast<Player2*>(collision.b.data);
-			player.transform.DeltaTranslate(collision.mtv);
-		}
-	}
+	//for (const Collision::HitPair& collision : collisions)
+	//{
+	//	if (collision.b.tag == Tags::PLAYER)
+	//	{
+	//		Player& player = *reinterpret_cast<Player*>(collision.b.data);
+	//		player.transform->DeltaTranslate(collision.mtv);
+	//	}
+	//}
+
+	//std::vector<Collision2::HitPair> collisions;
+	//mColliders2.Collide(collisions);
+	//for (const Collision2::HitPair& collision : collisions)
+	//{
+	//	if (collision.b.tag == Tags::PLAYER)
+	//	{
+	//		Player2& player = *reinterpret_cast<Player2*>(collision.b.data);
+	//		player.transform.DeltaTranslate(collision.mtv);
+	//	}
+	//}
 #endif
 }
 
@@ -171,9 +186,16 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #endif
 
 #if MAP
-	mMap.Render(mView, mProj, graphics);
-	//sPlayerRenderer.Render(mPlayer.transform->World(), mView, mProj, graphics);
+	//mMap.Render(mView, mProj, graphics);
+	std::vector<Collision2::CapsuleCollider>& capsules = mColliders2.mStaticCapsules.Objects();
+	//Collision2::CapsuleCollider& capsule = capsules[0];
+	//Debug::Draw(capsule, mView, mProj, graphics);
+	for (Collision2::CapsuleCollider& i : capsules)
+	{
+		Debug::Draw(i, mView, mProj, graphics);
+	}
 	sPlayerRenderer.Render(mPlayer2.transform.World(), mView, mProj, graphics);
+	//sPlayerRenderer.Render(mPlayer.transform->World(), mView, mProj, graphics);
 #endif
 }
 

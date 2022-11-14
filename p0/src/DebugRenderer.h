@@ -36,6 +36,16 @@ namespace Debug
 		std::shared_ptr<DX::DeviceResources> graphics,
 		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
+	void Draw(const Collision2::SphereCollider& collider,
+		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics,
+		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
+
+	void Draw(const Collision2::CapsuleCollider& collider,
+		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+		std::shared_ptr<DX::DeviceResources> graphics,
+		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
+
 	void InRange(const TransformBase& viewer, const Vector3& target, float length, float fov, /*(degrees)*/
 		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics);

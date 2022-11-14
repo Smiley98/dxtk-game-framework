@@ -133,6 +133,7 @@ namespace Collision2
 
 	class Colliders
 	{
+	public:
 		UnorderedVector<SphereCollider> mStaticSpheres;
 		UnorderedVector<SphereCollider> mDynamicSpheres;
 		UnorderedVector<CapsuleCollider> mStaticCapsules;

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Map.h"
+#include "DebugRenderer.h"
 
 /*BuildingId Map::Add(Building::Type type, Collision::Colliders& colliders)
 {
@@ -91,6 +92,9 @@ BuildingId Map::Add(Building::Type type, Collision2::Colliders& colliders)
 
 	// Buildings now own their Transform memory so we can call colliders.Add() outside of the switch statement!
 	colliders.Add(building->collider, halfHeight, radius, &building->transform, Tags::BUILDING, building);
+	Collision2::CapsuleCollider* collider = colliders.Get(building->collider);
+	assert(&building->transform != nullptr);
+	assert(collider->transform != nullptr);
 	return result;
 }
 
