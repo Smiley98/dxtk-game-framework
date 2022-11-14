@@ -44,7 +44,7 @@ public:
 		{
 			// Overwrite object to be removed with last object 
 			size_t index = mForward[id];
-			mObjects[index] = mObjects.back();
+			mObjects[index] = std::move(mObjects.back());
 
 			// Store last object's key and remove from maps
 			mObjects.pop_back();

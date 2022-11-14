@@ -3,9 +3,10 @@
 #include "DebugRenderer.h"
 #include "Map.h"
 #include "Utility.h"
-#define MAP false
-#define SPLINE true
-#define INPUT false
+#define MAP true
+#define SPLINE false
+#define KEYBOARD true
+#define GAMEPAD false
 
 namespace
 {
@@ -22,28 +23,17 @@ inline float Random(float min, float max)
 
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
-	const RECT size = graphics->GetOutputSize();
-	const float width = float(size.right - size.left);
-	const float height = float(size.bottom - size.top);
-
+#if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
-
-	//mVan.Load(sPlayerRenderer, mColliders);
-	//mVan.transform->SetYaw(-45.0f);
-
-	mBuilding.type = Building::Type::TD;
-	mBuilding.position = { -500.0f, 300.0f, 0.0f };
-
 	mHeadlights.SetParent(&mVan);
 	mHeadlights.TranslateY(80.0f);
 	mHeadlights.Scale(100.0f);
-
-	//AddTimer("test", 1.0f, [this]() {
-	//	Print(mVan.Euler());
-	//	Print(mVan.Forward());
-	//}, true);
+#endif
 
 #if MAP
+	mPlayer.Load(sPlayerRenderer, mColliders);
+	mPlayer.transform->SetYaw(-45.0f);
+
 	const int rows = 4;
 	const int cols = 8;
 	const float xStep = mWorldWidth / cols;
@@ -72,19 +62,20 @@ EntityScene::~EntityScene()
 
 void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	//mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
-	//mView = Matrix::CreateLookAt(
-	//	{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
-	//	{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
-	//	Vector3::UnitY);
 	const RECT size = graphics->GetOutputSize();
-	const float width = float(size.right - size.left);
-	const float height = float(size.bottom - size.top);
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_RADIANS;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
+#if MAP
+	mView = Matrix::CreateLookAt(
+		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
+		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
+		Vector3::UnitY);
+#else
 	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
+#endif
 	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
+	//mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
 }
 
 void EntityScene::OnBegin()
@@ -119,7 +110,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	mVan.Orientate(forward);
 #endif
 
-#if INPUT
+#if GAMEPAD
 	GamePad::State state = input.gamePad.GetState(0);
 
 	if (state.IsLeftThumbStickLeft())
@@ -131,6 +122,20 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 		mVan.DeltaTranslate(mVan.Forward() * av);
 	if (state.IsXPressed())
 		mVan.DeltaTranslate(mVan.Forward() * -av);
+#endif
+
+#if KEYBOARD
+	Keyboard::State state = input.keyboard.GetState();
+
+	if (state.A)
+		mPlayer.transform->DeltaYaw(av);
+	if (state.D)
+		mPlayer.transform->DeltaYaw(-av);
+
+	if (state.W)
+		mPlayer.transform->DeltaTranslate(mPlayer.transform->Forward() * av);
+	if (state.S)
+		mPlayer.transform->DeltaTranslate(mPlayer.transform->Forward() * -av);
 #endif
 
 #if MAP
@@ -149,35 +154,36 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	sPlayerRenderer.Render(mVan.World(), mView, mProj, graphics);
-	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
-	
 #if SPLINE
 	for (const Vector3& position : mSpline)
 		Debug::Primitive(Debug::SPHERE,
 			Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(position), mView, mProj, graphics);
+	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
+	sPlayerRenderer.Render(mVan.World(), mView, mProj, graphics);
 #endif
 
 #if MAP
 	mMap.Render(mView, mProj, graphics);
+	sPlayerRenderer.Render(mPlayer.transform->World(), mView, mProj, graphics);
 #endif
 }
 
-// Headlight-rendering calculations before forward kinematics.
-//Vector3 forward = mVan.transform->Forward();
+// Timer test:
+//AddTimer("test", 1.0f, [this]() {
+//	Print(mVan.Euler());
+//	Print(mVan.Forward());
+//}, true);
+
+// Triangle test:
+//sMiscRenderer.Triangle(
+//	{ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f },
+//mView, mProj, graphics);
+
+// FoV test:
+// Note that InRange() is three-dimensional so be aware of the z-component (2d != 3d).
+// *top.z = bot.z = bounds.z * 2.0f;
+//float length = 100.0f;
 //Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
 //Vector3 top = mVan.transform->Translation() + forward * bounds.y;
 //Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
-//float length = 100.0f;
-//mHeadlights.SetForward(forward);
-//mHeadlights.Translate(top);
-//mHeadlights.Scale(length);
-
-// Note that InRange() is three-dimensional so be aware of the z-component (2d != 3d).
-//*top.z = bot.z = bounds.z * 2.0f;
 //Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
-
-// Rendering tests
-//sMiscRenderer.Triangle(
-//{ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f }, mView, mProj, graphics);
-//Building::Draw(mBuilding, mView, mProj, graphics);

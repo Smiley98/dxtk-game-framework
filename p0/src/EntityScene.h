@@ -37,13 +37,10 @@ public:
 private:
 	Collision::Colliders mColliders;
 	MintyAftershave mMap;
-	Building mBuilding;
+	Player mPlayer;
 
 	Transform3 mVan;
 	Transform3 mHeadlights;
-
-	//Player mVan;
-	//Transform mHeadlights;
 
 	const float fov = 60.0f;
 	const float range = 400.0f;
