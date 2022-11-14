@@ -1,9 +1,9 @@
 #pragma once
 #include "Scene.h"
 #include "Collision.h"
+#include "Collision2.h"
 #include "Map.h"
 #include "Curves.h"
-#include "Transform3.h"
 
 struct Player
 {
@@ -16,6 +16,19 @@ struct Player
 		Vector3 bounds = renderer.Bounds(type);
 		colliders.Add(id, bounds.y - bounds.x, bounds.x, Tags::PLAYER, this);
 		transform = colliders.Get(id);
+	}
+};
+
+struct Player2
+{
+	Collision2::DynamicCapsule id;
+	Objects::Player type = Objects::VAN;
+	Transform3 transform;
+
+	void Load(const PlayerRenderer& renderer, Collision2::Colliders& colliders)
+	{
+		Vector3 bounds = renderer.Bounds(type);
+		colliders.Add(id, bounds.y - bounds.x, bounds.x, &transform, Tags::PLAYER, this);
 	}
 };
 
@@ -35,9 +48,12 @@ public:
 	void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
-	Collision::Colliders mColliders;
+	//Collision::Colliders mColliders;
+	Collision2::Colliders mColliders2;
+	//Player mPlayer;
+	Player2 mPlayer2;
+
 	MintyAftershave mMap;
-	Player mPlayer;
 
 	Transform3 mVan;
 	Transform3 mHeadlights;

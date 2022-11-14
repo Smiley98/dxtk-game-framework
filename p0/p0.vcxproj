@@ -122,7 +122,9 @@
   <ItemGroup>
     <ClInclude Include="src\Buildings.h" />
     <ClInclude Include="src\Collision.h" />
+    <ClInclude Include="src\Collision2.h" />
     <ClInclude Include="src\CollisionMath.h" />
+    <ClInclude Include="src\CollisionMath2.h" />
     <ClInclude Include="src\Curves.h" />
     <ClInclude Include="src\DebugRenderer.h" />
     <ClInclude Include="src\DeviceResources.h" />

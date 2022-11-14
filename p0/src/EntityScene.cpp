@@ -31,8 +31,10 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 #endif
 
 #if MAP
-	mPlayer.Load(sPlayerRenderer, mColliders);
-	mPlayer.transform->SetYaw(-45.0f);
+	//mPlayer.Load(sPlayerRenderer, mColliders);
+	//mPlayer.transform->SetYaw(-45.0f);
+	mPlayer2.Load(sPlayerRenderer, mColliders2);
+	mPlayer2.transform.RotateZ(-45.0f);
 
 	const int rows = 4;
 	const int cols = 8;
@@ -44,10 +46,12 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	{
 		for (int j = 0; j < cols; j++)
 		{
-			BuildingId id = mMap.Add(Building::TD, mColliders);
+			//BuildingId id = mMap.Add(Building::TD, mColliders);
+			BuildingId id = mMap.Add(Building::TD, mColliders2);
 			Building* building = mMap.Get(id);
-			building->position = { x, y, 0.0f };
-			mColliders.Get(building->collider)->Translate(building->position);
+			//building->position = { x, y, 0.0f };
+			//mColliders.Get(building->collider)->Translate(building->position);
+			building->transform.Translate(x, y, 0.0f);
 			x += xStep;
 		}
 		x = xStep * 0.5f;
@@ -128,25 +132,29 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	Keyboard::State state = input.keyboard.GetState();
 
 	if (state.A)
-		mPlayer.transform->DeltaYaw(av);
+		mPlayer2.transform.DeltaRotateZ(av);
 	if (state.D)
-		mPlayer.transform->DeltaYaw(-av);
+		mPlayer2.transform.DeltaRotateZ(-av);
 
 	if (state.W)
-		mPlayer.transform->DeltaTranslate(mPlayer.transform->Forward() * av);
+		mPlayer2.transform.DeltaTranslate(mPlayer2.transform.Forward() * av);
 	if (state.S)
-		mPlayer.transform->DeltaTranslate(mPlayer.transform->Forward() * -av);
+		mPlayer2.transform.DeltaTranslate(mPlayer2.transform.Forward() * -av);
 #endif
 
 #if MAP
-	std::vector<Collision::HitPair> collisions;
-	mColliders.Collide(collisions);
-	for (const Collision::HitPair& collision : collisions)
+	//std::vector<Collision::HitPair> collisions;
+	//mColliders.Collide(collisions);
+	std::vector<Collision2::HitPair> collisions;
+	mColliders2.Collide(collisions);
+	for (const Collision2::HitPair& collision : collisions)
 	{
 		if (collision.b.tag == Tags::PLAYER)
 		{
-			Player& player = *reinterpret_cast<Player*>(collision.b.data);
-			player.transform->DeltaTranslate(collision.mtv);
+			//Player& player = *reinterpret_cast<Player*>(collision.b.data);
+			//player.transform->DeltaTranslate(collision.mtv);
+			Player2& player = *reinterpret_cast<Player2*>(collision.b.data);
+			player.transform.DeltaTranslate(collision.mtv);
 		}
 	}
 #endif
@@ -164,7 +172,8 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 #if MAP
 	mMap.Render(mView, mProj, graphics);
-	sPlayerRenderer.Render(mPlayer.transform->World(), mView, mProj, graphics);
+	//sPlayerRenderer.Render(mPlayer.transform->World(), mView, mProj, graphics);
+	sPlayerRenderer.Render(mPlayer2.transform.World(), mView, mProj, graphics);
 #endif
 }
 
@@ -187,3 +196,15 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 //Vector3 top = mVan.transform->Translation() + forward * bounds.y;
 //Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
 //Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
+
+/*
+if (state.A)
+	mPlayer.transform->DeltaYaw(av);
+if (state.D)
+	mPlayer.transform->DeltaYaw(-av);
+
+if (state.W)
+	mPlayer.transform->DeltaTranslate(mPlayer.transform->Forward() * av);
+if (state.S)
+	mPlayer.transform->DeltaTranslate(mPlayer.transform->Forward() * -av);
+*/

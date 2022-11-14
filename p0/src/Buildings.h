@@ -1,5 +1,6 @@
 #pragma once
 #include "Collision.h"
+#include "Collision2.h"
 
 class Building
 {
@@ -20,10 +21,15 @@ public:
 		COUNT
 	} type;
 
-	Collision::StaticCapsule collider;
-	Vector3 position;
+	//Collision::StaticCapsule collider;
+	//Vector3 position;
+	Collision2::StaticCapsule collider;
+	Transform3 transform;
+
 	float hitpoints;
 	Color color = { 0.75f, 0.75f, 0.75f };
+
+	void Draw(const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics);
 
 	static void Load(std::shared_ptr<DX::DeviceResources> graphics);
 	static void Unload();

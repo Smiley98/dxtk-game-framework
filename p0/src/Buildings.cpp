@@ -60,11 +60,18 @@ void Building::Unload()
 	sStates.reset();
 }
 
+void Building::Draw(const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
+{
+	sShader->SetAmbientLightColor(color);
+	sModels[type]->Draw(graphics->GetD3DDeviceContext(), *sStates, transform.World(), view, proj);
+}
+
 void Building::Draw(const Building& building, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
 {
 	// Placeholder for now. Gonna need custom shaders if we want to colour the entire building with a single variable...
 	sShader->SetAmbientLightColor(building.color);
-	sModels[building.type]->Draw(graphics->GetD3DDeviceContext(), *sStates, Matrix::CreateTranslation(building.position), view, proj);
+	//sModels[building.type]->Draw(graphics->GetD3DDeviceContext(), *sStates, Matrix::CreateTranslation(building.position), view, proj);
+	sModels[building.type]->Draw(graphics->GetD3DDeviceContext(), *sStates, building.transform.World(), view, proj);
 }
 
 const DirectX::Model& Building::Model(Type type)

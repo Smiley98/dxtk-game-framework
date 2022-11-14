@@ -1,12 +1,12 @@
 #pragma once
-#include "Transform.h"
+#include "Transform3.h"
 #undef min
 #undef max
 
-namespace Collision
+namespace Collision2
 {
 	// Outputs the top and bottom of a cylinder relative to its forward vector
-	inline void CylinderBounds(const RigidTransform& transform, float halfHeight, Vector3& top, Vector3& bot)
+	inline void CylinderBounds(const Transform3& transform, float halfHeight, Vector3& top, Vector3& bot)
 	{
 		Vector3 forward = transform.Forward();
 		top = transform.Translation() + forward * halfHeight;
@@ -22,7 +22,7 @@ namespace Collision
 	}
 
 	// Outputs nearest spheres on capsules A and B
-	inline void NearestSpheres(const RigidTransform& tA, const RigidTransform& tB, float hhA, float hhB, float rA, float rB,
+	inline void NearestSpheres(const Transform3& tA, const Transform3& tB, float hhA, float hhB, float rA, float rB,
 		Vector3& nearestA, Vector3& nearestB)
 	{
 		Vector3 aTop, aBot, bTop, bBot;
@@ -77,7 +77,7 @@ namespace Collision
 		return colliding;
 	}
 
-	inline bool SphereCapsule(const Vector3& tA, float rA, const RigidTransform& tB, float hhB, float rB)
+	inline bool SphereCapsule(const Vector3& tA, float rA, const Transform3& tB, float hhB, float rB)
 	{
 		Vector3 top, bot;
 		CylinderBounds(tB, hhB, top, bot);
@@ -85,14 +85,14 @@ namespace Collision
 	}
 
 	// MTV resolves b from a
-	inline bool SphereCapsule(const Vector3& tA, float rA, const RigidTransform& tB, float hhB, float rB, Vector3& mtv)
+	inline bool SphereCapsule(const Vector3& tA, float rA, const Transform3& tB, float hhB, float rB, Vector3& mtv)
 	{
 		Vector3 top, bot;
 		CylinderBounds(tB, hhB, top, bot);
 		return SphereSphere(tA, NearestPoint(bot, top, tA), rA, rB, mtv);
 	}
 
-	inline bool CapsuleCapsule(const RigidTransform& tA, const RigidTransform& tB, float hhA, float hhB, float rA, float rB)
+	inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, float hhA, float hhB, float rA, float rB)
 	{
 		Vector3 nearestA, nearestB;
 		NearestSpheres(tA, tB, hhA, hhB, rA, rB, nearestA, nearestB);
@@ -100,14 +100,14 @@ namespace Collision
 	}
 
 	// MTV resolves b from a
-	inline bool CapsuleCapsule(const RigidTransform& tA, const RigidTransform& tB, float hhA, float hhB, float rA, float rB, Vector3& mtv)
+	inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, float hhA, float hhB, float rA, float rB, Vector3& mtv)
 	{
 		Vector3 nearestA, nearestB;
 		NearestSpheres(tA, tB, hhA, hhB, rA, rB, nearestA, nearestB);
 		return SphereSphere(nearestA, nearestB, rA, rB, mtv);
 	}
 
-	inline bool InRange(const TransformBase& viewer, const Vector3& target, float length, float fov /*(degrees)*/)
+	inline bool InRange(const Transform3& viewer, const Vector3& target, float length, float fov /*(degrees)*/)
 	{
 		if ((target - viewer.Translation()).Length() > length)
 			return false;
@@ -118,17 +118,4 @@ namespace Collision
 
 		return targetDirection.Dot(viewerDirection) > cosf(DirectX::XM_RADIANS * fov * 0.5f);
 	}
-
-	//inline bool SphereTriangle(const Vector3& tA, float rA, const Vector3& p0, const Vector3& p1, const Vector3& p2)
-	//{
-	//
-	//}
-
-	// Creating from top & bot is less efficient due to the additional rotation calculations.
-	// Moreover, the math maps nicely to RigidTransform and hh and r are models y and x.
-	//float hh = (top - bot).Length() * 0.5f - radius);
-	//Vector3 translation = (top + bot) * 0.5f;
-	//Vector3 orientation;
-	//(top - bot).Normalize(orientation);
-	//Orientate(orientation);
 }

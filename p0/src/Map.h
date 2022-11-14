@@ -15,8 +15,9 @@ struct BuildingId
 class Map
 {
 public:
-// The Colliders object shguld reside in the scene since it needs to be shared between players, projectiles, and buildings.
-	BuildingId Add(Building::Type type, Collision::Colliders& colliders);
+// The Colliders object should reside in the scene since it needs to be shared between players, projectiles, and buildings.
+	//BuildingId Add(Building::Type type, Collision::Colliders& colliders);
+	BuildingId Add(Building::Type type, Collision2::Colliders& colliders);
 	void Remove(BuildingId building);
 	Building* Get(BuildingId building);
 

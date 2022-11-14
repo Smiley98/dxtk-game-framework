@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Map.h"
 
-BuildingId Map::Add(Building::Type type, Collision::Colliders& colliders)
+/*BuildingId Map::Add(Building::Type type, Collision::Colliders& colliders)
 {
 	BuildingId result;
 	assert(type < Building::COUNT);
@@ -15,7 +15,6 @@ BuildingId Map::Add(Building::Type type, Collision::Colliders& colliders)
 		// *Insert additional building information here*
 		result.id = buildings.Add(std::move(building));
 	}
-
 	
 	Vector3 bounds = Building::Bounds(type);
 	Building* building = buildings.Get(result.id);
@@ -45,6 +44,53 @@ BuildingId Map::Add(Building::Type type, Collision::Colliders& colliders)
 		break;
 	};
 
+	return result;
+}*/
+
+BuildingId Map::Add(Building::Type type, Collision2::Colliders& colliders)
+{
+	BuildingId result;
+	assert(type < Building::COUNT);
+	result.type = type;
+	UnorderedVector<Building>& buildings = mBuildings[type];
+
+	{
+		Building building;
+		building.type = type;
+		building.hitpoints = Building::Durability(type);
+		// *Insert additional building information here*
+		result.id = buildings.Add(std::move(building));
+	}
+
+	Vector3 bounds = Building::Bounds(type);
+	Building* building = buildings.Get(result.id);
+
+	// Collider half height is either y or z depending on the building, hence the need for this switch.
+	float radius = bounds.x;
+	float halfHeight = bounds.y - radius;
+	switch (type)
+	{
+	case Building::TD:
+	case Building::BMO:
+	case Building::CONDO:
+	case Building::OFFICE:
+	case Building::PENTA:
+	case Building::PINK:
+		halfHeight = bounds.z - radius;
+		//building->transform.Translate({ 0.0f, 0.0f, halfHeight });
+		//building->transform.RotateX(90.0f);
+		break;
+
+	case Building::APARTMENT:
+	case Building::DUPLEX:
+		break;
+
+	default:
+		assert(false);
+	};
+
+	// Buildings now own their Transform memory so we can call colliders.Add() outside of the switch statement!
+	colliders.Add(building->collider, halfHeight, radius, &building->transform, Tags::BUILDING, building);
 	return result;
 }
 
