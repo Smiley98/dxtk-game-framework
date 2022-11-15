@@ -23,15 +23,13 @@ public:
 
 	inline T* Get(Id id)
 	{
-		if (mForward.find(id) == mForward.end())
-			return nullptr;
+		assert(mForward.find(id) != mForward.end());
 		return &mObjects[mForward[id]];
 	}
 
 	inline void Remove(Id id)
 	{
-		if (mForward.find(id) == mForward.end())
-			return;
+		assert(mForward.find(id) != mForward.end());
 
 		// Handle self-removal
 		if (mForward[id] == mObjects.size() - 1)

@@ -47,13 +47,17 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		for (int j = 0; j < cols; j++)
 		{
 			//BuildingId id = mMap.Add(Building::TD, mColliders);
-			BuildingId id = mMap.Add(Building::TD, mColliders2);
-			Building* building = mMap.Get(id);
 			//building->position = { x, y, 0.0f };
 			//mColliders.Get(building->collider)->Translate(building->position);
+
+			BuildingId id = mMap.Add(Building::TD, mColliders2);
+			Building* building = mMap.Get(id);
 			building->transform.Translate(x, y, 0.0f);
-			Print(building->transform.World().Forward());
 			x += xStep;
+
+			XMVECTOR t, r, s;
+			XMMatrixDecompose(&s, &r, &t, building->transform.World());
+			Print(Vector3(t));
 		}
 		x = xStep * 0.5f;
 		y += yStep;
