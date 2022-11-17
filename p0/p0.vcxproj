@@ -133,10 +133,9 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\Input.h" />
-    <ClInclude Include="src\Interpolation.h" />
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\MainScene.h" />
-    <ClInclude Include="src\MathConstants.h" />
+    <ClInclude Include="src\MathUtilities.h" />
     <ClInclude Include="src\MiscRenderer.h" />
     <ClInclude Include="src\PlayerRenderer.h" />
     <ClInclude Include="src\Renderer.h" />

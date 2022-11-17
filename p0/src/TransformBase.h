@@ -1,6 +1,6 @@
 #pragma once
 #include "SimpleMath.h"
-#include "MathConstants.h"
+#include "MathUtilities.h"
 
 // Yes header namespace declarations are a "bad practice",
 // but I'm on the verge of losing my mind every time I declare a DirectX::SimpleMath::Vector3...

@@ -1,7 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "Collision.h"
-#include "Collision2.h"
 #include "Map.h"
 #include "Curves.h"
 
@@ -48,14 +46,13 @@ public:
 	void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
+	MintyAftershave mMap;
+
 	//Collision::Colliders mColliders;
 	Collision2::Colliders mColliders2;
 	//Player mPlayer;
 	Player2 mPlayer2;
 
-	MintyAftershave mMap;
-
-	Transform3 mVan;
 	Transform3 mHeadlights;
 
 	const float fov = 60.0f;

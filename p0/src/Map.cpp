@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Map.h"
 #include "DebugRenderer.h"
+#include "Utility.h"
 
 /*BuildingId Map::Add(Building::Type type, Collision::Colliders& colliders)
 {
@@ -55,12 +56,18 @@ BuildingId Map::Add(Building::Type type, Collision2::Colliders& colliders)
 	result.type = type;
 	UnorderedVector<Building>& buildings = mBuildings[type];
 
+	std::vector<Building> memes;
+
 	{
 		Building building;
 		building.type = type;
 		building.hitpoints = Building::Durability(type);
 		result.id = buildings.Add(std::move(building));
+		// I have absolutely no idea why move() is corrupting collider memory...
+		// Might refactor this to be an ECS to avoid this building -> collider chain.
 	}
+
+	//Print(memes[0].Bounds(memes[0].type));
 
 	Vector3 bounds = Building::Bounds(type);
 	Building* building = buildings.Get(result.id);

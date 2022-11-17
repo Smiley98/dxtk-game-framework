@@ -1,6 +1,6 @@
 #pragma once
 #include "Transform.h"
-#include "Interpolation.h"
+#include "MathUtilities.h"
 #include <vector>
 
 struct SamplePoint

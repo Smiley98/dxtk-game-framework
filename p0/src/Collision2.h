@@ -157,7 +157,6 @@ namespace Collision2
 		void Add(StaticCapsule& id, float halfHeight, float radius,
 			Transform3* transform = nullptr, Tags::Tag tag = Tags::NONE, void* data = nullptr)
 		{
-			// The answer is somewhere in here!
 			CapsuleCollider collider(halfHeight, radius, transform, tag, data);
 			id.n = mStaticCapsules.Add(std::move(collider));
 		}

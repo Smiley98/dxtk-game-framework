@@ -1,6 +1,6 @@
 #pragma once
 #include "SimpleMath.h"
-#include "MathConstants.h"
+#include "MathUtilities.h"
 #define Y_FORWARD true
 
 using namespace DirectX::SimpleMath;

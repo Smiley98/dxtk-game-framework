@@ -1,31 +1,22 @@
 #include "pch.h"
 #include "EntityScene.h"
 #include "DebugRenderer.h"
-#include "Map.h"
 #include "Utility.h"
-#define MAP true
-#define SPLINE false
+
+#define MAP false
+#define SPLINE true
 #define KEYBOARD true
 #define GAMEPAD false
 
-namespace
-{
-	constexpr float r = 25.0f;
-	constexpr float hh = 75.0f;
-}
-
 using namespace DirectX;
-
-inline float Random(float min, float max)
-{
-	return min + (rand() / ((float)RAND_MAX / (max - min)));
-}
 
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
+	mPlayer2.Load(sPlayerRenderer, mColliders2);
+
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
-	mHeadlights.SetParent(&mVan);
+	mHeadlights.SetParent(&mPlayer2.transform);
 	mHeadlights.TranslateY(80.0f);
 	mHeadlights.Scale(100.0f);
 #endif
@@ -33,8 +24,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 #if MAP
 	//mPlayer.Load(sPlayerRenderer, mColliders);
 	//mPlayer.transform->SetYaw(-45.0f);
-	mPlayer2.Load(sPlayerRenderer, mColliders2);
-	mPlayer2.transform.RotateZ(-45.0f);
+	std::vector<Collision2::CapsuleCollider>& capsules = mColliders2.mStaticCapsules.Objects();
 
 	const int rows = 4;
 	const int cols = 8;
@@ -63,7 +53,6 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		y += yStep;
 	}
 
-	std::vector<Collision2::CapsuleCollider>& capsules = mColliders2.mStaticCapsules.Objects();
 	for (Collision2::CapsuleCollider& i : capsules)
 	{
 		Print(i.transform->World().Forward());
@@ -122,8 +111,8 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	Vector3 b = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
 	Vector3 forward = b - a;
 	forward.Normalize();
-	mVan.Translate(a);
-	mVan.Orientate(forward);
+	mPlayer2.transform.Translate(a);
+	mPlayer2.transform.Orientate(forward);
 #endif
 
 #if GAMEPAD
@@ -186,7 +175,6 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Debug::Primitive(Debug::SPHERE,
 			Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(position), mView, mProj, graphics);
 	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
-	sPlayerRenderer.Render(mVan.World(), mView, mProj, graphics);
 #endif
 
 #if MAP
@@ -198,9 +186,9 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		Debug::Draw(i, mView, mProj, graphics);
 	}
-	sPlayerRenderer.Render(mPlayer2.transform.World(), mView, mProj, graphics);
-	//sPlayerRenderer.Render(mPlayer.transform->World(), mView, mProj, graphics);
 #endif
+
+	sPlayerRenderer.Render(mPlayer2.transform.World(), mView, mProj, graphics);
 }
 
 // Timer test:

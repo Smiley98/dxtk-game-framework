@@ -154,16 +154,13 @@
     <ClInclude Include="src\Curves.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Interpolation.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\Transform3.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\GameObject.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\MathConstants.h">
+    <ClInclude Include="src\MathUtilities.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Collision2.h">
