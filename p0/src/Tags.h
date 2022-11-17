@@ -1,5 +1,4 @@
 #pragma once
-
 namespace Tags
 {
 	enum Tag
@@ -8,14 +7,5 @@ namespace Tags
 		PLAYER,
 		BUILDING,
 		BULLET
-	};
-}
-
-namespace Objects
-{
-	enum Player
-	{
-		VAN,
-		MECH
 	};
 }

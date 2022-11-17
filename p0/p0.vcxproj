@@ -96,9 +96,13 @@
     <Manifest Include="settings.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Buildings.cpp" />
+    <ClCompile Include="src\BuildingRenderer.cpp" />
     <ClCompile Include="src\DebugRenderer.cpp" />
     <ClCompile Include="src\DeviceResources.cpp" />
+    <ClCompile Include="src\Entity.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\EntityScene.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Map.cpp" />
@@ -120,7 +124,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Buildings.h" />
+    <ClInclude Include="src\BuildingRenderer.h" />
+    <ClInclude Include="src\Building.h" />
     <ClInclude Include="src\Collision.h" />
     <ClInclude Include="src\Collision2.h" />
     <ClInclude Include="src\CollisionMath.h" />
@@ -139,11 +144,12 @@
     <ClInclude Include="src\MainScene.h" />
     <ClInclude Include="src\MathUtilities.h" />
     <ClInclude Include="src\MiscRenderer.h" />
+    <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\PlayerFactory.h" />
     <ClInclude Include="src\PlayerRenderer.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Transform3.h" />
-    <ClInclude Include="src\UnorderedVector.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\CollisionScene.h" />
     <ClInclude Include="src\RigidTransform.h" />

@@ -98,7 +98,7 @@ namespace Debug
 		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color, bool wireframe)
 	{
-		auto shape = GeometricPrimitive::CreateSphere(graphics->GetD3DDeviceContext(), collider.Radius() * 2.0f);
+		auto shape = GeometricPrimitive::CreateSphere(graphics->GetD3DDeviceContext(), collider.radius * 2.0f);
 		shape->Draw(collider.transform->World(), view, proj, color, nullptr, wireframe);
 	}
 
@@ -107,12 +107,12 @@ namespace Debug
 		std::shared_ptr<DX::DeviceResources> graphics, XMVECTOR color, bool wireframe)
 	{
 		auto context = graphics->GetD3DDeviceContext();
-		auto cylinder = GeometricPrimitive::CreateCylinder(context, collider.HalfHeight() * 2.0f, collider.Radius() * 2.0f);
-		auto sphere = GeometricPrimitive::CreateSphere(context, collider.Radius() * 2.0f);
+		auto cylinder = GeometricPrimitive::CreateCylinder(context, collider.halfHeight * 2.0f, collider.radius * 2.0f);
+		auto sphere = GeometricPrimitive::CreateSphere(context, collider.radius * 2.0f);
 
 		Vector3 upper;
 		Vector3 lower;
-		Collision2::CylinderBounds(*collider.transform, collider.HalfHeight(), upper, lower);
+		Collision2::CylinderBounds(*collider.transform, collider.halfHeight, upper, lower);
 
 		sphere->Draw(Matrix::CreateTranslation(upper), view, proj, color, nullptr, wireframe);
 		sphere->Draw(Matrix::CreateTranslation(lower), view, proj, color, nullptr, wireframe);

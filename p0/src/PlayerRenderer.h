@@ -1,8 +1,7 @@
 #pragma once
 #include "Renderer.h"
-#include "Tags.h"
+#include "Player.h"
 
-// Probably more intuitive to make a Player class and implement static methods for rendering.
 class PlayerRenderer :
 	public Renderer
 {
@@ -10,11 +9,10 @@ public:
 	void Load(std::shared_ptr<DX::DeviceResources> graphics) final;
 	void Unload() final;
 
-	// Testing
 	void Render(const Matrix& world, const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics) const;
 
-	Vector3 Bounds(Objects::Player type) const;
+	Vector3 Bounds(Player::Type type) const;
 
 private:
 	std::shared_ptr<DirectX::Model> mVan;

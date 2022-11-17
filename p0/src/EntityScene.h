@@ -3,7 +3,7 @@
 #include "Map.h"
 #include "Curves.h"
 
-struct Player
+/*struct Player
 {
 	Collision::DynamicCapsule id;
 	Objects::Player type = Objects::VAN;
@@ -28,7 +28,7 @@ struct Player2
 		Vector3 bounds = renderer.Bounds(type);
 		colliders.Add(id, bounds.y - bounds.x, bounds.x, &transform, Tags::PLAYER, this);
 	}
-};
+};*/
 
 class EntityScene :
 	public Scene
@@ -46,13 +46,14 @@ public:
 	void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
-	MintyAftershave mMap;
+	//MintyAftershave mMap;
 
 	//Collision::Colliders mColliders;
-	Collision2::Colliders mColliders2;
+	//Collision2::Colliders mColliders2;
 	//Player mPlayer;
-	Player2 mPlayer2;
+	//Player2 mPlayer2;
 
+	Entity mPlayer;
 	Transform3 mHeadlights;
 
 	const float fov = 60.0f;

@@ -5,11 +5,11 @@
 class Renderer
 {
 public:
-	enum Type
-	{
-		PLAYER,
-		BUILDING
-	};
+	//enum Type
+	//{
+	//	PLAYER,
+	//	BUILDING
+	//};
 
 	virtual void Load(std::shared_ptr<DX::DeviceResources> graphics);
 	virtual void Unload();

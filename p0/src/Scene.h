@@ -1,9 +1,14 @@
 #pragma once
 #include "DXTK.h"
 #include "Input.h"
-#include "PlayerRenderer.h"
-#include "MiscRenderer.h"
 #include "Timer.h"
+
+#include "PlayerRenderer.h"
+#include "BuildingRenderer.h"
+#include "MiscRenderer.h"
+
+#include "Component.h"
+
 #include <array>
 #include <memory>
 #include <string>
@@ -67,11 +72,17 @@ protected:
 
 	// Shared members
 	static PlayerRenderer sPlayerRenderer;
+	static BuildingRenderer sBuildingRenderer;
 	static MiscRenderer sMiscRenderer;
 
 	// Common members
 	Matrix mView;
 	Matrix mProj;
+
+	// Components (should always be allocated by collections within scene)
+	ComponentCollection<Transform3> mTransforms;
+	ComponentCollection<Collision2::SphereCollider> mSpheres;
+	ComponentCollection<Collision2::CapsuleCollider> mCapsules;
 
 private:
 	static std::array<Scene*, NONE> sScenes;

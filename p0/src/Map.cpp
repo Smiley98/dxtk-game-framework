@@ -49,7 +49,7 @@
 	return result;
 }*/
 
-BuildingId Map::Add(Building::Type type, Collision2::Colliders& colliders)
+/*BuildingId Map::Add(Building::Type type, Collision2::Colliders& colliders)
 {
 	BuildingId result;
 	assert(type < Building::COUNT);
@@ -62,12 +62,10 @@ BuildingId Map::Add(Building::Type type, Collision2::Colliders& colliders)
 		Building building;
 		building.type = type;
 		building.hitpoints = Building::Durability(type);
-		result.id = buildings.Add(std::move(building));
-		// I have absolutely no idea why move() is corrupting collider memory...
-		// Might refactor this to be an ECS to avoid this building -> collider chain.
+		result.id = buildings.Add(building);
+		//result.id = buildings.Add(std::move(building));
+		Print("Aids");
 	}
-
-	//Print(memes[0].Bounds(memes[0].type));
 
 	Vector3 bounds = Building::Bounds(type);
 	Building* building = buildings.Get(result.id);
@@ -134,7 +132,7 @@ void Map::Render(const Matrix& view, const Matrix& proj, std::shared_ptr<DX::Dev
 			Building::Draw(building, view, proj, graphics);
 		}
 	}
-}
+}*/
 
 void MintyAftershave::Reset()
 {

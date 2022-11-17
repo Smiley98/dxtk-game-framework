@@ -1,8 +1,8 @@
 #pragma once
-#include "Buildings.h"
+#include "Building.h"
 #include <array>
 
-struct BuildingId
+/*struct BuildingId
 {
 	Id id;
 	Building::Type type;
@@ -29,6 +29,16 @@ public:
 
 private:
 	std::array<UnorderedVector<Building>, Building::COUNT> mBuildings;
+};*/
+
+class Map
+{
+public:
+
+
+
+protected:
+
 };
 
 class MintyAftershave :

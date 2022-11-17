@@ -3,6 +3,7 @@
 #include "DebugRenderer.h"
 #include "Utility.h"
 #include "Component.h"
+#include "PlayerFactory.h"
 
 #define MAP false
 #define SPLINE true
@@ -11,24 +12,14 @@
 
 using namespace DirectX;
 
-struct Test {};
-
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
-	mPlayer2.Load(sPlayerRenderer, mColliders2);
-
-	ComponentCollection<Test> cc;
-	Entity e0 = CreateEntity();
-	Entity e1 = CreateEntity();
-
-	Test& t0 = cc.Add(e0);
-	Test& t1 = cc.Add(e1);
-	cc.Remove(e1);
-	cc.Remove(e0);
+	//mPlayer2.Load(sPlayerRenderer, mColliders2);
+	mPlayer = CreatePlayer(mTransforms, mCapsules);
 
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
-	mHeadlights.SetParent(&mPlayer2.transform);
+	mHeadlights.SetParent(mTransforms.GetComponent(mPlayer));
 	mHeadlights.TranslateY(80.0f);
 	mHeadlights.Scale(100.0f);
 #endif
@@ -115,6 +106,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
+	Transform3& transform = *mTransforms.GetComponent(mPlayer);
 
 #if SPLINE
 	Vector3 a = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
@@ -123,8 +115,8 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	Vector3 b = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
 	Vector3 forward = b - a;
 	forward.Normalize();
-	mPlayer2.transform.Translate(a);
-	mPlayer2.transform.Orientate(forward);
+	transform.Translate(a);
+	transform.Orientate(forward);
 #endif
 
 #if GAMEPAD
@@ -145,14 +137,14 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	Keyboard::State state = input.keyboard.GetState();
 
 	if (state.A)
-		mPlayer2.transform.DeltaRotateZ(av);
+		transform.DeltaRotateZ(av);
 	if (state.D)
-		mPlayer2.transform.DeltaRotateZ(-av);
+		transform.DeltaRotateZ(-av);
 
 	if (state.W)
-		mPlayer2.transform.DeltaTranslate(mPlayer2.transform.Forward() * av);
+		transform.DeltaTranslate(transform.Forward() * av);
 	if (state.S)
-		mPlayer2.transform.DeltaTranslate(mPlayer2.transform.Forward() * -av);
+		transform.DeltaTranslate(transform.Forward() * -av);
 #endif
 
 #if MAP
@@ -200,7 +192,8 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	}
 #endif
 
-	sPlayerRenderer.Render(mPlayer2.transform.World(), mView, mProj, graphics);
+	Debug::Draw(*mCapsules.GetComponent(mPlayer), mView, mProj, graphics);
+	sPlayerRenderer.Render(mTransforms.GetComponent(mPlayer)->World(), mView, mProj, graphics);
 }
 
 // Timer test:

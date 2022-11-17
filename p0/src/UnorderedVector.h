@@ -13,13 +13,22 @@ template<typename T>
 class UnorderedVector
 {
 public:
-	inline Id Add(T&& object)
+	inline Id Add(const T& object)
 	{
 		mObjects.push_back(object);
 		mForward[++gId] = mObjects.size() - 1;
 		mBackward[mObjects.size() - 1] = gId;
 		return gId;
 	}
+
+	// Apparently I don't understand x-values...
+	//inline Id Add(T&& object)
+	//{
+	//	mObjects.push_back(object);
+	//	mForward[++gId] = mObjects.size() - 1;
+	//	mBackward[mObjects.size() - 1] = gId;
+	//	return gId;
+	//}
 
 	inline T* Get(Id id)
 	{

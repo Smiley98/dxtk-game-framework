@@ -58,8 +58,14 @@ public:
 		return it != mLookup.end() ? &mComponents[it->second] : nullptr;
 	}
 
-	size_t Count()
+	const std::vector<Component>& Components() const
 	{
+		return mComponents;
+	}
+
+	size_t Count() const
+	{
+		assert(mEntities.size() == mComponents.size());
 		return mComponents.size();
 	}
 
