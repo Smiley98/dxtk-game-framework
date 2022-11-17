@@ -2,6 +2,7 @@
 #include "EntityScene.h"
 #include "DebugRenderer.h"
 #include "Utility.h"
+#include "Component.h"
 
 #define MAP false
 #define SPLINE true
@@ -10,9 +11,20 @@
 
 using namespace DirectX;
 
+struct Test {};
+
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 	mPlayer2.Load(sPlayerRenderer, mColliders2);
+
+	ComponentCollection<Test> cc;
+	Entity e0 = CreateEntity();
+	Entity e1 = CreateEntity();
+
+	Test& t0 = cc.Add(e0);
+	Test& t1 = cc.Add(e1);
+	cc.Remove(e1);
+	cc.Remove(e0);
 
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);

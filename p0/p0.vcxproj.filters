@@ -37,6 +37,9 @@
     <Filter Include="Systems">
       <UniqueIdentifier>{5e8ce3ac-e0f9-4ec4-9598-ab562d541809}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ECS">
+      <UniqueIdentifier>{34949342-79b0-49cb-94be-4bef182c6bf9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\fonts\SegoeUI_18.spritefont">
@@ -168,6 +171,12 @@
     </ClInclude>
     <ClInclude Include="src\CollisionMath2.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Component.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entity.h">
+      <Filter>ECS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
