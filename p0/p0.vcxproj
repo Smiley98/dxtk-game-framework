@@ -101,6 +101,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\BuildingRenderer.cpp" />
+    <ClCompile Include="src\Collision2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\DebugRenderer.cpp" />
     <ClCompile Include="src\DeviceResources.cpp" />
     <ClCompile Include="src\Entity.cpp">

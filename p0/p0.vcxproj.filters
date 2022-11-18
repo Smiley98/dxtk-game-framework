@@ -109,6 +109,9 @@
     <ClCompile Include="src\BuildingFactory.cpp">
       <Filter>ECS\Factories</Filter>
     </ClCompile>
+    <ClCompile Include="src\Collision2.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />

@@ -1,7 +1,7 @@
 #pragma once
 #include "CollisionMath2.h"
 #include "Entity.h"
-#include "Tags.h"
+#include <vector>
 
 // The Colliders class was too weird given its id system and memory ownership.
 // Collision should be as C-like as possible to reduce complexity and increase flexibility.
@@ -17,25 +17,25 @@ namespace Collision2
 		Vector3 mtv;
 	};
 
+	// TODO -- remove this, make this pure C.
+	// Add Collider classes that construct from entity + transform for TESTING ONLY (no memory corruption)!
 	struct Collider
 	{
-		virtual bool IsColliding(const SphereCollider& collider) const = 0;
-		virtual bool IsColliding(const CapsuleCollider& collider) const = 0;
-		virtual bool IsColliding(const SphereCollider& collider, Vector3& mtv) const = 0;
-		virtual bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const = 0;
+		//virtual bool IsColliding(const SphereCollider& collider) const = 0;
+		//virtual bool IsColliding(const CapsuleCollider& collider) const = 0;
+		//virtual bool IsColliding(const SphereCollider& collider, Vector3& mtv) const = 0;
+		//virtual bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const = 0;
 
-		Entity entity = INVALID_ENTITY;
-		Transform3* transform = nullptr;
 		bool dynamic = false;
 	};
 
 	struct SphereCollider :
 		public Collider
 	{
-		inline bool IsColliding(const SphereCollider& collider) const final;
-		inline bool IsColliding(const CapsuleCollider& collider) const final;
-		inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
-		inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
+		//inline bool IsColliding(const SphereCollider& collider) const final;
+		//inline bool IsColliding(const CapsuleCollider& collider) const final;
+		//inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
+		//inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
 
 		float radius = 0.0f;
 	};
@@ -43,10 +43,10 @@ namespace Collision2
 	struct CapsuleCollider :
 		public Collider
 	{
-		inline bool IsColliding(const CapsuleCollider& collider) const final;
-		inline bool IsColliding(const SphereCollider& collider) const final;
-		inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
-		inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
+		//inline bool IsColliding(const CapsuleCollider& collider) const final;
+		//inline bool IsColliding(const SphereCollider& collider) const final;
+		//inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
+		//inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
 
 		inline void AutoBound(const Vector3& bounds);
 
@@ -54,7 +54,7 @@ namespace Collision2
 		float radius = 0.0f;
 	};
 
-	inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
+	/*inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
 	{
 		return SphereSphere(collider.transform->Translation(), transform->Translation(), collider.radius, radius);
 	}
@@ -94,7 +94,7 @@ namespace Collision2
 	inline bool CapsuleCollider::IsColliding(const SphereCollider& collider, Vector3& mtv) const
 	{
 		return SphereCapsule(collider.transform->Translation(), collider.radius, *transform, halfHeight, radius, mtv);
-	}
+	}*/
 
 	inline void CapsuleCollider::AutoBound(const Vector3& bounds)
 	{
@@ -104,7 +104,10 @@ namespace Collision2
 		halfHeight = hh;
 	}
 
-	inline void Collide(/*const std::vector<Collider*>& colliders,*/
+	struct Components;
+	void Collide(const std::vector<Entity>& entities, const Components& components, std::vector<HitPair>& collisions);
+
+	/*inline void Collide(
 		const std::vector<SphereCollider>& spheres,
 		const std::vector<CapsuleCollider>& capsules,
 		std::vector<HitPair>& collisions)
@@ -224,7 +227,7 @@ namespace Collision2
 				}
 			}
 		}
-	}
+	}*/
 
 	/*
 	enum Geometry

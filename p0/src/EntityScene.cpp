@@ -15,14 +15,9 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 {
 	float step = mWorldWidth / mTestBuildings.size();
 	for (size_t i = 0; i < mTestBuildings.size(); i++)
-		mTestBuildings[i] = CreateBuilding(mComponents, (Building::Type)i, sBuildingRenderer);
-
-	for (size_t i = 0; i < mTestBuildings.size(); i++)
 	{
-		Transform3* a = mComponents.transforms.GetComponent(mTestBuildings[i]);
-		Transform3* b = mComponents.capsules.GetComponent(mTestBuildings[i])->transform;
-		Print(a->Scaling());
-		Print(b->Scaling());
+		mTestBuildings[i] = CreateBuilding(mComponents, (Building::Type)i, sBuildingRenderer);
+		mComponents.transforms.GetComponent(mTestBuildings[i])->Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
 	}
 
 	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);
@@ -188,11 +183,14 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	//for (Entity i : mTestBuildings)
-	//{
-	//	Transform3& transform = *mComponents.capsules.GetComponent(i)->transform;
-	//	Debug::Draw(*mComponents.capsules.GetComponent(i), mView, mProj, graphics, Colors::Red);
-	//}
+	for (Entity i : mTestBuildings)
+	{
+		Transform3& transform = *mComponents.transforms.GetComponent(i);
+		Collision2::CapsuleCollider& collider = *mComponents.capsules.GetComponent(i);
+		Building& building = *mComponents.buildings.GetComponent(i);
+		Debug::Draw(transform, collider.radius, collider.halfHeight, mView, mProj, graphics, Colors::Red);
+		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
+	}
 
 #if SPLINE
 	for (const Vector3& position : mSpline)
@@ -212,8 +210,11 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	}
 #endif
 
-	Debug::Draw(*mComponents.capsules.GetComponent(mPlayer), mView, mProj, graphics);
-	sPlayerRenderer.Render(mComponents.transforms.GetComponent(mPlayer)->World(), mView, mProj, graphics);
+	Transform3& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
+	Collision2::CapsuleCollider& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
+
+	Debug::Draw(playerTransform, playerCollider.radius, playerCollider.halfHeight, mView, mProj, graphics);
+	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
 }
 
 // Timer test:
@@ -235,31 +236,3 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 //Vector3 top = mVan.transform->Translation() + forward * bounds.y;
 //Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
 //Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
-
-// Building + collider render test (no need to rotate -- colliders fit their bounds)!
-//std::vector<Building> buildings(Building::COUNT);
-//buildings[0].type = Building::TD;
-//buildings[1].type = Building::APARTMENT;
-//buildings[2].type = Building::BMO;
-//buildings[3].type = Building::CONDO;
-//buildings[4].type = Building::DUPLEX;
-//buildings[5].type = Building::OFFICE;
-//buildings[6].type = Building::PENTA;
-//buildings[7].type = Building::PINK;
-//float step = mWorldWidth / buildings.size();
-//for (size_t i = 0; i < buildings.size(); i++)
-//{
-//	Transform3 tr;
-//	Collision2::CapsuleCollider cc;
-//	cc.transform = &tr;
-//	tr.Translate(100.0f + step * i, mWorldHeight * 0.5f, 0.0f);
-//
-//	Vector3 bounds = sBuildingRenderer.Bounds(buildings[i].type);
-//	float radius = bounds.x;
-//	float halfHeight = bounds.y - radius;
-//	cc.radius = radius;
-//	cc.halfHeight = halfHeight;
-//
-//	Debug::Draw(cc, mView, mProj, graphics, Colors::Red);
-//	sBuildingRenderer.Render(buildings[i], tr.World(), mView, mProj, graphics);
-//}
