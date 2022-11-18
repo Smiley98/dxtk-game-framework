@@ -6,6 +6,7 @@
 #include "PlayerRenderer.h"
 #include "BuildingRenderer.h"
 #include "MiscRenderer.h"
+#include "DebugRenderer.h"
 
 #include "Components.h"
 

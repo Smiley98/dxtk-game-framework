@@ -53,6 +53,10 @@ private:
 	//Player mPlayer;
 	//Player2 mPlayer2;
 
+	Building mBuilding;
+
+	std::array<Entity, Building::COUNT> mTestBuildings;
+
 	Entity mPlayer;
 	Transform3 mHeadlights;
 

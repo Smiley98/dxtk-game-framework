@@ -1,17 +1,16 @@
 #include "PlayerFactory.h"
 #include "Components.h"
+#include "PlayerRenderer.h"
 
-Entity CreatePlayer(Components& components, float radius, float halfHeight)
+Entity CreatePlayer(Components& components, const PlayerRenderer& renderer)
 {
 	Entity entity = CreateEntity();
 	components.tags.Add(entity) = Tags::PLAYER;
-	Transform3& transform = components.transforms.Add(entity);
 
 	Collision2::CapsuleCollider& capsule = components.capsules.Add(entity);
 	capsule.entity = entity;
-	capsule.transform = &transform;
-	capsule.radius = radius;
-	capsule.halfHeight = halfHeight;
+	capsule.transform = &components.transforms.Add(entity);
+	capsule.AutoBound(renderer.Bounds());
 
 	return entity;
 }

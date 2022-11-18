@@ -32,23 +32,23 @@ void BuildingRenderer::Unload()
 }
 
 void BuildingRenderer::Render(const Building& building,
-	const Matrix& world, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
+	const Matrix& world, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics) const
 {
 	mShader->SetAmbientLightColor(building.color);
 	mModels[building.type]->Draw(graphics->GetD3DDeviceContext(), *mStates, world, view, proj);
 }
 
-const DirectX::Model& BuildingRenderer::Model(Building::Type type)
+const DirectX::Model& BuildingRenderer::Model(Building::Type type) const
 {
 	return *mModels[type];
 }
 
-Vector3 BuildingRenderer::Bounds(Building::Type type)
+Vector3 BuildingRenderer::Bounds(Building::Type type) const
 {
 	return mModels[type]->meshes.front()->boundingBox.Extents;
 }
 
-float BuildingRenderer::MaxDurability(Building::Type type)
+float BuildingRenderer::MaxDurability(Building::Type type) const
 {
 	static std::array<float, Building::COUNT> durabilities{
 	100.0f,	// TD

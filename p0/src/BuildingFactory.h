@@ -3,4 +3,6 @@
 #include "Building.h"
 
 struct Components;
-Entity CreateBuilding(Components& components, float radius, float halfHeight, Building::Type type);
+class BuildingRenderer;
+Entity CreateBuilding(Components& components,
+	Building::Type type, const BuildingRenderer& renderer);

@@ -1,9 +1,8 @@
 #include "pch.h"
 #include "EntityScene.h"
-#include "DebugRenderer.h"
-#include "Utility.h"
-#include "Component.h"
 #include "PlayerFactory.h"
+#include "BuildingFactory.h"
+#include "Utility.h"
 
 #define MAP false
 #define SPLINE true
@@ -14,10 +13,19 @@ using namespace DirectX;
 
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
-	Vector3 bounds = sPlayerRenderer.Bounds();
-	float radius = bounds.x;
-	float halfHeight = bounds.y - radius;
-	mPlayer = CreatePlayer(mComponents, radius, halfHeight);
+	float step = mWorldWidth / mTestBuildings.size();
+	for (size_t i = 0; i < mTestBuildings.size(); i++)
+		mTestBuildings[i] = CreateBuilding(mComponents, (Building::Type)i, sBuildingRenderer);
+
+	for (size_t i = 0; i < mTestBuildings.size(); i++)
+	{
+		Transform3* a = mComponents.transforms.GetComponent(mTestBuildings[i]);
+		Transform3* b = mComponents.capsules.GetComponent(mTestBuildings[i])->transform;
+		Print(a->Scaling());
+		Print(b->Scaling());
+	}
+
+	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);
 
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
@@ -82,10 +90,14 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
 		Vector3::UnitY);
 #else
-	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
+	//mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
+	mView = Matrix::CreateLookAt(
+		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
+		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
+		Vector3::UnitY);
 #endif
-	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
-	//mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
+	//mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
+	mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
 }
 
 void EntityScene::OnBegin()
@@ -176,6 +188,12 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
+	//for (Entity i : mTestBuildings)
+	//{
+	//	Transform3& transform = *mComponents.capsules.GetComponent(i)->transform;
+	//	Debug::Draw(*mComponents.capsules.GetComponent(i), mView, mProj, graphics, Colors::Red);
+	//}
+
 #if SPLINE
 	for (const Vector3& position : mSpline)
 		Debug::Primitive(Debug::SPHERE,
@@ -218,14 +236,30 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 //Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
 //Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
 
-/*
-if (state.A)
-	mPlayer.transform->DeltaYaw(av);
-if (state.D)
-	mPlayer.transform->DeltaYaw(-av);
-
-if (state.W)
-	mPlayer.transform->DeltaTranslate(mPlayer.transform->Forward() * av);
-if (state.S)
-	mPlayer.transform->DeltaTranslate(mPlayer.transform->Forward() * -av);
-*/
+// Building + collider render test (no need to rotate -- colliders fit their bounds)!
+//std::vector<Building> buildings(Building::COUNT);
+//buildings[0].type = Building::TD;
+//buildings[1].type = Building::APARTMENT;
+//buildings[2].type = Building::BMO;
+//buildings[3].type = Building::CONDO;
+//buildings[4].type = Building::DUPLEX;
+//buildings[5].type = Building::OFFICE;
+//buildings[6].type = Building::PENTA;
+//buildings[7].type = Building::PINK;
+//float step = mWorldWidth / buildings.size();
+//for (size_t i = 0; i < buildings.size(); i++)
+//{
+//	Transform3 tr;
+//	Collision2::CapsuleCollider cc;
+//	cc.transform = &tr;
+//	tr.Translate(100.0f + step * i, mWorldHeight * 0.5f, 0.0f);
+//
+//	Vector3 bounds = sBuildingRenderer.Bounds(buildings[i].type);
+//	float radius = bounds.x;
+//	float halfHeight = bounds.y - radius;
+//	cc.radius = radius;
+//	cc.halfHeight = halfHeight;
+//
+//	Debug::Draw(cc, mView, mProj, graphics, Colors::Red);
+//	sBuildingRenderer.Render(buildings[i], tr.World(), mView, mProj, graphics);
+//}

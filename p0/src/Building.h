@@ -17,5 +17,5 @@ struct Building
 	} type;
 
 	DirectX::SimpleMath::Color color = { 0.75f, 0.75f, 0.75f };
-	float hitpoints;
+	float durability;
 };

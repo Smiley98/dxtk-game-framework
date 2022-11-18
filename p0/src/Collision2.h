@@ -48,6 +48,8 @@ namespace Collision2
 		inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
 		inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
 
+		inline void AutoBound(const Vector3& bounds);
+
 		float halfHeight = 0.0f;
 		float radius = 0.0f;
 	};
@@ -92,6 +94,14 @@ namespace Collision2
 	inline bool CapsuleCollider::IsColliding(const SphereCollider& collider, Vector3& mtv) const
 	{
 		return SphereCapsule(collider.transform->Translation(), collider.radius, *transform, halfHeight, radius, mtv);
+	}
+
+	inline void CapsuleCollider::AutoBound(const Vector3& bounds)
+	{
+		float r = bounds.x;
+		float hh = bounds.y - r;
+		radius = r;
+		halfHeight = hh;
 	}
 
 	inline void Collide(/*const std::vector<Collider*>& colliders,*/

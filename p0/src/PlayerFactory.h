@@ -2,4 +2,5 @@
 #include "Entity.h"
 
 struct Components;
-Entity CreatePlayer(Components& components, float radius, float halfHeight);
+class PlayerRenderer;
+Entity CreatePlayer(Components& components, const PlayerRenderer& renderer);
