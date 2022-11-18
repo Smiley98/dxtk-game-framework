@@ -43,9 +43,10 @@ public:
 		}
 	}
 
-	Component& operator[](size_t index) {
-		return mComponents[index];
-	}
+	// Somewhat ambiguous and not needed yet.
+	//Component& operator[](size_t index) {
+	//	return mComponents[index];
+	//}
 
 	Entity GetEntity(size_t index) const {
 		return mEntities[index];
@@ -56,6 +57,11 @@ public:
 		// This lookup isn't costly because we won't have many components.
 		auto it = mLookup.find(entity);
 		return it != mLookup.end() ? &mComponents[it->second] : nullptr;
+	}
+
+	const std::vector<Entity>& Entities() const
+	{
+		return mEntities;
 	}
 
 	const std::vector<Component>& Components() const

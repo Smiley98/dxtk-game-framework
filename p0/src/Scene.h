@@ -7,8 +7,7 @@
 #include "BuildingRenderer.h"
 #include "MiscRenderer.h"
 
-#include "Component.h"
-#include "Tags.h"
+#include "Components.h"
 
 #include <array>
 #include <memory>
@@ -80,11 +79,7 @@ protected:
 	Matrix mView;
 	Matrix mProj;
 
-	// Components (should always be allocated by collections within scene)
-	ComponentCollection<Transform3> mTransforms;
-	ComponentCollection<Collision2::SphereCollider> mSpheres;
-	ComponentCollection<Collision2::CapsuleCollider> mCapsules;
-	ComponentCollection<Tags::Tag> mTags;
+	Components mComponents;
 
 private:
 	static std::array<Scene*, NONE> sScenes;

@@ -1,4 +1,6 @@
 #pragma once
+#include "SimpleMath.h"
+
 struct Building
 {
 	enum Type : size_t
@@ -14,6 +16,6 @@ struct Building
 		COUNT
 	} type;
 
-	Color color = { 0.75f, 0.75f, 0.75f };
+	DirectX::SimpleMath::Color color = { 0.75f, 0.75f, 0.75f };
 	float hitpoints;
 };

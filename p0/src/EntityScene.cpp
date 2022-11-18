@@ -17,11 +17,11 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	Vector3 bounds = sPlayerRenderer.Bounds();
 	float radius = bounds.x;
 	float halfHeight = bounds.y - radius;
-	mPlayer = CreatePlayer(mTags, mTransforms, mCapsules, radius, halfHeight);
+	mPlayer = CreatePlayer(mComponents, radius, halfHeight);
 
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
-	mHeadlights.SetParent(mTransforms.GetComponent(mPlayer));
+	mHeadlights.SetParent(mComponents.transforms.GetComponent(mPlayer));
 	mHeadlights.TranslateY(80.0f);
 	mHeadlights.Scale(100.0f);
 #endif
@@ -108,7 +108,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
-	Transform3& transform = *mTransforms.GetComponent(mPlayer);
+	Transform3& transform = *mComponents.transforms.GetComponent(mPlayer);
 
 #if SPLINE
 	Vector3 a = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
@@ -194,8 +194,8 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	}
 #endif
 
-	Debug::Draw(*mCapsules.GetComponent(mPlayer), mView, mProj, graphics);
-	sPlayerRenderer.Render(mTransforms.GetComponent(mPlayer)->World(), mView, mProj, graphics);
+	Debug::Draw(*mComponents.capsules.GetComponent(mPlayer), mView, mProj, graphics);
+	sPlayerRenderer.Render(mComponents.transforms.GetComponent(mPlayer)->World(), mView, mProj, graphics);
 }
 
 // Timer test:

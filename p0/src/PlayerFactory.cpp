@@ -1,19 +1,13 @@
 #include "PlayerFactory.h"
-#include "Component.h"
-#include "Collision2.h"
+#include "Components.h"
 
-Entity CreatePlayer(
-	ComponentCollection<Tags::Tag>& tags,
-	ComponentCollection<Transform3>& transforms,
-	ComponentCollection<Collision2::CapsuleCollider>& capsules,
-	float radius, float halfHeight
-)
+Entity CreatePlayer(Components& components, float radius, float halfHeight)
 {
 	Entity entity = CreateEntity();
-	tags.Add(entity) = Tags::PLAYER;
-	Transform3& transform = transforms.Add(entity);
+	components.tags.Add(entity) = Tags::PLAYER;
+	Transform3& transform = components.transforms.Add(entity);
 
-	Collision2::CapsuleCollider& capsule = capsules.Add(entity);
+	Collision2::CapsuleCollider& capsule = components.capsules.Add(entity);
 	capsule.entity = entity;
 	capsule.transform = &transform;
 	capsule.radius = radius;
