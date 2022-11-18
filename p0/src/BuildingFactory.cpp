@@ -10,8 +10,8 @@ Entity CreateBuilding(Components& components,
 	components.tags.Add(entity) = Tags::BUILDING;
 	components.transforms.Add(entity);
 
-	Collision2::Capsule& capsule = components.capsules.Add(entity);
-	Collision2::AutoBound(capsule, renderer.Bounds(type));
+	Capsule& capsule = components.capsules.Add(entity);
+	AutoBound(capsule, renderer.Bounds(type));
 	capsule.dynamic = false;
 
 	Building& building = components.buildings.Add(entity);

@@ -1,5 +1,6 @@
 #pragma once
 #include "DXTK.h"
+#include "Geometry.h"
 #include <memory>
 
 namespace Collision
@@ -36,12 +37,12 @@ namespace Debug
 		std::shared_ptr<DX::DeviceResources> graphics,
 		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
-	void Draw(const Transform3& transform, float radius,
+	void Draw(const Transform3& transform, const Sphere& sphere,
 		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics,
 		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
-	void Draw(const Transform3& transform, float radius, float halfHeight,
+	void Draw(const Transform3& transform, const Capsule& capsule,
 		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics,
 		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);

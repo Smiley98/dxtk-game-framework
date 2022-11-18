@@ -8,8 +8,8 @@ Entity CreatePlayer(Components& components, const PlayerRenderer& renderer)
 	components.tags.Add(entity) = Tags::PLAYER;
 	components.transforms.Add(entity);
 
-	Collision2::Capsule& capsule = components.capsules.Add(entity);
-	Collision2::AutoBound(capsule, renderer.Bounds());
+	Capsule& capsule = components.capsules.Add(entity);
+	AutoBound(capsule, renderer.Bounds());
 	capsule.dynamic = true;
 
 	return entity;

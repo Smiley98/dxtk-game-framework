@@ -1,26 +1,11 @@
 #pragma once
 #include "Transform3.h"
+#include "Geometry.h"
 #undef min
 #undef max
 
 namespace Collision2
 {
-	struct Geometry
-	{
-		bool dynamic = false;	// no movement (static) vs movement (dynamic)
-	};
-
-	struct Sphere : public Geometry
-	{
-		float r = 0.0f;		// radius
-	};
-
-	struct Capsule : public Geometry
-	{
-		float r = 0.0f;		// radius
-		float hh = 0.0f;	// half-height
-	};
-
 	// Outputs the top and bottom of a cylinder relative to its forward vector
 	inline void CylinderBounds(const Transform3& transform, float halfHeight, Vector3& top, Vector3& bot)
 	{
@@ -53,7 +38,7 @@ namespace Collision2
 			bBot - aBot		// A-bot to B-bot
 		};
 
-		uint32_t min = 0;
+		size_t min = 0;
 		float length = vectors[min].LengthSquared();
 		for (size_t i = 1; i < 4; i++)
 		{
@@ -188,13 +173,5 @@ namespace Collision2
 		targetDirection.Normalize();
 
 		return targetDirection.Dot(viewerDirection) > cosf(DirectX::XM_RADIANS * fov * 0.5f);
-	}
-
-	void AutoBound(Capsule& capsule, const Vector3& bounds)
-	{
-		float r = bounds.x;
-		float hh = bounds.y - r;
-		capsule.r = r;
-		capsule.hh = hh;
 	}
 }

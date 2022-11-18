@@ -72,8 +72,10 @@
 #include "StepTimer.h"
 
 // Includes Transform and SimpleMath
-#include "Collision.h"
-#include "Collision2.h"
+#include "CollisionMath.h"
+#include "CollisionMath2.h"
+//#include "Collision.h"
+//#include "Collision2.h"
 
 namespace DX
 {
