@@ -14,8 +14,10 @@ using namespace DirectX;
 
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
-	//mPlayer2.Load(sPlayerRenderer, mColliders2);
-	mPlayer = CreatePlayer(mTransforms, mCapsules);
+	Vector3 bounds = sPlayerRenderer.Bounds();
+	float radius = bounds.x;
+	float halfHeight = bounds.y - radius;
+	mPlayer = CreatePlayer(mTags, mTransforms, mCapsules, radius, halfHeight);
 
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);

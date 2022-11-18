@@ -8,6 +8,7 @@
 #include "MiscRenderer.h"
 
 #include "Component.h"
+#include "Tags.h"
 
 #include <array>
 #include <memory>
@@ -83,6 +84,7 @@ protected:
 	ComponentCollection<Transform3> mTransforms;
 	ComponentCollection<Collision2::SphereCollider> mSpheres;
 	ComponentCollection<Collision2::CapsuleCollider> mCapsules;
+	ComponentCollection<Tags::Tag> mTags;
 
 private:
 	static std::array<Scene*, NONE> sScenes;

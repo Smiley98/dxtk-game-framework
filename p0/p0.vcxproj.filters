@@ -103,6 +103,9 @@
     <ClCompile Include="src\Entity.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
+    <ClCompile Include="src\PlayerFactory.cpp">
+      <Filter>ECS\Factories</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -184,9 +187,6 @@
       <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="src\Building.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Player.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\PlayerFactory.h">

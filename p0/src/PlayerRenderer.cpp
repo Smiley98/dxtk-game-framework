@@ -34,15 +34,16 @@ void PlayerRenderer::Render(const Matrix& world, const Matrix& view, const Matri
 	mVan->Draw(graphics->GetD3DDeviceContext(), *mStates, world, view, proj);
 }
 
-Vector3 PlayerRenderer::Bounds(Player::Type type) const
+Vector3 PlayerRenderer::Bounds(/*Player::Type type*/) const
 {
-	switch (type)
-	{
-	case Player::VAN:
-		return mVan->meshes.front()->boundingBox.Extents;
-	case Player::MECH:
-		return {};
-	default:
-		return {};
-	}
+	return mVan->meshes.front()->boundingBox.Extents;
+	//switch (type)
+	//{
+	//case Player::VAN:
+	//	return mVan->meshes.front()->boundingBox.Extents;
+	//case Player::MECH:
+	//	return {};
+	//default:
+	//	return {};
+	//}
 }

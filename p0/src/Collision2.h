@@ -1,6 +1,6 @@
 #pragma once
 #include "CollisionMath2.h"
-#include "UnorderedVector.h"
+#include "Entity.h"
 #include "Tags.h"
 
 // The Colliders class was too weird given its id system and memory ownership.
@@ -10,16 +10,10 @@ namespace Collision2
 	struct SphereCollider;
 	struct CapsuleCollider;
 
-	struct Info
-	{
-		Tags::Tag tag = Tags::NONE;	// Used to cast data
-		void* data = nullptr;		// Points to the object that owns this collider
-	};
-
 	struct HitPair
 	{
-		Info a;
-		Info b;
+		Entity a = INVALID_ENTITY;
+		Entity b = INVALID_ENTITY;
 		Vector3 mtv;
 	};
 
@@ -30,9 +24,9 @@ namespace Collision2
 		virtual bool IsColliding(const SphereCollider& collider, Vector3& mtv) const = 0;
 		virtual bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const = 0;
 
+		Entity entity = INVALID_ENTITY;
 		Transform3* transform = nullptr;
 		bool dynamic = false;
-		Info info;
 	};
 
 	struct SphereCollider :
@@ -43,7 +37,7 @@ namespace Collision2
 		inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
 		inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
 
-		float radius;
+		float radius = 0.0f;
 	};
 
 	struct CapsuleCollider :
@@ -54,8 +48,8 @@ namespace Collision2
 		inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
 		inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
 
-		float halfHeight;
-		float radius;
+		float halfHeight = 0.0f;
+		float radius = 0.0f;
 	};
 
 	inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
@@ -136,7 +130,7 @@ namespace Collision2
 				const SphereCollider& b = *dynamicSpheres[j];
 				if (b.IsColliding(a, mtv))
 				{
-					collisions.push_back({ a.info, b.info, mtv });
+					collisions.push_back({ a.entity, b.entity, mtv });
 				}
 			}
 
@@ -147,7 +141,7 @@ namespace Collision2
 				const CapsuleCollider& b = *dynamicCapsules[j];
 				if (b.IsColliding(a, mtv))
 				{
-					collisions.push_back({ a.info, b.info, mtv });
+					collisions.push_back({ a.entity, b.entity, mtv });
 				}
 			}
 		}
@@ -162,7 +156,7 @@ namespace Collision2
 				const SphereCollider& b = *dynamicSpheres[j];
 				if (b.IsColliding(a, mtv))
 				{
-					collisions.push_back({ a.info, b.info, mtv });
+					collisions.push_back({ a.entity, b.entity, mtv });
 				}
 			}
 
@@ -173,7 +167,7 @@ namespace Collision2
 				const CapsuleCollider& b = *dynamicCapsules[j];
 				if (b.IsColliding(a, mtv))
 				{
-					collisions.push_back({ a.info, b.info, mtv });
+					collisions.push_back({ a.entity, b.entity, mtv });
 				}
 			}
 		}
@@ -188,7 +182,7 @@ namespace Collision2
 				const CapsuleCollider& b = *dynamicCapsules[j];
 				if (b.IsColliding(a, mtv))
 				{
-					collisions.push_back({ a.info, b.info, mtv });
+					collisions.push_back({ a.entity, b.entity, mtv });
 				}
 			}
 
@@ -200,7 +194,7 @@ namespace Collision2
 				const SphereCollider& b = *dynamicSpheres[j];
 				if (b.IsColliding(a, mtv))
 				{
-					collisions.push_back({ a.info, b.info, mtv });
+					collisions.push_back({ a.entity, b.entity, mtv });
 				}
 			}
 		}
@@ -216,7 +210,7 @@ namespace Collision2
 				const CapsuleCollider& b = *dynamicCapsules[j];
 				if (b.IsColliding(a, mtv))
 				{
-					collisions.push_back({ a.info, b.info, mtv });
+					collisions.push_back({ a.entity, b.entity, mtv });
 				}
 			}
 		}
