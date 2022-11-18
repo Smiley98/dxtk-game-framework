@@ -10,14 +10,8 @@ Entity CreateBuilding(Components& components,
 	components.tags.Add(entity) = Tags::BUILDING;
 	components.transforms.Add(entity);
 
-	// push_back causes a reallocation which is why the pointer is getting invalidated!
-	// Collider no longer needs to know its entity for collision response since we now must loop through all entities!
-	//capsule.entity = entity;
-	//capsule.transform = &transform;
-	// Switching from vector to array won't save us because component removal would still mess up addresses xD
-
-	Collision2::CapsuleCollider& capsule = components.capsules.Add(entity);
-	capsule.AutoBound(renderer.Bounds(type));
+	Collision2::Capsule& capsule = components.capsules.Add(entity);
+	Collision2::AutoBound(capsule, renderer.Bounds(type));
 	capsule.dynamic = false;
 
 	Building& building = components.buildings.Add(entity);

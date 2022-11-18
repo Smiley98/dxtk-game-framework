@@ -5,6 +5,22 @@
 
 namespace Collision2
 {
+	struct Geometry
+	{
+		bool dynamic = false;	// no movement (static) vs movement (dynamic)
+	};
+
+	struct Sphere : public Geometry
+	{
+		float r = 0.0f;		// radius
+	};
+
+	struct Capsule : public Geometry
+	{
+		float r = 0.0f;		// radius
+		float hh = 0.0f;	// half-height
+	};
+
 	// Outputs the top and bottom of a cylinder relative to its forward vector
 	inline void CylinderBounds(const Transform3& transform, float halfHeight, Vector3& top, Vector3& bot)
 	{
@@ -13,16 +29,17 @@ namespace Collision2
 		bot = transform.Translation() - forward * halfHeight;
 	}
 
-	// Returns the point along line ab closest to point p
-	inline Vector3 NearestPoint(const Vector3& a, const Vector3& b, const Vector3& p)
+	// Projects point P along line AB
+	inline Vector3 Project(const Vector3& a, const Vector3& b, const Vector3& p)
 	{
 		Vector3 AB = b - a;
 		float t = (p - a).Dot(AB) / AB.Dot(AB);
 		return a + std::min(std::max(t, 0.0f), 1.0f) * AB;
 	}
 
-	// Outputs nearest spheres on capsules A and B
-	inline void NearestSpheres(const Transform3& tA, const Transform3& tB, float hhA, float hhB, float rA, float rB,
+	// Determines the two closest points along cylinders A and B
+	inline void NearestCylinderPoints(
+		const Transform3& tA, const Transform3& tB, float hhA, float hhB,
 		Vector3& nearestA, Vector3& nearestB)
 	{
 		Vector3 aTop, aBot, bTop, bBot;
@@ -30,15 +47,15 @@ namespace Collision2
 		CylinderBounds(tB, hhB, bTop, bBot);
 
 		Vector3 vectors[4]{
-			bTop - aTop,
-			bBot - aTop,
-			bTop - aBot,
-			bBot - aBot
+			bTop - aTop,	// A-top to B-top
+			bBot - aTop,	// A-top to B-bot
+			bTop - aBot,	// A-bot to B-top
+			bBot - aBot		// A-bot to B-bot
 		};
 
 		uint32_t min = 0;
 		float length = vectors[min].LengthSquared();
-		for (int i = 1; i < 4; i++)
+		for (size_t i = 1; i < 4; i++)
 		{
 			float temp = vectors[i].LengthSquared();
 			if (temp < length)
@@ -49,10 +66,15 @@ namespace Collision2
 		}
 
 		nearestA = min < 2 ? aTop : aBot;
-		nearestB = NearestPoint(bBot, bTop, nearestA);
-		nearestA = NearestPoint(aBot, aTop, nearestB);
+		nearestB = Project(bBot, bTop, nearestA);
+		nearestA = Project(aBot, aTop, nearestB);
 	}
 
+//*****************
+// Sphere-Sphere
+//*****************
+
+	// Boolean hit-test
 	inline bool SphereSphere(const Vector3& tA, const Vector3& tB, float rA, float rB)
 	{
 		Vector3 AB = tB - tA;
@@ -77,36 +99,85 @@ namespace Collision2
 		return colliding;
 	}
 
-	inline bool SphereCapsule(const Vector3& tA, float rA, const Transform3& tB, float hhB, float rB)
+	// Boolean wrapper
+	inline bool SphereSphere(const Transform3& tA, const Transform3& tB, const Sphere& gA, const Sphere& gB)
+	{
+		return SphereSphere(tA.Translation(), tB.Translation(), gA.r, gB.r);
+	}
+
+	// MTV wrapper
+	inline bool SphereSphere(const Transform3& tA, const Transform3& tB, const Sphere& gA, const Sphere& gB, Vector3& mtv)
+	{
+		return SphereSphere(tA.Translation(), tB.Translation(), gA.r, gB.r, mtv);
+	}
+
+//*****************
+// Sphere-Capsule
+//*****************
+
+	// Boolean hit-test
+	inline bool SphereCapsule(const Vector3& tA, const Transform3& tB, float rA, float rB, float hhB)
 	{
 		Vector3 top, bot;
 		CylinderBounds(tB, hhB, top, bot);
-		return SphereSphere(tA, NearestPoint(bot, top, tA), rA, rB);
+		return SphereSphere(tA, Project(bot, top, tA), rA, rB);
 	}
 
 	// MTV resolves b from a
-	inline bool SphereCapsule(const Vector3& tA, float rA, const Transform3& tB, float hhB, float rB, Vector3& mtv)
+	inline bool SphereCapsule(const Vector3& tA, const Transform3& tB, float rA, float rB, float hhB, Vector3& mtv)
 	{
 		Vector3 top, bot;
 		CylinderBounds(tB, hhB, top, bot);
-		return SphereSphere(tA, NearestPoint(bot, top, tA), rA, rB, mtv);
+		return SphereSphere(tA, Project(bot, top, tA), rA, rB, mtv);
 	}
 
-	inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, float hhA, float hhB, float rA, float rB)
+	// Boolean wrapper
+	inline bool SphereCapsule(const Transform3& tA, const Transform3& tB, const Sphere& gA, const Capsule& gB)
+	{
+		return SphereCapsule(tA.Translation(), tB, gA.r, gB.r, gB.hh);
+	}
+
+	// MTV wrapper
+	inline bool SphereCapsule(const Transform3& tA, const Transform3& tB, const Sphere& gA, const Capsule& gB, Vector3& mtv)
+	{
+		return SphereCapsule(tA.Translation(), tB, gA.r, gB.r, gB.hh, mtv);
+	}
+
+//*****************
+// Capsule-Capsule
+//*****************
+
+	// Boolean hit-test
+	inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, float rA, float rB, float hhA, float hhB)
 	{
 		Vector3 nearestA, nearestB;
-		NearestSpheres(tA, tB, hhA, hhB, rA, rB, nearestA, nearestB);
+		NearestCylinderPoints(tA, tB, hhA, hhB, nearestA, nearestB);
 		return SphereSphere(nearestA, nearestB, rA, rB);
 	}
 
 	// MTV resolves b from a
-	inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, float hhA, float hhB, float rA, float rB, Vector3& mtv)
+	inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, float rA, float rB, float hhA, float hhB, Vector3& mtv)
 	{
 		Vector3 nearestA, nearestB;
-		NearestSpheres(tA, tB, hhA, hhB, rA, rB, nearestA, nearestB);
+		NearestCylinderPoints(tA, tB, hhA, hhB, nearestA, nearestB);
 		return SphereSphere(nearestA, nearestB, rA, rB, mtv);
 	}
 
+	// Boolean wrapper
+	inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, const Capsule& gA, const Capsule& gB)
+	{
+		return CapsuleCapsule(tA, tB, gA.r, gB.r, gA.hh, gB.hh);
+	}
+
+	// MTV wrapper
+	inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, const Capsule& gA, const Capsule& gB, Vector3& mtv)
+	{
+		return CapsuleCapsule(tA, tB, gA.r, gB.r, gA.hh, gB.hh, mtv);
+	}
+
+//*****************
+// Miscellaneous
+//*****************
 	inline bool InRange(const Transform3& viewer, const Vector3& target, float length, float fov /*(degrees)*/)
 	{
 		if ((target - viewer.Translation()).Length() > length)
@@ -117,5 +188,13 @@ namespace Collision2
 		targetDirection.Normalize();
 
 		return targetDirection.Dot(viewerDirection) > cosf(DirectX::XM_RADIANS * fov * 0.5f);
+	}
+
+	void AutoBound(Capsule& capsule, const Vector3& bounds)
+	{
+		float r = bounds.x;
+		float hh = bounds.y - r;
+		capsule.r = r;
+		capsule.hh = hh;
 	}
 }

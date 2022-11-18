@@ -3,12 +3,12 @@
 #include "Entity.h"
 #include <vector>
 
-// The Colliders class was too weird given its id system and memory ownership.
-// Collision should be as C-like as possible to reduce complexity and increase flexibility.
+// This file is an excellent example of everything wrong with C++ and object-oriented programming.
 namespace Collision2
 {
-	struct SphereCollider;
-	struct CapsuleCollider;
+	struct Components;
+	class SphereCollider;
+	class CapsuleCollider;
 
 	struct HitPair
 	{
@@ -17,95 +17,116 @@ namespace Collision2
 		Vector3 mtv;
 	};
 
-	// TODO -- remove this, make this pure C.
-	// Add Collider classes that construct from entity + transform for TESTING ONLY (no memory corruption)!
-	struct Collider
-	{
-		//virtual bool IsColliding(const SphereCollider& collider) const = 0;
-		//virtual bool IsColliding(const CapsuleCollider& collider) const = 0;
-		//virtual bool IsColliding(const SphereCollider& collider, Vector3& mtv) const = 0;
-		//virtual bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const = 0;
+	void Collide(
+		const std::vector<Entity>& entities,
+		const Components& components,
+		std::vector<HitPair>& collisions);
 
-		bool dynamic = false;
+	class Collider
+	{
+	public:
+		Collider(Entity& e, Transform3& t) : entity(e), transform(t) {}
+
+	protected:
+		virtual bool IsColliding(const SphereCollider& collider) const = 0;
+		virtual bool IsColliding(const CapsuleCollider& collider) const = 0;
+		virtual bool IsColliding(const SphereCollider& collider, Vector3& mtv) const = 0;
+		virtual bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const = 0;
+
+		Entity& entity;
+		Transform3& transform;
+
+	private:
+		Collider() = default;
 	};
 
-	struct SphereCollider :
+	class SphereCollider :
 		public Collider
 	{
-		//inline bool IsColliding(const SphereCollider& collider) const final;
-		//inline bool IsColliding(const CapsuleCollider& collider) const final;
-		//inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
-		//inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
+	public:
+		SphereCollider(Sphere& g, Entity& e, Transform3& t) : geometry(g), Collider(e, t) {}
+		friend CapsuleCollider;
+		friend void Collide(
+			const std::vector<Entity>& entities,
+			const Components& components,
+			std::vector<HitPair>& collisions);
 
-		float radius = 0.0f;
+	protected:
+		Sphere& geometry;
+
+		inline bool IsColliding(const SphereCollider& collider) const final;
+		inline bool IsColliding(const CapsuleCollider& collider) const final;
+		inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
+		inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
+
+	private:
+		SphereCollider() = default;
 	};
 
-	struct CapsuleCollider :
+	class CapsuleCollider :
 		public Collider
 	{
-		//inline bool IsColliding(const CapsuleCollider& collider) const final;
-		//inline bool IsColliding(const SphereCollider& collider) const final;
-		//inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
-		//inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
+	public:
+		CapsuleCollider(Capsule& g, Entity& e, Transform3& t) : geometry(g), Collider(e, t) {}
+		friend SphereCollider;
+		friend void Collide(
+			const std::vector<Entity>& entities,
+			const Components& components,
+			std::vector<HitPair>& collisions);
 
-		inline void AutoBound(const Vector3& bounds);
+	protected:
+		Capsule& geometry;
 
-		float halfHeight = 0.0f;
-		float radius = 0.0f;
+		inline bool IsColliding(const CapsuleCollider& collider) const final;
+		inline bool IsColliding(const SphereCollider& collider) const final;
+		inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
+		inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
+
+	private:
+		CapsuleCollider() = default;
 	};
 
-	/*inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
+	inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
 	{
-		return SphereSphere(collider.transform->Translation(), transform->Translation(), collider.radius, radius);
+		return SphereSphere(collider.transform, transform, collider.geometry, geometry);
 	}
 
 	inline bool SphereCollider::IsColliding(const CapsuleCollider& collider) const
 	{
-		return SphereCapsule(transform->Translation(), radius, *collider.transform, collider.halfHeight, collider.radius);
+		return SphereCapsule(transform, collider.transform, geometry, collider.geometry);
 	}
 
 	inline bool SphereCollider::IsColliding(const SphereCollider& collider, Vector3& mtv) const
 	{
-		return SphereSphere(collider.transform->Translation(), transform->Translation(), collider.radius, radius, mtv);
+		return SphereSphere(collider.transform, transform, collider.geometry, geometry, mtv);
 	}
 
 	inline bool SphereCollider::IsColliding(const CapsuleCollider& collider, Vector3& mtv) const
 	{
-		bool isColliding = SphereCapsule(transform->Translation(), radius, *collider.transform, collider.halfHeight, collider.radius, mtv);
+		bool isColliding = SphereCapsule(transform, collider.transform, geometry, collider.geometry, mtv);
 		mtv = -mtv;
 		return isColliding;
 	}
 
 	inline bool CapsuleCollider::IsColliding(const CapsuleCollider& collider) const
 	{
-		return CapsuleCapsule(*collider.transform, *transform, collider.halfHeight, halfHeight, collider.radius, radius);
+		return CapsuleCapsule(collider.transform, transform, collider.geometry, geometry);
 	}
 
 	inline bool CapsuleCollider::IsColliding(const SphereCollider& collider) const
 	{
-		return SphereCapsule(collider.transform->Translation(), collider.radius, *transform, halfHeight, radius);
+		return SphereCapsule(collider.transform, transform, collider.geometry, geometry);
 	}
 
 	inline bool CapsuleCollider::IsColliding(const CapsuleCollider& collider, Vector3& mtv) const
 	{
-		return CapsuleCapsule(*collider.transform, *transform, collider.halfHeight, halfHeight, collider.radius, radius, mtv);
+		return CapsuleCapsule(collider.transform, transform, collider.geometry, geometry, mtv);
 	}
 
 	inline bool CapsuleCollider::IsColliding(const SphereCollider& collider, Vector3& mtv) const
 	{
-		return SphereCapsule(collider.transform->Translation(), collider.radius, *transform, halfHeight, radius, mtv);
-	}*/
-
-	inline void CapsuleCollider::AutoBound(const Vector3& bounds)
-	{
-		float r = bounds.x;
-		float hh = bounds.y - r;
-		radius = r;
-		halfHeight = hh;
+		return SphereCapsule(collider.transform, transform, collider.geometry, geometry, mtv);
 	}
-
-	struct Components;
-	void Collide(const std::vector<Entity>& entities, const Components& components, std::vector<HitPair>& collisions);
 
 	/*inline void Collide(
 		const std::vector<SphereCollider>& spheres,
