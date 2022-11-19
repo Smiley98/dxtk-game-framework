@@ -1,6 +1,7 @@
 #pragma once
 #include "CollisionMath2.h"
 #include "Entity.h"
+#include <array>
 #include <vector>
 
 struct Components;
@@ -13,8 +14,7 @@ namespace Collision2
 
 	struct HitPair
 	{
-		Entity a = INVALID_ENTITY;
-		Entity b = INVALID_ENTITY;
+		std::array<Entity, 2> hits { INVALID_ENTITY, INVALID_ENTITY };
 		Vector3 mtv;
 	};
 

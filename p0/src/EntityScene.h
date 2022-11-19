@@ -19,7 +19,7 @@ public:
 	void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
-	std::array<Entity, Building::COUNT> mTestBuildings;
+	//std::array<Entity, Building::COUNT> mTestBuildings;
 	std::vector<Entity> mBuildings;
 
 	Entity mPlayer;

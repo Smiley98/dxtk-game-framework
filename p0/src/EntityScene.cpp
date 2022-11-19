@@ -4,8 +4,8 @@
 #include "BuildingFactory.h"
 #include "Utility.h"
 
-#define MAP false
-#define SPLINE true
+#define MAP true
+#define SPLINE false
 #define KEYBOARD true
 #define GAMEPAD false
 
@@ -13,15 +13,6 @@ using namespace DirectX;
 
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
-	float step = mWorldWidth / mTestBuildings.size();
-	for (size_t i = 0; i < mTestBuildings.size(); i++)
-	{
-		mTestBuildings[i] = CreateBuilding(mComponents, (Building::Type)i, sBuildingRenderer);
-		mComponents.transforms.GetComponent(mTestBuildings[i])->Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
-	}
-
-	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);
-
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
 	mHeadlights.SetParent(mComponents.transforms.GetComponent(mPlayer));
@@ -29,13 +20,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mHeadlights.Scale(100.0f);
 #endif
 
-	std::vector<Collision2::HitPair> collisions;
-	Collision2::Collide(mComponents.transforms.Entities(), mComponents, collisions);
-	Print("Test");
-
 #if MAP
-	std::vector<Collision2::CapsuleCollider>& capsules = mColliders2.mStaticCapsules.Objects();
-
 	const int rows = 4;
 	const int cols = 8;
 	const float xStep = mWorldWidth / cols;
@@ -46,28 +31,24 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	{
 		for (int j = 0; j < cols; j++)
 		{
-			//BuildingId id = mMap.Add(Building::TD, mColliders);
-			//building->position = { x, y, 0.0f };
-			//mColliders.Get(building->collider)->Translate(building->position);
-
-			BuildingId id = mMap.Add(Building::TD, mColliders2);
-			Building* building = mMap.Get(id);
-			building->transform.Translate(x, y, 0.0f);
+			Entity building = CreateBuilding(mComponents, Building::TD, sBuildingRenderer);
+			mComponents.transforms.GetComponent(building)->Translate(x, y, 0.0f);
+			mBuildings.push_back(building);
 			x += xStep;
-
-			XMVECTOR t, r, s;
-			XMMatrixDecompose(&s, &r, &t, building->transform.World());
-			Print(Vector3(t));
 		}
 		x = xStep * 0.5f;
 		y += yStep;
 	}
 
-	for (Collision2::CapsuleCollider& i : capsules)
-	{
-		Print(i.transform->World().Forward());
-	}
+	//float step = mWorldWidth / mTestBuildings.size();
+	//for (size_t i = 0; i < mTestBuildings.size(); i++)
+	//{
+	//	mTestBuildings[i] = CreateBuilding(mComponents, (Building::Type)i, sBuildingRenderer);
+	//	mComponents.transforms.GetComponent(mTestBuildings[i])->Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
+	//}
 #endif
+
+	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);
 }
 
 EntityScene::~EntityScene()
@@ -84,16 +65,12 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	mView = Matrix::CreateLookAt(
 		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
 		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
-		Vector3::UnitY);
+		Vector3::Up);
 #else
 	//mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
-	mView = Matrix::CreateLookAt(
-		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
-		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
-		Vector3::UnitY);
 #endif
-	//mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
-	mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
+	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
+	//mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
 }
 
 void EntityScene::OnBegin()
@@ -133,14 +110,14 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	GamePad::State state = input.gamePad.GetState(0);
 
 	if (state.IsLeftThumbStickLeft())
-		mVan.DeltaRotateZ(av);
+		transform.DeltaRotateZ(av);
 	if (state.IsLeftThumbStickRight())
-		mVan.DeltaRotateZ(-av);
+		transform.DeltaRotateZ(-av);
 
 	if (state.IsAPressed())
-		mVan.DeltaTranslate(mVan.Forward() * av);
+		transform.DeltaTranslate(transform.Forward() * av);
 	if (state.IsXPressed())
-		mVan.DeltaTranslate(mVan.Forward() * -av);
+		transform.DeltaTranslate(transform.Forward() * -av);
 #endif
 
 #if KEYBOARD
@@ -158,41 +135,34 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 #endif
 
 #if MAP
-	//std::vector<Collision::HitPair> collisions;
-	//mColliders.Collide(collisions);
-	//for (const Collision::HitPair& collision : collisions)
-	//{
-	//	if (collision.b.tag == Tags::PLAYER)
-	//	{
-	//		Player& player = *reinterpret_cast<Player*>(collision.b.data);
-	//		player.transform->DeltaTranslate(collision.mtv);
-	//	}
-	//}
-
-	//std::vector<Collision2::HitPair> collisions;
-	//mColliders2.Collide(collisions);
-	//for (const Collision2::HitPair& collision : collisions)
-	//{
-	//	if (collision.b.tag == Tags::PLAYER)
-	//	{
-	//		Player2& player = *reinterpret_cast<Player2*>(collision.b.data);
-	//		player.transform.DeltaTranslate(collision.mtv);
-	//	}
-	//}
+	std::vector<Collision2::HitPair> collisions;
+	Collision2::Collide(mComponents.transforms.Entities(), mComponents, collisions);
+	for (const Collision2::HitPair& collision : collisions)
+	{
+		for (Entity entity : collision.hits)
+		{
+			Tags::Tag* tag = mComponents.tags.GetComponent(entity);
+			if (tag != nullptr)
+			{
+				switch (*tag)
+				{
+					case Tags::PLAYER:
+						mComponents.transforms.GetComponent(entity)->DeltaTranslate(collision.mtv);
+						break;
+					case Tags::BUILDING:
+						mComponents.buildings.GetComponent(entity)->durability -= 10.0f;
+						break;
+					case Tags::BULLET:
+						break;
+				}
+			}
+		}
+	}
 #endif
 }
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	for (Entity i : mTestBuildings)
-	{
-		Transform3& transform = *mComponents.transforms.GetComponent(i);
-		Capsule& collider = *ToCapsule(mComponents.colliders.GetComponent(i));
-		Building& building = *mComponents.buildings.GetComponent(i);
-		Debug::Draw(transform, collider, mView, mProj, graphics, Colors::Red);
-		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
-	}
-
 #if SPLINE
 	for (const Vector3& position : mSpline)
 		Debug::Primitive(Debug::SPHERE,
@@ -201,13 +171,14 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #endif
 
 #if MAP
-	//mMap.Render(mView, mProj, graphics);
-	std::vector<Collision2::CapsuleCollider>& capsules = mColliders2.mStaticCapsules.Objects();
-	//Collision2::CapsuleCollider& capsule = capsules[0];
-	//Debug::Draw(capsule, mView, mProj, graphics);
-	for (Collision2::CapsuleCollider& i : capsules)
+	//for (Entity i : mTestBuildings)
+	for (Entity i : mBuildings)
 	{
-		Debug::Draw(i, mView, mProj, graphics);
+		Transform3& transform = *mComponents.transforms.GetComponent(i);
+		Capsule& collider = *ToCapsule(mComponents.colliders.GetComponent(i));
+		Building& building = *mComponents.buildings.GetComponent(i);
+		Debug::Draw(transform, collider, mView, mProj, graphics, Colors::Red);
+		//sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
 	}
 #endif
 
