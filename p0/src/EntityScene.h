@@ -19,7 +19,6 @@ public:
 	void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
-	//std::array<Entity, Building::COUNT> mTestBuildings;
 	std::vector<Entity> mBuildings;
 
 	Entity mPlayer;
@@ -32,10 +31,10 @@ private:
 	float mWorldHeight = 900;
 
 	std::vector<Vector3> mSpline = {
-		Vector3{ 500.0f, -300.0f, 0.0f },
-		Vector3{ -500.0f, -300.0f, 100.0f },
-		Vector3{ -500.0f, 300.0f, 100.0f },
-		Vector3{ 500.0f, 300.0f, 0.0f }
+		Vector3{ 500.0f, -300.0f, -500.0f },
+		Vector3{ -500.0f, -300.0f, 500.0f },
+		Vector3{ -500.0f, 300.0f, 500.0f },
+		Vector3{ 500.0f, 300.0f, -500.0f }
 	};
 	SpeedTable mSpeedTable;
 
