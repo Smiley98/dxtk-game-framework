@@ -43,10 +43,13 @@ public:
 		}
 	}
 
-	// Somewhat ambiguous and not needed yet.
-	//Component& operator[](size_t index) {
-	//	return mComponents[index];
-	//}
+	const Component& operator[](size_t index) const {
+		return mComponents[index];
+	}
+
+	Component& operator[](size_t index) {
+		return mComponents[index];
+	}
 
 	const Entity GetEntity(size_t index) const {
 		return mEntities[index];
@@ -68,15 +71,16 @@ public:
 		return it != mLookup.end() ? &mComponents[it->second] : nullptr;
 	}
 
-	const std::vector<Entity>& Entities() const
-	{
-		return mEntities;
-	}
-
-	const std::vector<Component>& Components() const
-	{
-		return mComponents;
-	}
+	// Try not to expose these
+	//const std::vector<Entity>& Entities() const
+	//{
+	//	return mEntities;
+	//}
+	//
+	//const std::vector<Component>& Components() const
+	//{
+	//	return mComponents;
+	//}
 
 	size_t Count() const
 	{

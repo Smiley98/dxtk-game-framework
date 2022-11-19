@@ -129,7 +129,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 #if MAP
 	std::vector<Collision2::HitPair> collisions;
-	Collision2::Collide(mComponents.transforms.Entities(), mComponents, collisions);
+	Collision2::Collide(mComponents, collisions);
 	for (const Collision2::HitPair& collision : collisions)
 	{
 		for (Entity entity : collision.hits)
@@ -157,7 +157,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	Transform3& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
-	Capsule& playerCollider = *ToCapsule(mComponents.colliders.GetComponent(mPlayer));
+	Capsule& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
 	Debug::Draw(playerTransform, playerCollider, mView, mProj, graphics);
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
 
@@ -176,7 +176,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	for (Entity i : mBuildings)
 	{
 		Transform3& transform = *mComponents.transforms.GetComponent(i);
-		Capsule& collider = *ToCapsule(mComponents.colliders.GetComponent(i));
+		Capsule& collider = *mComponents.capsules.GetComponent(i);
 		Building& building = *mComponents.buildings.GetComponent(i);
 		Debug::Draw(transform, collider, mView, mProj, graphics, Colors::Red);
 		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);

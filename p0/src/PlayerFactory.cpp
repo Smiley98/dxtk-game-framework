@@ -8,10 +8,9 @@ Entity CreatePlayer(Components& components, const PlayerRenderer& renderer)
 	components.tags.Add(entity) = Tags::PLAYER;
 	components.transforms.Add(entity);
 
-	Capsule& capsule = *ToCapsule(&components.colliders.Add(entity));
+	Capsule& capsule = components.capsules.Add(entity);
 	AutoBound(capsule, renderer.Bounds());
 	capsule.dynamic = true;
-	capsule.sphere = false;
 
 	return entity;
 }

@@ -9,52 +9,39 @@ struct Components;
 // This file is an excellent example of everything wrong with C++ and object-oriented programming.
 namespace Collision2
 {
-	class SphereCollider;
-	class CapsuleCollider;
-
 	struct HitPair
 	{
 		std::array<Entity, 2> hits { INVALID_ENTITY, INVALID_ENTITY };
 		Vector3 mtv;
 	};
 
-	void Collide(
-		const std::vector<Entity>& entities,
-		const Components& components,
-		std::vector<HitPair>& collisions);
+	void Collide(const Components& components, std::vector<HitPair>& collisions);
 
+	class SphereCollider;
+	class CapsuleCollider;
 	class Collider
 	{
 	public:
-		Collider(const Entity e, const Transform3& t) : entity(e), transform(t) {}
+		const Entity entity = INVALID_ENTITY;
+		const Transform3& transform;
 
 	protected:
+		Collider() = default;
+		Collider(const Entity e, const Transform3& t) : entity(e), transform(t) {}
+
 		virtual bool IsColliding(const SphereCollider& collider) const = 0;
 		virtual bool IsColliding(const CapsuleCollider& collider) const = 0;
 		virtual bool IsColliding(const SphereCollider& collider, Vector3& mtv) const = 0;
 		virtual bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const = 0;
-
-		const Entity entity = INVALID_ENTITY;
-		const Transform3& transform;
-
-	private:
-		Collider() = default;
 	};
 
 	class SphereCollider :
 		public Collider
 	{
 	public:
-		SphereCollider(const Entity& e, const Transform3& t, const Sphere& g) : Collider(e, t), geometry(g) {}
-		friend CapsuleCollider;
-		friend void Collide(
-			const std::vector<Entity>& entities,
-			const Components& components,
-			std::vector<HitPair>& collisions);
-
-	protected:
 		const Sphere& geometry;
 
+	protected:
 		inline bool IsColliding(const SphereCollider& collider) const final;
 		inline bool IsColliding(const CapsuleCollider& collider) const final;
 		inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
@@ -62,29 +49,28 @@ namespace Collision2
 
 	private:
 		SphereCollider() = default;
+		SphereCollider(const Entity& e, const Transform3& t, const Sphere& g) : Collider(e, t), geometry(g) {}
+
+		friend void Collide(const Components& components, std::vector<HitPair>& collisions);
 	};
 
 	class CapsuleCollider :
 		public Collider
 	{
 	public:
-		CapsuleCollider(const Entity& e, const Transform3& t, const Capsule& g) : Collider(e, t), geometry(g) {}
-		friend SphereCollider;
-		friend void Collide(
-			const std::vector<Entity>& entities,
-			const Components& components,
-			std::vector<HitPair>& collisions);
-
-	protected:
 		const Capsule& geometry;
 
+	protected:
 		inline bool IsColliding(const CapsuleCollider& collider) const final;
 		inline bool IsColliding(const SphereCollider& collider) const final;
 		inline bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const final;
 		inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
 
 	private:
+		CapsuleCollider(const Entity& e, const Transform3& t, const Capsule& g) : Collider(e, t), geometry(g) {}
 		CapsuleCollider() = default;
+
+		friend void Collide(const Components& components, std::vector<HitPair>& collisions);
 	};
 
 	inline bool SphereCollider::IsColliding(const SphereCollider& collider) const

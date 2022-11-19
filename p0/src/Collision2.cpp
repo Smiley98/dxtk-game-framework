@@ -3,37 +3,41 @@
 
 namespace Collision2
 {
-	void Collide(const std::vector<Entity>& entities, const Components& components, std::vector<HitPair>& collisions)
+	// Passing Components is more convenient than passing spheres and capsules directly.
+	// Can modify this later if we need to hit-test specific groups of geometry rather than all geometry.
+	void Collide(const Components& components, std::vector<HitPair>& collisions)
 	{
 		std::vector<Collision2::SphereCollider> staticSpheres;
 		std::vector<Collision2::SphereCollider> dynamicSpheres;
 		std::vector<Collision2::CapsuleCollider> staticCapsules;
 		std::vector<Collision2::CapsuleCollider> dynamicCapsules;
 
-		// Can avoid these scary casts if we use only capsules although its nice to see multi-geometry implementation
-		for (Entity entity : entities)
+		// Separate static vs dynamic spheres
+		for (size_t i = 0; i < components.spheres.Count(); i++)
 		{
-			const Transform3* transform = components.transforms.GetComponent(entity);
-			const Geometry* collider = components.colliders.GetComponent(entity);
-			if (collider != nullptr)
-			{
-				if (collider->sphere)
-				{
-					Collision2::SphereCollider sphereCollider(entity, *transform, *ToSphere(collider));
-					if (sphereCollider.geometry.dynamic)
-						dynamicSpheres.push_back(sphereCollider);
-					else
-						staticSpheres.push_back(sphereCollider);
-				}
-				else
-				{
-					Collision2::CapsuleCollider capsuleCollider(entity, *transform, *ToCapsule(collider));
-					if (capsuleCollider.geometry.dynamic)
-						dynamicCapsules.push_back(capsuleCollider);
-					else
-						staticCapsules.push_back(capsuleCollider);
-				}
-			}
+			const Entity entity = components.spheres.GetEntity(i);
+			const Transform3& transform = *components.transforms.GetComponent(entity);
+			const Sphere& sphere = components.spheres[i];
+
+			SphereCollider collider(entity, transform, sphere);
+			if (sphere.dynamic)
+				dynamicSpheres.push_back(collider);
+			else
+				staticSpheres.push_back(collider);
+		}
+
+		// Separate static vs dynamic capsules
+		for (size_t i = 0; i < components.capsules.Count(); i++)
+		{
+			const Entity entity = components.capsules.GetEntity(i);
+			const Transform3& transform = *components.transforms.GetComponent(entity);
+			const Capsule& capsule = components.capsules[i];
+
+			CapsuleCollider collider(entity, transform, capsule);
+			if (capsule.dynamic)
+				dynamicCapsules.push_back(collider);
+			else
+				staticCapsules.push_back(collider);
 		}
 
 		// Static spheres vs dynamic spheres & dynamic capsules
