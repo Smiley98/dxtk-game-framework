@@ -3,10 +3,11 @@
 #include "Entity.h"
 #include <vector>
 
+struct Components;
+
 // This file is an excellent example of everything wrong with C++ and object-oriented programming.
 namespace Collision2
 {
-	struct Components;
 	class SphereCollider;
 	class CapsuleCollider;
 
@@ -25,7 +26,7 @@ namespace Collision2
 	class Collider
 	{
 	public:
-		Collider(Entity& e, Transform3& t) : entity(e), transform(t) {}
+		Collider(const Entity& e, const Transform3& t) : entity(e), transform(t) {}
 
 	protected:
 		virtual bool IsColliding(const SphereCollider& collider) const = 0;
@@ -33,8 +34,8 @@ namespace Collision2
 		virtual bool IsColliding(const SphereCollider& collider, Vector3& mtv) const = 0;
 		virtual bool IsColliding(const CapsuleCollider& collider, Vector3& mtv) const = 0;
 
-		Entity& entity;
-		Transform3& transform;
+		const Entity& entity;
+		const Transform3& transform;
 
 	private:
 		Collider() = default;
@@ -44,7 +45,7 @@ namespace Collision2
 		public Collider
 	{
 	public:
-		SphereCollider(Sphere& g, Entity& e, Transform3& t) : geometry(g), Collider(e, t) {}
+		SphereCollider(const Entity& e, const Transform3& t, const Sphere& g) : Collider(e, t), geometry(g) {}
 		friend CapsuleCollider;
 		friend void Collide(
 			const std::vector<Entity>& entities,
@@ -52,7 +53,7 @@ namespace Collision2
 			std::vector<HitPair>& collisions);
 
 	protected:
-		Sphere& geometry;
+		const Sphere& geometry;
 
 		inline bool IsColliding(const SphereCollider& collider) const final;
 		inline bool IsColliding(const CapsuleCollider& collider) const final;
@@ -67,7 +68,7 @@ namespace Collision2
 		public Collider
 	{
 	public:
-		CapsuleCollider(Capsule& g, Entity& e, Transform3& t) : geometry(g), Collider(e, t) {}
+		CapsuleCollider(const Entity& e, const Transform3& t, const Capsule& g) : Collider(e, t), geometry(g) {}
 		friend SphereCollider;
 		friend void Collide(
 			const std::vector<Entity>& entities,
@@ -75,7 +76,7 @@ namespace Collision2
 			std::vector<HitPair>& collisions);
 
 	protected:
-		Capsule& geometry;
+		const Capsule& geometry;
 
 		inline bool IsColliding(const CapsuleCollider& collider) const final;
 		inline bool IsColliding(const SphereCollider& collider) const final;

@@ -8,8 +8,7 @@
 struct Components
 {
 	ComponentCollection<Transform3> transforms;
-	ComponentCollection<Sphere> spheres;
-	ComponentCollection<Capsule> capsules;
+	ComponentCollection<Geometry> colliders;
 	ComponentCollection<Building> buildings;
 	ComponentCollection<Tags::Tag> tags;
 };

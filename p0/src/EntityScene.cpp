@@ -29,9 +29,11 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mHeadlights.Scale(100.0f);
 #endif
 
+	std::vector<Collision2::HitPair> collisions;
+	Collision2::Collide(mComponents.transforms.Entities(), mComponents, collisions);
+	Print("Test");
+
 #if MAP
-	//mPlayer.Load(sPlayerRenderer, mColliders);
-	//mPlayer.transform->SetYaw(-45.0f);
 	std::vector<Collision2::CapsuleCollider>& capsules = mColliders2.mStaticCapsules.Objects();
 
 	const int rows = 4;
@@ -65,7 +67,6 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	{
 		Print(i.transform->World().Forward());
 	}
-	Print("Test");
 #endif
 }
 
@@ -186,7 +187,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	for (Entity i : mTestBuildings)
 	{
 		Transform3& transform = *mComponents.transforms.GetComponent(i);
-		Capsule& collider = *mComponents.capsules.GetComponent(i);
+		Capsule& collider = *ToCapsule(mComponents.colliders.GetComponent(i));
 		Building& building = *mComponents.buildings.GetComponent(i);
 		Debug::Draw(transform, collider, mView, mProj, graphics, Colors::Red);
 		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
@@ -211,7 +212,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #endif
 
 	Transform3& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
-	Capsule& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
+	Capsule& playerCollider = *ToCapsule(mComponents.colliders.GetComponent(mPlayer));
 	Debug::Draw(playerTransform, playerCollider, mView, mProj, graphics);
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
 }

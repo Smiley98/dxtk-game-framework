@@ -4,33 +4,36 @@
 namespace Collision2
 {
 	void Collide(const std::vector<Entity>& entities, const Components& components, std::vector<HitPair>& collisions)
-
 	{
-		std::vector<Transform3*> transforms;
-		std::vector<SphereCollider*> staticSpheres;
-		std::vector<SphereCollider*> dynamicSpheres;
-		std::vector<CapsuleCollider*> staticCapsules;
-		std::vector<CapsuleCollider*> dynamicCapsules;
+		std::vector<Collision2::SphereCollider> staticSpheres;
+		std::vector<Collision2::SphereCollider> dynamicSpheres;
+		std::vector<Collision2::CapsuleCollider> staticCapsules;
+		std::vector<Collision2::CapsuleCollider> dynamicCapsules;
 
-		/*for (Entity entity : entities)
+		// Can avoid these scary casts if we use only capsules although its nice to see multi-geometry implementation
+		for (Entity entity : entities)
 		{
-			//transforms.push_back()
-		}
-
-		for (const SphereCollider& sphere : spheres)
-		{
-			if (sphere.dynamic)
-				dynamicSpheres.push_back(&sphere);
-			else
-				staticSpheres.push_back(&sphere);
-		}
-
-		for (const CapsuleCollider& capsule : capsules)
-		{
-			if (capsule.dynamic)
-				dynamicCapsules.push_back(&capsule);
-			else
-				staticCapsules.push_back(&capsule);
+			const Transform3* transform = components.transforms.GetComponent(entity);
+			const Geometry* collider = components.colliders.GetComponent(entity);
+			if (collider != nullptr)
+			{
+				if (collider->sphere)
+				{
+					Collision2::SphereCollider sphereCollider(entity, *transform, *ToSphere(collider));
+					if (sphereCollider.geometry.dynamic)
+						dynamicSpheres.push_back(sphereCollider);
+					else
+						staticSpheres.push_back(sphereCollider);
+				}
+				else
+				{
+					Collision2::CapsuleCollider capsuleCollider(entity, *transform, *ToCapsule(collider));
+					if (capsuleCollider.geometry.dynamic)
+						dynamicCapsules.push_back(capsuleCollider);
+					else
+						staticCapsules.push_back(capsuleCollider);
+				}
+			}
 		}
 
 		// Static spheres vs dynamic spheres & dynamic capsules
@@ -39,8 +42,8 @@ namespace Collision2
 			for (size_t j = 0; j < dynamicSpheres.size(); j++)
 			{
 				Vector3 mtv;
-				const SphereCollider& a = *staticSpheres[i];
-				const SphereCollider& b = *dynamicSpheres[j];
+				const SphereCollider& a = staticSpheres[i];
+				const SphereCollider& b = dynamicSpheres[j];
 				if (b.IsColliding(a, mtv))
 				{
 					collisions.push_back({ a.entity, b.entity, mtv });
@@ -50,8 +53,8 @@ namespace Collision2
 			for (size_t j = 0; j < dynamicCapsules.size(); j++)
 			{
 				Vector3 mtv;
-				const SphereCollider& a = *staticSpheres[i];
-				const CapsuleCollider& b = *dynamicCapsules[j];
+				const SphereCollider& a = staticSpheres[i];
+				const CapsuleCollider& b = dynamicCapsules[j];
 				if (b.IsColliding(a, mtv))
 				{
 					collisions.push_back({ a.entity, b.entity, mtv });
@@ -65,8 +68,8 @@ namespace Collision2
 			for (size_t j = 0; j < dynamicSpheres.size(); j++)
 			{
 				Vector3 mtv;
-				const CapsuleCollider& a = *staticCapsules[i];
-				const SphereCollider& b = *dynamicSpheres[j];
+				const CapsuleCollider& a = staticCapsules[i];
+				const SphereCollider& b = dynamicSpheres[j];
 				if (b.IsColliding(a, mtv))
 				{
 					collisions.push_back({ a.entity, b.entity, mtv });
@@ -76,8 +79,8 @@ namespace Collision2
 			for (size_t j = 0; j < dynamicCapsules.size(); j++)
 			{
 				Vector3 mtv;
-				const CapsuleCollider& a = *staticCapsules[i];
-				const CapsuleCollider& b = *dynamicCapsules[j];
+				const CapsuleCollider& a = staticCapsules[i];
+				const CapsuleCollider& b = dynamicCapsules[j];
 				if (b.IsColliding(a, mtv))
 				{
 					collisions.push_back({ a.entity, b.entity, mtv });
@@ -91,8 +94,8 @@ namespace Collision2
 			for (size_t j = 0; j < dynamicCapsules.size(); j++)
 			{
 				Vector3 mtv;
-				const SphereCollider& a = *dynamicSpheres[i];
-				const CapsuleCollider& b = *dynamicCapsules[j];
+				const SphereCollider& a = dynamicSpheres[i];
+				const CapsuleCollider& b = dynamicCapsules[j];
 				if (b.IsColliding(a, mtv))
 				{
 					collisions.push_back({ a.entity, b.entity, mtv });
@@ -103,8 +106,8 @@ namespace Collision2
 			{
 				if (i == j) continue;
 				Vector3 mtv;
-				const SphereCollider& a = *dynamicSpheres[i];
-				const SphereCollider& b = *dynamicSpheres[j];
+				const SphereCollider& a = dynamicSpheres[i];
+				const SphereCollider& b = dynamicSpheres[j];
 				if (b.IsColliding(a, mtv))
 				{
 					collisions.push_back({ a.entity, b.entity, mtv });
@@ -119,13 +122,13 @@ namespace Collision2
 			{
 				if (i == j) continue;
 				Vector3 mtv;
-				const CapsuleCollider& a = *dynamicCapsules[i];
-				const CapsuleCollider& b = *dynamicCapsules[j];
+				const CapsuleCollider& a = dynamicCapsules[i];
+				const CapsuleCollider& b = dynamicCapsules[j];
 				if (b.IsColliding(a, mtv))
 				{
 					collisions.push_back({ a.entity, b.entity, mtv });
 				}
 			}
-		}*/
+		}
 	}
 }

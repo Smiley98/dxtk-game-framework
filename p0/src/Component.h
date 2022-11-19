@@ -48,13 +48,22 @@ public:
 	//	return mComponents[index];
 	//}
 
-	Entity GetEntity(size_t index) const {
+	const Entity GetEntity(size_t index) const {
 		return mEntities[index];
+	}
+
+	Entity& GetEntity(size_t index) {
+		return mEntities[index];
+	}
+
+	const Component* GetComponent(const Entity entity) const
+	{
+		auto it = mLookup.find(entity);
+		return it != mLookup.end() ? &mComponents[it->second] : nullptr;
 	}
 
 	Component* GetComponent(Entity entity)
 	{
-		// This lookup isn't costly because we won't have many components.
 		auto it = mLookup.find(entity);
 		return it != mLookup.end() ? &mComponents[it->second] : nullptr;
 	}
