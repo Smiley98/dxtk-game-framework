@@ -109,7 +109,7 @@
     <ClCompile Include="src\BuildingFactory.cpp">
       <Filter>ECS\Factories</Filter>
     </ClCompile>
-    <ClCompile Include="src\Collision2.cpp">
+    <ClCompile Include="src\Collision.cpp">
       <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Geometry.cpp">
@@ -122,9 +122,6 @@
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\StepTimer.h" />
     <ClInclude Include="src\DXTK.h" />
-    <ClInclude Include="src\Transform.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\MainScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
@@ -134,24 +131,12 @@
     <ClInclude Include="src\TestScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Collision.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\Tags.h" />
     <ClInclude Include="src\DebugRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="src\RigidTransform.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\CollisionScene.h">
       <Filter>Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TransformBase.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CollisionMath.h">
-      <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer.h">
       <Filter>Renderers</Filter>
@@ -177,7 +162,7 @@
     <ClInclude Include="src\MathUtilities.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\CollisionMath2.h">
+    <ClInclude Include="src\CollisionMath.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Component.h">
@@ -201,7 +186,7 @@
     <ClInclude Include="src\Components.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="src\Collision2.h">
+    <ClInclude Include="src\Collision.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Geometry.h">

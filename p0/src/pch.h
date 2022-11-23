@@ -73,9 +73,6 @@
 
 // Includes Transform and SimpleMath
 #include "CollisionMath.h"
-#include "CollisionMath2.h"
-//#include "Collision.h"
-//#include "Collision2.h"
 
 namespace DX
 {

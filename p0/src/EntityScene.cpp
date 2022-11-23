@@ -158,7 +158,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	Transform3& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
 	Capsule& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
-	Debug::Draw(playerTransform, playerCollider, mView, mProj, graphics);
+	Debug::Capsule(playerTransform, playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
 
 #if SPLINE
@@ -178,7 +178,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Transform3& transform = *mComponents.transforms.GetComponent(i);
 		Capsule& collider = *mComponents.capsules.GetComponent(i);
 		Building& building = *mComponents.buildings.GetComponent(i);
-		Debug::Draw(transform, collider, mView, mProj, graphics, Colors::Red);
+		Debug::Capsule(transform, collider.r, collider.hh, mView, mProj, graphics, Colors::Red);
 		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
 	}
 #endif

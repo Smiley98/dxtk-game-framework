@@ -1,6 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "Collision.h"
 
 class MainScene :
 	public Scene

@@ -1,4 +1,4 @@
-#include "Collision2.h"
+#include "Collision.h"
 #include "Components.h"
 
 // Passing Components is more convenient than passing spheres and capsules directly.

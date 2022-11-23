@@ -90,21 +90,21 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	Vector3 direction = mSS.b - mSS.a;
 	direction.Normalize();
-	Debug::Draw(mSS.a + r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
-	Debug::Draw(mSS.b - r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
-	Debug::Draw(mSS.a, r, mView, mProj, graphics, mSS.color, true);
-	Debug::Draw(mSS.b, r, mView, mProj, graphics, mSS.color, true);
+	Debug::Sphere(mSS.a + r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
+	Debug::Sphere(mSS.b - r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
+	Debug::Sphere(mSS.a, r, mView, mProj, graphics, mSS.color, true);
+	Debug::Sphere(mSS.b, r, mView, mProj, graphics, mSS.color, true);
 
 	Vector3 aNearest, bNearest;
 	NearestCylinderPoints(mCC.a, mCC.b, hh, hh, aNearest, bNearest);
-	Debug::Draw(aNearest, r, mView, mProj, graphics, Colors::Black);
-	Debug::Draw(bNearest, r, mView, mProj, graphics, Colors::White);
-	Debug::Draw(mCC.a, r, hh, mView, mProj, graphics, mCC.color, true);
-	Debug::Draw(mCC.b, r, hh, mView, mProj, graphics, mCC.color, true);
+	Debug::Sphere(aNearest, r, mView, mProj, graphics, Colors::Black);
+	Debug::Sphere(bNearest, r, mView, mProj, graphics, Colors::White);
+	Debug::Capsule(mCC.a, r, hh, mView, mProj, graphics, mCC.color, true);
+	Debug::Capsule(mCC.b, r, hh, mView, mProj, graphics, mCC.color, true);
 
-	Debug::Draw(mSC.a, r, mView, mProj, graphics, mSC.color, true);
-	Debug::Draw(mSC.b, r, hh, mView, mProj, graphics, mSC.color, true);
+	Debug::Sphere(mSC.a, r, mView, mProj, graphics, mSC.color, true);
+	Debug::Capsule(mSC.b, r, hh, mView, mProj, graphics, mSC.color, true);
 
-	Debug::Draw(mSoccer.player, r, hh, mView, mProj, graphics, mSoccer.color, true);
-	Debug::Draw(mSoccer.ball, r, mView, mProj, graphics, mSoccer.color, true);
+	Debug::Capsule(mSoccer.player, r, hh, mView, mProj, graphics, mSoccer.color, true);
+	Debug::Sphere(mSoccer.ball, r, mView, mProj, graphics, mSoccer.color, true);
 }

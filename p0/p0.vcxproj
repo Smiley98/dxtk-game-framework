@@ -101,7 +101,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\BuildingRenderer.cpp" />
-    <ClCompile Include="src\Collision2.cpp">
+    <ClCompile Include="src\Collision.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -144,9 +144,7 @@
     <ClInclude Include="src\BuildingRenderer.h" />
     <ClInclude Include="src\Building.h" />
     <ClInclude Include="src\Collision.h" />
-    <ClInclude Include="src\Collision2.h" />
     <ClInclude Include="src\CollisionMath.h" />
-    <ClInclude Include="src\CollisionMath2.h" />
     <ClInclude Include="src\Component.h" />
     <ClInclude Include="src\Components.h" />
     <ClInclude Include="src\Curves.h" />
@@ -169,13 +167,10 @@
     <ClInclude Include="src\Transform3.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\CollisionScene.h" />
-    <ClInclude Include="src\RigidTransform.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\StepTimer.h" />
     <ClInclude Include="src\Tags.h" />
     <ClInclude Include="src\TestScene.h" />
-    <ClInclude Include="src\Transform.h" />
-    <ClInclude Include="src\TransformBase.h" />
     <ClInclude Include="src\Utility.h" />
   </ItemGroup>
   <ItemGroup>
