@@ -47,5 +47,5 @@ private:
     std::shared_ptr<DirectX::AudioEngine>   mAudioEngine;
     DX::StepTimer                           mTimer;
     DX::Input                               mInput;
-    Scene::Type                             mScene = Scene::COLLISION;
+    Scene::Type                             mScene = Scene::ENTITY;
 };

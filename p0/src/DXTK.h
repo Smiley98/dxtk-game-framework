@@ -1,8 +1,5 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
-#include <wrl/client.h>
-#include <d3d11_1.h>
-#include <dxgi1_6.h>
 
 namespace DirectX
 {
@@ -27,9 +24,11 @@ namespace DirectX
 	class SpriteFont;
 }
 
-#include "Collision.h"
+namespace DX
+{
+	class DeviceResources;
+	class StepTimer;
+}
+
 #include "PrimitiveBatch.h"
 #include "VertexTypes.h"
-
-#include "DeviceResources.h"
-#include "StepTimer.h"

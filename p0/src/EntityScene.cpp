@@ -2,6 +2,7 @@
 #include "EntityScene.h"
 #include "PlayerFactory.h"
 #include "BuildingFactory.h"
+#include "Collision.h"
 #include "Utility.h"
 
 #define MAP true
