@@ -13,34 +13,17 @@ using namespace DirectX;
 CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) :
 	Scene(graphics, audio)
 {
-	auto context = graphics->GetD3DDeviceContext();
-	auto device = graphics->GetD3DDevice();
+	mSS.a = { -500.0f, 0.0f, 0.0f };
 
-	mSS.gA.r = r;
-	mSS.gB.r = r;
-	mCC.gA.r = r;
-	mCC.gB.r = r;
-	mSC.gA.r = r;
-	mSC.gB.r = r;
-	mCC.gA.hh = hh;
-	mCC.gB.hh = hh;
-	mSC.gB.hh = hh;
+	mCC.a.Translate(500.0f, 0.0f, 0.0f);
+	mCC.b.RotateZ(90.0f);
 
-	mSoccer.gPlayer.hh = hh;
-	mSoccer.gPlayer.r = r;
-	mSoccer.gBall.r = r;
-
-	mSS.tA.Translate(-500.0f, 0.0f, 0.0f);
-
-	mCC.tA.Translate(500.0f, 0.0f, 0.0f);
-	mCC.tB.RotateZ(90.0f);
-
-	mSC.tA.Translate(0.0f, 250.0f, 0.0f);
-	mSC.tB.Translate(0.0f, 250.0f, 0.0f);
-	mSC.tB.RotateZ(90.0f);
+	mSC.a = { 0.0f, 250.0f, 0.0f };
+	mSC.b.Translate(0.0f, 250.0f, 0.0f);
+	mSC.b.RotateZ(90.0f);
 	
-	mSoccer.tPlayer.RotateZ(-45.0f);
-	mSoccer.tPlayer.Translate(-500.0f, -500.0f, 0.0f);
+	mSoccer.player.RotateZ(-45.0f);
+	mSoccer.player.Translate(-500.0f, -500.0f, 0.0f);
 }
 
 CollisionScene::~CollisionScene()
@@ -77,29 +60,27 @@ void CollisionScene::OnUpdate(float dt, float tt, DX::Input& input)
 	const float speed = 100.0f * dt;
 	Vector3 mtv;
 
-	mSS.tB.Translate(mSS.tA.Translation());
-	mSS.tB.DeltaTranslate(r * cos(tt), r * sin(tt), 0.0f);
-	mSS.tB.DeltaTranslate(SphereSphere(mSS.tA, mSS.tB, mSS.gA, mSS.gB, mtv) ? mtv : Vector3::Zero);
-	mSS.color = SphereSphere(mSS.tA, mSS.tB, mSS.gA, mSS.gB) ? Colors::Red : Colors::Green;
+	mSS.b = mSS.a;
+	mSS.b += { r* cos(tt), r* sin(tt), 0.0f };
+	mSS.b += SphereSphere(mSS.a, mSS.b, r, r, mtv) ? mtv : Vector3::Zero;
+	mSS.color = SphereSphere(mSS.a, mSS.b, r, r) ? Colors::Red : Colors::Green;
 
-	mCC.tB.Translate(Vector3{ mCC.tA.Translation().x, hh + r, 0.0f } + Vector3{ cos(tt) * speed, 0.0f, 0.0f });
-	mCC.tB.DeltaRotateZ(speed);
-	mCC.tB.DeltaTranslate(CapsuleCapsule(mCC.tA, mCC.tB, mCC.gA, mCC.gB, mtv) ? mtv : Vector3::Zero);
-	mCC.color = CapsuleCapsule(mCC.tA, mCC.tB, mCC.gA, mCC.gB) ? Colors::Red : Colors::Green;
+	mCC.b.Translate(Vector3{ mCC.a.Translation().x, hh + r, 0.0f } + Vector3{ cos(tt) * speed, 0.0f, 0.0f });
+	mCC.b.DeltaRotateZ(speed);
+	mCC.b.DeltaTranslate(CapsuleCapsule(mCC.a, mCC.b, r, r, hh, hh, mtv) ? mtv : Vector3::Zero);
+	mCC.color = CapsuleCapsule(mCC.a, mCC.b, r, r, hh, hh) ? Colors::Red : Colors::Green;
 
-	mSC.tB.Translate(mSC.tA.Translation() + Vector3{ cos(tt) * hh, -r, 0.0f });
-	mSC.tB.DeltaTranslate(SphereCapsule(mSC.tA, mSC.tB, mSC.gA, mSC.gB, mtv) ? mtv : Vector3::Zero);
-	mSC.color = SphereCapsule(mSC.tA, mSC.tB, mSC.gA, mSC.gB) ? Colors::Red : Colors::Green;
+	mSC.b.Translate(mSC.a + Vector3{ cos(tt) * hh, -r, 0.0f });
+	mSC.b.DeltaTranslate(SphereCapsule(mSC.a, mSC.b, r, r, hh, mtv) ? mtv : Vector3::Zero);
+	mSC.color = SphereCapsule(mSC.a, mSC.b, r, r, hh) ? Colors::Red : Colors::Green;
 
-	mSoccer.tPlayer.DeltaTranslate(mSoccer.tPlayer.Forward() * speed);
-	mSoccer.tBall.DeltaTranslate(SphereCapsule(mSoccer.tBall, mSoccer.tPlayer, mSoccer.gBall, mSoccer.gPlayer, mtv) ?
-		-mtv : Vector3::Zero);
-	mSoccer.color = SphereCapsule(mSoccer.tBall, mSoccer.tPlayer, mSoccer.gBall, mSoccer.gPlayer) ?
-		Colors::Red : Colors::Green;
-	if (mSoccer.tPlayer.Translation().y > 500.0f)
+	mSoccer.player.DeltaTranslate(mSoccer.player.Forward() * speed);
+	mSoccer.ball += SphereCapsule(mSoccer.ball, mSoccer.player, r, r, hh, mtv) ? -mtv : Vector3::Zero;
+	mSoccer.color = SphereCapsule(mSoccer.ball, mSoccer.player, r, r, hh) ? Colors::Red : Colors::Green;
+	if (mSoccer.player.Translation().y > 500.0f)
 	{
-		mSoccer.tPlayer.Translate(-500.0f, -500.0f, 0.0f);
-		mSoccer.tBall.Translate(Vector3::Zero);
+		mSoccer.player.Translate(-500.0f, -500.0f, 0.0f);
+		mSoccer.ball = Vector3::Zero;
 	}
 }
 
@@ -107,23 +88,23 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
 
-	Vector3 direction = mSS.tB.Translation() - mSS.tA.Translation();
+	Vector3 direction = mSS.b - mSS.a;
 	direction.Normalize();
-	Debug::Draw(mSS.tA.Translation() + mSS.gA.r * 0.5f * direction, mSS.gA.r * 0.5f, mView, mProj, graphics);
-	Debug::Draw(mSS.tB.Translation() - mSS.gB.r * 0.5f * direction, mSS.gA.r * 0.5f, mView, mProj, graphics);
-	Debug::Draw(mSS.tA, mSS.gA, mView, mProj, graphics, mSS.color, true);
-	Debug::Draw(mSS.tB, mSS.gB, mView, mProj, graphics, mSS.color, true);
+	Debug::Draw(mSS.a + r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
+	Debug::Draw(mSS.b - r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
+	Debug::Draw(mSS.a, r, mView, mProj, graphics, mSS.color, true);
+	Debug::Draw(mSS.b, r, mView, mProj, graphics, mSS.color, true);
 
 	Vector3 aNearest, bNearest;
-	NearestCylinderPoints(mCC.tA, mCC.tB, mCC.gA.hh, mCC.gB.hh, aNearest, bNearest);
-	Debug::Draw(aNearest, mCC.gA.r, mView, mProj, graphics, Colors::Black);
-	Debug::Draw(bNearest, mCC.gB.r, mView, mProj, graphics, Colors::White);
-	Debug::Draw(mCC.tA, mCC.gA, mView, mProj, graphics, mCC.color, true);
-	Debug::Draw(mCC.tB, mCC.gB, mView, mProj, graphics, mCC.color, true);
+	NearestCylinderPoints(mCC.a, mCC.b, hh, hh, aNearest, bNearest);
+	Debug::Draw(aNearest, r, mView, mProj, graphics, Colors::Black);
+	Debug::Draw(bNearest, r, mView, mProj, graphics, Colors::White);
+	Debug::Draw(mCC.a, r, hh, mView, mProj, graphics, mCC.color, true);
+	Debug::Draw(mCC.b, r, hh, mView, mProj, graphics, mCC.color, true);
 
-	Debug::Draw(mSC.tA, mSC.gA, mView, mProj, graphics, mSC.color, true);
-	Debug::Draw(mSC.tB, mSC.gB, mView, mProj, graphics, mSC.color, true);
+	Debug::Draw(mSC.a, r, mView, mProj, graphics, mSC.color, true);
+	Debug::Draw(mSC.b, r, hh, mView, mProj, graphics, mSC.color, true);
 
-	Debug::Draw(mSoccer.tPlayer, mSoccer.gPlayer, mView, mProj, graphics, mSoccer.color, true);
-	Debug::Draw(mSoccer.tBall, mSoccer.gBall, mView, mProj, graphics, mSoccer.color, true);
+	Debug::Draw(mSoccer.player, r, hh, mView, mProj, graphics, mSoccer.color, true);
+	Debug::Draw(mSoccer.ball, r, mView, mProj, graphics, mSoccer.color, true);
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "Collision.h"
 
 class CollisionScene :
     public Scene
@@ -20,37 +19,29 @@ public:
 private:
 	struct TestSphereSphere
 	{
-		Transform3 tA;
-		Transform3 tB;
-		Sphere gA;
-		Sphere gB;
+		Vector3 a;
+		Vector3 b;
 		Color color;
 	} mSS;	// sphere-sphere
 
 	struct TestCapsuleCapsule
 	{
-		Transform3 tA;
-		Transform3 tB;
-		Capsule gA;
-		Capsule gB;
+		Transform3 a;
+		Transform3 b;
 		Color color;
 	} mCC;	// capsule-capsule
 
 	struct TestSphereCapsule
 	{
-		Transform3 tA;
-		Transform3 tB;
-		Sphere gA;
-		Capsule gB;
+		Vector3 a;
+		Transform3 b;
 		Color color;
 	} mSC;	// sphere-capsule (resolves capsule)
 
 	struct TestSoccer
 	{
-		Transform3 tPlayer;
-		Transform3 tBall;
-		Capsule gPlayer;
-		Sphere gBall;
+		Transform3 player;
+		Vector3 ball;
 		Color color;
 	} mSoccer;	// capsule-sphere (resolves sphere)
 };
