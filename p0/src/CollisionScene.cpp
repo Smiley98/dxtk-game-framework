@@ -24,6 +24,9 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 	
 	mSoccer.player.RotateZ(-45.0f);
 	mSoccer.player.Translate(-500.0f, -500.0f, 0.0f);
+
+	mRange.target = { 0.0f, -500.0f, 0.0f };
+	mRange.viewer.Translate(0.0f, -400.0f, 0.0f);
 }
 
 CollisionScene::~CollisionScene()
@@ -82,6 +85,8 @@ void CollisionScene::OnUpdate(float dt, float tt, DX::Input& input)
 		mSoccer.player.Translate(-500.0f, -500.0f, 0.0f);
 		mSoccer.ball = Vector3::Zero;
 	}
+
+	mRange.viewer.RotateZ(tt * 100.0f);
 }
 
 void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -107,4 +112,8 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	Debug::Capsule(mSoccer.player, r, hh, mView, mProj, graphics, mSoccer.color, true);
 	Debug::Sphere(mSoccer.ball, r, mView, mProj, graphics, mSoccer.color, true);
+
+	//Debug::Capsule(mRange.viewer, r, hh, mView, mProj, graphics);
+	Debug::InRange(mRange.viewer, mRange.target, mRange.length, mRange.fov, mView, mProj, graphics);
+	Debug::Sphere(mRange.target, r, mView, mProj, graphics);
 }

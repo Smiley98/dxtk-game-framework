@@ -1,6 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "Transform3.h"
 
 class TestScene :
     public Scene
@@ -34,7 +33,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture1;
     Microsoft::WRL::ComPtr<ID3D11InputLayout>                               mBatchInputLayout;
 
-    Transform3 mParent, mChild1, mChild2;
+    Transform mParent, mChild1, mChild2;
 };
 
 // DirectXTK audio objects

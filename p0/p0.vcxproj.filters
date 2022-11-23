@@ -192,8 +192,8 @@
     <ClInclude Include="src\Geometry.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\Transform3.h">
-      <Filter>ECS\Components</Filter>
+    <ClInclude Include="src\Transform.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

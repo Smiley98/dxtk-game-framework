@@ -14,7 +14,7 @@ void Collide(const Components& components, std::vector<HitPair>& collisions)
 	for (size_t i = 0; i < components.spheres.Count(); i++)
 	{
 		const Entity entity = components.spheres.GetEntity(i);
-		const Transform3& transform = *components.transforms.GetComponent(entity);
+		const Transform& transform = *components.transforms.GetComponent(entity);
 		const Sphere& sphere = components.spheres[i];
 
 		SphereCollider collider(entity, transform, sphere);
@@ -28,7 +28,7 @@ void Collide(const Components& components, std::vector<HitPair>& collisions)
 	for (size_t i = 0; i < components.capsules.Count(); i++)
 	{
 		const Entity entity = components.capsules.GetEntity(i);
-		const Transform3& transform = *components.transforms.GetComponent(entity);
+		const Transform& transform = *components.transforms.GetComponent(entity);
 		const Capsule& capsule = components.capsules[i];
 
 		CapsuleCollider collider(entity, transform, capsule);

@@ -1,11 +1,11 @@
 #pragma once
-#include "Transform3.h"
+#include "Transform.h"
 #include "Geometry.h"
 #undef min
 #undef max
 
 // Outputs the top and bottom of a cylinder relative to its forward vector
-inline void CylinderBounds(const Transform3& transform, float halfHeight, Vector3& top, Vector3& bot)
+inline void CylinderBounds(const Transform& transform, float halfHeight, Vector3& top, Vector3& bot)
 {
 	Vector3 forward = transform.Forward();
 	top = transform.Translation() + forward * halfHeight;
@@ -22,7 +22,7 @@ inline Vector3 Project(const Vector3& a, const Vector3& b, const Vector3& p)
 
 // Determines the two closest points along cylinders A and B
 inline void NearestCylinderPoints(
-	const Transform3& tA, const Transform3& tB, float hhA, float hhB,
+	const Transform& tA, const Transform& tB, float hhA, float hhB,
 	Vector3& nearestA, Vector3& nearestB)
 {
 	Vector3 aTop, aBot, bTop, bBot;
@@ -83,13 +83,13 @@ inline bool SphereSphere(const Vector3& tA, const Vector3& tB, float rA, float r
 }
 
 // Boolean wrapper
-inline bool SphereSphere(const Transform3& tA, const Transform3& tB, const Sphere& gA, const Sphere& gB)
+inline bool SphereSphere(const Transform& tA, const Transform& tB, const Sphere& gA, const Sphere& gB)
 {
 	return SphereSphere(tA.Translation(), tB.Translation(), gA.r, gB.r);
 }
 
 // MTV wrapper
-inline bool SphereSphere(const Transform3& tA, const Transform3& tB, const Sphere& gA, const Sphere& gB, Vector3& mtv)
+inline bool SphereSphere(const Transform& tA, const Transform& tB, const Sphere& gA, const Sphere& gB, Vector3& mtv)
 {
 	return SphereSphere(tA.Translation(), tB.Translation(), gA.r, gB.r, mtv);
 }
@@ -99,7 +99,7 @@ inline bool SphereSphere(const Transform3& tA, const Transform3& tB, const Spher
 //*****************
 
 // Boolean hit-test
-inline bool SphereCapsule(const Vector3& tA, const Transform3& tB, float rA, float rB, float hhB)
+inline bool SphereCapsule(const Vector3& tA, const Transform& tB, float rA, float rB, float hhB)
 {
 	Vector3 top, bot;
 	CylinderBounds(tB, hhB, top, bot);
@@ -107,7 +107,7 @@ inline bool SphereCapsule(const Vector3& tA, const Transform3& tB, float rA, flo
 }
 
 // MTV resolves b from a
-inline bool SphereCapsule(const Vector3& tA, const Transform3& tB, float rA, float rB, float hhB, Vector3& mtv)
+inline bool SphereCapsule(const Vector3& tA, const Transform& tB, float rA, float rB, float hhB, Vector3& mtv)
 {
 	Vector3 top, bot;
 	CylinderBounds(tB, hhB, top, bot);
@@ -115,13 +115,13 @@ inline bool SphereCapsule(const Vector3& tA, const Transform3& tB, float rA, flo
 }
 
 // Boolean wrapper
-inline bool SphereCapsule(const Transform3& tA, const Transform3& tB, const Sphere& gA, const Capsule& gB)
+inline bool SphereCapsule(const Transform& tA, const Transform& tB, const Sphere& gA, const Capsule& gB)
 {
 	return SphereCapsule(tA.Translation(), tB, gA.r, gB.r, gB.hh);
 }
 
 // MTV wrapper
-inline bool SphereCapsule(const Transform3& tA, const Transform3& tB, const Sphere& gA, const Capsule& gB, Vector3& mtv)
+inline bool SphereCapsule(const Transform& tA, const Transform& tB, const Sphere& gA, const Capsule& gB, Vector3& mtv)
 {
 	return SphereCapsule(tA.Translation(), tB, gA.r, gB.r, gB.hh, mtv);
 }
@@ -131,7 +131,7 @@ inline bool SphereCapsule(const Transform3& tA, const Transform3& tB, const Sphe
 //*****************
 
 // Boolean hit-test
-inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, float rA, float rB, float hhA, float hhB)
+inline bool CapsuleCapsule(const Transform& tA, const Transform& tB, float rA, float rB, float hhA, float hhB)
 {
 	Vector3 nearestA, nearestB;
 	NearestCylinderPoints(tA, tB, hhA, hhB, nearestA, nearestB);
@@ -139,7 +139,7 @@ inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, float rA,
 }
 
 // MTV resolves b from a
-inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, float rA, float rB, float hhA, float hhB, Vector3& mtv)
+inline bool CapsuleCapsule(const Transform& tA, const Transform& tB, float rA, float rB, float hhA, float hhB, Vector3& mtv)
 {
 	Vector3 nearestA, nearestB;
 	NearestCylinderPoints(tA, tB, hhA, hhB, nearestA, nearestB);
@@ -147,13 +147,13 @@ inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, float rA,
 }
 
 // Boolean wrapper
-inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, const Capsule& gA, const Capsule& gB)
+inline bool CapsuleCapsule(const Transform& tA, const Transform& tB, const Capsule& gA, const Capsule& gB)
 {
 	return CapsuleCapsule(tA, tB, gA.r, gB.r, gA.hh, gB.hh);
 }
 
 // MTV wrapper
-inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, const Capsule& gA, const Capsule& gB, Vector3& mtv)
+inline bool CapsuleCapsule(const Transform& tA, const Transform& tB, const Capsule& gA, const Capsule& gB, Vector3& mtv)
 {
 	return CapsuleCapsule(tA, tB, gA.r, gB.r, gA.hh, gB.hh, mtv);
 }
@@ -161,7 +161,7 @@ inline bool CapsuleCapsule(const Transform3& tA, const Transform3& tB, const Cap
 //*****************
 // Miscellaneous
 //*****************
-inline bool InRange(const Transform3& viewer, const Vector3& target, float length, float fov /*(degrees)*/)
+inline bool InRange(const Transform& viewer, const Vector3& target, float length, float fov /*(degrees)*/)
 {
 	if ((target - viewer.Translation()).Length() > length)
 		return false;

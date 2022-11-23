@@ -86,7 +86,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
-	Transform3& transform = *mComponents.transforms.GetComponent(mPlayer);
+	Transform& transform = *mComponents.transforms.GetComponent(mPlayer);
 
 #if SPLINE
 	Vector3 a = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
@@ -156,7 +156,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	Transform3& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
+	Transform& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
 	Capsule& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
 	Debug::Capsule(playerTransform, playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
@@ -175,7 +175,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #if MAP
 	for (Entity i : mBuildings)
 	{
-		Transform3& transform = *mComponents.transforms.GetComponent(i);
+		Transform& transform = *mComponents.transforms.GetComponent(i);
 		Capsule& collider = *mComponents.capsules.GetComponent(i);
 		Building& building = *mComponents.buildings.GetComponent(i);
 		Debug::Capsule(transform, collider.r, collider.hh, mView, mProj, graphics, Colors::Red);

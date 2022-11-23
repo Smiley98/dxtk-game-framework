@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "DebugRenderer.h"
-
+#include "Utility.h"
 
 using namespace DirectX;
 
@@ -43,7 +43,7 @@ namespace Debug
 		float length = line.Length();
 		line.Normalize();
 
-		Transform3 transform;
+		Transform transform;
 		transform.Translate(a + line * length * 0.5f);
 		transform.Orientate(line);
 		
@@ -51,10 +51,10 @@ namespace Debug
 		box->Draw(transform.World(), view, proj, color);
 	}
 
-	void InRange(const Transform3& viewer, const Vector3& target, float length, float fov,
+	void InRange(const Transform& viewer, const Vector3& target, float length, float fov,
 		const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
 	{
-		Transform3 left, right;
+		Transform left, right;
 		left.Translate( viewer.Translation());
 		right.Translate(viewer.Translation());
 		left.Rotate( viewer.Rotation());
@@ -62,20 +62,24 @@ namespace Debug
 		left.RotateZ(-fov * 0.5f);
 		right.RotateZ(fov * 0.5f);
 
+		Capsule(viewer, 25.0f, 75.0f, view, proj, graphics);
+
 		XMVECTOR color = InRange(viewer, target, length, fov) ? Colors::Red : Colors::Green;
-		//Line(viewer.Translation(), target, 10.0f, view, proj, graphics, color);
-		//Line(viewer.Translation(), viewer.Translation() + viewer.Forward() * length, 10.0f, view, proj, graphics, color);
 		Line(viewer.Translation(), viewer.Translation() + left.Forward() * length, 10.0f, view, proj, graphics, color);
 		Line(viewer.Translation(), viewer.Translation() + right.Forward() * length, 10.0f, view, proj, graphics, color);
 	}
 
-	void Sphere(const Vector3& position, float radius, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color, bool wireframe)
+	void Sphere(const Vector3& position, float radius,
+		const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics,
+		DirectX::XMVECTOR color, bool wireframe)
 	{
 		auto shape = GeometricPrimitive::CreateSphere(graphics->GetD3DDeviceContext(), radius * 2.0f);
 		shape->Draw(Matrix::CreateTranslation(position), view, proj, color, nullptr, wireframe);
 	}
 
-	void Capsule(const Transform3& transform, float radius, float halfHeight, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color, bool wireframe)
+	void Capsule(const Transform& transform, float radius, float halfHeight,
+		const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics,
+		DirectX::XMVECTOR color, bool wireframe)
 	{
 		auto context = graphics->GetD3DDeviceContext();
 		auto cylinder = GeometricPrimitive::CreateCylinder(context, halfHeight * 2.0f, radius * 2.0f);

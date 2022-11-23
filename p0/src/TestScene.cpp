@@ -165,8 +165,7 @@ void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphi
 	graphics->PIXEndEvent();
 }
 
-// LHS seems more intuitive than RHS, but the depth buffer gets screwed with LHS...
-// Removing DXTK once I get my prototypes sorted because the SM vs XM mis-match is getting unreasonable.
+// LHS seems more intuitive than RHS, but the depth buffer is flipped so gotta re-export models with LHS...
 //mView = XMMatrixLookAtRH({ 0.0f, 50.0f, 50.0f }, Vector3::Zero, Vector3::Up);
 //mProj = XMMatrixPerspectiveFovRH(fovAngleY, aspectRatio, near, far);
 //mView = XMMatrixLookAtLH({ 0.0f, 50.0f, 50.0f }, Vector3::Zero, Vector3::Up);

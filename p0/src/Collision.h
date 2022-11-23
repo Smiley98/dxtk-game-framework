@@ -21,11 +21,11 @@ class Collider
 {
 public:
 	const Entity entity = INVALID_ENTITY;
-	const Transform3& transform;
+	const Transform& transform;
 
 protected:
 	Collider() = default;
-	Collider(const Entity e, const Transform3& t) : entity(e), transform(t) {}
+	Collider(const Entity e, const Transform& t) : entity(e), transform(t) {}
 
 	virtual bool IsColliding(const SphereCollider& collider) const = 0;
 	virtual bool IsColliding(const CapsuleCollider& collider) const = 0;
@@ -47,7 +47,7 @@ protected:
 
 private:
 	SphereCollider() = default;
-	SphereCollider(const Entity& e, const Transform3& t, const Sphere& g) : Collider(e, t), geometry(g) {}
+	SphereCollider(const Entity& e, const Transform& t, const Sphere& g) : Collider(e, t), geometry(g) {}
 
 	friend void Collide(const Components& components, std::vector<HitPair>& collisions);
 };
@@ -65,7 +65,7 @@ protected:
 	inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
 
 private:
-	CapsuleCollider(const Entity& e, const Transform3& t, const Capsule& g) : Collider(e, t), geometry(g) {}
+	CapsuleCollider(const Entity& e, const Transform& t, const Capsule& g) : Collider(e, t), geometry(g) {}
 	CapsuleCollider() = default;
 
 	friend void Collide(const Components& components, std::vector<HitPair>& collisions);

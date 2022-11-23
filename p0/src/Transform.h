@@ -5,15 +5,15 @@
 
 using namespace DirectX::SimpleMath;
 
-class Transform3
+class Transform
 {
 public:
-	Transform3* const Parent() const
+	Transform* const Parent() const
 	{
 		return mParent;
 	}
 
-	void SetParent(Transform3* parent)
+	void SetParent(Transform* parent)
 	{
 		mParent = parent;
 	}
@@ -269,7 +269,7 @@ public:
 	}
 
 private:
-	Transform3* mParent = nullptr;
+	Transform* mParent = nullptr;
 	Quaternion mRotation = Quaternion::Identity;
 	Vector3 mTranslation = Vector3::Zero;
 	Vector3 mEuler = Vector3::Zero;

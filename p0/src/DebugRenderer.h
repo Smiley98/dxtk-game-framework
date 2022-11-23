@@ -3,12 +3,6 @@
 #include "Geometry.h"
 #include <memory>
 
-namespace Collision
-{
-	class SphereCollider;
-	class CapsuleCollider;
-}
-
 namespace Debug
 {
 	enum Geometry {
@@ -20,24 +14,25 @@ namespace Debug
 		TEAPOT
 	};
 
-	void Primitive(Geometry geometry, const DirectX::SimpleMath::Matrix& world, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+	void Primitive(Geometry geometry, const Matrix& world,
+		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
 	void Line(const Vector3& a, const Vector3& b, float thickness,
-		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color = DirectX::Colors::White);
 
 	void Sphere(const Vector3& position, float radius,
-		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics,
 		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
-	void Capsule(const Transform3& transform, float radius, float halfHeight,
-		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+	void Capsule(const Transform& transform, float radius, float halfHeight,
+		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics,
 		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
-	void InRange(const Transform3& viewer, const Vector3& target, float length, float fov, /*(degrees)*/
-		const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj,
+	void InRange(const Transform& viewer, const Vector3& target, float length, float fov, /*(degrees)*/
+		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics);
 };

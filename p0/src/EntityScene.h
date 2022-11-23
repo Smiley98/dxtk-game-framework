@@ -22,7 +22,7 @@ private:
 	std::vector<Entity> mBuildings;
 
 	Entity mPlayer;
-	Transform3 mHeadlights;
+	Transform mHeadlights;
 
 	const float fov = 60.0f;
 	const float range = 400.0f;
