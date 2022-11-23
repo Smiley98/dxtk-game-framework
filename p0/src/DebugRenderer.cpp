@@ -112,7 +112,7 @@ namespace Debug
 
 		Vector3 upper;
 		Vector3 lower;
-		Collision2::CylinderBounds(transform, capsule.hh, upper, lower);
+		CylinderBounds(transform, capsule.hh, upper, lower);
 
 		sphere->Draw(Matrix::CreateTranslation(upper), view, proj, color, nullptr, wireframe);
 		sphere->Draw(Matrix::CreateTranslation(lower), view, proj, color, nullptr, wireframe);

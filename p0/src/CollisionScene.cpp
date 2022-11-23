@@ -9,7 +9,6 @@ namespace
 }
 
 using namespace DirectX;
-using namespace Collision;
 
 CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) :
 	Scene(graphics, audio),
@@ -146,8 +145,8 @@ void CollisionScene::DebugSpheres(const Collision::SphereCollider& a, const Coll
 	Vector3 direction = b.position - a.position;
 	direction.Normalize();
 
-	SphereCollider halfA(a.Radius() * 0.5f);
-	SphereCollider halfB(b.Radius() * 0.5f);
+	Collision::SphereCollider halfA(a.Radius() * 0.5f);
+	Collision::SphereCollider halfB(b.Radius() * 0.5f);
 	halfA.position = a.position + halfA.Radius() * direction;
 	halfB.position = b.position + halfB.Radius() * -direction;
 	Debug::Draw(halfA, mView, mProj, graphics);
@@ -158,8 +157,8 @@ void CollisionScene::DebugCapsules(const Collision::CapsuleCollider& a, const Co
 {
 	Vector3 aNearest, bNearest;
 	NearestSpheres(a, b, a.HalfHeight(), b.HalfHeight(), a.Radius(), b.Radius(), aNearest, bNearest);
-	SphereCollider aSphere(a.Radius());
-	SphereCollider bSphere(a.Radius());
+	Collision::SphereCollider aSphere(a.Radius());
+	Collision::SphereCollider bSphere(a.Radius());
 	aSphere.position = aNearest;
 	bSphere.position = bNearest;
 	Debug::Draw(aSphere, mView, mProj, graphics, Colors::Black);

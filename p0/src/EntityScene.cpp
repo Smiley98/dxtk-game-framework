@@ -128,9 +128,9 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 #endif
 
 #if MAP
-	std::vector<Collision2::HitPair> collisions;
-	Collision2::Collide(mComponents, collisions);
-	for (const Collision2::HitPair& collision : collisions)
+	std::vector<HitPair> collisions;
+	Collide(mComponents, collisions);
+	for (const HitPair& collision : collisions)
 	{
 		for (Entity entity : collision.hits)
 		{
