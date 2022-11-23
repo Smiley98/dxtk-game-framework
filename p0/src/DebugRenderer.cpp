@@ -118,4 +118,25 @@ namespace Debug
 		sphere->Draw(Matrix::CreateTranslation(lower), view, proj, color, nullptr, wireframe);
 		cylinder->Draw(transform.World(), view, proj, color, nullptr, wireframe);
 	}
+
+	void Draw(const Vector3& position, float radius, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color, bool wireframe)
+	{
+		auto shape = GeometricPrimitive::CreateSphere(graphics->GetD3DDeviceContext(), radius * 2.0f);
+		shape->Draw(Matrix::CreateTranslation(position), view, proj, color, nullptr, wireframe);
+	}
+
+	void Draw(const Transform3& transform, float radius, float halfHeight, const DirectX::SimpleMath::Matrix& view, const DirectX::SimpleMath::Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color, bool wireframe)
+	{
+		auto context = graphics->GetD3DDeviceContext();
+		auto cylinder = GeometricPrimitive::CreateCylinder(context, halfHeight * 2.0f, radius * 2.0f);
+		auto sphere = GeometricPrimitive::CreateSphere(context, radius * 2.0f);
+
+		Vector3 upper;
+		Vector3 lower;
+		CylinderBounds(transform, halfHeight, upper, lower);
+
+		sphere->Draw(Matrix::CreateTranslation(upper), view, proj, color, nullptr, wireframe);
+		sphere->Draw(Matrix::CreateTranslation(lower), view, proj, color, nullptr, wireframe);
+		cylinder->Draw(transform.World(), view, proj, color, nullptr, wireframe);
+	}
 }

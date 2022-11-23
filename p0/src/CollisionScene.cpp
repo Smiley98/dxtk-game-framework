@@ -11,30 +11,36 @@ namespace
 using namespace DirectX;
 
 CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) :
-	Scene(graphics, audio),
-	mSphereSphereA(r),
-	mSphereSphereB(r),
-	mCapsuleCapsuleA(hh, r),
-	mCapsuleCapsuleB(hh, r),
-	mSphere1(r),
-	mSphere2(r),
-	mCapsule1(hh, r),
-	mCapsule2(hh, r)
+	Scene(graphics, audio)
 {
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();
 
-	mSphereSphereA.position = { -500.0f, 0.0f, 0.0f };
+	mSS.gA.r = r;
+	mSS.gB.r = r;
+	mCC.gA.r = r;
+	mCC.gB.r = r;
+	mSC.gA.r = r;
+	mSC.gB.r = r;
+	mCC.gA.hh = hh;
+	mCC.gB.hh = hh;
+	mSC.gB.hh = hh;
 
-	mCapsuleCapsuleA.Translate({ 500.0, 0.0f, 0.0f });
-	mCapsuleCapsuleB.SetYaw(90.0f);
+	mSoccer.gPlayer.hh = hh;
+	mSoccer.gPlayer.r = r;
+	mSoccer.gBall.r = r;
+
+	mSS.tA.Translate(-500.0f, 0.0f, 0.0f);
+
+	mCC.tA.Translate(500.0f, 0.0f, 0.0f);
+	mCC.tB.RotateZ(90.0f);
+
+	mSC.tA.Translate(0.0f, 250.0f, 0.0f);
+	mSC.tB.Translate(0.0f, 250.0f, 0.0f);
+	mSC.tB.RotateZ(90.0f);
 	
-	mCapsule1.Translate({ 0.0f, 250.0f, 0.0f });
-	mCapsule1.SetYaw(90.0f);
-	mSphere1.position = { 0.0f, 250.0f, 0.0f };
-	
-	mCapsule2.SetYaw(-45.0f);
-	mCapsule2.Translate({ -500, -500, 0.0f });
+	mSoccer.tPlayer.RotateZ(-45.0f);
+	mSoccer.tPlayer.Translate(-500.0f, -500.0f, 0.0f);
 }
 
 CollisionScene::~CollisionScene()
@@ -69,55 +75,31 @@ void CollisionScene::OnResume()
 void CollisionScene::OnUpdate(float dt, float tt, DX::Input& input)
 {
 	const float speed = 100.0f * dt;
+	Vector3 mtv;
 
+	mSS.tB.Translate(mSS.tA.Translation());
+	mSS.tB.DeltaTranslate(r * cos(tt), r * sin(tt), 0.0f);
+	mSS.tB.DeltaTranslate(SphereSphere(mSS.tA, mSS.tB, mSS.gA, mSS.gB, mtv) ? mtv : Vector3::Zero);
+	mSS.color = SphereSphere(mSS.tA, mSS.tB, mSS.gA, mSS.gB) ? Colors::Red : Colors::Green;
+
+	mCC.tB.Translate(Vector3{ mCC.tA.Translation().x, hh + r, 0.0f } + Vector3{ cos(tt) * speed, 0.0f, 0.0f });
+	mCC.tB.DeltaRotateZ(speed);
+	mCC.tB.DeltaTranslate(CapsuleCapsule(mCC.tA, mCC.tB, mCC.gA, mCC.gB, mtv) ? mtv : Vector3::Zero);
+	mCC.color = CapsuleCapsule(mCC.tA, mCC.tB, mCC.gA, mCC.gB) ? Colors::Red : Colors::Green;
+
+	mSC.tB.Translate(mSC.tA.Translation() + Vector3{ cos(tt) * hh, -r, 0.0f });
+	mSC.tB.DeltaTranslate(SphereCapsule(mSC.tA, mSC.tB, mSC.gA, mSC.gB, mtv) ? mtv : Vector3::Zero);
+	mSC.color = SphereCapsule(mSC.tA, mSC.tB, mSC.gA, mSC.gB) ? Colors::Red : Colors::Green;
+
+	mSoccer.tPlayer.DeltaTranslate(mSoccer.tPlayer.Forward() * speed);
+	mSoccer.tBall.DeltaTranslate(SphereCapsule(mSoccer.tBall, mSoccer.tPlayer, mSoccer.gBall, mSoccer.gPlayer, mtv) ?
+		-mtv : Vector3::Zero);
+	mSoccer.color = SphereCapsule(mSoccer.tBall, mSoccer.tPlayer, mSoccer.gBall, mSoccer.gPlayer) ?
+		Colors::Red : Colors::Green;
+	if (mSoccer.tPlayer.Translation().y > 500.0f)
 	{
-		mSphereSphereB.position = mSphereSphereA.position;
-		mSphereSphereB.position += { r * cos(tt), r * sin(tt), 0.0f };
-		Vector3 mtv;
-		if (mSphereSphereB.IsColliding(mSphereSphereA, mtv))
-			mSphereSphereB.position += mtv;
-		mSphereSphereColor = mSphereSphereB.IsColliding(mSphereSphereA) ? Colors::Red : Colors::Green;
-	}
-
-	{
-		const Vector3 origin{ mCapsuleCapsuleA.Translation().x, hh + r, 0.0f };
-		mCapsuleCapsuleB.Translate(origin + Vector3 { cos(tt) * speed, 0.0f, 0.0f });
-		mCapsuleCapsuleB.DeltaYaw(speed);
-
-		Vector3 mtv;
-		if (mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA, mtv))
-			mCapsuleCapsuleB.DeltaTranslate(mtv);
-		mCapsuleCapsuleColor = mCapsuleCapsuleB.IsColliding(mCapsuleCapsuleA) ? Colors::Red : Colors::Green;
-	}
-
-	{
-		// Capsule-Sphere
-		Vector3 mtv;
-		mCapsule1.Translate(mSphere1.position + Vector3{ cos(tt) * hh, -r, 0.0f });
-		if (mCapsule1.IsColliding(mSphere1, mtv))
-			mCapsule1.DeltaTranslate(mtv);
-		mColor1 = mCapsule1.IsColliding(mSphere1) ? Colors::Red : Colors::Green;
-
-		// Sphere-Capsule
-		//mSphere1.g.t = mCapsule1.g.t.Translation() + Vector3{ cos(tt) * mHalfHeight, -mRadius, 0.0f };
-		//if (mSphere1.IsColliding(mCapsule1, mtv))
-		//	mSphere1.g.t += mtv;
-		//mColor1 = mSphere1.IsColliding(mCapsule1) ? Colors::Red : Colors::Green;
-	}
-
-	{
-		// Soccer (Sphere-Capsule)
-		mCapsule2.DeltaTranslate(mCapsule2.Forward() * speed);
-		Vector3 mtv;
-		if (mSphere2.IsColliding(mCapsule2, mtv))
-			mSphere2.position += mtv;
-		mColor2 = mSphere2.IsColliding(mCapsule2) ? Colors::Red : Colors::Green;
-
-		if (mCapsule2.Translation().y > 500.0f)
-		{
-			mCapsule2.Translate({ -500, -500, 0.0f });
-			mSphere2.position = Vector3::Zero;
-		}
+		mSoccer.tPlayer.Translate(-500.0f, -500.0f, 0.0f);
+		mSoccer.tBall.Translate(Vector3::Zero);
 	}
 }
 
@@ -125,42 +107,23 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
 
-	Debug::Draw(mSphereSphereA, mView, mProj, graphics, mSphereSphereColor, true);
-	Debug::Draw(mSphereSphereB, mView, mProj, graphics, mSphereSphereColor, true);
-	DebugSpheres(mSphereSphereA, mSphereSphereB, graphics);
-
-	Debug::Draw(mCapsuleCapsuleA, mView, mProj, graphics, mCapsuleCapsuleColor, true);
-	Debug::Draw(mCapsuleCapsuleB, mView, mProj, graphics, mCapsuleCapsuleColor, true);
-	DebugCapsules(mCapsuleCapsuleA, mCapsuleCapsuleB, graphics);
-
-	Debug::Draw(mSphere1, mView, mProj, graphics, mColor1, true);
-	Debug::Draw(mCapsule1, mView, mProj, graphics, mColor1, true);
-
-	Debug::Draw(mSphere2, mView, mProj, graphics, mColor2, true);
-	Debug::Draw(mCapsule2, mView, mProj, graphics, mColor2, true);
-}
-
-void CollisionScene::DebugSpheres(const Collision::SphereCollider& a, const Collision::SphereCollider& b, std::shared_ptr<DX::DeviceResources> graphics)
-{
-	Vector3 direction = b.position - a.position;
+	Vector3 direction = mSS.tB.Translation() - mSS.tA.Translation();
 	direction.Normalize();
+	Debug::Draw(mSS.tA.Translation() + mSS.gA.r * 0.5f * direction, mSS.gA.r * 0.5f, mView, mProj, graphics);
+	Debug::Draw(mSS.tB.Translation() - mSS.gB.r * 0.5f * direction, mSS.gA.r * 0.5f, mView, mProj, graphics);
+	Debug::Draw(mSS.tA, mSS.gA, mView, mProj, graphics, mSS.color, true);
+	Debug::Draw(mSS.tB, mSS.gB, mView, mProj, graphics, mSS.color, true);
 
-	Collision::SphereCollider halfA(a.Radius() * 0.5f);
-	Collision::SphereCollider halfB(b.Radius() * 0.5f);
-	halfA.position = a.position + halfA.Radius() * direction;
-	halfB.position = b.position + halfB.Radius() * -direction;
-	Debug::Draw(halfA, mView, mProj, graphics);
-	Debug::Draw(halfB, mView, mProj, graphics);
-}
-
-void CollisionScene::DebugCapsules(const Collision::CapsuleCollider& a, const Collision::CapsuleCollider& b, std::shared_ptr<DX::DeviceResources> graphics)
-{
 	Vector3 aNearest, bNearest;
-	NearestSpheres(a, b, a.HalfHeight(), b.HalfHeight(), a.Radius(), b.Radius(), aNearest, bNearest);
-	Collision::SphereCollider aSphere(a.Radius());
-	Collision::SphereCollider bSphere(a.Radius());
-	aSphere.position = aNearest;
-	bSphere.position = bNearest;
-	Debug::Draw(aSphere, mView, mProj, graphics, Colors::Black);
-	Debug::Draw(bSphere, mView, mProj, graphics, Colors::White);
+	NearestCylinderPoints(mCC.tA, mCC.tB, mCC.gA.hh, mCC.gB.hh, aNearest, bNearest);
+	Debug::Draw(aNearest, mCC.gA.r, mView, mProj, graphics, Colors::Black);
+	Debug::Draw(bNearest, mCC.gB.r, mView, mProj, graphics, Colors::White);
+	Debug::Draw(mCC.tA, mCC.gA, mView, mProj, graphics, mCC.color, true);
+	Debug::Draw(mCC.tB, mCC.gB, mView, mProj, graphics, mCC.color, true);
+
+	Debug::Draw(mSC.tA, mSC.gA, mView, mProj, graphics, mSC.color, true);
+	Debug::Draw(mSC.tB, mSC.gB, mView, mProj, graphics, mSC.color, true);
+
+	Debug::Draw(mSoccer.tPlayer, mSoccer.gPlayer, mView, mProj, graphics, mSoccer.color, true);
+	Debug::Draw(mSoccer.tBall, mSoccer.gBall, mView, mProj, graphics, mSoccer.color, true);
 }

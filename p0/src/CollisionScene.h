@@ -18,22 +18,39 @@ public:
     void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
-	Collision::SphereCollider mSphereSphereA;
-	Collision::SphereCollider mSphereSphereB;
-	Color mSphereSphereColor;
+	struct TestSphereSphere
+	{
+		Transform3 tA;
+		Transform3 tB;
+		Sphere gA;
+		Sphere gB;
+		Color color;
+	} mSS;	// sphere-sphere
 
-	Collision::CapsuleCollider mCapsuleCapsuleA;
-	Collision::CapsuleCollider mCapsuleCapsuleB;
-	Color mCapsuleCapsuleColor;
+	struct TestCapsuleCapsule
+	{
+		Transform3 tA;
+		Transform3 tB;
+		Capsule gA;
+		Capsule gB;
+		Color color;
+	} mCC;	// capsule-capsule
 
-	Collision::SphereCollider mSphere1;
-	Collision::CapsuleCollider mCapsule1;
-	Color mColor1;
+	struct TestSphereCapsule
+	{
+		Transform3 tA;
+		Transform3 tB;
+		Sphere gA;
+		Capsule gB;
+		Color color;
+	} mSC;	// sphere-capsule (resolves capsule)
 
-	Collision::SphereCollider mSphere2;
-	Collision::CapsuleCollider mCapsule2;
-	Color mColor2;
-
-	void DebugSpheres(const Collision::SphereCollider& a, const Collision::SphereCollider& b, std::shared_ptr<DX::DeviceResources> graphics);
-	void DebugCapsules(const Collision::CapsuleCollider& a, const Collision::CapsuleCollider& b, std::shared_ptr<DX::DeviceResources> graphics);
+	struct TestSoccer
+	{
+		Transform3 tPlayer;
+		Transform3 tBall;
+		Capsule gPlayer;
+		Sphere gBall;
+		Color color;
+	} mSoccer;	// capsule-sphere (resolves sphere)
 };
