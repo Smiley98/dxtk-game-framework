@@ -51,5 +51,5 @@ private:
 		Vector3 target;
 		float fov = 45.0f;
 		float length = 100.0f;
-	} mRange;
+	} mRange;	// FoV-test
 };

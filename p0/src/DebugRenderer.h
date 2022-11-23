@@ -1,5 +1,6 @@
 #pragma once
-#include "DXTK.h"
+#include "DeviceResources.h"
+#include "Transform.h"
 #include "Geometry.h"
 #include <memory>
 

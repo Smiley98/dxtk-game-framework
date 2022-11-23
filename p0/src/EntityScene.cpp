@@ -195,15 +195,6 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 //	{ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f },
 //mView, mProj, graphics);
 
-// FoV test:
-// Note that InRange() is three-dimensional so be aware of the z-component (2d != 3d).
-// *top.z = bot.z = bounds.z * 2.0f;
-//float length = 100.0f;
-//Vector3 bounds = sPlayerRenderer.Bounds(Objects::VAN);
-//Vector3 top = mVan.transform->Translation() + forward * bounds.y;
-//Vector3 bot = mVan.transform->Translation() - forward * bounds.y;
-//Debug::InRange(mHeadlights, mBuilding.position, length * 2.0f, fov, mView, mProj, graphics);
-
 // Building types test:
 //std::array<Entity, Building::COUNT> mTestBuildings;
 //float step = mWorldWidth / mTestBuildings.size();

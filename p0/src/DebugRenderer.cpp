@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "DebugRenderer.h"
-#include "Utility.h"
 
 using namespace DirectX;
 
@@ -59,10 +58,8 @@ namespace Debug
 		right.Translate(viewer.Translation());
 		left.Rotate( viewer.Rotation());
 		right.Rotate(viewer.Rotation());
-		left.RotateZ(-fov * 0.5f);
-		right.RotateZ(fov * 0.5f);
-
-		Capsule(viewer, 25.0f, 75.0f, view, proj, graphics);
+		left.DeltaRotateZ(-fov * 0.5f);
+		right.DeltaRotateZ(fov * 0.5f);
 
 		XMVECTOR color = InRange(viewer, target, length, fov) ? Colors::Red : Colors::Green;
 		Line(viewer.Translation(), viewer.Translation() + left.Forward() * length, 10.0f, view, proj, graphics, color);

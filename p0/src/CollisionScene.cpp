@@ -113,7 +113,6 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Debug::Capsule(mSoccer.player, r, hh, mView, mProj, graphics, mSoccer.color, true);
 	Debug::Sphere(mSoccer.ball, r, mView, mProj, graphics, mSoccer.color, true);
 
-	//Debug::Capsule(mRange.viewer, r, hh, mView, mProj, graphics);
 	Debug::InRange(mRange.viewer, mRange.target, mRange.length, mRange.fov, mView, mProj, graphics);
 	Debug::Sphere(mRange.target, r, mView, mProj, graphics);
 }
