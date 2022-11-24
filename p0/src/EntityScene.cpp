@@ -2,7 +2,7 @@
 #include "EntityScene.h"
 #include "PlayerFactory.h"
 #include "BuildingFactory.h"
-#include "Collision.h"
+#include "CollisionSystem.h"
 #include "Utility.h"
 
 #define MAP true
@@ -129,29 +129,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 #endif
 
 #if MAP
-	std::vector<HitPair> collisions;
-	Collide(mComponents, collisions);
-	for (const HitPair& collision : collisions)
-	{
-		for (Entity entity : collision.hits)
-		{
-			Tags::Tag* tag = mComponents.tags.GetComponent(entity);
-			if (tag != nullptr)
-			{
-				switch (*tag)
-				{
-					case Tags::PLAYER:
-						mComponents.transforms.GetComponent(entity)->DeltaTranslate(collision.mtv);
-						break;
-					case Tags::BUILDING:
-						mComponents.buildings.GetComponent(entity)->durability -= 10.0f;
-						break;
-					case Tags::BULLET:
-						break;
-				}
-			}
-		}
-	}
+	Collision::Update(mComponents);
 #endif
 }
 

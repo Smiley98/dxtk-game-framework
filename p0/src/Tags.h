@@ -6,6 +6,6 @@ namespace Tags
 		NONE,
 		PLAYER,
 		BUILDING,
-		BULLET
+		PROJECTILE
 	};
 }

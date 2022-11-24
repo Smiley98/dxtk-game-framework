@@ -5,11 +5,17 @@
 #include "Geometry.h"
 #include "Tags.h"
 
+using TransformCollection = ComponentCollection<Transform>;
+using SphereCollection = ComponentCollection<Sphere>;
+using CapsuleCollection = ComponentCollection<Capsule>;
+using BuildingCollection = ComponentCollection<Building>;
+using TagCollection = ComponentCollection<Tags::Tag>;
+
 struct Components
 {
-	ComponentCollection<Transform> transforms;
-	ComponentCollection<Sphere> spheres;
-	ComponentCollection<Capsule> capsules;
-	ComponentCollection<Building> buildings;
-	ComponentCollection<Tags::Tag> tags;
+	TransformCollection transforms;
+	SphereCollection spheres;
+	CapsuleCollection capsules;
+	BuildingCollection buildings;
+	TagCollection tags;
 };

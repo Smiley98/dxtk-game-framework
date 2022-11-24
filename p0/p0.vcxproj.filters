@@ -46,6 +46,9 @@
     <Filter Include="ECS\Factories">
       <UniqueIdentifier>{fd8ec130-671d-4789-a0ba-11d2992720c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ECS\Systems">
+      <UniqueIdentifier>{c34dce8f-1b0e-4194-847c-24a0180228c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\fonts\SegoeUI_18.spritefont">
@@ -109,11 +112,14 @@
     <ClCompile Include="src\BuildingFactory.cpp">
       <Filter>ECS\Factories</Filter>
     </ClCompile>
-    <ClCompile Include="src\Collision.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
     <ClCompile Include="src\Geometry.cpp">
       <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerSystem.cpp">
+      <Filter>ECS\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CollisionSystem.cpp">
+      <Filter>ECS\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -186,7 +192,7 @@
     <ClInclude Include="src\Components.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="src\Collision.h">
+    <ClInclude Include="src\Colliders.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Geometry.h">
@@ -194,6 +200,15 @@
     </ClInclude>
     <ClInclude Include="src\Transform.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PlayerSystem.h">
+      <Filter>ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HitPair.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CollisionSystem.h">
+      <Filter>ECS\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
