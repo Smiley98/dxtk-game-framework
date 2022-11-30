@@ -1,5 +1,6 @@
 #pragma once
 #include "SimpleMath.h"
+#include "ComponentHash.h"
 
 struct Building
 {
@@ -18,4 +19,6 @@ struct Building
 
 	DirectX::SimpleMath::Color color = { 0.75f, 0.75f, 0.75f };
 	float durability;
+
+	static uint32_t Hash();
 };

@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 template<typename Component>
-class ComponentCollection
+class ComponentMap
 {
 public:
 	Component& Add(Entity entity)

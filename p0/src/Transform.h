@@ -1,6 +1,7 @@
 #pragma once
 #include "SimpleMath.h"
 #include "MathUtilities.h"
+#include "ComponentHash.h"
 #define Y_FORWARD true
 
 using namespace DirectX::SimpleMath;
@@ -8,6 +9,8 @@ using namespace DirectX::SimpleMath;
 class Transform
 {
 public:
+	static uint32_t Hash();
+
 	Transform* const Parent() const
 	{
 		return mParent;

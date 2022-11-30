@@ -9,3 +9,13 @@ void AutoBound(Capsule& capsule, const DirectX::SimpleMath::Vector3& bounds)
 	capsule.r = r;
 	capsule.hh = hh;
 }
+
+uint32_t Sphere::Hash()
+{
+	return ComponentHash::SPHERE;
+}
+
+uint32_t Capsule::Hash()
+{
+	return ComponentHash::CAPSULE;
+}

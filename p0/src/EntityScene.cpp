@@ -17,6 +17,13 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 {
 	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);
 
+	uint32_t hash = ComponentHash::NONE;
+	hash |= Transform::Hash();
+	hash |= Sphere::Hash();
+	hash |= Capsule::Hash();
+	hash |= Kinematic::Hash();
+	hash |= Building::Hash();
+
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
 	mHeadlights.TranslateY(80.0f);
