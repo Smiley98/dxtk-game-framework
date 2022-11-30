@@ -4,12 +4,7 @@
 #include <vector>
 #include <unordered_map>
 
-// No idea why memory is getting corrupted...........
-//namespace
-//{
-//	// global map of entities to component hashes
-//	std::unordered_map<Entity, uint32_t> gLookup;
-//}
+extern std::unordered_map<Entity, uint32_t> gLookup;
 
 template<typename Component>
 class ComponentMap
@@ -22,7 +17,7 @@ public:
 		assert(mEntities.size() == mComponents.size());
 		assert(mLookup.size() == mComponents.size());
 
-		//gLookup[entity] |= Component::Hash();
+		gLookup[entity] |= Component::Hash();
 		mLookup[entity] = mComponents.size();
 		mComponents.push_back(Component());
 		mEntities.push_back(entity);
@@ -50,11 +45,11 @@ public:
 			mLookup.erase(entity);
 		}
 
-		//auto hash = gLookup.find(entity);
-		//if (hash != gLookup.end())
-		//{
-		//	gLookup.at(it->first) &= ~Component::Hash();
-		//}
+		auto hash = gLookup.find(entity);
+		if (hash != gLookup.end())
+		{
+			hash->second &= ~Component::Hash();
+		}
 	}
 
 	const Component& operator[](size_t index) const {

@@ -13,23 +13,11 @@
 
 using namespace DirectX;
 
+std::unordered_map<Entity, uint32_t> gLookup;
+
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);
-
-	uint32_t hash = ComponentHash::NONE;
-	hash |= Transform::Hash();
-	hash |= Sphere::Hash();
-	hash |= Capsule::Hash();
-	hash |= Kinematic::Hash();
-	hash |= Building::Hash();
-
-	Entity test = CreateEntity();
-	mComponents.transforms.Add(test);
-	mComponents.transforms.Remove(test);
-	mComponents.transforms.Remove(test);
-	mComponents.transforms.Remove(test);
-	mComponents.transforms.Remove(test);
 
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
