@@ -1,5 +1,6 @@
 #pragma once
 #include "DXTK.h"
+#include "Transform.h"
 #include <vector>
 
 class Renderer

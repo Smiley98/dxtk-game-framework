@@ -3,6 +3,7 @@
 #include "PlayerFactory.h"
 #include "BuildingFactory.h"
 #include "CollisionSystem.h"
+#include "KinematicsSystem.h"
 #include "Utility.h"
 
 #define MAP true
@@ -130,6 +131,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 #if MAP
 	Collision::Update(mComponents);
+	Kinematics::Update(dt);
 #endif
 }
 

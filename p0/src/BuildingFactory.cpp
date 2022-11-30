@@ -1,6 +1,6 @@
 #include "BuildingFactory.h"
-#include "Components.h"
 #include "BuildingRenderer.h"
+#include "Components.h"
 #include "Utility.h"
 
 Entity CreateBuilding(Components& components,
