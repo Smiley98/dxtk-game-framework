@@ -5,7 +5,7 @@
 Entity CreatePlayer(Components& components, const PlayerRenderer& renderer)
 {
 	Entity entity = CreateEntity();
-	components.tags.Add(entity) = Tags::PLAYER;
+	components.identifiers.Add(entity).tag = Tags::PLAYER;
 	components.transforms.Add(entity);
 
 	Capsule& capsule = components.capsules.Add(entity);

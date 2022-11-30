@@ -158,41 +158,43 @@ namespace Collision
 
 	void Resolve(Components& components, const std::vector<HitPair>& collisions)
 	{
+		// Might want to negate mtv so that it always resolves player
 		for (const HitPair& collision : collisions)
 		{
-			// Might want to negate mtv so that it always resolves player
-			Tags::Tag* tagA = components.tags.GetComponent(collision.hits[0]);
-			Tags::Tag* tagB = components.tags.GetComponent(collision.hits[1]);
-			assert(tagA != nullptr && tagB != nullptr);
+			// All entities might as well have identifiers since there's only like 5 possible identifiers as of now
+			assert(components.identifiers.GetComponent(collision.hits[0]) != nullptr);
+			assert(components.identifiers.GetComponent(collision.hits[1]) != nullptr);
+			Tags::Tag tagA = components.identifiers.GetComponent(collision.hits[0])->tag;
+			Tags::Tag tagB = components.identifiers.GetComponent(collision.hits[1])->tag;
 
-			if (*tagA == Tags::PLAYER && *tagB == Tags::PLAYER)
+			if (tagA == Tags::PLAYER && tagB == Tags::PLAYER)
 			{
 				OnPlayerPlayer(collision.hits[0], collision.hits[1], collision.mtv, components);
 			}
 
-			else if (*tagA == Tags::PLAYER && *tagB == Tags::BUILDING)
+			else if (tagA == Tags::PLAYER && tagB == Tags::BUILDING)
 			{
 				OnPlayerBuilding(collision.hits[0], collision.hits[1], collision.mtv, components);
 			}
-			else if (*tagA == Tags::BUILDING && *tagB == Tags::PLAYER)
+			else if (tagA == Tags::BUILDING && tagB == Tags::PLAYER)
 			{
 				OnPlayerBuilding(collision.hits[1], collision.hits[0], collision.mtv, components);
 			}
 
-			else if (*tagA == Tags::PLAYER && *tagB == Tags::PROJECTILE)
+			else if (tagA == Tags::PLAYER && tagB == Tags::PROJECTILE)
 			{
 				OnPlayerProjectile(collision.hits[0], collision.hits[1], collision.mtv, components);
 			}
-			else if (*tagA == Tags::PROJECTILE && *tagB == Tags::PLAYER)
+			else if (tagA == Tags::PROJECTILE && tagB == Tags::PLAYER)
 			{
 				OnPlayerProjectile(collision.hits[1], collision.hits[0], collision.mtv, components);
 			}
 
-			else if (*tagA == Tags::BUILDING && *tagB == Tags::PROJECTILE)
+			else if (tagA == Tags::BUILDING && tagB == Tags::PROJECTILE)
 			{
 				OnBuildingProjectile(collision.hits[0], collision.hits[1], collision.mtv, components);
 			}
-			else if (*tagA == Tags::PROJECTILE && *tagB == Tags::BUILDING)
+			else if (tagA == Tags::PROJECTILE && tagB == Tags::BUILDING)
 			{
 				OnBuildingProjectile(collision.hits[1], collision.hits[0], collision.mtv, components);
 			}
@@ -201,44 +203,20 @@ namespace Collision
 			{
 				Print("***ERROR -- UNHANDLED COLLISION***");
 			}
-
-			//std::vector<HitPair> player_player;
-			//std::vector<HitPair> player_building;
-			//std::vector<HitPair> player_projectile;
-			//std::vector<HitPair> building_projectile;
-			//for (Entity entity : collision.hits)
-			//{
-			//	Tags::Tag* tag = components.tags.GetComponent(entity);
-			//	if (tag != nullptr)
-			//	{
-			//		// TODO -- invoke callbacks instead of handling collisions directly 
-			//		switch (*tag)
-			//		{
-			//		case Tags::PLAYER:
-			//			components.transforms.GetComponent(entity)->DeltaTranslate(collision.mtv);
-			//			break;
-			//		case Tags::BUILDING:
-			//			components.buildings.GetComponent(entity)->durability -= 10.0f;
-			//			break;
-			//		case Tags::PROJECTILE:
-			//			break;
-			//		}
-			//	}
-			//}
 		}
 	}
 
 	void OnPlayerPlayer(Entity playerA, Entity playerB, const Vector3& mtv, Components& components)
 	{
-		assert(*components.tags.GetComponent(playerA) == Tags::PLAYER);
-		assert(*components.tags.GetComponent(playerB) == Tags::PLAYER);
+		assert(components.identifiers.GetComponent(playerA)->tag == Tags::PLAYER);
+		assert(components.identifiers.GetComponent(playerB)->tag == Tags::PLAYER);
 
 	}
 
 	void OnPlayerBuilding(Entity player, Entity building, const Vector3& mtv, Components& components)
 	{
-		assert(*components.tags.GetComponent(player) == Tags::PLAYER);
-		assert(*components.tags.GetComponent(building) == Tags::BUILDING);
+		assert(components.identifiers.GetComponent(player)->tag == Tags::PLAYER);
+		assert(components.identifiers.GetComponent(building)->tag == Tags::BUILDING);
 
 		components.transforms.GetComponent(player)->DeltaTranslate(mtv);
 		components.buildings.GetComponent(building)->durability -= 10.0f;
@@ -246,15 +224,15 @@ namespace Collision
 
 	void OnPlayerProjectile(Entity player, Entity projectile, const Vector3& mtv, Components& components)
 	{
-		assert(*components.tags.GetComponent(player) == Tags::PLAYER);
-		assert(*components.tags.GetComponent(projectile) == Tags::PROJECTILE);
+		assert(components.identifiers.GetComponent(player)->tag == Tags::PLAYER);
+		assert(components.identifiers.GetComponent(projectile)->tag == Tags::PROJECTILE);
 
 	}
 
 	void OnBuildingProjectile(Entity building, Entity projectile, const Vector3& mtv, Components& components)
 	{
-		assert(*components.tags.GetComponent(building) == Tags::BUILDING);
-		assert(*components.tags.GetComponent(projectile) == Tags::PROJECTILE);
+		assert(components.identifiers.GetComponent(building)->tag == Tags::BUILDING);
+		assert(components.identifiers.GetComponent(projectile)->tag == Tags::PROJECTILE);
 
 	}
 }

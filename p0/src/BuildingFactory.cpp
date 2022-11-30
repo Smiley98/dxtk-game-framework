@@ -7,7 +7,7 @@ Entity CreateBuilding(Components& components,
 	Building::Type type, const BuildingRenderer& renderer)
 {
 	Entity entity = CreateEntity();
-	components.tags.Add(entity) = Tags::BUILDING;
+	components.identifiers.Add(entity).tag = Tags::BUILDING;
 	components.transforms.Add(entity);
 
 	Capsule& capsule = components.capsules.Add(entity);

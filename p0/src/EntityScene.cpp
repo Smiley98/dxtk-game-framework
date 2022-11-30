@@ -24,6 +24,13 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	hash |= Kinematic::Hash();
 	hash |= Building::Hash();
 
+	Entity test = CreateEntity();
+	mComponents.transforms.Add(test);
+	mComponents.transforms.Remove(test);
+	mComponents.transforms.Remove(test);
+	mComponents.transforms.Remove(test);
+	mComponents.transforms.Remove(test);
+
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
 	mHeadlights.TranslateY(80.0f);
@@ -138,7 +145,7 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 
 #if MAP
 	Collision::Update(mComponents);
-	Kinematics::Update(dt);
+	Kinematics::Update(mComponents, dt);
 #endif
 }
 
