@@ -21,5 +21,4 @@ struct Components
 	Bodies bodies;
 	Buildings buildings;
 	Identifiers identifiers;
-	//ComponentMap<Tags::Tag> tags;
 };

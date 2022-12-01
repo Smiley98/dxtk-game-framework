@@ -13,8 +13,6 @@
 
 using namespace DirectX;
 
-std::unordered_map<Entity, uint32_t> gLookup;
-
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
 {
 	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);

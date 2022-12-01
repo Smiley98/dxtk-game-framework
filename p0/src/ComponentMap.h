@@ -31,13 +31,13 @@ public:
 		if (it != mLookup.end())
 		{
 			const size_t index = it->second;
-			const Entity entity = mEntities[index];
+			const Entity entity = mEntities.at(index);
 
 			if (index < mComponents.size() - 1)
 			{
-				mComponents[index] = std::move(mComponents.back());
-				mEntities[index] = mEntities.back();
-				mLookup[mEntities[index]] = index;
+				mComponents.at(index) = std::move(mComponents.back());
+				mEntities.at(index) = mEntities.back();
+				mLookup.at(mEntities.at(index)) = index;
 			}
 
 			mComponents.pop_back();
@@ -53,31 +53,39 @@ public:
 	}
 
 	const Component& operator[](size_t index) const {
-		return mComponents[index];
+		return mComponents.at(index);
 	}
 
 	Component& operator[](size_t index) {
-		return mComponents[index];
+		return mComponents.at(index);
 	}
 
 	const Entity GetEntity(size_t index) const {
-		return mEntities[index];
+		return mEntities.at(index);
 	}
 
 	Entity& GetEntity(size_t index) {
-		return mEntities[index];
+		return mEntities.at(index);
 	}
 
 	const Component* GetComponent(const Entity entity) const
 	{
-		auto it = mLookup.find(entity);
-		return it != mLookup.end() ? &mComponents[it->second] : nullptr;
+		assert(gLookup.find(entity) != gLookup.end());
+		assert(mLookup.find(entity) != mLookup.end());
+		return (gLookup.at(entity) & Component::Hash()) == Component::Hash() ?
+			&mComponents.at(mLookup.at(entity)) : nullptr;
+		//auto it = mLookup.find(entity);
+		//return it != mLookup.end() ? &mComponents[it->second] : nullptr;
 	}
 
 	Component* GetComponent(Entity entity)
 	{
-		auto it = mLookup.find(entity);
-		return it != mLookup.end() ? &mComponents[it->second] : nullptr;
+		assert(gLookup.find(entity) != gLookup.end());
+		assert(mLookup.find(entity) != mLookup.end());
+		return (gLookup.at(entity) & Component::Hash()) == Component::Hash() ?
+			&mComponents.at(mLookup.at(entity)) : nullptr;
+		//auto it = mLookup.find(entity);
+		//return it != mLookup.end() ? &mComponents[it->second] : nullptr;
 	}
 
 	// Try not to expose these
