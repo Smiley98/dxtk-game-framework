@@ -121,6 +121,21 @@
     <ClCompile Include="src\CollisionSystem.cpp">
       <Filter>ECS\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\Kinematic.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Identifier.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinematicsSystem.cpp">
+      <Filter>ECS\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Transform.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Building.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -171,9 +186,6 @@
     <ClInclude Include="src\CollisionMath.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Component.h">
-      <Filter>ECS</Filter>
-    </ClInclude>
     <ClInclude Include="src\Entity.h">
       <Filter>ECS</Filter>
     </ClInclude>
@@ -198,9 +210,6 @@
     <ClInclude Include="src\Geometry.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\Transform.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\PlayerSystem.h">
       <Filter>ECS\Systems</Filter>
     </ClInclude>
@@ -209,6 +218,24 @@
     </ClInclude>
     <ClInclude Include="src\CollisionSystem.h">
       <Filter>ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Transform.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kinematic.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Identifier.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinematicsSystem.h">
+      <Filter>ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ComponentHash.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ComponentMap.h">
+      <Filter>ECS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
