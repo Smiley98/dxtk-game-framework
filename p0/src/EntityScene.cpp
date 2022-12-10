@@ -4,6 +4,7 @@
 #include "BuildingFactory.h"
 #include "CollisionSystem.h"
 #include "KinematicsSystem.h"
+#include "PlayerSystem.h"
 #include "Utility.h"
 
 #define MAP true
@@ -84,7 +85,7 @@ void EntityScene::OnResume()
 {
 }
 
-void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
+void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
@@ -101,37 +102,10 @@ void EntityScene::OnUpdate(float dt, float tt, DX::Input& input)
 	transform.Orientate(forward);
 #endif
 
-#if GAMEPAD
-	GamePad::State state = input.gamePad.GetState(0);
-
-	if (state.IsLeftThumbStickLeft())
-		transform.DeltaRotateZ(av);
-	if (state.IsLeftThumbStickRight())
-		transform.DeltaRotateZ(-av);
-
-	if (state.IsAPressed())
-		transform.DeltaTranslate(transform.Forward() * av);
-	if (state.IsXPressed())
-		transform.DeltaTranslate(transform.Forward() * -av);
-#endif
-
-#if KEYBOARD
-	Keyboard::State state = input.keyboard.GetState();
-
-	if (state.A)
-		transform.DeltaRotateZ(av);
-	if (state.D)
-		transform.DeltaRotateZ(-av);
-
-	if (state.W)
-		transform.DeltaTranslate(transform.Forward() * av);
-	if (state.S)
-		transform.DeltaTranslate(transform.Forward() * -av);
-#endif
-
 #if MAP
-	Collision::Update(mComponents);
 	Kinematics::Update(mComponents, dt);
+	Players::Update(mComponents, input, dt);
+	Collision::Update(mComponents);
 #endif
 }
 

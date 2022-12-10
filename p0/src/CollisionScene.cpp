@@ -58,7 +58,7 @@ void CollisionScene::OnResume()
 {
 }
 
-void CollisionScene::OnUpdate(float dt, float tt, DX::Input& input)
+void CollisionScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
 	const float speed = 100.0f * dt;
 	Vector3 mtv;

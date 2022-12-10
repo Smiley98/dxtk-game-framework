@@ -87,7 +87,7 @@ void TestScene::OnResume()
 {
 }
 
-void TestScene::OnUpdate(float dt, float tt, DX::Input& input)
+void TestScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
 	mParent.RotateY(tt * 50.0f);
 	mChild1.RotateX(tt * 50.0f);

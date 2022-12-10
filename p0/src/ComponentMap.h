@@ -71,7 +71,6 @@ public:
 	const Component* GetComponent(const Entity entity) const
 	{
 		assert(gLookup.find(entity) != gLookup.end());
-		assert(mLookup.find(entity) != mLookup.end());
 		return (gLookup.at(entity) & Component::Hash()) == Component::Hash() ?
 			&mComponents.at(mLookup.at(entity)) : nullptr;
 		//auto it = mLookup.find(entity);
@@ -81,7 +80,6 @@ public:
 	Component* GetComponent(Entity entity)
 	{
 		assert(gLookup.find(entity) != gLookup.end());
-		assert(mLookup.find(entity) != mLookup.end());
 		return (gLookup.at(entity) & Component::Hash()) == Component::Hash() ?
 			&mComponents.at(mLookup.at(entity)) : nullptr;
 		//auto it = mLookup.find(entity);

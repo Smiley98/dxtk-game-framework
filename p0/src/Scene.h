@@ -50,7 +50,7 @@ public:
 	static void Pause();
 	static void Resume();
 
-	static void Update(float dt, float tt, DX::Input& input);
+	static void Update(float dt, float tt, const DX::Input& input);
 	static void Render(std::shared_ptr<DX::DeviceResources> graphics);
 
 	static Type Current();
@@ -65,7 +65,7 @@ protected:
 	virtual void OnPause() = 0;
 	virtual void OnResume() = 0;
 
-	virtual void OnUpdate(float dt, float tt, DX::Input& input) = 0;
+	virtual void OnUpdate(float dt, float tt, const DX::Input& input) = 0;
 	virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) = 0;
 
 	void AddTimer(const std::string& name, float duration, TimerCallback callback, bool repeat);

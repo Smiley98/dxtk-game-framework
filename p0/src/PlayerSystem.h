@@ -1,10 +1,8 @@
 #pragma once
-#include "HitPair.h"
-#include "Tags.h"
-#include <vector>
+#include "Input.h"
 
 struct Components;
 namespace Players
 {
-	void Update(Components& components);
+	void Update(Components& components, const DX::Input& input, float dt);
 }

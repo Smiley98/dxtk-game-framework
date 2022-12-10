@@ -91,7 +91,7 @@ void Scene::Resume()
 	scene->mPaused = false;
 }
 
-void Scene::Update(float dt, float tt, DX::Input& input)
+void Scene::Update(float dt, float tt, const DX::Input& input)
 {
 	sScenes[sType]->OnUpdate(dt, tt, input);
 

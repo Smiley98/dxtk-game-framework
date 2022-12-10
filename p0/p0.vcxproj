@@ -136,6 +136,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\CollisionScene.cpp" />
+    <ClCompile Include="src\Player.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\PlayerFactory.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -164,6 +168,7 @@
     <ClInclude Include="src\ComponentMap.h" />
     <ClInclude Include="src\ComponentHash.h" />
     <ClInclude Include="src\Components.h" />
+    <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\Curves.h" />
     <ClInclude Include="src\DebugRenderer.h" />
     <ClInclude Include="src\DeviceResources.h" />
@@ -181,6 +186,7 @@
     <ClInclude Include="src\MainScene.h" />
     <ClInclude Include="src\MathUtilities.h" />
     <ClInclude Include="src\MiscRenderer.h" />
+    <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\PlayerFactory.h" />
     <ClInclude Include="src\PlayerRenderer.h" />
     <ClInclude Include="src\PlayerSystem.h" />

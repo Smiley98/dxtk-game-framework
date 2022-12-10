@@ -41,7 +41,7 @@ void MainScene::OnResume()
 {
 }
 
-void MainScene::OnUpdate(float dt, float tt, DX::Input& input)
+void MainScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
 	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
 }

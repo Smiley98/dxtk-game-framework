@@ -5,20 +5,15 @@
 #include "Kinematic.h"
 #include "Building.h"
 #include "Identifier.h"
-
-using Transforms = ComponentMap<Transform>;
-using Spheres = ComponentMap<Sphere>;
-using Capsules = ComponentMap<Capsule>;
-using Buildings = ComponentMap<Building>;
-using Bodies = ComponentMap<Kinematic>;
-using Identifiers = ComponentMap<Identifier>;
+#include "Player.h"
 
 struct Components
 {
-	Transforms transforms;
-	Spheres spheres;
-	Capsules capsules;
-	Bodies bodies;
-	Buildings buildings;
-	Identifiers identifiers;
+	ComponentMap<Transform> transforms;
+	ComponentMap<Sphere> spheres;
+	ComponentMap<Capsule> capsules;
+	ComponentMap<Kinematic> bodies;
+	ComponentMap<Building> buildings;
+	ComponentMap<Identifier> identifiers;
+	ComponentMap<Player> players;
 };

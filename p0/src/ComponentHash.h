@@ -10,4 +10,5 @@ namespace ComponentHash
 	constexpr uint32_t KINEMATIC = CAPSULE << 1;
 	constexpr uint32_t BUILDING = KINEMATIC << 1;
 	constexpr uint32_t IDENTIFIER = BUILDING << 1;
+	constexpr uint32_t PLAYER = IDENTIFIER << 1;
 }

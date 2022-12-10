@@ -136,6 +136,9 @@
     <ClCompile Include="src\Building.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -237,6 +240,10 @@
     <ClInclude Include="src\ComponentMap.h">
       <Filter>ECS</Filter>
     </ClInclude>
+    <ClInclude Include="src\Player.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Constants.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">
