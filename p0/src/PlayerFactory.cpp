@@ -7,7 +7,7 @@ Entity CreatePlayer(Components& components, const PlayerRenderer& renderer)
 {
 	Entity entity = CreateEntity();
 	Player& player = components.players.Add(entity);
-	player.steering = Constants::VAN_STEERING_MAX;
+	player.steering = 250.0f;
 	player.type = Player::VAN;
 	components.identifiers.Add(entity).tag = Tags::PLAYER;
 

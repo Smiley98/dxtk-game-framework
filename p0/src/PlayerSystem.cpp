@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Constants.h"
+//#include "Constants.h"
 #include "PlayerSystem.h"
 #include "Components.h"
 #define GAMEPAD false
@@ -19,6 +19,9 @@ namespace Players
 			Player& player = *components.players.GetComponent(entity);
 			Transform& transform = *components.transforms.GetComponent(entity);
 
+			constexpr float VAN_MOVE_VEL = 500.0f;
+			constexpr float VAN_MOVE_ACC = 500.0f;
+
 #if GAMEPAD
 			GamePad::State state = input.gamePad.GetState(0);
 
@@ -36,18 +39,27 @@ namespace Players
 #if KEYBOARD
 			Keyboard::State state = input.keyboard.GetState();
 			if (state.W)
-				body.hAcc = Constants::VAN_H_ACC_MAX;
+				body.hAcc = VAN_MOVE_ACC;
 			else if (state.S)
-				body.hAcc = -Constants::VAN_H_ACC_MAX;
+				body.hAcc = -VAN_MOVE_ACC;
 			else
+			{
 				body.hAcc = 0.0f;
+				body.hVel *= 0.95f;
+			}
+
+			// Increase acceleration (via frication) if breaking (opposite to current velocity)
+			if (body.hVel > 0.0f && body.hAcc < 0.0f || body.hVel < 0.0f && body.hAcc > 0.0f)
+			{
+				body.hVel *= 0.9f;
+			}
 
 			if (state.A)
 				transform.DeltaRotateZ(player.steering * dt);
 			if (state.D)
 				transform.DeltaRotateZ(-player.steering * dt);
 #endif
-			body.hVel = std::clamp(body.hVel, -Constants::VAN_H_VEL_MAX, Constants::VAN_H_VEL_MAX);
+			body.hVel = std::clamp(body.hVel, -VAN_MOVE_VEL, VAN_MOVE_VEL);
 		}
 	}
 }
