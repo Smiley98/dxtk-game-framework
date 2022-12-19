@@ -244,6 +244,9 @@
       <Filter>ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\Constants.h" />
+    <ClInclude Include="src\Steering.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

@@ -191,6 +191,7 @@
     <ClInclude Include="src\PlayerRenderer.h" />
     <ClInclude Include="src\PlayerSystem.h" />
     <ClInclude Include="src\Renderer.h" />
+    <ClInclude Include="src\Steering.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Transform.h" />
     <ClInclude Include="src\pch.h" />

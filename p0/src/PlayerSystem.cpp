@@ -4,6 +4,7 @@
 #include "Components.h"
 #define GAMEPAD false
 #define KEYBOARD true
+#include "Steering.h"
 
 namespace Players
 {
@@ -97,6 +98,9 @@ namespace Players
 				body.hVel *= 0.9f;
 			}
 			body.hVel = std::clamp(body.hVel, -VAN_MOVE_VEL, VAN_MOVE_VEL);
+
+			// TODO -- 3d physics. Operations like steering are counter-intuitive without 3d forces.
+			//Steering::Seek()
 		}
 	}
 }
