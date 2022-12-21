@@ -65,16 +65,16 @@ namespace Players
 			switch (translation)
 			{
 			case FORWARD:
-				body.hAcc = VAN_MOVE_ACC;
+				body.acc = VAN_MOVE_ACC;
 				break;
 
 			case BACKWARD:
-				body.hAcc = -VAN_MOVE_ACC;
+				body.acc = -VAN_MOVE_ACC;
 				break;
 
 			case NONE:
-				body.hAcc = 0.0f;
-				body.hVel *= 0.95f;
+				body.acc = 0.0f;
+				body.vel *= 0.95f;
 				break;
 			}
 
@@ -92,15 +92,12 @@ namespace Players
 				break;
 			}
 
-			// Increase deceleration (via frication) if breaking (opposite to current velocity)
-			if (body.hVel > 0.0f && body.hAcc < 0.0f || body.hVel < 0.0f && body.hAcc > 0.0f)
+			// Increase deceleration (via friction) if breaking (opposite to current velocity)
+			if (body.vel > 0.0f && body.acc < 0.0f || body.vel < 0.0f && body.acc > 0.0f)
 			{
-				body.hVel *= 0.9f;
+				body.vel *= 0.9f;
 			}
-			body.hVel = std::clamp(body.hVel, -VAN_MOVE_VEL, VAN_MOVE_VEL);
-
-			// TODO -- 3d physics. Operations like steering are counter-intuitive without 3d forces.
-			//Steering::Seek()
+			body.vel = std::clamp(body.vel, -VAN_MOVE_VEL, VAN_MOVE_VEL);
 		}
 	}
 }

@@ -139,6 +139,12 @@
     <ClCompile Include="src\Player.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="src\Kinematic3.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SteeringEntity.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -245,6 +251,15 @@
     </ClInclude>
     <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\Steering.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Kinematic3.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ComponentDef.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SteeringEntity.h">
       <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>

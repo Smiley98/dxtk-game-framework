@@ -6,6 +6,7 @@
 #include "KinematicsSystem.h"
 #include "PlayerSystem.h"
 #include "Utility.h"
+#include "SteeringEntity.h"
 
 #define MAP true
 #define SPLINE false
@@ -45,6 +46,10 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		y += yStep;
 	}
 #endif
+
+	mSeeker = CreateEntity();
+	mComponents.transforms.Add(mSeeker);
+	mComponents.bodies3.Add(mSeeker);
 }
 
 EntityScene::~EntityScene()
@@ -106,6 +111,7 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	Kinematics::Update(mComponents, dt);
 	Players::Update(mComponents, input, dt);
 	Collision::Update(mComponents);
+	Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
 #endif
 }
 
@@ -136,6 +142,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Debug::Capsule(transform, collider.r, collider.hh, mView, mProj, graphics, Colors::Red);
 		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
 	}
+	Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
 #endif
 }
 

@@ -40,4 +40,6 @@ private:
 
 	float t = 0.0f, d = 0.0f;
 	size_t interval = 0, sample = 0;
+
+	Entity mSeeker;
 };
