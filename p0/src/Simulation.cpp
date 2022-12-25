@@ -5,6 +5,16 @@
 // p2 = p1 + v2(t) + 0.5a(t^2)
 namespace Kinematics
 {
+	Vector3 Simulate3(const Vector3& pos, const Vector3& vel, const Vector3& acc, float dt)
+	{
+		return pos + vel * dt + 0.5f * acc * dt * dt;
+	}
+
+	float Simulate3(float pos, float vel, float acc, float dt)
+	{
+		return pos + vel * dt + 0.5f * acc * dt * dt;
+	}
+
 	Vector3 Simulate3(Kinematic3& body, float dt, size_t steps)
 	{
 		Vector3 displacement;

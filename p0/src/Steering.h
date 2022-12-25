@@ -1,15 +1,9 @@
 #pragma once
 #include "Transform.h"
+#include "Simulation.h"
 
 namespace Steering
 {
-    //public static Vector3 Seek(Vector3 target, Rigidbody current, float speed)
-    //{
-    //    Vector3 desiredVelocity = (target - current.position).normalized * speed;
-    //    Vector3 currentVelocity = current.velocity;
-    //    return desiredVelocity - currentVelocity;
-    //}
-
 	inline Vector3 Seek(
         const Vector3& targetPosition,
         const Vector3& seekerPosition,
@@ -21,4 +15,36 @@ namespace Steering
 
         return desiredVelocity - seekerVelocity;
 	}
+
+    inline Vector3 Flee(
+        const Vector3& targetPosition,
+        const Vector3& seekerPosition,
+        const Vector3& seekerVelocity, float maxSpeed)
+    {
+        return -Seek(targetPosition, seekerPosition, seekerVelocity, maxSpeed);
+    }
+
+    inline Vector3 Pursue(
+        const Vector3& targetPosition,
+        const Vector3& targetVelocity,
+        const Vector3& targetAcceleration,
+        const Vector3& seekerPosition,
+        const Vector3& seekerVelocity, float maxSpeed, float dt)
+    {
+        return Seek(
+            Kinematics::Simulate3(targetPosition, targetVelocity, targetAcceleration, dt),
+            seekerPosition, seekerVelocity, maxSpeed);
+    }
+
+    inline Vector3 Evade(
+        const Vector3& targetPosition,
+        const Vector3& targetVelocity,
+        const Vector3& targetAcceleration,
+        const Vector3& seekerPosition,
+        const Vector3& seekerVelocity, float maxSpeed, float dt)
+    {
+        return -Seek(
+            Kinematics::Simulate3(targetPosition, targetVelocity, targetAcceleration, dt),
+            seekerPosition, seekerVelocity, maxSpeed);
+    }
 }

@@ -51,6 +51,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mSeeker = CreateEntity();
 	mComponents.transforms.Add(mSeeker);
 	mComponents.bodies3.Add(mSeeker);
+	mComponents.transforms.GetComponent(mSeeker)->Translate(800.0f, 450.0f, 0.0f);
 }
 
 EntityScene::~EntityScene()
@@ -112,7 +113,8 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	Kinematics::Update(mComponents, dt);
 	Players::Update(mComponents, input, dt);
 	Collision::Update(mComponents);
-	Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
+	//Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
+	//Steering::Flee(mPlayer, mSeeker, 1000.0f, mComponents);
 #endif
 }
 
