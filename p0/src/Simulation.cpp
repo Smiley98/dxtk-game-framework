@@ -1,38 +1,29 @@
 #include "Simulation.h"
 
+// "Semi-implicit Euler integration" -- cheapest energy-conserving system
+// v2 = v1 + a(t)
+// p2 = p1 + v2(t) + 0.5a(t^2)
 namespace Kinematics
 {
-	//void Simulate3(const Vector3& acceleration, const Vector3& inVelocity, const Vector3& inPosition,
-	//	Vector3& outVelocity, Vector3& outPosition, float dt, size_t steps)
-	//{
-	//
-	//}
-	//
-	//void Simulate(float acceleration, float inVelocity, float inPosition,
-	//	float& outVelocity, float& outPosition, float dt, size_t steps)
-	//{
-	//
-	//}
-
-	void Simulate3(Kinematic3& body, Transform& transform, float dt, size_t steps)
+	Vector3 Simulate3(Kinematic3& body, float dt, size_t steps)
 	{
+		Vector3 displacement;
 		for (size_t i = 0; i < steps; i++)
 		{
 			body.vel += body.acc * dt;
-			transform.DeltaTranslate(body.vel * dt + 0.5f * body.acc * dt * dt);
-
-			Vector3 forward;
-			body.vel.Normalize(forward);
-			transform.Orientate(forward);
+			displacement += body.vel * dt + 0.5f * body.acc * dt * dt;
 		}
+		return displacement;
 	}
 
-	void Simulate(Kinematic& body, float& distance, float dt, size_t steps)
+	float Simulate(Kinematic& body, float dt, size_t steps)
 	{
+		float displacement = 0.0f;
 		for (size_t i = 0; i < steps; i++)
 		{
 			body.vel += body.acc * dt;
-			distance += body.vel * dt + 0.5f * body.acc * dt * dt;
+			displacement += body.vel * dt + 0.5f * body.acc * dt * dt;
 		}
+		return displacement;
 	}
 }
