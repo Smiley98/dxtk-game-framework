@@ -1,12 +1,14 @@
 #include "pch.h"
 #include "KinematicsSystem.h"
+#include "Simulation.h"
 #include "Components.h"
 
 namespace Kinematics
 {
 	// Create a gravity component that stores a gravitation force to apply to the entity's kinematic.
 	// Apply said acceleration within GravitySystem::Update() (which Kinematics::Update() will then apply).
-	void Update(Components& components, float dt, float timeSteps)
+
+	void Update(Components& components, float dt, size_t steps)
 	{
 		for (size_t i = 0; i < components.bodies.Count(); i++)
 		{
@@ -18,14 +20,9 @@ namespace Kinematics
 			Transform& transform = *components.transforms.GetComponent(entity);
 			Kinematic& body = components.bodies[i];
 
-			// "Semi-implicit Euler integration" -- cheapest energy-conserving system
-			// v2 = v1 + a(t)
-			// p2 = p1 + v2(t) + 0.5a(t^2)
-			//body.vel += body.acc * dt;
-			//transform.DeltaTranslate(body.vel * dt + 0.5f * body.acc * dt * dt);
-
-			body.vel += body.acc * dt;
-			transform.DeltaTranslate(transform.Forward() * (body.vel * dt + 0.5f * body.acc * dt * dt));
+			float translation = 0.0f;
+			Simulate(body, translation, dt, steps);
+			transform.DeltaTranslate(transform.Forward() * translation);
 		}
 
 		for (size_t i = 0; i < components.bodies3.Count(); i++)
@@ -38,11 +35,11 @@ namespace Kinematics
 			Transform& transform = *components.transforms.GetComponent(entity);
 			Kinematic3& body = components.bodies3[i];
 
-			// "Semi-implicit Euler integration" -- cheapest energy-conserving system
-			// v2 = v1 + a(t)
-			// p2 = p1 + v2(t) + 0.5a(t^2)
-			body.vel += body.acc * dt;
-			transform.DeltaTranslate(body.vel * dt + 0.5f * body.acc * dt * dt);
+			Simulate3(body, transform, dt, steps);
 		}
 	}
+
+	// "Semi-implicit Euler integration" -- cheapest energy-conserving system
+	// v2 = v1 + a(t)
+	// p2 = p1 + v2(t) + 0.5a(t^2)
 }

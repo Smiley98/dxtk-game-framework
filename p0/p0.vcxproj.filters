@@ -145,6 +145,9 @@
     <ClCompile Include="src\SteeringEntity.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="src\Simulation.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -260,6 +263,9 @@
       <Filter>ECS</Filter>
     </ClInclude>
     <ClInclude Include="src\SteeringEntity.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Simulation.h">
       <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>

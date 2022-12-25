@@ -3,5 +3,5 @@
 struct Components;
 namespace Kinematics
 {
-	void Update(Components& components, float dt, float timeSteps = 1.0f);
+	void Update(Components& components, float dt, size_t steps = 1);
 }
