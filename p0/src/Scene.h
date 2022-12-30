@@ -14,8 +14,6 @@
 #include <memory>
 #include <string>
 
-using TimerCallback = std::function<void()>;
-
 class Scene
 {
 public:
@@ -70,6 +68,7 @@ protected:
 
 	void AddTimer(const std::string& name, float duration, TimerCallback callback, bool repeat);
 	void RemoveTimer(const std::string& name);
+	Timer& GetTimer(const std::string& name);
 
 	// Shared members
 	static PlayerRenderer sPlayerRenderer;

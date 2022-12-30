@@ -10,8 +10,8 @@ using Microsoft::WRL::ComPtr;
 
 Game::Game() noexcept(false)
 {
-    mFixedTimer.SetFixedTimeStep(true);
-    mFixedTimer.SetTargetElapsedSeconds(1.0 / 50.0);
+    mStepTimer.SetFixedTimeStep(true);
+    mStepTimer.SetTargetElapsedSeconds(1.0 / 50.0);
     mDeviceResources = std::make_shared<DX::DeviceResources>();
     mDeviceResources->RegisterDeviceNotify(this);
 }
@@ -49,20 +49,16 @@ void Game::Initialize(HWND window, int width, int height)
 // Main runs this function as frequently as possible -- whenever the Win32 event queue is empty
 void Game::Tick()
 {
-    // Update logic at a fixed rate of 50hz
-    mFixedTimer.Tick([&] {
+    mStepTimer.Tick([&] {
         Scene::Update(
-            (float)mFixedTimer.GetElapsedSeconds(),
-            (float)mFixedTimer.GetTotalSeconds(),
+            (float)mStepTimer.GetElapsedSeconds(),
+            (float)mStepTimer.GetTotalSeconds(),
         mInput);
     });
 
-    // Update input, audio & graphics every frame
-    mVariableTimer.Tick([&] {
-        Input();
-        Audio();
-        Render();
-    });
+    Input();
+    Audio();
+    Render();
 }
 
 void Game::Input()
@@ -90,11 +86,10 @@ void Game::Audio()
     mAudioEngine->Update();
 }
 
-// Draws the scene.
 void Game::Render()
 {
     // Don't try to render anything before the two ticks (needed for frame interpolation/extrapolation).
-    if (mFixedTimer.GetFrameCount() <= 1)
+    if (mStepTimer.GetFrameCount() <= 1)
     {
         return;
     }
@@ -108,7 +103,6 @@ void Game::Render()
     mDeviceResources->Present();
 }
 
-// Helper method to clear the back buffers.
 void Game::Clear()
 {
     mDeviceResources->PIXBeginEvent(L"Clear");
@@ -130,7 +124,6 @@ void Game::Clear()
 }
 
 #pragma region Message Handlers
-// Message handlers
 void Game::OnActivated()
 {
 }
@@ -146,8 +139,7 @@ void Game::OnSuspending()
 
 void Game::OnResuming()
 {
-    mVariableTimer.ResetElapsedTime();
-    mFixedTimer.ResetElapsedTime();
+    mStepTimer.ResetElapsedTime();
     mAudioEngine->Resume();
 }
 
@@ -208,3 +200,20 @@ void Game::OnDeviceRestored()
     Scene::Run(mScene);
 }
 #pragma endregion
+
+// Gameloop timer test results:
+// Debug: Tick() & Frame() fired 50:50
+// Release: Tick() & Frame() fired 10:50
+
+// Test code:
+//static int yes, no; <-- ++yes within Tick(), ++no within Frame().
+//static double timer = 0.0;
+//timer += mStepTimer.GetElapsedSeconds();
+//if (timer > 1.0)
+//{
+//    timer = 0.0;
+//    Print("Yes: " + std::to_string(yes));
+//    Print("No : " + std::to_string(no));
+//    yes = 0;
+//    no = 0;
+//}

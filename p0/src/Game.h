@@ -43,11 +43,11 @@ private:
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
 
-    // Shared resources 
+    // Shared resources
+    DX::StepTimer mStepTimer;
     std::shared_ptr<DX::DeviceResources> mDeviceResources;
     std::shared_ptr<DirectX::AudioEngine> mAudioEngine;
     DX::Input mInput;
 
-    DX::StepTimer mFixedTimer, mVariableTimer;
     Scene::Type mScene = Scene::ENTITY;
 };

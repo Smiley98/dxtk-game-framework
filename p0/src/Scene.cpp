@@ -98,7 +98,7 @@ void Scene::Update(float dt, float tt, const DX::Input& input)
 	auto& timers = sScenes[sType]->mTimers;
 	for (auto& [key, val] : timers)
 	{
-		val.Update(dt);
+		val.Tick(dt);
 		if (val.IsExpired() /* && !val.IsRepeat() <-- unnecessary because repeating timers never expire*/)
 			timers.erase(key);
 	}
@@ -123,4 +123,9 @@ void Scene::AddTimer(const std::string& name, float duration, TimerCallback call
 void Scene::RemoveTimer(const std::string& name)
 {
 	mTimers.erase(name);
+}
+
+Timer& Scene::GetTimer(const std::string& name)
+{
+	return mTimers.at(name);
 }

@@ -78,10 +78,14 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 
 void EntityScene::OnBegin()
 {
+	AddTimer("test", 1.0f, [this] {
+		Print("Callback");
+	}, true);
 }
 
 void EntityScene::OnEnd()
 {
+	RemoveTimer("test");
 }
 
 void EntityScene::OnPause()
@@ -94,6 +98,8 @@ void EntityScene::OnResume()
 
 void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
+	//Print(std::to_string(GetTimer("test").Percentage()));
+
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
 	Transform& transform = *mComponents.transforms.GetComponent(mPlayer);
@@ -148,12 +154,6 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
 #endif
 }
-
-// Timer test:
-//AddTimer("test", 1.0f, [this]() {
-//	Print(mVan.Euler());
-//	Print(mVan.Forward());
-//}, true);
 
 // Triangle test:
 //sMiscRenderer.Triangle(

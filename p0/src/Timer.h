@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
 
+// Callback should be a simple "fire and forget" function.
+// Prefer processes over repeating timers for frequency-based updates.
 using TimerCallback = std::function<void()>;
 
 class Timer
@@ -11,10 +13,17 @@ public:
 
 	inline bool IsExpired() const;
 	inline bool IsRepeat() const;
-	inline float Duration() const;
 
-	inline void Update(float dt);
+	inline float Duration() const;
+	inline float Elapsed() const;
+	inline float Percentage() const;
+
+	inline void Tick(float dt);
 	inline void Reset();
+
+	// Neat ideas but also makes things confusing, especially with repeat functionality.
+	//inline void Complete(); -- fires callback and makes elapsed > duration
+	//inline void Expire(); -- makes elapsed > duration but doesn't fire callback
 
 private:
 	TimerCallback mCallback;
@@ -39,7 +48,17 @@ inline float Timer::Duration() const
 	return mDuration;
 }
 
-inline void Timer::Update(float dt)
+inline float Timer::Elapsed() const
+{
+	return mElapsed;
+}
+
+inline float Timer::Percentage() const
+{
+	return mElapsed / mDuration;
+}
+
+inline void Timer::Tick(float dt)
 {
 	mElapsed += dt;
 	if (IsExpired())
@@ -54,25 +73,3 @@ inline void Timer::Reset()
 {
 	mElapsed = 0.0f;
 }
-
-// unordered_map doesn't require a default constructor so we can keep Timer immutable!
-/*
-inline void SetDuration(float duration);
-inline void SetRepeat(bool repeat);
-inline void SetCallback(TimerCallback callback);
-
-inline void Timer::SetDuration(float duration)
-{
-	mDuration = duration;
-}
-
-inline void Timer::SetRepeat(bool repeat)
-{
-	mRepeat = repeat;
-}
-
-inline void Timer::SetCallback(TimerCallback callback)
-{
-	mCallback = callback;
-}
-*/
