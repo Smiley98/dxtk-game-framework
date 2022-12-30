@@ -36,16 +36,18 @@ public:
     void GetDefaultSize( int& width, int& height ) const noexcept;
     
 private:
-    void Update();
+    void Input();
+    void Audio();
     void Render();
     void Clear();
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
 
     // Shared resources 
-    std::shared_ptr<DX::DeviceResources>    mDeviceResources;
-    std::shared_ptr<DirectX::AudioEngine>   mAudioEngine;
-    DX::StepTimer                           mTimer;
-    DX::Input                               mInput;
-    Scene::Type                             mScene = Scene::ENTITY;
+    std::shared_ptr<DX::DeviceResources> mDeviceResources;
+    std::shared_ptr<DirectX::AudioEngine> mAudioEngine;
+    DX::Input mInput;
+
+    DX::StepTimer mFixedTimer, mVariableTimer;
+    Scene::Type mScene = Scene::ENTITY;
 };

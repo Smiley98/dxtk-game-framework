@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Game.h"
+#include "Utility.h"
 
 extern void ExitGame() noexcept;
 
@@ -9,6 +10,8 @@ using Microsoft::WRL::ComPtr;
 
 Game::Game() noexcept(false)
 {
+    mFixedTimer.SetFixedTimeStep(true);
+    mFixedTimer.SetTargetElapsedSeconds(1.0 / 50.0);
     mDeviceResources = std::make_shared<DX::DeviceResources>();
     mDeviceResources->RegisterDeviceNotify(this);
 }
@@ -46,21 +49,23 @@ void Game::Initialize(HWND window, int width, int height)
 // Main runs this function as frequently as possible -- whenever the Win32 event queue is empty
 void Game::Tick()
 {
-    // Timer ticks as fast as possible but calls update at the desired rate.
-    mTimer.Tick([&] {
-        Update();
-        
-        // Probably don't need to process audio at light-speed xD
-        if (!mAudioEngine->IsCriticalError())
-            mAudioEngine->Update();
+    // Update logic at a fixed rate of 50hz
+    mFixedTimer.Tick([&] {
+        Scene::Update(
+            (float)mFixedTimer.GetElapsedSeconds(),
+            (float)mFixedTimer.GetTotalSeconds(),
+        mInput);
     });
-    
-    // Render whenever possible!
-    Render();
+
+    // Update input, audio & graphics every frame
+    mVariableTimer.Tick([&] {
+        Input();
+        Audio();
+        Render();
+    });
 }
 
-// Updates the world.
-void Game::Update()
+void Game::Input()
 {
     auto const pad = mInput.gamePad.GetState(0);
     if (pad.IsConnected())
@@ -76,15 +81,20 @@ void Game::Update()
     {
         ExitGame();
     }
+}
 
-    Scene::Update((float)mTimer.GetElapsedSeconds(), (float)mTimer.GetTotalSeconds(), mInput);
+void Game::Audio()
+{
+    // IsCriticalError() = !IsAudioDevicePresent() == Update().
+    // Not worth handling audio connect & disconnect at this point.
+    mAudioEngine->Update();
 }
 
 // Draws the scene.
 void Game::Render()
 {
-    // Don't try to render anything before the first Update.
-    if (mTimer.GetFrameCount() == 0)
+    // Don't try to render anything before the two ticks (needed for frame interpolation/extrapolation).
+    if (mFixedTimer.GetFrameCount() <= 1)
     {
         return;
     }
@@ -136,7 +146,8 @@ void Game::OnSuspending()
 
 void Game::OnResuming()
 {
-    mTimer.ResetElapsedTime();
+    mVariableTimer.ResetElapsedTime();
+    mFixedTimer.ResetElapsedTime();
     mAudioEngine->Resume();
 }
 
