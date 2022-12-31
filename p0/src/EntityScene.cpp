@@ -78,14 +78,10 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 
 void EntityScene::OnBegin()
 {
-	AddTimer("test", 1.0f, [this] {
-		Print("Callback");
-	}, true);
 }
 
 void EntityScene::OnEnd()
 {
-	RemoveTimer("test");
 }
 
 void EntityScene::OnPause()
@@ -98,8 +94,6 @@ void EntityScene::OnResume()
 
 void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
-	//Print(std::to_string(GetTimer("test").Percentage()));
-
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
 	Transform& transform = *mComponents.transforms.GetComponent(mPlayer);
@@ -168,3 +162,15 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 //	mTestBuildings[i] = CreateBuilding(mComponents, (Building::Type)i, sBuildingRenderer);
 //	mComponents.transforms.GetComponent(mTestBuildings[i])->Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
 //}
+
+// Timer test:
+//AddTimer("test", 1.0f, [this] {
+//	Print("Callback");
+//}, false);
+//
+// Process test:
+//AddProcess("test", 1.0f / 10.0f, 1.0f, [this](const Process& process) {
+//	if (process.Percentage() > 0.5f)
+//		RemoveProcess("test");
+//	Print(std::to_string(process.Percentage()));
+//}, true);

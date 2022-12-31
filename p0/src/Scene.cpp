@@ -93,14 +93,41 @@ void Scene::Resume()
 
 void Scene::Update(float dt, float tt, const DX::Input& input)
 {
-	sScenes[sType]->OnUpdate(dt, tt, input);
+	Scene& scene = *sScenes[sType];
+	scene.OnUpdate(dt, tt, input);
 
-	auto& timers = sScenes[sType]->mTimers;
-	for (auto& [key, val] : timers)
-	{
+	for (auto& [key, val] : scene.mTimers)
 		val.Tick(dt);
-		if (val.IsExpired() /* && !val.IsRepeat() <-- unnecessary because repeating timers never expire*/)
-			timers.erase(key);
+
+	for (auto& [key, val] : scene.mProcesses)
+		val.Tick(dt);
+
+	while (!scene.mTimerRemoveQueue.empty())
+	{
+		scene.mTimers.erase(scene.mTimerRemoveQueue.front());
+		scene.mTimerRemoveQueue.pop();
+	}
+
+	while (!scene.mProcessRemoveQueue.empty())
+	{
+		scene.mProcesses.erase(scene.mProcessRemoveQueue.front());
+		scene.mProcessRemoveQueue.pop();
+	}
+
+	for (auto it = scene.mTimers.begin(); it != scene.mTimers.end();)
+	{
+		if (it->second.IsExpired())
+			it = scene.mTimers.erase(it);
+		else
+			it++;
+	}
+
+	for (auto it = scene.mProcesses.begin(); it != scene.mProcesses.end();)
+	{
+		if (it->second.IsExpired())
+			it = scene.mProcesses.erase(it);
+		else
+			it++;
 	}
 }
 
@@ -122,10 +149,16 @@ void Scene::AddTimer(const std::string& name, float duration, TimerCallback call
 
 void Scene::RemoveTimer(const std::string& name)
 {
-	mTimers.erase(name);
+	mTimerRemoveQueue.push(name);
 }
 
-Timer& Scene::GetTimer(const std::string& name)
+void Scene::AddProcess(const std::string& name, float frequency, float duration, ProcessCallback callback, bool repeat)
 {
-	return mTimers.at(name);
+	Process process(frequency, duration, callback, repeat);
+	mProcesses.insert({ name, std::move(process) });
+}
+
+void Scene::RemoveProcess(const std::string& name)
+{
+	mProcessRemoveQueue.push(name);
 }

@@ -13,6 +13,7 @@
 #include <array>
 #include <memory>
 #include <string>
+#include <queue>
 
 class Scene
 {
@@ -68,7 +69,9 @@ protected:
 
 	void AddTimer(const std::string& name, float duration, TimerCallback callback, bool repeat);
 	void RemoveTimer(const std::string& name);
-	Timer& GetTimer(const std::string& name);
+
+	void AddProcess(const std::string& name, float frequency, float duration, ProcessCallback callback, bool repeat);
+	void RemoveProcess(const std::string& name);
 
 	// Shared members
 	static PlayerRenderer sPlayerRenderer;
@@ -87,4 +90,7 @@ private:
 	bool mPaused = false;
 
 	std::unordered_map<std::string, Timer> mTimers;
+	std::unordered_map<std::string, Process> mProcesses;
+	std::queue<std::string> mTimerRemoveQueue;
+	std::queue<std::string> mProcessRemoveQueue;
 };
