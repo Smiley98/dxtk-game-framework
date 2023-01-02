@@ -1,5 +1,4 @@
 #include "pch.h"
-//#include "Constants.h"
 #include "PlayerSystem.h"
 #include "Components.h"
 #define GAMEPAD false
@@ -16,9 +15,9 @@ namespace Players
 		for (size_t i = 0; i < components.players.Count(); i++)
 		{
 			Entity entity = components.players.GetEntity(i);
-			Kinematic& body = *components.bodies.GetComponent(entity);
-			Player& player = *components.players.GetComponent(entity);
 			Transform& transform = *components.transforms.GetComponent(entity);
+			Rigidbody& body = *components.rigidbodies.GetComponent(entity);
+			Player& player = *components.players.GetComponent(entity);
 
 			constexpr float VAN_MOVE_VEL = 500.0f;
 			constexpr float VAN_MOVE_ACC = 500.0f;
@@ -62,22 +61,6 @@ namespace Players
 				rotation = BACKWARD;
 #endif
 
-			switch (translation)
-			{
-			case FORWARD:
-				body.acc = VAN_MOVE_ACC;
-				break;
-
-			case BACKWARD:
-				body.acc = -VAN_MOVE_ACC;
-				break;
-
-			case NONE:
-				body.acc = 0.0f;
-				body.vel *= 0.95f;
-				break;
-			}
-
 			switch (rotation)
 			{
 			case FORWARD:
@@ -92,12 +75,31 @@ namespace Players
 				break;
 			}
 
-			// Increase deceleration (via friction) if breaking (opposite to current velocity)
-			if (body.vel > 0.0f && body.acc < 0.0f || body.vel < 0.0f && body.acc > 0.0f)
+			switch (translation)
 			{
-				body.vel *= 0.9f;
+			case FORWARD:
+				player.acc = VAN_MOVE_ACC;
+				break;
+
+			case BACKWARD:
+				player.acc = -VAN_MOVE_ACC;
+				break;
+
+			case NONE:
+				player.acc = 0.0f;
+				player.vel *= 0.95f;
+				break;
 			}
-			body.vel = std::clamp(body.vel, -VAN_MOVE_VEL, VAN_MOVE_VEL);
+
+			// Double acceleration if braking
+			player.acc *= player.vel > 0.0f && player.acc < 0.0f || player.vel < 0.0f && player.acc > 0.0f ? 2.0f : 1.0f;
+			player.vel += player.acc * dt;
+			player.vel = std::clamp(player.vel, -VAN_MOVE_VEL, VAN_MOVE_VEL);
+			transform.DeltaTranslate(transform.Forward() * Dynamics::Integrate(player.vel, player.acc, dt));
+
+			// Write velocity to rigidbody so other physics objects interact correctly with Players
+			// (Could write acceleration as well, but it won't be accurate due to 1D motion)
+			body.velocity = transform.Forward() * player.vel;
 		}
 	}
 }

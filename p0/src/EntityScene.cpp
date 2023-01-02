@@ -3,7 +3,7 @@
 #include "PlayerFactory.h"
 #include "BuildingFactory.h"
 #include "CollisionSystem.h"
-#include "KinematicsSystem.h"
+#include "DynamicsSystem.h"
 #include "PlayerSystem.h"
 #include "Utility.h"
 #include "SteeringEntity.h"
@@ -50,8 +50,13 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 
 	mSeeker = CreateEntity();
 	mComponents.transforms.Add(mSeeker);
-	mComponents.bodies3.Add(mSeeker);
+	mComponents.rigidbodies.Add(mSeeker);
 	mComponents.transforms.GetComponent(mSeeker)->Translate(800.0f, 450.0f, 0.0f);
+
+	mPursuer = CreateEntity();
+	mComponents.transforms.Add(mPursuer);
+	mComponents.rigidbodies.Add(mPursuer);
+	mComponents.transforms.GetComponent(mPursuer)->Translate(800.0f, 450.0f, 0.0f);
 }
 
 EntityScene::~EntityScene()
@@ -110,10 +115,13 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 #endif
 
 #if MAP
-	Kinematics::Update(mComponents, dt);
+	Dynamics::Update(mComponents, dt);
 	Players::Update(mComponents, input, dt);
 	Collision::Update(mComponents);
-	//Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
+
+	// If we wanted a better pursue we could increase/decrease physics prediction steps based on proximity.
+	Steering::Pursue(mPlayer, mPursuer, 1000.0f, dt, mComponents);
+	Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
 	//Steering::Flee(mPlayer, mSeeker, 1000.0f, mComponents);
 #endif
 }
@@ -146,6 +154,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
 	}
 	Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
+	Debug::Sphere(mComponents.transforms.GetComponent(mPursuer)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
 #endif
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 struct Components;
-namespace Kinematics
+namespace Dynamics
 {
 	void Update(Components& components, float dt, size_t steps = 1);
 }

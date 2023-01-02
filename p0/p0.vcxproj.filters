@@ -121,14 +121,8 @@
     <ClCompile Include="src\CollisionSystem.cpp">
       <Filter>ECS\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kinematic.cpp">
-      <Filter>ECS\Components</Filter>
-    </ClCompile>
     <ClCompile Include="src\Identifier.cpp">
       <Filter>ECS\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\KinematicsSystem.cpp">
-      <Filter>ECS\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\Transform.cpp">
       <Filter>ECS\Components</Filter>
@@ -139,14 +133,14 @@
     <ClCompile Include="src\Player.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\Kinematic3.cpp">
-      <Filter>ECS\Components</Filter>
-    </ClCompile>
     <ClCompile Include="src\SteeringEntity.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="src\Simulation.cpp">
-      <Filter>Math</Filter>
+    <ClCompile Include="src\Rigidbody.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DynamicsSystem.cpp">
+      <Filter>ECS\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -234,14 +228,8 @@
     <ClInclude Include="src\Transform.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kinematic.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
     <ClInclude Include="src\Identifier.h">
       <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\KinematicsSystem.h">
-      <Filter>ECS\Systems</Filter>
     </ClInclude>
     <ClInclude Include="src\ComponentHash.h">
       <Filter>ECS</Filter>
@@ -256,17 +244,20 @@
     <ClInclude Include="src\Steering.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Kinematic3.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
     <ClInclude Include="src\ComponentDef.h">
       <Filter>ECS</Filter>
     </ClInclude>
     <ClInclude Include="src\SteeringEntity.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Simulation.h">
+    <ClInclude Include="src\Integration.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rigidbody.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DynamicsSystem.h">
+      <Filter>ECS\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

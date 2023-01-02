@@ -1,6 +1,6 @@
 #pragma once
 #include "Transform.h"
-#include "Simulation.h"
+#include "Integration.h"
 
 namespace Steering
 {
@@ -32,7 +32,7 @@ namespace Steering
         const Vector3& seekerVelocity, float maxSpeed, float dt)
     {
         return Seek(
-            Kinematics::Simulate3(targetPosition, targetVelocity, targetAcceleration, dt),
+            targetPosition + Dynamics::Integrate(targetVelocity, targetAcceleration, dt),
             seekerPosition, seekerVelocity, maxSpeed);
     }
 
@@ -44,7 +44,7 @@ namespace Steering
         const Vector3& seekerVelocity, float maxSpeed, float dt)
     {
         return -Seek(
-            Kinematics::Simulate3(targetPosition, targetVelocity, targetAcceleration, dt),
+            targetPosition + Dynamics::Integrate(targetVelocity, targetAcceleration, dt),
             seekerPosition, seekerVelocity, maxSpeed);
     }
 }

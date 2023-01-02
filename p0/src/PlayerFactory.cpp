@@ -12,7 +12,7 @@ Entity CreatePlayer(Components& components, const PlayerRenderer& renderer)
 	components.identifiers.Add(entity).tag = Tags::PLAYER;
 
 	components.transforms.Add(entity);
-	components.bodies.Add(entity);
+	components.rigidbodies.Add(entity);
 
 	Capsule& capsule = components.capsules.Add(entity);
 	AutoBound(capsule, renderer.Bounds());
