@@ -51,12 +51,12 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mSeeker = CreateEntity();
 	mComponents.transforms.Add(mSeeker);
 	mComponents.rigidbodies.Add(mSeeker);
-	mComponents.transforms.GetComponent(mSeeker)->Translate(800.0f, 450.0f, 0.0f);
+	mComponents.transforms.GetComponent(mSeeker)->Translate(100.0f, 450.0f, 0.0f);
 
 	mPursuer = CreateEntity();
 	mComponents.transforms.Add(mPursuer);
 	mComponents.rigidbodies.Add(mPursuer);
-	mComponents.transforms.GetComponent(mPursuer)->Translate(800.0f, 450.0f, 0.0f);
+	mComponents.transforms.GetComponent(mPursuer)->Translate(100.0f, 450.0f, 0.0f);
 }
 
 EntityScene::~EntityScene()
@@ -120,7 +120,8 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	Collision::Update(mComponents);
 
 	// If we wanted a better pursue we could increase/decrease physics prediction steps based on proximity.
-	Steering::Pursue(mPlayer, mPursuer, 1000.0f, dt, mComponents);
+	//Steering::Pursue(mPlayer, mPursuer, 1000.0f, dt, mComponents);
+	Steering::Arrive(mPlayer, mPursuer, 1000.0f, dt, mComponents);
 	Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
 	//Steering::Flee(mPlayer, mSeeker, 1000.0f, mComponents);
 #endif

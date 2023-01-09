@@ -1,10 +1,34 @@
 #include "pch.h"
 #include "SteeringEntity.h"
 #include "Steering.h"
+#include "Integration.h"
 #include "Components.h"
 
 namespace Steering
 {
+	void Arrive(Entity target, Entity seeker, float maxSpeed, float dt, Components& components)
+	{
+		assert(components.transforms.GetComponent(seeker) != nullptr);
+		assert(components.transforms.GetComponent(target) != nullptr);
+		assert(components.rigidbodies.GetComponent(seeker) != nullptr);
+
+		// 1. Add steering force towards target
+		Rigidbody& rb = *components.rigidbodies.GetComponent(seeker);
+		rb.acceleration = Seek(
+			components.transforms.GetComponent(target)->Translation(),
+			components.transforms.GetComponent(seeker)->Translation(),
+			rb.velocity, maxSpeed
+		);
+
+		// 2. Integrate velocity then correct acceleration
+		rb.velocity += rb.acceleration * dt;
+		rb.acceleration = Arrive(
+			components.transforms.GetComponent(target)->Translation(),
+			components.transforms.GetComponent(seeker)->Translation(),
+			components.rigidbodies.GetComponent(seeker)->velocity
+		);
+	}
+
 	void Seek(Entity target, Entity seeker, float maxSpeed, Components& components)
 	{
 		assert(components.transforms.GetComponent(seeker) != nullptr);

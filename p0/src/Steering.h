@@ -4,6 +4,20 @@
 
 namespace Steering
 {
+
+    inline Vector3 Arrive(
+        const Vector3& targetPosition,
+        const Vector3& seekerPosition,
+        const Vector3& seekerVelocity)
+    {
+        float d = (targetPosition - seekerPosition).Length();
+        float a = seekerVelocity.Dot(seekerVelocity) / (d * 2.0f);
+
+        Vector3 v;
+        seekerVelocity.Normalize(v);
+        return -v * a;
+    }
+
 	inline Vector3 Seek(
         const Vector3& targetPosition,
         const Vector3& seekerPosition,
