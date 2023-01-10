@@ -196,7 +196,7 @@
     <ClInclude Include="src\PlayerSystem.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Rigidbody.h" />
-    <ClInclude Include="src\Integration.h" />
+    <ClInclude Include="src\Dynamics.h" />
     <ClInclude Include="src\Steering.h" />
     <ClInclude Include="src\SteeringEntity.h" />
     <ClInclude Include="src\Timer.h" />

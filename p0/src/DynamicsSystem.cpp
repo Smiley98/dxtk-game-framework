@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "DynamicsSystem.h"
-#include "Integration.h"
+#include "Dynamics.h"
 #include "Components.h"
 
 namespace Dynamics

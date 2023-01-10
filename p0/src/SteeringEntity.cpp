@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "SteeringEntity.h"
 #include "Steering.h"
-#include "Integration.h"
+#include "Dynamics.h"
 #include "Components.h"
 
 namespace Steering
@@ -22,7 +22,7 @@ namespace Steering
 
 		// 2. Integrate velocity then correct acceleration
 		rb.velocity += rb.acceleration * dt;
-		rb.acceleration = Arrive(
+		rb.acceleration = Dynamics::Decelerate(
 			components.transforms.GetComponent(target)->Translation(),
 			components.transforms.GetComponent(seeker)->Translation(),
 			components.rigidbodies.GetComponent(seeker)->velocity
@@ -41,6 +41,7 @@ namespace Steering
 			components.rigidbodies.GetComponent(seeker)->velocity, maxSpeed
 		);
 	}
+
 	void Flee(Entity target, Entity seeker, float maxSpeed, Components& components)
 	{
 		assert(components.transforms.GetComponent(seeker) != nullptr);

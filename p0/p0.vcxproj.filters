@@ -250,7 +250,7 @@
     <ClInclude Include="src\SteeringEntity.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Integration.h">
+    <ClInclude Include="src\Dynamics.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Rigidbody.h">
