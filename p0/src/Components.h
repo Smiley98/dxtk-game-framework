@@ -1,5 +1,6 @@
 #pragma once
 #include "ComponentMap.h"
+#include "EntityTransform.h"
 #include "Rigidbody.h"
 #include "Geometry.h"
 #include "Building.h"

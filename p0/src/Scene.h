@@ -8,12 +8,12 @@
 #include "MiscRenderer.h"
 #include "DebugRenderer.h"
 
-#include "Components.h"
-
 #include <array>
 #include <memory>
 #include <string>
 #include <queue>
+
+#include "Components.h"
 
 class Scene
 {
@@ -34,7 +34,7 @@ public:
 	virtual ~Scene() = 0;
 
 	// Constructors/destructors
-	static void Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
+	static void Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components);
 	static void Destroy();
 
 	// Handle window resize event
@@ -55,7 +55,7 @@ public:
 	static Type Current();
 
 protected:
-	Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
+	Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components);
 	virtual void OnResize(std::shared_ptr<DX::DeviceResources> graphics) = 0;
 
 	virtual void OnBegin() = 0;
@@ -82,7 +82,7 @@ protected:
 	Matrix mView;
 	Matrix mProj;
 
-	Components mComponents;
+	Components& mComponents;
 
 private:
 	static std::array<Scene*, NONE> sScenes;

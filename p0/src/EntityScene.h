@@ -7,7 +7,7 @@ class EntityScene :
 	public Scene
 {
 public:
-	EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
+	EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components);
 	~EntityScene() final;
 
 	void OnResize(std::shared_ptr<DX::DeviceResources> graphics) final;

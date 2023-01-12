@@ -1,7 +1,6 @@
 #pragma once
 #include "SimpleMath.h"
 #include "MathUtilities.h"
-#include "ComponentHash.h"
 #define Y_FORWARD true
 
 using namespace DirectX::SimpleMath;
@@ -9,61 +8,6 @@ using namespace DirectX::SimpleMath;
 class Transform
 {
 public:
-	static uint32_t Hash();
-
-	Transform* const Parent() const
-	{
-		return mParent;
-	}
-
-	void SetParent(Transform* parent)
-	{
-		mParent = parent;
-	}
-
-//***************
-// World getters
-//***************
-	Matrix World() const
-	{
-		return mParent != nullptr ? Local() * mParent->World() : Local();
-	}
-
-	Vector3 WorldForward() const
-	{
-		return Vector3::Transform(Vector3::UnitZ, WorldRotation());
-	}
-
-	Vector3 WorldRight() const
-	{
-		return Vector3::Transform(Vector3::UnitX, WorldRotation());
-	}
-
-	Vector3 WorldUp() const
-	{
-		return Vector3::Transform(Vector3::UnitY, WorldRotation());
-	}
-
-	Vector3 WorldTranslation() const
-	{
-		return mParent != nullptr ? Translation() + mParent->WorldTranslation() : Translation();
-	}
-
-	Quaternion WorldRotation() const
-	{
-		return mParent != nullptr ? Rotation() * mParent->WorldRotation() : Rotation();
-	}
-
-	Vector3 WorldEuler() const
-	{
-		return mParent != nullptr ? Euler() + mParent->WorldEuler() : Euler();
-	}
-
-	Vector3 WorldScaling() const
-	{
-		return mParent != nullptr ? Scaling() * mParent->WorldScaling() : Scaling();
-	}
-
 //***************
 // Local getters
 //***************
@@ -271,16 +215,76 @@ public:
 		mScale.z = z;
 	}
 
-private:
+// World methods only accessible through EntityTransform.
+// (EntityTransform world methods override those of Transform to ensure correct memory access via ECS (instead of raw pointers).
+protected:
+	Transform* const Parent() const
+	{
+		return mParent;
+	}
+
+	void SetParent(Transform* parent)
+	{
+		mParent = parent;
+	}
+
+//***************
+// World getters
+//***************
+	Matrix World() const
+	{
+		return mParent != nullptr ? Local() * mParent->World() : Local();
+	}
+
+	Vector3 WorldForward() const
+	{
+#if Y_FORWARD
+		return Vector3::Transform(Vector3::UnitY, WorldRotation());
+#else
+		return Vector3::Transform(Vector3::UnitZ, WorldRotation());
+#endif
+	}
+
+	Vector3 WorldRight() const
+	{
+		return Vector3::Transform(Vector3::UnitX, WorldRotation());
+	}
+
+	Vector3 WorldUp() const
+	{
+#if Y_FORWARD
+		return Vector3::Transform(Vector3::UnitZ, WorldRotation());
+#else
+		return Vector3::Transform(Vector3::UnitY, WorldRotation());
+#endif
+	}
+
+	Vector3 WorldTranslation() const
+	{
+		return mParent != nullptr ? Translation() + mParent->WorldTranslation() : Translation();
+	}
+
+	Quaternion WorldRotation() const
+	{
+		return mParent != nullptr ? Rotation() * mParent->WorldRotation() : Rotation();
+	}
+
+	Vector3 WorldEuler() const
+	{
+		return mParent != nullptr ? Euler() + mParent->WorldEuler() : Euler();
+	}
+
+	Vector3 WorldScaling() const
+	{
+		return mParent != nullptr ? Scaling() * mParent->WorldScaling() : Scaling();
+	}
+
 	Transform* mParent = nullptr;
 	Quaternion mRotation = Quaternion::Identity;
 	Vector3 mTranslation = Vector3::Zero;
 	Vector3 mEuler = Vector3::Zero;
 	Vector3 mScale = Vector3::One;
 
-	// DirectX is RHS so X right, Y up and Z forward. We can have the game take place on the xy plane without issue:
-	// Just export models with Y-Forward Z-Up and move the camera 1000 units along z!
-	// Having a near plane of 0.1 or greater drastically improves precision for far-away objects.
 	void InternalDeltaRotate(const Vector3& radians)
 	{
 		mRotation *= Quaternion::CreateFromYawPitchRoll(radians);

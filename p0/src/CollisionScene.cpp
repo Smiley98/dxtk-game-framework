@@ -10,8 +10,8 @@ namespace
 
 using namespace DirectX;
 
-CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) :
-	Scene(graphics, audio)
+CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components) :
+	Scene(graphics, audio, components)
 {
 	mSS.a = { -500.0f, 0.0f, 0.0f };
 

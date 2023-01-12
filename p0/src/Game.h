@@ -49,5 +49,6 @@ private:
     std::shared_ptr<DirectX::AudioEngine> mAudioEngine;
     DX::Input mInput;
 
+    Components mComponents;
     Scene::Type mScene = Scene::ENTITY;
 };

@@ -17,7 +17,8 @@
 
 using namespace DirectX;
 
-EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio) : Scene(graphics, audio)
+EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components)
+	: Scene(graphics, audio, components)
 {
 	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);
 	mComponents.transforms.GetComponent(mPlayer)->Translate(800.0f, 450.0f, 0.0f);

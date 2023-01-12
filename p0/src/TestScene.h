@@ -5,7 +5,7 @@ class TestScene :
     public Scene
 {
 public:
-    TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
+    TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components);
     ~TestScene() final;
 
 protected:

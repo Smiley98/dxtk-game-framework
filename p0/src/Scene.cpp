@@ -4,6 +4,7 @@
 #include "CollisionScene.h"
 #include "EntityScene.h"
 #include "MainScene.h"
+#include "Entity.h"
 
 std::unordered_map<Entity, uint32_t> gLookup;
 
@@ -17,7 +18,8 @@ PlayerRenderer Scene::sPlayerRenderer;
 BuildingRenderer Scene::sBuildingRenderer;
 MiscRenderer Scene::sMiscRenderer;
 
-Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
+Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components) :
+	mComponents(components)
 {
 }
 
@@ -25,20 +27,20 @@ Scene::~Scene()
 {
 }
 
-void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
+void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components)
 {
 	sPlayerRenderer.Load(graphics);
 	sBuildingRenderer.Load(graphics);
 	sMiscRenderer.Load(graphics);
 
-	//sScenes[SPLASH] = new SplashScene(graphics, audio);
-	//sScenes[LOADOUT] = new LoadoutScene(graphics, audio);
-	//sScenes[MAP] = new MapScene(graphics, audio);
-	//sScenes[MAIN] = new MainScene(graphics, audio);
-	sScenes[TEST] = new TestScene(graphics, audio);
-	sScenes[COLLISION] = new CollisionScene(graphics, audio);
-	//sScenes[PHYSICS] = new PhysicsScene(graphics, audio);
-	sScenes[ENTITY] = new EntityScene(graphics, audio);
+	//sScenes[SPLASH] = new SplashScene(graphics, audio, components);
+	//sScenes[LOADOUT] = new LoadoutScene(graphics, audio, components);
+	//sScenes[MAP] = new MapScene(graphics, audio, components);
+	//sScenes[MAIN] = new MainScene(graphics, audio, components);
+	sScenes[TEST] = new TestScene(graphics, audio, components);
+	sScenes[COLLISION] = new CollisionScene(graphics, audio, components);
+	//sScenes[PHYSICS] = new PhysicsScene(graphics, audio, components);
+	sScenes[ENTITY] = new EntityScene(graphics, audio, components);
 }
 
 void Scene::Destroy()
