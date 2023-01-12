@@ -8,8 +8,10 @@
 #include "Utility.h"
 #include "SteeringEntity.h"
 
-#define MAP true
+#define STEERING true
 #define SPLINE false
+#define MAP false
+#define TEST_BUILDINGS true
 #define KEYBOARD true
 #define GAMEPAD false
 
@@ -19,6 +21,18 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 {
 	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);
 	mComponents.transforms.GetComponent(mPlayer)->Translate(800.0f, 450.0f, 0.0f);
+
+#if STEERING
+	mSeeker = CreateEntity();
+	mComponents.transforms.Add(mSeeker);
+	mComponents.rigidbodies.Add(mSeeker);
+	mComponents.transforms.GetComponent(mSeeker)->Translate(100.0f, 450.0f, 0.0f);
+
+	mPursuer = CreateEntity();
+	mComponents.transforms.Add(mPursuer);
+	mComponents.rigidbodies.Add(mPursuer);
+	mComponents.transforms.GetComponent(mPursuer)->Translate(100.0f, 450.0f, 0.0f);
+#endif
 
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
@@ -48,15 +62,14 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	}
 #endif
 
-	mSeeker = CreateEntity();
-	mComponents.transforms.Add(mSeeker);
-	mComponents.rigidbodies.Add(mSeeker);
-	mComponents.transforms.GetComponent(mSeeker)->Translate(100.0f, 450.0f, 0.0f);
-
-	mPursuer = CreateEntity();
-	mComponents.transforms.Add(mPursuer);
-	mComponents.rigidbodies.Add(mPursuer);
-	mComponents.transforms.GetComponent(mPursuer)->Translate(100.0f, 450.0f, 0.0f);
+#if TEST_BUILDINGS
+	float step = mWorldWidth / mTestBuildings.size();
+	for (size_t i = 0; i < mTestBuildings.size(); i++)
+	{
+		mTestBuildings[i] = CreateBuilding(mComponents, (Building::Type)i, sBuildingRenderer);
+		mComponents.transforms.GetComponent(mTestBuildings[i])->Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
+	}
+#endif
 }
 
 EntityScene::~EntityScene()
@@ -69,15 +82,15 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_RADIANS;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-#if MAP
+#if SPLINE
+	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
+	mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
+#else
 	mView = Matrix::CreateLookAt(
 		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
 		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
 		Vector3::Up);
 	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
-#else
-	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
-	mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
 #endif
 }
 
@@ -103,6 +116,14 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	const float av = 100.0f * dt;	// angular velocity
 	Transform& transform = *mComponents.transforms.GetComponent(mPlayer);
 
+#if STEERING
+	// If we wanted a better pursue we could increase/decrease physics prediction steps based on proximity.
+	//Steering::Pursue(mPlayer, mPursuer, 1000.0f, dt, mComponents);
+	Steering::Arrive(mPlayer, mPursuer, 1000.0f, dt, mComponents);
+	Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
+	//Steering::Flee(mPlayer, mSeeker, 1000.0f, mComponents);
+#endif
+
 #if SPLINE
 	Vector3 a = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
 	d += lv;
@@ -114,25 +135,21 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	transform.Orientate(forward);
 #endif
 
-#if MAP
 	Dynamics::Update(mComponents, dt);
 	Players::Update(mComponents, input, dt);
 	Collision::Update(mComponents);
-
-	// If we wanted a better pursue we could increase/decrease physics prediction steps based on proximity.
-	//Steering::Pursue(mPlayer, mPursuer, 1000.0f, dt, mComponents);
-	Steering::Arrive(mPlayer, mPursuer, 1000.0f, dt, mComponents);
-	Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
-	//Steering::Flee(mPlayer, mSeeker, 1000.0f, mComponents);
-#endif
 }
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	Transform& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
 	Capsule& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
-	Debug::Capsule(playerTransform, playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
+
+#if STEERING
+	//Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
+	//Debug::Sphere(mComponents.transforms.GetComponent(mPursuer)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
+#endif
 
 #if SPLINE
 	for (const Vector3& position : mSpline)
@@ -151,11 +168,33 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Transform& transform = *mComponents.transforms.GetComponent(i);
 		Capsule& collider = *mComponents.capsules.GetComponent(i);
 		Building& building = *mComponents.buildings.GetComponent(i);
-		Debug::Capsule(transform, collider.r, collider.hh, mView, mProj, graphics, Colors::Red);
 		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
 	}
-	Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
-	Debug::Sphere(mComponents.transforms.GetComponent(mPursuer)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
+#endif
+
+#if TEST_BUILDINGS
+	for (Entity i : mTestBuildings)
+	{
+		Building& building = *mComponents.buildings.GetComponent(i);
+		Transform& transform = *mComponents.transforms.GetComponent(i);
+		Capsule& collider = *mComponents.capsules.GetComponent(i);
+
+		// TD, BMO and PENTA (0, 2, 6) are oriented along Z whereas capsules are oriented along Y.
+		// Hence, the transforms need to be temporarily rotated for rendering.
+		auto temporaryRotate = [&](float x)
+		{
+			if (building.type == Building::TD ||
+				building.type == Building::BMO ||
+				building.type == Building::PENTA)
+				transform.DeltaRotateX(x);
+		};
+		
+		temporaryRotate(90.0f);
+		Debug::Capsule(transform, collider.r, collider.hh, mView, mProj, graphics);
+		temporaryRotate(-90.0f);
+		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
+	}
+	Debug::Capsule(playerTransform, playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 #endif
 }
 
@@ -163,15 +202,6 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 //sMiscRenderer.Triangle(
 //	{ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f },
 //mView, mProj, graphics);
-
-// Building types test:
-//std::array<Entity, Building::COUNT> mTestBuildings;
-//float step = mWorldWidth / mTestBuildings.size();
-//for (size_t i = 0; i < mTestBuildings.size(); i++)
-//{
-//	mTestBuildings[i] = CreateBuilding(mComponents, (Building::Type)i, sBuildingRenderer);
-//	mComponents.transforms.GetComponent(mTestBuildings[i])->Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
-//}
 
 // Timer test:
 //AddTimer("test", 1.0f, [this] {

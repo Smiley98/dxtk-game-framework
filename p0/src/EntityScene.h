@@ -20,6 +20,7 @@ public:
 
 private:
 	std::vector<Entity> mBuildings;
+	std::array<Entity, Building::COUNT> mTestBuildings;
 
 	Entity mPlayer;
 	Transform mHeadlights;

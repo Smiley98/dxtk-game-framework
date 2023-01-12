@@ -18,8 +18,31 @@ namespace Collision
 
 	void Update(Components& components)
 	{
+		// Since this engine orientates objects with Y_FORWARD, any geometry that doesn't match
+		// a capsule with radius defined by the x-axis and half-height defined by the y-axis
+		// will require explicit rules such as this one to handle alternative orientations.
+		auto temporaryRotate = [&](float theta)
+		{
+			for (size_t i = 0; i < components.buildings.Count(); i++)
+			{
+				Transform& transform = *components.transforms.GetComponent(components.buildings.GetEntity(i));
+				switch (components.buildings[i].type)
+				{
+				case Building::TD:
+				case Building::BMO:
+				case Building::PENTA:
+					transform.DeltaRotateX(theta);
+					break;
+				}
+			}
+		};
+		// This looks hacky, but in reality engines like Unity store the difference between
+		// collider orientations vs render orientations so this is just doing that manually.
+
 		std::vector<HitPair> collisions;
+		temporaryRotate(90);
 		Collect(components, collisions);
+		temporaryRotate(-90);
 		Resolve(components, collisions);
 	}
 
