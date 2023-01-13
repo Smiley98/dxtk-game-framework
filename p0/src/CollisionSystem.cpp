@@ -18,31 +18,8 @@ namespace Collision
 
 	void Update(Components& components)
 	{
-		// Since this engine orientates objects with Y_FORWARD, any geometry that doesn't match
-		// a capsule with radius defined by the x-axis and half-height defined by the y-axis
-		// will require explicit rules such as this one to handle alternative orientations.
-		auto temporaryRotate = [&](float theta)
-		{
-			for (size_t i = 0; i < components.buildings.Count(); i++)
-			{
-				EntityTransform& transform = *components.transforms.GetComponent(components.buildings.GetEntity(i));
-				switch (components.buildings[i].type)
-				{
-				case Building::TD:
-				case Building::BMO:
-				case Building::PENTA:
-					transform.DeltaRotateX(theta);
-					break;
-				}
-			}
-		};
-		// This looks hacky, but in reality engines like Unity store the difference between
-		// collider orientations vs render orientations so this is just doing that manually.
-
 		std::vector<HitPair> collisions;
-		temporaryRotate(90);
 		Collect(components, collisions);
-		temporaryRotate(-90);
 		Resolve(components, collisions);
 	}
 
@@ -233,7 +210,6 @@ namespace Collision
 	{
 		assert(components.identifiers.GetComponent(playerA)->tag == Tags::PLAYER);
 		assert(components.identifiers.GetComponent(playerB)->tag == Tags::PLAYER);
-
 	}
 
 	void OnPlayerBuilding(Entity player, Entity building, const Vector3& mtv, Components& components)
@@ -241,8 +217,10 @@ namespace Collision
 		assert(components.identifiers.GetComponent(player)->tag == Tags::PLAYER);
 		assert(components.identifiers.GetComponent(building)->tag == Tags::BUILDING);
 
+		// This fails because we need both the Building and Capsule component to have tags.
+		// TODO -- make Hierarchy component.
 		components.transforms.GetComponent(player)->DeltaTranslate(mtv);
-		components.buildings.GetComponent(building)->durability -= 10.0f;
+		//components.buildings.GetComponent(building)->durability -= 10.0f;
 	}
 
 	void OnPlayerProjectile(Entity player, Entity projectile, const Vector3& mtv, Components& components)

@@ -8,10 +8,15 @@ Entity CreateBuilding(Components& components,
 	Building::Type type, const BuildingRenderer& renderer)
 {
 	Entity entity = CreateEntity();
-	components.identifiers.Add(entity).tag = Tags::BUILDING;
+	Entity collider = CreateEntity();
+	components.transforms.Add(entity);
+	components.transforms.Add(collider).parent = entity;
+	components.identifiers.Add(collider).tag = Tags::BUILDING;
+	// Collision resolver needs tags to function, so adding tag to collider instead of building.
+	// Update: Resolve now fails during building damage callback... Need to make Hierarchy component!
 
-	EntityTransform& transform = components.transforms.Add(entity);
-	Capsule& capsule = components.capsules.Add(entity);
+	EntityTransform& transform = *components.transforms.GetComponent(collider);
+	Capsule& capsule = components.capsules.Add(collider);
 	Vector3 bounds = renderer.Bounds(type);
 	switch (type)
 	{
@@ -23,6 +28,9 @@ Entity CreateBuilding(Components& components,
 			float hh = bounds.z - r;
 			capsule.r = r;
 			capsule.hh = hh;
+			// Should be bounds.z but that pushes us under since no ground plane
+			transform.TranslateZ(hh);
+			transform.RotateX(90.0f);
 			break;
 		}
 
@@ -36,6 +44,8 @@ Entity CreateBuilding(Components& components,
 			float hh = bounds.y - r;
 			capsule.r = r;
 			capsule.hh = hh;
+			// TODO -- fix getting pushed under buildings
+			//transform.TranslateZ(r);
 			break;
 		}
 	}
@@ -46,6 +56,7 @@ Entity CreateBuilding(Components& components,
 	Building& building = components.buildings.Add(entity);
 	building.durability = renderer.MaxDurability(type);
 	building.type = type;
+	building.collider = collider;
 
 	return entity;
 }

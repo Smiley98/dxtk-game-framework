@@ -166,8 +166,8 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #if MAP
 	for (Entity i : mBuildings)
 	{
-		Transform& transform = *mComponents.transforms.GetComponent(i);
-		Capsule& collider = *mComponents.capsules.GetComponent(i);
+		EntityTransform& transform = *mComponents.transforms.GetComponent(i);
+		//Capsule& collider = *mComponents.capsules.GetComponent(i);
 		Building& building = *mComponents.buildings.GetComponent(i);
 		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
 	}
@@ -177,23 +177,12 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	for (Entity i : mTestBuildings)
 	{
 		Building& building = *mComponents.buildings.GetComponent(i);
-		EntityTransform& transform = *mComponents.transforms.GetComponent(i);
-		Capsule& collider = *mComponents.capsules.GetComponent(i);
+		Capsule& collider = *mComponents.capsules.GetComponent(building.collider);
+		EntityTransform& buildingTransform = *mComponents.transforms.GetComponent(i);
+		EntityTransform& colliderTransform = *mComponents.transforms.GetComponent(building.collider);
 
-		// TD, BMO and PENTA (0, 2, 6) are oriented along Z whereas capsules are oriented along Y.
-		// Hence, the transforms need to be temporarily rotated for rendering.
-		auto temporaryRotate = [&](float x)
-		{
-			if (building.type == Building::TD ||
-				building.type == Building::BMO ||
-				building.type == Building::PENTA)
-				transform.DeltaRotateX(x);
-		};
-		
-		temporaryRotate(90.0f);
-		Debug::Capsule(transform, collider.r, collider.hh, mView, mProj, graphics);
-		temporaryRotate(-90.0f);
-		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
+		Debug::Capsule(colliderTransform, collider.r, collider.hh, mView, mProj, graphics);
+		sBuildingRenderer.Render(building, buildingTransform.World(), mView, mProj, graphics);
 	}
 	Debug::Capsule(playerTransform, playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 #endif

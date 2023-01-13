@@ -1,9 +1,13 @@
 #pragma once
 #include "SimpleMath.h"
 #include "ComponentHash.h"
+#include "Entity.h"
 
 struct Building
 {
+	// Must manually maintain reference to child
+	Entity collider;
+
 	enum Type : size_t
 	{
 		TD,

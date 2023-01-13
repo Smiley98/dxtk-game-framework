@@ -8,8 +8,8 @@
 inline void CylinderBounds(const EntityTransform& transform, float halfHeight, Vector3& top, Vector3& bot)
 {
 	Vector3 forward = transform.WorldForward();
-	top = transform.Translation() + forward * halfHeight;
-	bot = transform.Translation() - forward * halfHeight;
+	top = transform.WorldTranslation() + forward * halfHeight;
+	bot = transform.WorldTranslation() - forward * halfHeight;
 }
 
 // Projects point P along line AB
@@ -92,7 +92,7 @@ inline bool SphereSphere(
 	const EntityTransform& tA, const EntityTransform& tB,
 	const Sphere& gA, const Sphere& gB)
 {
-	return SphereSphere(tA.Translation(), tB.Translation(), gA.r, gB.r);
+	return SphereSphere(tA.WorldTranslation(), tB.WorldTranslation(), gA.r, gB.r);
 }
 
 // MTV wrapper
@@ -100,7 +100,7 @@ inline bool SphereSphere(
 	const EntityTransform& tA, const EntityTransform& tB,
 	const Sphere& gA, const Sphere& gB, Vector3& mtv)
 {
-	return SphereSphere(tA.Translation(), tB.Translation(), gA.r, gB.r, mtv);
+	return SphereSphere(tA.WorldTranslation(), tB.WorldTranslation(), gA.r, gB.r, mtv);
 }
 
 //*****************
@@ -132,7 +132,7 @@ inline bool SphereCapsule(
 	const EntityTransform& tA, const EntityTransform& tB,
 	const Sphere& gA, const Capsule& gB)
 {
-	return SphereCapsule(tA.Translation(), tB, gA.r, gB.r, gB.hh);
+	return SphereCapsule(tA.WorldTranslation(), tB, gA.r, gB.r, gB.hh);
 }
 
 // MTV wrapper
@@ -140,7 +140,7 @@ inline bool SphereCapsule(
 	const EntityTransform& tA, const EntityTransform& tB,
 	const Sphere& gA, const Capsule& gB, Vector3& mtv)
 {
-	return SphereCapsule(tA.Translation(), tB, gA.r, gB.r, gB.hh, mtv);
+	return SphereCapsule(tA.WorldTranslation(), tB, gA.r, gB.r, gB.hh, mtv);
 }
 
 //*****************
@@ -188,11 +188,11 @@ inline bool CapsuleCapsule(
 //*****************
 inline bool InRange(const EntityTransform& viewer, const Vector3& target, float length, float fov /*(degrees)*/)
 {
-	if ((target - viewer.Translation()).Length() > length)
+	if ((target - viewer.WorldTranslation()).Length() > length)
 		return false;
 
 	Vector3 viewerDirection = viewer.WorldForward();
-	Vector3 targetDirection = (target - viewer.Translation());
+	Vector3 targetDirection = (target - viewer.WorldTranslation());
 	targetDirection.Normalize();
 
 	return targetDirection.Dot(viewerDirection) > cosf(DirectX::XM_RADIANS * fov * 0.5f);
