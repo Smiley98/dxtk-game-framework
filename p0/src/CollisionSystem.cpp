@@ -212,15 +212,15 @@ namespace Collision
 		assert(components.identifiers.GetComponent(playerB)->tag == Tags::PLAYER);
 	}
 
-	void OnPlayerBuilding(Entity player, Entity building, const Vector3& mtv, Components& components)
+	void OnPlayerBuilding(Entity player, Entity buildingCollider, const Vector3& mtv, Components& components)
 	{
 		assert(components.identifiers.GetComponent(player)->tag == Tags::PLAYER);
-		assert(components.identifiers.GetComponent(building)->tag == Tags::BUILDING);
+		assert(components.identifiers.GetComponent(buildingCollider)->tag == Tags::BUILDING);
 
-		// This fails because we need both the Building and Capsule component to have tags.
-		// TODO -- make Hierarchy component.
 		components.transforms.GetComponent(player)->DeltaTranslate(mtv);
-		//components.buildings.GetComponent(building)->durability -= 10.0f;
+		components.buildings.GetComponent(
+			components.hierarchies.GetComponent(buildingCollider)->parent
+		)->durability -= 10.0f;
 	}
 
 	void OnPlayerProjectile(Entity player, Entity projectile, const Vector3& mtv, Components& components)

@@ -1,10 +1,13 @@
 #include "Entity.h"
 #include "Components.h"
 
-Entity CreateEntity()
+Entity CreateEntity(Components& components)
 {
 	static Entity entity = 0;
-	return ++entity;
+	++entity;
+	components.transforms.Add(entity).mSelf = entity;
+	components.hierarchies.Add(entity);
+	return entity;
 }
 
 void DestroyEntity(Entity& entity, Components& components)

@@ -7,13 +7,12 @@
 Entity CreateBuilding(Components& components,
 	Building::Type type, const BuildingRenderer& renderer)
 {
-	Entity entity = CreateEntity();
-	Entity collider = CreateEntity();
-	components.transforms.Add(entity);
-	components.transforms.Add(collider).parent = entity;
+	Entity entity = CreateEntity(components);
+	Entity collider = CreateEntity(components);
+	AddChild(entity, collider, components);
 	components.identifiers.Add(collider).tag = Tags::BUILDING;
-	// Collision resolver needs tags to function, so adding tag to collider instead of building.
-	// Update: Resolve now fails during building damage callback... Need to make Hierarchy component!
+	// The parent (building) doesn't have a collider, and tags are only checked on collision,
+	// so logically the child (collider) must have the tag!
 
 	EntityTransform& transform = *components.transforms.GetComponent(collider);
 	Capsule& capsule = components.capsules.Add(collider);
@@ -50,13 +49,10 @@ Entity CreateBuilding(Components& components,
 		}
 	}
 	capsule.dynamic = false;
-	// Historically used AutoBound(capsule, renderer.Bounds(type));
-	// TD, BMO and PENTA are Z_FORWARDS instead of Y_FORWARDS so calculating all bounds inline.
 
 	Building& building = components.buildings.Add(entity);
 	building.durability = renderer.MaxDurability(type);
 	building.type = type;
-	building.collider = collider;
 
 	return entity;
 }

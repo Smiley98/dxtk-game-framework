@@ -24,13 +24,11 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mComponents.transforms.GetComponent(mPlayer)->Translate(800.0f, 450.0f, 0.0f);
 
 #if STEERING
-	mSeeker = CreateEntity();
-	mComponents.transforms.Add(mSeeker);
+	mSeeker = CreateEntity(mComponents);
 	mComponents.rigidbodies.Add(mSeeker);
 	mComponents.transforms.GetComponent(mSeeker)->Translate(100.0f, 450.0f, 0.0f);
 
-	mPursuer = CreateEntity();
-	mComponents.transforms.Add(mPursuer);
+	mPursuer = CreateEntity(mComponents);
 	mComponents.rigidbodies.Add(mPursuer);
 	mComponents.transforms.GetComponent(mPursuer)->Translate(100.0f, 450.0f, 0.0f);
 #endif
@@ -179,10 +177,11 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #if TEST_BUILDINGS
 	for (Entity i : mTestBuildings)
 	{
+		Entity child = *mComponents.hierarchies.GetComponent(i)->children.begin();
+		Capsule& collider = *mComponents.capsules.GetComponent(child);
 		Building& building = *mComponents.buildings.GetComponent(i);
-		Capsule& collider = *mComponents.capsules.GetComponent(building.collider);
 		EntityTransform& buildingTransform = *mComponents.transforms.GetComponent(i);
-		EntityTransform& colliderTransform = *mComponents.transforms.GetComponent(building.collider);
+		EntityTransform& colliderTransform = *mComponents.transforms.GetComponent(child);
 
 		Debug::Capsule(colliderTransform, collider.r, collider.hh, mView, mProj, graphics);
 		sBuildingRenderer.Render(building, buildingTransform.World(), mView, mProj, graphics);

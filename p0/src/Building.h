@@ -5,9 +5,6 @@
 
 struct Building
 {
-	// Must manually maintain reference to child
-	Entity collider;
-
 	enum Type : size_t
 	{
 		TD,

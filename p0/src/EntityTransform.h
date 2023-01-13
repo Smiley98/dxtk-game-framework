@@ -3,21 +3,17 @@
 #include "ComponentHash.h"
 #include "Entity.h"
 
-template<typename T>
-class ComponentMap;
 class Game;
+struct Components;
 
 class EntityTransform : public Transform
 {
 public:
 	static uint32_t Hash();
 
-	// Remember to assign this back to INVALID_ENTITY on parent destruction.
-	Entity parent = INVALID_ENTITY;
-
-	//***************
-	// World getters
-	//***************
+//***************
+// World getters
+//***************
 	Matrix World() const
 	{
 		return Parent() != nullptr ? Local() * Parent()->World() : Local();
@@ -67,21 +63,13 @@ public:
 	}
 
 private:
+	Entity mSelf = INVALID_ENTITY;
 	EntityTransform* Parent() const;
 
+	friend Entity CreateEntity(Components& components);
 	friend Game;
-	static ComponentMap<EntityTransform>* sTransforms;
+	static Components* sComponents;
 };
-
-//Transform* const Parent() const
-//{
-//	return mParent;
-//}
-//
-//void SetParent(Transform* parent)
-//{
-//	mParent = parent;
-//}
 
 // World setters are cursed. For example, if we call WorldTranslate(0.0f, 0.0f, 0.0f) the object will have a
 // translation of 0, but if its parent translates then the child's translation will be overwritten.

@@ -1,11 +1,12 @@
 #include "EntityTransform.h"
-#include "ComponentMap.h"
+#include "Components.h"
 
-ComponentMap<EntityTransform>* EntityTransform::sTransforms = nullptr;
+Components* EntityTransform::sComponents = nullptr;
 
 EntityTransform* EntityTransform::Parent() const
 {
-	return parent != INVALID_ENTITY ? sTransforms->GetComponent(parent) : nullptr;
+	Entity parent = sComponents->hierarchies.GetComponent(mSelf)->parent;
+	return parent != INVALID_ENTITY ? sComponents->transforms.GetComponent(parent) : nullptr;
 }
 
 uint32_t EntityTransform::Hash()
