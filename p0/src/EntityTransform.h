@@ -9,6 +9,8 @@ class Game;
 class EntityTransform : public Transform
 {
 public:
+	static uint32_t Hash();
+
 	// Remember to assign this back to INVALID_ENTITY on parent destruction.
 	Entity parent = INVALID_ENTITY;
 
@@ -68,7 +70,6 @@ private:
 
 	friend Game;
 	static Components& sComponents;
-	static uint32_t Hash();
 };
 
 //Transform* const Parent() const
