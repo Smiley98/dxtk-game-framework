@@ -29,11 +29,7 @@ public:
 	{
 		if (HasComponent(entity))
 		{
-			gLookup.find(entity)->second &= ~Component::Hash();
-			auto it = mLookup.find(entity);
-			const size_t index = it->second;
-			const Entity entity = mEntities.at(index);
-
+			const size_t index = mLookup.at(entity);
 			if (index < mComponents.size() - 1)
 			{
 				mComponents.at(index) = std::move(mComponents.back());
@@ -44,6 +40,7 @@ public:
 			mComponents.pop_back();
 			mEntities.pop_back();
 			mLookup.erase(entity);
+			gLookup.at(entity) &= ~Component::Hash();
 		}
 	}
 
