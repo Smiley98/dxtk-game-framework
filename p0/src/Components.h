@@ -9,7 +9,8 @@
 
 struct Components
 {
-	ComponentMap<Transform> transforms;
+	//ComponentMap<Transform> transforms;
+	ComponentMap<EntityTransform> transforms;
 	ComponentMap<Rigidbody> rigidbodies;
 	ComponentMap<Sphere> spheres;
 	ComponentMap<Capsule> capsules;

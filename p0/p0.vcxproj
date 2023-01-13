@@ -113,6 +113,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\EntityScene.cpp" />
+    <ClCompile Include="src\EntityTransform.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Geometry.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -153,10 +154,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\TestScene.cpp" />
-    <ClCompile Include="src\Transform.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="src\Utility.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -180,6 +177,7 @@
     <ClInclude Include="src\DXTK.h" />
     <ClInclude Include="src\Entity.h" />
     <ClInclude Include="src\EntityScene.h" />
+    <ClInclude Include="src\EntityTransform.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Geometry.h" />
     <ClInclude Include="src\HitPair.h" />

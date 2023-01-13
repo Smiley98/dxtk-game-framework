@@ -6,9 +6,6 @@ namespace ComponentHash
 	constexpr uint32_t NONE = 0;
 	constexpr uint32_t TRANSFORM = 1;
 
-	//constexpr uint32_t KINEMATIC = TRANSFORM << 1;
-	//constexpr uint32_t KINEMATIC3 = KINEMATIC << 1;
-
 	constexpr uint32_t RIGIDBODY = TRANSFORM << 1;
 	constexpr uint32_t SPHERE = RIGIDBODY << 1;
 	constexpr uint32_t CAPSULE = SPHERE << 1;

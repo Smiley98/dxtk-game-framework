@@ -124,9 +124,6 @@
     <ClCompile Include="src\Identifier.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\Transform.cpp">
-      <Filter>ECS\Components</Filter>
-    </ClCompile>
     <ClCompile Include="src\Building.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
@@ -141,6 +138,9 @@
     </ClCompile>
     <ClCompile Include="src\DynamicsSystem.cpp">
       <Filter>ECS\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EntityTransform.cpp">
+      <Filter>ECS\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -258,6 +258,9 @@
     </ClInclude>
     <ClInclude Include="src\DynamicsSystem.h">
       <Filter>ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EntityTransform.h">
+      <Filter>ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
