@@ -9,8 +9,8 @@
 #include "SteeringEntity.h"
 
 #define STEERING false
-#define SPLINE false
-#define MAP true
+#define SPLINE true
+#define MAP false
 #define TEST_BUILDINGS false
 #define KEYBOARD true
 #define GAMEPAD false
@@ -35,8 +35,10 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 
 #if SPLINE
 	mSpeedTable = CreateSpeedTable(mSpline, 16);
-	mHeadlights.TranslateY(80.0f);
-	mHeadlights.Scale(100.0f);
+	mHeadlights = CreateEntity(mComponents);
+	mComponents.transforms.GetComponent(mHeadlights)->TranslateY(80.0f);
+	mComponents.transforms.GetComponent(mHeadlights)->Scale(100.0f);
+	AddChild(mPlayer, mHeadlights, mComponents);
 #endif
 
 #if MAP
@@ -50,7 +52,6 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	{
 		for (int j = 0; j < cols; j++)
 		{
-			// TODO -- test each building's collider (some half-height's are negative).
 			Entity building = CreateBuilding(mComponents, Building::TD, sBuildingRenderer);
 			mComponents.transforms.GetComponent(building)->Translate(x, y, 0.0f);
 			mBuildings.push_back(building);
@@ -159,10 +160,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Debug::Primitive(Debug::SPHERE,
 			Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(position), mView, mProj, graphics);
 
-	// Cannot set the parent up-front since component buffers are reallocated on-add.
-	// TODO -- rework parenting system to use entities (ids) so parenting is memory-safe.
-	mHeadlights.SetParent(&playerTransform);
-	sMiscRenderer.Cone(mHeadlights.World(), mView, mProj, graphics);
+	sMiscRenderer.Cone(mComponents.transforms.GetComponent(mHeadlights)->World(), mView, mProj, graphics);
 #endif
 
 #if MAP
