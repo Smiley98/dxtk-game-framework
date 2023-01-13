@@ -115,7 +115,7 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
 	const float lv = 250.0f * dt;	// linear velocity
 	const float av = 100.0f * dt;	// angular velocity
-	Transform& transform = *mComponents.transforms.GetComponent(mPlayer);
+	EntityTransform& transform = *mComponents.transforms.GetComponent(mPlayer);
 
 #if STEERING
 	// If we wanted a better pursue we could increase/decrease physics prediction steps based on proximity.
@@ -143,7 +143,7 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	Transform& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
+	EntityTransform& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
 	Capsule& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
 
@@ -177,7 +177,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	for (Entity i : mTestBuildings)
 	{
 		Building& building = *mComponents.buildings.GetComponent(i);
-		Transform& transform = *mComponents.transforms.GetComponent(i);
+		EntityTransform& transform = *mComponents.transforms.GetComponent(i);
 		Capsule& collider = *mComponents.capsules.GetComponent(i);
 
 		// TD, BMO and PENTA (0, 2, 6) are oriented along Z whereas capsules are oriented along Y.

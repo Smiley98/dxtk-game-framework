@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "BuildingFactory.h"
 #include "BuildingRenderer.h"
 #include "Components.h"
@@ -9,7 +10,7 @@ Entity CreateBuilding(Components& components,
 	Entity entity = CreateEntity();
 	components.identifiers.Add(entity).tag = Tags::BUILDING;
 
-	Transform& transform = components.transforms.Add(entity);
+	EntityTransform& transform = components.transforms.Add(entity);
 	Capsule& capsule = components.capsules.Add(entity);
 	Vector3 bounds = renderer.Bounds(type);
 	switch (type)

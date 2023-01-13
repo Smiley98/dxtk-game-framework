@@ -63,8 +63,8 @@ void TestScene::OnBegin()
 	//mEffect2->Play();
 	//AddTimer("test", 1.0f, [this]() {}, true);
 
-	mChild1.SetParent(&mParent);
-	mChild2.SetParent(&mParent);
+	//mChild1.SetParent(&mParent);
+	//mChild2.SetParent(&mParent);
 	mChild1.Scale(2.0f);
 	mChild2.Scale(2.0f);
 	mChild1.RotateY(-30.0f);

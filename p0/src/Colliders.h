@@ -14,11 +14,11 @@ namespace Collision
 	{
 	public:
 		const Entity entity = INVALID_ENTITY;
-		const Transform& transform;
+		const EntityTransform& transform;
 
 	protected:
 		Collider() = default;
-		Collider(const Entity e, const Transform& t) : entity(e), transform(t) {}
+		Collider(const Entity e, const EntityTransform& t) : entity(e), transform(t) {}
 
 		virtual bool IsColliding(const SphereCollider& collider) const = 0;
 		virtual bool IsColliding(const CapsuleCollider& collider) const = 0;
@@ -40,7 +40,7 @@ namespace Collision
 
 	private:
 		SphereCollider() = default;
-		SphereCollider(const Entity& e, const Transform& t, const Sphere& g) : Collider(e, t), geometry(g) {}
+		SphereCollider(const Entity& e, const EntityTransform& t, const Sphere& g) : Collider(e, t), geometry(g) {}
 
 		friend void Collect(const Components& components, std::vector<HitPair>& collisions);
 	};
@@ -58,7 +58,7 @@ namespace Collision
 		inline bool IsColliding(const SphereCollider& collider, Vector3& mtv) const final;
 
 	private:
-		CapsuleCollider(const Entity& e, const Transform& t, const Capsule& g) : Collider(e, t), geometry(g) {}
+		CapsuleCollider(const Entity& e, const EntityTransform& t, const Capsule& g) : Collider(e, t), geometry(g) {}
 		CapsuleCollider() = default;
 
 		friend void Collect(const Components& components, std::vector<HitPair>& collisions);

@@ -178,7 +178,7 @@ void Game::GetDefaultSize(int& width, int& height) const noexcept
 void Game::CreateDeviceDependentResources()
 {
     Scene::Create(mDeviceResources, mAudioEngine, mComponents);
-    EntityTransform::sComponents = mComponents;
+    EntityTransform::sTransforms = &mComponents.transforms;
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.

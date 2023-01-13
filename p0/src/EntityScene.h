@@ -23,7 +23,7 @@ private:
 	std::array<Entity, Building::COUNT> mTestBuildings;
 
 	Entity mPlayer;
-	Transform mHeadlights;
+	EntityTransform mHeadlights;
 
 	const float fov = 60.0f;
 	const float range = 400.0f;

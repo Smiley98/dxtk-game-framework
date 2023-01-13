@@ -15,7 +15,7 @@ namespace Dynamics
 
 			assert(components.transforms.GetComponent(entity) != nullptr);
 			assert(&components.rigidbodies[i] != nullptr);
-			Transform& transform = *components.transforms.GetComponent(entity);
+			EntityTransform& transform = *components.transforms.GetComponent(entity);
 			Rigidbody& body = components.rigidbodies[i];
 
 			Vector3 displacement;

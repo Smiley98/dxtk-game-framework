@@ -1,5 +1,5 @@
 #pragma once
-struct Transform;
+struct EntityTransform;
 struct Sphere;
 struct Capsule;
 struct Kinematic;

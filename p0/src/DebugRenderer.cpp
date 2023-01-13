@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "DebugRenderer.h"
+#include "CollisionMath.h"
 
 using namespace DirectX;
 
@@ -42,7 +43,7 @@ namespace Debug
 		float length = line.Length();
 		line.Normalize();
 
-		Transform transform;
+		EntityTransform transform;
 		transform.Translate(a + line * length * 0.5f);
 		transform.Orientate(line);
 		
@@ -50,10 +51,10 @@ namespace Debug
 		box->Draw(transform.World(), view, proj, color);
 	}
 
-	void InRange(const Transform& viewer, const Vector3& target, float length, float fov,
+	void InRange(const EntityTransform& viewer, const Vector3& target, float length, float fov,
 		const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
 	{
-		Transform left, right;
+		EntityTransform left, right;
 		left.Translate( viewer.Translation());
 		right.Translate(viewer.Translation());
 		left.Rotate( viewer.Rotation());
@@ -74,7 +75,7 @@ namespace Debug
 		shape->Draw(Matrix::CreateTranslation(position), view, proj, color, nullptr, wireframe);
 	}
 
-	void Capsule(const Transform& transform, float radius, float halfHeight,
+	void Capsule(const EntityTransform& transform, float radius, float halfHeight,
 		const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics,
 		DirectX::XMVECTOR color, bool wireframe)
 	{

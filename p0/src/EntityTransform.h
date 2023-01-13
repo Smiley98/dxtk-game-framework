@@ -3,7 +3,8 @@
 #include "ComponentHash.h"
 #include "Entity.h"
 
-struct Components;
+template<typename T>
+class ComponentMap;
 class Game;
 
 class EntityTransform : public Transform
@@ -69,7 +70,7 @@ private:
 	EntityTransform* Parent() const;
 
 	friend Game;
-	static Components& sComponents;
+	static ComponentMap<EntityTransform>* sTransforms;
 };
 
 //Transform* const Parent() const

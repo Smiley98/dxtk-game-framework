@@ -25,7 +25,7 @@ namespace Collision
 		{
 			for (size_t i = 0; i < components.buildings.Count(); i++)
 			{
-				Transform& transform = *components.transforms.GetComponent(components.buildings.GetEntity(i));
+				EntityTransform& transform = *components.transforms.GetComponent(components.buildings.GetEntity(i));
 				switch (components.buildings[i].type)
 				{
 				case Building::TD:
@@ -59,7 +59,7 @@ namespace Collision
 		for (size_t i = 0; i < components.spheres.Count(); i++)
 		{
 			const Entity entity = components.spheres.GetEntity(i);
-			const Transform& transform = *components.transforms.GetComponent(entity);
+			const EntityTransform& transform = *components.transforms.GetComponent(entity);
 			const Sphere& sphere = components.spheres[i];
 
 			SphereCollider collider(entity, transform, sphere);
@@ -73,7 +73,7 @@ namespace Collision
 		for (size_t i = 0; i < components.capsules.Count(); i++)
 		{
 			const Entity entity = components.capsules.GetEntity(i);
-			const Transform& transform = *components.transforms.GetComponent(entity);
+			const EntityTransform& transform = *components.transforms.GetComponent(entity);
 			const Capsule& capsule = components.capsules[i];
 
 			CapsuleCollider collider(entity, transform, capsule);

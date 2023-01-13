@@ -1,10 +1,5 @@
-//
-// Main.cpp
-//
-
 #include "pch.h"
 #include "Game.h"
-
 #include <Dbt.h>
 
 using namespace DirectX;

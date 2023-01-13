@@ -15,7 +15,7 @@ namespace Players
 		for (size_t i = 0; i < components.players.Count(); i++)
 		{
 			Entity entity = components.players.GetEntity(i);
-			Transform& transform = *components.transforms.GetComponent(entity);
+			EntityTransform& transform = *components.transforms.GetComponent(entity);
 			Rigidbody& body = *components.rigidbodies.GetComponent(entity);
 			Player& player = *components.players.GetComponent(entity);
 

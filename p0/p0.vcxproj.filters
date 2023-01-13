@@ -225,9 +225,6 @@
     <ClInclude Include="src\CollisionSystem.h">
       <Filter>ECS\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="src\Transform.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
     <ClInclude Include="src\Identifier.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
@@ -261,6 +258,9 @@
     </ClInclude>
     <ClInclude Include="src\EntityTransform.h">
       <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Transform.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

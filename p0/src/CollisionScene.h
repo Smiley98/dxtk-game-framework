@@ -26,28 +26,28 @@ private:
 
 	struct TestCapsuleCapsule
 	{
-		Transform a;
-		Transform b;
+		EntityTransform a;
+		EntityTransform b;
 		Color color;
 	} mCC;	// capsule-capsule
 
 	struct TestSphereCapsule
 	{
 		Vector3 a;
-		Transform b;
+		EntityTransform b;
 		Color color;
 	} mSC;	// sphere-capsule (resolves capsule)
 
 	struct TestSoccer
 	{
-		Transform player;
+		EntityTransform player;
 		Vector3 ball;
 		Color color;
 	} mSoccer;	// capsule-sphere (resolves sphere)
 
 	struct TestRange
 	{
-		Transform viewer;
+		EntityTransform viewer;
 		Vector3 target;
 		float fov = 45.0f;
 		float length = 100.0f;

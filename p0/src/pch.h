@@ -68,11 +68,12 @@
 #include "SpriteFont.h"
 #include "VertexTypes.h"
 
+// DeviceResources is inluded in every scene so keep it in PCH.
+// StepTimer is only used in Game but uses CRT headers which are compiled here.
+// EntityTransform is the most common component so its the only user-defined code here.
 #include "DeviceResources.h"
 #include "StepTimer.h"
-
-// Includes Transform and SimpleMath
-#include "CollisionMath.h"
+#include "EntityTransform.h"
 
 namespace DX
 {
