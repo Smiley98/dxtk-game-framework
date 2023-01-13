@@ -27,9 +27,10 @@ public:
 
 	void Remove(Entity entity)
 	{
-		auto it = mLookup.find(entity);
-		if (it != mLookup.end())
+		if (HasComponent(entity))
 		{
+			gLookup.find(entity)->second &= ~Component::Hash();
+			auto it = mLookup.find(entity);
 			const size_t index = it->second;
 			const Entity entity = mEntities.at(index);
 
@@ -43,12 +44,6 @@ public:
 			mComponents.pop_back();
 			mEntities.pop_back();
 			mLookup.erase(entity);
-		}
-
-		auto hash = gLookup.find(entity);
-		if (hash != gLookup.end())
-		{
-			hash->second &= ~Component::Hash();
 		}
 	}
 

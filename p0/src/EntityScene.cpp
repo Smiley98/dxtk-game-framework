@@ -63,6 +63,9 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	}
 #endif
 
+	Entity building = CreateBuilding(mComponents, Building::TD, sBuildingRenderer);
+	DestroyEntity(building, mComponents);
+
 #if TEST_BUILDINGS
 	float step = mWorldWidth / mTestBuildings.size();
 	for (size_t i = 0; i < mTestBuildings.size(); i++)

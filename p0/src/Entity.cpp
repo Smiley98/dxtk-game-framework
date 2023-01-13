@@ -7,8 +7,9 @@ Entity CreateEntity()
 	return ++entity;
 }
 
-void DestroyEntity(Entity entity, Components& components)
+void DestroyEntity(Entity& entity, Components& components)
 {
+	// TODO -- Destroy children on parent destruction.
 	components.transforms.Remove(entity);
 	components.hierarchies.Remove(entity);
 	components.identifiers.Remove(entity);
@@ -17,9 +18,10 @@ void DestroyEntity(Entity entity, Components& components)
 	components.capsules.Remove(entity);
 	components.buildings.Remove(entity);
 	components.players.Remove(entity);
+	entity = INVALID_ENTITY;
 }
 
-// Pass INVALID_ENTITY nullify
+// Pass INVALID_ENTITY to nullify
 void SetParent(Entity parent, Entity child, Components& components)
 {
 	if (components.hierarchies.GetComponent(child) == nullptr)
