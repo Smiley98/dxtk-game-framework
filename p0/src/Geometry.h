@@ -29,4 +29,5 @@ namespace DirectX
 	}
 }
 
-void AutoBound(Capsule& capsule, const DirectX::SimpleMath::Vector3& bounds);
+void BoundY(Capsule& capsule, const DirectX::SimpleMath::Vector3& bounds);
+void BoundZ(Capsule& capsule, const DirectX::SimpleMath::Vector3& bounds);

@@ -8,10 +8,10 @@
 #include "Utility.h"
 #include "SteeringEntity.h"
 
-#define STEERING true
+#define STEERING false
 #define SPLINE false
-#define MAP false
-#define TEST_BUILDINGS true
+#define MAP true
+#define TEST_BUILDINGS false
 #define KEYBOARD true
 #define GAMEPAD false
 
@@ -146,11 +146,12 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	EntityTransform& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
 	Capsule& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
+	Debug::Capsule(playerTransform, playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
 
 #if STEERING
-	//Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
-	//Debug::Sphere(mComponents.transforms.GetComponent(mPursuer)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
+	Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
+	Debug::Sphere(mComponents.transforms.GetComponent(mPursuer)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
 #endif
 
 #if SPLINE
@@ -167,10 +168,14 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #if MAP
 	for (Entity i : mBuildings)
 	{
-		EntityTransform& transform = *mComponents.transforms.GetComponent(i);
-		//Capsule& collider = *mComponents.capsules.GetComponent(i);
+		Entity child = *mComponents.hierarchies.GetComponent(i)->children.begin();
+		Capsule& collider = *mComponents.capsules.GetComponent(child);
 		Building& building = *mComponents.buildings.GetComponent(i);
-		sBuildingRenderer.Render(building, transform.World(), mView, mProj, graphics);
+		EntityTransform& buildingTransform = *mComponents.transforms.GetComponent(i);
+		EntityTransform& colliderTransform = *mComponents.transforms.GetComponent(child);
+
+		Debug::Capsule(colliderTransform, collider.r, collider.hh, mView, mProj, graphics);
+		sBuildingRenderer.Render(building, buildingTransform.World(), mView, mProj, graphics);
 	}
 #endif
 

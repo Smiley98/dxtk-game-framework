@@ -15,7 +15,7 @@ Entity CreatePlayer(Components& components, const PlayerRenderer& renderer)
 	player.type = Player::VAN;
 
 	Capsule& capsule = components.capsules.Add(entity);
-	AutoBound(capsule, renderer.Bounds());
+	BoundY(capsule, renderer.Bounds());
 	capsule.dynamic = true;
 
 	return entity;
