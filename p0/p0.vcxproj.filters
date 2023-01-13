@@ -142,6 +142,9 @@
     <ClCompile Include="src\EntityTransform.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="src\Hierarchy.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -261,6 +264,9 @@
     </ClInclude>
     <ClInclude Include="src\Transform.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hierarchy.h">
+      <Filter>ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

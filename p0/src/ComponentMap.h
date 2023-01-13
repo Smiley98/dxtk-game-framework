@@ -52,6 +52,18 @@ public:
 		}
 	}
 
+	size_t Count() const
+	{
+		assert(mEntities.size() == mComponents.size());
+		return mComponents.size();
+	}
+
+	bool HasComponent(const Entity entity) const
+	{
+		assert(gLookup.find(entity) != gLookup.end());
+		return (gLookup.at(entity) & Component::Hash()) == Component::Hash();
+	}
+
 	const Component& operator[](size_t index) const {
 		return mComponents.at(index);
 	}
@@ -70,42 +82,12 @@ public:
 
 	const Component* GetComponent(const Entity entity) const
 	{
-		assert(gLookup.find(entity) != gLookup.end());
-		return (gLookup.at(entity) & Component::Hash()) == Component::Hash() ?
-			&mComponents.at(mLookup.at(entity)) : nullptr;
-		//auto it = mLookup.find(entity);
-		//return it != mLookup.end() ? &mComponents[it->second] : nullptr;
+		return HasComponent(entity) ? &mComponents.at(mLookup.at(entity)) : nullptr;
 	}
 
 	Component* GetComponent(Entity entity)
 	{
-		assert(gLookup.find(entity) != gLookup.end());
-		return (gLookup.at(entity) & Component::Hash()) == Component::Hash() ?
-			&mComponents.at(mLookup.at(entity)) : nullptr;
-		//auto it = mLookup.find(entity);
-		//return it != mLookup.end() ? &mComponents[it->second] : nullptr;
-	}
-
-	// Try not to expose these
-	//const std::vector<Entity>& Entities() const
-	//{
-	//	return mEntities;
-	//}
-	//
-	//const std::vector<Component>& Components() const
-	//{
-	//	return mComponents;
-	//}
-
-	size_t Count() const
-	{
-		assert(mEntities.size() == mComponents.size());
-		return mComponents.size();
-	}
-
-	bool Contains(Entity entity) const
-	{
-		return mLookup.find(entity) != mLookup.end();
+		return HasComponent(entity) ? &mComponents.at(mLookup.at(entity)) : nullptr;
 	}
 
 private:
