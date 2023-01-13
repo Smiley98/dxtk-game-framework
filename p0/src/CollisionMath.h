@@ -7,7 +7,7 @@
 // Outputs the top and bottom of a cylinder relative to its forward vector
 inline void CylinderBounds(const EntityTransform& transform, float halfHeight, Vector3& top, Vector3& bot)
 {
-	Vector3 forward = transform.Forward();
+	Vector3 forward = transform.WorldForward();
 	top = transform.Translation() + forward * halfHeight;
 	bot = transform.Translation() - forward * halfHeight;
 }
@@ -22,7 +22,8 @@ inline Vector3 Project(const Vector3& a, const Vector3& b, const Vector3& p)
 
 // Determines the two closest points along cylinders A and B
 inline void NearestCylinderPoints(
-	const EntityTransform& tA, const EntityTransform& tB, float hhA, float hhB,
+	const EntityTransform& tA, const EntityTransform& tB,
+	float hhA, float hhB,
 	Vector3& nearestA, Vector3& nearestB)
 {
 	Vector3 aTop, aBot, bTop, bBot;
@@ -58,7 +59,9 @@ inline void NearestCylinderPoints(
 //*****************
 
 // Boolean hit-test
-inline bool SphereSphere(const Vector3& tA, const Vector3& tB, float rA, float rB)
+inline bool SphereSphere(
+	const Vector3& tA, const Vector3& tB,
+	float rA, float rB)
 {
 	Vector3 AB = tB - tA;
 	float lengthAB = AB.Length();
@@ -67,7 +70,9 @@ inline bool SphereSphere(const Vector3& tA, const Vector3& tB, float rA, float r
 }
 
 // MTV resolves B from A
-inline bool SphereSphere(const Vector3& tA, const Vector3& tB, float rA, float rB, Vector3& mtv)
+inline bool SphereSphere(
+	const Vector3& tA, const Vector3& tB,
+	float rA, float rB, Vector3& mtv)
 {
 	Vector3 AB = tB - tA;
 	float lengthAB = AB.Length();
@@ -83,13 +88,17 @@ inline bool SphereSphere(const Vector3& tA, const Vector3& tB, float rA, float r
 }
 
 // Boolean wrapper
-inline bool SphereSphere(const EntityTransform& tA, const EntityTransform& tB, const Sphere& gA, const Sphere& gB)
+inline bool SphereSphere(
+	const EntityTransform& tA, const EntityTransform& tB,
+	const Sphere& gA, const Sphere& gB)
 {
 	return SphereSphere(tA.Translation(), tB.Translation(), gA.r, gB.r);
 }
 
 // MTV wrapper
-inline bool SphereSphere(const EntityTransform& tA, const EntityTransform& tB, const Sphere& gA, const Sphere& gB, Vector3& mtv)
+inline bool SphereSphere(
+	const EntityTransform& tA, const EntityTransform& tB,
+	const Sphere& gA, const Sphere& gB, Vector3& mtv)
 {
 	return SphereSphere(tA.Translation(), tB.Translation(), gA.r, gB.r, mtv);
 }
@@ -99,7 +108,9 @@ inline bool SphereSphere(const EntityTransform& tA, const EntityTransform& tB, c
 //*****************
 
 // Boolean hit-test
-inline bool SphereCapsule(const Vector3& tA, const EntityTransform& tB, float rA, float rB, float hhB)
+inline bool SphereCapsule(
+	const Vector3& tA, const EntityTransform& tB, 
+	float rA, float rB, float hhB)
 {
 	Vector3 top, bot;
 	CylinderBounds(tB, hhB, top, bot);
@@ -107,7 +118,9 @@ inline bool SphereCapsule(const Vector3& tA, const EntityTransform& tB, float rA
 }
 
 // MTV resolves b from a
-inline bool SphereCapsule(const Vector3& tA, const EntityTransform& tB, float rA, float rB, float hhB, Vector3& mtv)
+inline bool SphereCapsule(
+	const Vector3& tA, const EntityTransform& tB,
+	float rA, float rB, float hhB, Vector3& mtv)
 {
 	Vector3 top, bot;
 	CylinderBounds(tB, hhB, top, bot);
@@ -115,13 +128,17 @@ inline bool SphereCapsule(const Vector3& tA, const EntityTransform& tB, float rA
 }
 
 // Boolean wrapper
-inline bool SphereCapsule(const EntityTransform& tA, const EntityTransform& tB, const Sphere& gA, const Capsule& gB)
+inline bool SphereCapsule(
+	const EntityTransform& tA, const EntityTransform& tB,
+	const Sphere& gA, const Capsule& gB)
 {
 	return SphereCapsule(tA.Translation(), tB, gA.r, gB.r, gB.hh);
 }
 
 // MTV wrapper
-inline bool SphereCapsule(const EntityTransform& tA, const EntityTransform& tB, const Sphere& gA, const Capsule& gB, Vector3& mtv)
+inline bool SphereCapsule(
+	const EntityTransform& tA, const EntityTransform& tB,
+	const Sphere& gA, const Capsule& gB, Vector3& mtv)
 {
 	return SphereCapsule(tA.Translation(), tB, gA.r, gB.r, gB.hh, mtv);
 }
@@ -131,7 +148,9 @@ inline bool SphereCapsule(const EntityTransform& tA, const EntityTransform& tB, 
 //*****************
 
 // Boolean hit-test
-inline bool CapsuleCapsule(const EntityTransform& tA, const EntityTransform& tB, float rA, float rB, float hhA, float hhB)
+inline bool CapsuleCapsule(
+	const EntityTransform& tA, const EntityTransform& tB,
+	float rA, float rB, float hhA, float hhB)
 {
 	Vector3 nearestA, nearestB;
 	NearestCylinderPoints(tA, tB, hhA, hhB, nearestA, nearestB);
@@ -139,7 +158,9 @@ inline bool CapsuleCapsule(const EntityTransform& tA, const EntityTransform& tB,
 }
 
 // MTV resolves b from a
-inline bool CapsuleCapsule(const EntityTransform& tA, const EntityTransform& tB, float rA, float rB, float hhA, float hhB, Vector3& mtv)
+inline bool CapsuleCapsule(
+	const EntityTransform& tA, const EntityTransform& tB,
+	float rA, float rB, float hhA, float hhB, Vector3& mtv)
 {
 	Vector3 nearestA, nearestB;
 	NearestCylinderPoints(tA, tB, hhA, hhB, nearestA, nearestB);
@@ -147,13 +168,17 @@ inline bool CapsuleCapsule(const EntityTransform& tA, const EntityTransform& tB,
 }
 
 // Boolean wrapper
-inline bool CapsuleCapsule(const EntityTransform& tA, const EntityTransform& tB, const Capsule& gA, const Capsule& gB)
+inline bool CapsuleCapsule(
+	const EntityTransform& tA, const EntityTransform& tB,
+	const Capsule& gA, const Capsule& gB)
 {
 	return CapsuleCapsule(tA, tB, gA.r, gB.r, gA.hh, gB.hh);
 }
 
 // MTV wrapper
-inline bool CapsuleCapsule(const EntityTransform& tA, const EntityTransform& tB, const Capsule& gA, const Capsule& gB, Vector3& mtv)
+inline bool CapsuleCapsule(
+	const EntityTransform& tA, const EntityTransform& tB,
+	const Capsule& gA, const Capsule& gB, Vector3& mtv)
 {
 	return CapsuleCapsule(tA, tB, gA.r, gB.r, gA.hh, gB.hh, mtv);
 }
@@ -166,7 +191,7 @@ inline bool InRange(const EntityTransform& viewer, const Vector3& target, float 
 	if ((target - viewer.Translation()).Length() > length)
 		return false;
 
-	Vector3 viewerDirection = viewer.Forward();
+	Vector3 viewerDirection = viewer.WorldForward();
 	Vector3 targetDirection = (target - viewer.Translation());
 	targetDirection.Normalize();
 

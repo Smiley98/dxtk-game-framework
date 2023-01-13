@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TestScene.h"
+#include "Utility.h"
 
 using namespace DirectX;
 
@@ -63,15 +64,27 @@ void TestScene::OnBegin()
 	//mEffect2->Play();
 	//AddTimer("test", 1.0f, [this]() {}, true);
 
-	//mChild1.SetParent(&mParent);
-	//mChild2.SetParent(&mParent);
-	mChild1.Scale(2.0f);
-	mChild2.Scale(2.0f);
-	mChild1.RotateY(-30.0f);
-	mChild2.RotateY(30.0f);
-	mParent.Translate(0.0f, 0.0f, 10.0f);
-	mChild1.Translate(-5.0f, 0.0f, 10.0f);
-	mChild2.Translate(5.0f, 0.0f, 10.0f);
+	mParent = CreateEntity();
+	mComponents.transforms.Add(mParent);
+	mChild1 = CreateEntity();
+	mComponents.transforms.Add(mChild1);
+	mChild2 = CreateEntity();
+	mComponents.transforms.Add(mChild2);
+
+	// We must fetch components after they're added (Add() invalidates pointers).
+	EntityTransform& parent = *mComponents.transforms.GetComponent(mParent);
+	EntityTransform& child1 = *mComponents.transforms.GetComponent(mChild1);
+	EntityTransform& child2 = *mComponents.transforms.GetComponent(mChild2);
+
+	child1.parent = mParent;
+	child2.parent = mParent;
+	child1.Scale(2.0f);
+	child2.Scale(2.0f);
+	child1.RotateY(-30.0f);
+	child2.RotateY(30.0f);
+	parent.Translate(0.0f, 0.0f, 10.0f);
+	child1.Translate(-5.0f, 0.0f, 10.0f);
+	child2.Translate(5.0f, 0.0f, 10.0f);
 }
 
 void TestScene::OnEnd()
@@ -90,9 +103,9 @@ void TestScene::OnResume()
 
 void TestScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
-	mParent.RotateY(tt * 50.0f);
-	mChild1.RotateX(tt * 50.0f);
-	mChild2.RotateZ(tt * 50.0f);
+	mComponents.transforms.GetComponent(mParent)->RotateY(tt * 50.0f);
+	mComponents.transforms.GetComponent(mChild1)->RotateX(tt * 50.0f);
+	mComponents.transforms.GetComponent(mChild2)->RotateZ(tt * 50.0f);
 }
 
 void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -112,9 +125,9 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//mSprites->End();
 	//graphics->PIXEndEvent();
 
-	mShape->Draw(mParent.World(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(mChild1.World(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(mChild2.World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mComponents.transforms.GetComponent(mParent)->World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mComponents.transforms.GetComponent(mChild1)->World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(mComponents.transforms.GetComponent(mChild2)->World(), mView, mProj, Colors::White, mTexture1.Get());
 
 	graphics->PIXEndEvent();
 }

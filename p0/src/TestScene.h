@@ -33,7 +33,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture1;
     Microsoft::WRL::ComPtr<ID3D11InputLayout>                               mBatchInputLayout;
 
-    EntityTransform mParent, mChild1, mChild2;
+    Entity mParent, mChild1, mChild2;
 };
 
 // DirectXTK audio objects
