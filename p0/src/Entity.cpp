@@ -10,8 +10,10 @@ Entity CreateEntity()
 void DestroyEntity(Entity& entity, Components& components)
 {
 	// TODO -- Destroy children on parent destruction.
-	components.transforms.Remove(entity);
+	Hierarchy& childHierarchy = *components.hierarchies.GetComponent(entity);
+
 	components.hierarchies.Remove(entity);
+	components.transforms.Remove(entity);
 	components.identifiers.Remove(entity);
 	components.rigidbodies.Remove(entity);
 	components.spheres.Remove(entity);
@@ -21,11 +23,27 @@ void DestroyEntity(Entity& entity, Components& components)
 	entity = INVALID_ENTITY;
 }
 
-// Pass INVALID_ENTITY to nullify
-void SetParent(Entity parent, Entity child, Components& components)
+void AddChild(Entity parent, Entity child, Components& components)
 {
-	if (components.hierarchies.GetComponent(child) == nullptr)
-		components.hierarchies.Add(child).parent = parent;
-	else
-		components.hierarchies.GetComponent(child)->parent = parent;
+	if (components.hierarchies.GetComponent(child)->parent != INVALID_ENTITY)
+	{
+		components.hierarchies.GetComponent(
+			components.hierarchies.GetComponent(child)->parent
+		)->children.erase(child);
+	}
+
+	components.hierarchies.GetComponent(child)->parent = parent;
+	components.hierarchies.GetComponent(parent)->children.insert(child);
+}
+
+void RemoveChild(Entity parent, Entity child, Components& components)
+{
+	assert(
+		components.hierarchies.GetComponent(child)->parent == parent &&
+		components.hierarchies.GetComponent(parent)->children.find(child) !=
+		components.hierarchies.GetComponent(parent)->children.end()
+	);
+
+	components.hierarchies.GetComponent(parent)->children.erase(child);
+	components.hierarchies.GetComponent(child)->parent = INVALID_ENTITY;
 }

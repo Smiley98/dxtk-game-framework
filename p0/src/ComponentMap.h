@@ -37,8 +37,8 @@ public:
 				mLookup.at(mEntities.at(index)) = index;
 			}
 
-			mComponents.pop_back();
 			mEntities.pop_back();
+			mComponents.pop_back();
 			mLookup.erase(entity);
 			gLookup.at(entity) &= ~Component::Hash();
 		}
