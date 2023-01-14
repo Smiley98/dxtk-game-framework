@@ -49,5 +49,5 @@ private:
     DX::Input mInput;
 
     Components mComponents;
-    Scene::Type mScene = Scene::TEST;
+    Scene::Type mScene = Scene::ENTITY;
 };

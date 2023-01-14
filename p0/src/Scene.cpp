@@ -6,8 +6,6 @@
 #include "MainScene.h"
 #include "Entity.h"
 
-std::unordered_map<Entity, uint32_t> gLookup;
-
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 

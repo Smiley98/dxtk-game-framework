@@ -1,6 +1,8 @@
 #include "Entity.h"
 #include "Components.h"
 
+std::unordered_map<Entity, uint32_t> gLookup;
+
 Entity CreateEntity(Components& components)
 {
 	static Entity entity = 0;
@@ -10,20 +12,33 @@ Entity CreateEntity(Components& components)
 	return entity;
 }
 
-void DestroyEntity(Entity& entity, Components& components)
+void DestroyEntity(Entity entity, Components& components)
 {
-	// TODO -- Destroy children on parent destruction.
-	Hierarchy& childHierarchy = *components.hierarchies.GetComponent(entity);
+	auto destroy = [&](Entity e, Components& c) {
+		assert(gLookup.find(e) != gLookup.end());
+		c.hierarchies.Remove(e);
+		c.transforms.Remove(e);
+		c.identifiers.Remove(e);
+		c.rigidbodies.Remove(e);
+		c.spheres.Remove(e);
+		c.capsules.Remove(e);
+		c.buildings.Remove(e);
+		c.players.Remove(e);
+		gLookup.erase(e);
+	};
 
-	components.hierarchies.Remove(entity);
-	components.transforms.Remove(entity);
-	components.identifiers.Remove(entity);
-	components.rigidbodies.Remove(entity);
-	components.spheres.Remove(entity);
-	components.capsules.Remove(entity);
-	components.buildings.Remove(entity);
-	components.players.Remove(entity);
-	entity = INVALID_ENTITY;
+	// Recurssive case
+	for (Entity child : components.hierarchies.GetComponent(entity)->children)
+		destroy(child, components);
+
+	// Base case
+	if (components.hierarchies.GetComponent(entity)->parent != INVALID_ENTITY)
+		RemoveChild(components.hierarchies.GetComponent(entity)->parent, entity, components);
+	destroy(entity, components);
+
+	// Note that passing by reference to nullify the entity would create more problems than solutions.
+	// Hierarchies store parents & children by-value, and changing Hierarchy to use pointers is also problematic.
+	// Hence, the best we can do is erase from gLookup and nullify explicity via entity = INVALID_ENTITY;
 }
 
 void AddChild(Entity parent, Entity child, Components& components)

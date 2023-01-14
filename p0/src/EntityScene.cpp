@@ -8,9 +8,9 @@
 #include "Utility.h"
 #include "SteeringEntity.h"
 
-#define STEERING false
-#define SPLINE true
-#define MAP false
+#define STEERING true
+#define SPLINE false
+#define MAP true
 #define TEST_BUILDINGS false
 #define KEYBOARD true
 #define GAMEPAD false
@@ -61,9 +61,6 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		y += yStep;
 	}
 #endif
-
-	Entity building = CreateBuilding(mComponents, Building::TD, sBuildingRenderer);
-	DestroyEntity(building, mComponents);
 
 #if TEST_BUILDINGS
 	float step = mWorldWidth / mTestBuildings.size();
