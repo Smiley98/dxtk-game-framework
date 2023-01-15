@@ -28,9 +28,13 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mComponents.rigidbodies.Add(mSeeker);
 	mComponents.transforms.GetComponent(mSeeker)->Translate(100.0f, 450.0f, 0.0f);
 
-	mPursuer = CreateEntity(mComponents);
-	mComponents.rigidbodies.Add(mPursuer);
-	mComponents.transforms.GetComponent(mPursuer)->Translate(100.0f, 450.0f, 0.0f);
+	mArriver = CreateEntity(mComponents);
+	mComponents.rigidbodies.Add(mArriver);
+	mComponents.transforms.GetComponent(mArriver)->Translate(100.0f, 450.0f, 0.0f);
+
+	mWanderer = CreateEntity(mComponents);
+	mComponents.rigidbodies.Add(mWanderer);
+	mComponents.transforms.GetComponent(mWanderer)->Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
 #endif
 
 #if SPLINE
@@ -117,11 +121,19 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	EntityTransform& transform = *mComponents.transforms.GetComponent(mPlayer);
 
 #if STEERING
-	// If we wanted a better pursue we could increase/decrease physics prediction steps based on proximity.
-	//Steering::Pursue(mPlayer, mPursuer, 1000.0f, dt, mComponents);
-	Steering::Arrive(mPlayer, mPursuer, 1000.0f, dt, mComponents);
+	Steering::Arrive(mPlayer, mArriver, 1000.0f, dt, mComponents);
+	Steering::Wander(mWanderer, 1000.0f, 10.0f, mComponents);
 	Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
 	//Steering::Flee(mPlayer, mSeeker, 1000.0f, mComponents);
+	//Steering::Pursue(mPlayer, mPursuer, 1000.0f, dt, mComponents);
+	// Do multiple integrations to improve pursue prediction
+
+	Vector3 wandererPosition = mComponents.transforms.GetComponent(mWanderer)->Translation();
+	if (wandererPosition.x > mWorldWidth || wandererPosition.x < 0.0f ||
+		wandererPosition.y > mWorldHeight || wandererPosition.y < 0.0f)
+	{
+		mComponents.transforms.GetComponent(mWanderer)->Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
+	}
 #endif
 
 #if SPLINE
@@ -149,7 +161,8 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 #if STEERING
 	Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
-	Debug::Sphere(mComponents.transforms.GetComponent(mPursuer)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
+	Debug::Sphere(mComponents.transforms.GetComponent(mArriver)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
+	Debug::Sphere(mComponents.transforms.GetComponent(mWanderer)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumPurple);
 #endif
 
 #if SPLINE
@@ -169,7 +182,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		EntityTransform& buildingTransform = *mComponents.transforms.GetComponent(i);
 		EntityTransform& colliderTransform = *mComponents.transforms.GetComponent(child);
 
-		Debug::Capsule(colliderTransform, collider.r, collider.hh, mView, mProj, graphics);
+		//Debug::Capsule(colliderTransform, collider.r, collider.hh, mView, mProj, graphics);
 		sBuildingRenderer.Render(building, buildingTransform.World(), mView, mProj, graphics);
 	}
 #endif

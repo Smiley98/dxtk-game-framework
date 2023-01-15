@@ -1,6 +1,8 @@
 #pragma once
-#include <DirectXMath.h>
+#include <SimpleMath.h>
 #include <cstdlib>
+
+using namespace DirectX::SimpleMath;
 
 namespace DirectX
 {
@@ -16,4 +18,14 @@ inline float Random(float min, float max)
 inline float Lerp(float a, float b, float t)
 {
 	return a * (1.0f - t) + (b * t);
+}
+
+inline Vector3 RandomSpherePoint(float radius)
+{
+	float z = Random(-1.0f, 1.0f);
+	float a = Random(0.0f, DirectX::XM_2PI);
+	float r = sqrtf(1.0f - z * z);
+	float x = r * cosf(a);
+	float y = r * sinf(a);
+	return Vector3(x, y, z ) * radius;
 }

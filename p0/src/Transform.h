@@ -3,8 +3,6 @@
 #include "MathUtilities.h"
 #define Y_FORWARD true
 
-using namespace DirectX::SimpleMath;
-
 class Transform
 {
 public:

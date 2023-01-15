@@ -29,6 +29,18 @@ namespace Steering
 		);
 	}
 
+	void Wander(Entity seeker, float maxSpeed, float radius, Components& components)
+	{
+		assert(components.transforms.GetComponent(seeker) != nullptr);
+		assert(components.rigidbodies.GetComponent(seeker) != nullptr);
+
+		components.rigidbodies.GetComponent(seeker)->acceleration = Wander(
+			components.transforms.GetComponent(seeker)->Translation(),
+			components.rigidbodies.GetComponent(seeker)->velocity,
+			maxSpeed, radius
+		);
+	}
+
 	void Seek(Entity target, Entity seeker, float maxSpeed, Components& components)
 	{
 		assert(components.transforms.GetComponent(seeker) != nullptr);

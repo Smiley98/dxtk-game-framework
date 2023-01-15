@@ -47,4 +47,16 @@ namespace Steering
             targetPosition + Dynamics::Integrate(targetVelocity, targetAcceleration, dt),
             seekerPosition, seekerVelocity, maxSpeed);
     }
+
+    inline Vector3 Wander(
+        const Vector3& seekerPosition,
+        const Vector3& seekerVelocity,
+        float maxSpeed, float radius)
+    {
+        Vector3 direction;
+        seekerVelocity.Normalize(direction);
+        Vector3 centre = seekerPosition + direction * radius;
+        Vector3 offset = RandomSpherePoint(radius);
+        return Seek(centre + offset, seekerPosition, seekerVelocity, maxSpeed);
+    }
 }
