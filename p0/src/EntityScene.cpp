@@ -35,6 +35,21 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mWanderer = CreateEntity(mComponents);
 	mComponents.rigidbodies.Add(mWanderer);
 	mComponents.transforms.GetComponent(mWanderer)->Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
+
+	mRandomSeeker = CreateEntity(mComponents);
+	mComponents.rigidbodies.Add(mRandomSeeker);
+
+	mRandomTarget = CreateEntity(mComponents);
+	mComponents.rigidbodies.Add(mRandomTarget);
+
+	AddTimer("RandomTarget", 1.0f, [&] {
+		mComponents.transforms.GetComponent(mRandomTarget)->Translate
+		(
+			Random(0.0f, mWorldWidth),
+			Random(0.0f, mWorldHeight),
+			0.0f
+		);
+	}, true);
 #endif
 
 #if SPLINE
@@ -124,6 +139,7 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	Steering::Arrive(mPlayer, mArriver, 1000.0f, dt, mComponents);
 	Steering::Wander(mWanderer, 1000.0f, 10.0f, mComponents);
 	Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
+	Steering::Seek(mRandomTarget, mRandomSeeker, 1000.0f, mComponents);
 	//Steering::Flee(mPlayer, mSeeker, 1000.0f, mComponents);
 	//Steering::Pursue(mPlayer, mPursuer, 1000.0f, dt, mComponents);
 	// Do multiple integrations to improve pursue prediction
@@ -163,6 +179,8 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
 	Debug::Sphere(mComponents.transforms.GetComponent(mArriver)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
 	Debug::Sphere(mComponents.transforms.GetComponent(mWanderer)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumPurple);
+	Debug::Sphere(mComponents.transforms.GetComponent(mRandomSeeker)->Translation(), 50.0f, mView, mProj, graphics, Colors::White);
+	Debug::Sphere(mComponents.transforms.GetComponent(mRandomTarget)->Translation(), 50.0f, mView, mProj, graphics, Colors::Black);
 #endif
 
 #if SPLINE
