@@ -14,7 +14,7 @@
 
 #define STEERING true
 #define SPLINE false
-#define MAP true
+#define MAP false
 #define TEST_BUILDINGS false
 #define KEYBOARD true
 #define GAMEPAD false
@@ -35,6 +35,22 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mArriver = CreateSteering(mComponents, SteeringBehaviour::ARRIVE, 1000.0f, mPlayer);
 	mRandomSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, 1000.0f, mRandomTarget);
 
+	mTarget1 = CreateEntity(mComponents);
+	mTarget2 = CreateEntity(mComponents);
+	mComponents.spheres.Add(mTarget1).r = 50.0f;
+	mComponents.spheres.Add(mTarget2).r = 50.0f;
+	
+	mAvoider1 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget1);
+	mAvoider2 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget2);
+	Entity collider1 = CreateEntity(mComponents);
+	Entity collider2 = CreateEntity(mComponents);
+	components.spheres.Add(collider1).r = 50.0f;
+	components.spheres.Add(collider2).r = 50.0f;
+	components.transforms.GetComponent(collider1)->DeltaTranslateY(100.0f);
+	components.transforms.GetComponent(collider2)->DeltaTranslateY(100.0f);
+	AddChild(mAvoider1, collider1, mComponents);
+	AddChild(mAvoider2, collider2, mComponents);
+
 	AddTimer("RandomTarget", 1.0f, [&] {
 		mComponents.transforms.GetComponent(mRandomTarget)->Translate
 		(
@@ -42,6 +58,43 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 			Random(0.0f, mWorldHeight),
 			0.0f
 		);
+	}, true);
+
+	AddTimer("targets", 2.0f, [&] {
+		static bool flip;
+		if (flip)
+		{
+			mComponents.transforms.GetComponent(mTarget1)->Translate
+			(
+				mWorldWidth * 0.5f,
+				mWorldHeight * 0.25f,
+				0.0f
+			);
+
+			mComponents.transforms.GetComponent(mTarget2)->Translate
+			(
+				mWorldWidth * 0.25f,
+				mWorldHeight * 0.5f,
+				0.0f
+			);
+		}
+		else
+		{
+			mComponents.transforms.GetComponent(mTarget1)->Translate
+			(
+				mWorldWidth * 0.5f,
+				mWorldHeight * 0.75f,
+				0.0f
+			);
+
+			mComponents.transforms.GetComponent(mTarget2)->Translate
+			(
+				mWorldWidth * 0.75f,
+				mWorldHeight * 0.5f,
+				0.0f
+			);
+		}
+		flip = !flip;
 	}, true);
 #endif
 
@@ -153,11 +206,23 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
 
 #if STEERING
-	Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
-	Debug::Sphere(mComponents.transforms.GetComponent(mArriver)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
+	//Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
+	//Debug::Sphere(mComponents.transforms.GetComponent(mArriver)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
 	//Debug::Sphere(mComponents.transforms.GetComponent(mWanderer)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumPurple);
-	Debug::Sphere(mComponents.transforms.GetComponent(mRandomSeeker)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumAquamarine);
-	Debug::Sphere(mComponents.transforms.GetComponent(mRandomTarget)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumOrchid);
+	//Debug::Sphere(mComponents.transforms.GetComponent(mRandomSeeker)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumAquamarine);
+	//Debug::Sphere(mComponents.transforms.GetComponent(mRandomTarget)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumOrchid);
+	Debug::Sphere(mComponents.transforms.GetComponent(mTarget1)->Translation(), 50.0f, mView, mProj, graphics);
+	Debug::Sphere(mComponents.transforms.GetComponent(mTarget2)->Translation(), 50.0f, mView, mProj, graphics);
+	Debug::Sphere(mComponents.transforms.GetComponent(mAvoider1)->Translation(), 50.0f, mView, mProj, graphics, Colors::Black);
+	Debug::Sphere(mComponents.transforms.GetComponent(mAvoider2)->Translation(), 50.0f, mView, mProj, graphics, Colors::Black);
+	Debug::Sphere(mComponents.transforms.GetComponent(
+		*mComponents.hierarchies.GetComponent(mAvoider1)->children.begin()
+	//)->WorldForward() * 100.0f + mComponents.transforms.GetComponent(mAvoider1)->Translation(), 50.0f, mView, mProj, graphics, Colors::Gray);
+	)->WorldTranslation(), 50.0f, mView, mProj, graphics, Colors::Gray);
+	Debug::Sphere(mComponents.transforms.GetComponent(
+		*mComponents.hierarchies.GetComponent(mAvoider2)->children.begin()
+	//)->WorldForward() * 100.0f + mComponents.transforms.GetComponent(mAvoider2)->Translation(), 50.0f, mView, mProj, graphics, Colors::Gray);
+	)->WorldTranslation(), 50.0f, mView, mProj, graphics, Colors::Gray);
 #endif
 
 #if SPLINE

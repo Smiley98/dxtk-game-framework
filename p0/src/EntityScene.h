@@ -43,4 +43,5 @@ private:
 	size_t interval = 0, sample = 0;
 
 	Entity mSeeker, mArriver, mRandomSeeker, mRandomTarget;
+	Entity mAvoider1, mAvoider2, mTarget1, mTarget2;
 };
