@@ -16,6 +16,7 @@ namespace ComponentHash
 	constexpr uint32_t CAPSULE = SPHERE << 1;
 
 	// Gameplay Components
-	constexpr uint32_t BUILDING = CAPSULE << 1;
+	constexpr uint32_t STEERING = CAPSULE << 1;
+	constexpr uint32_t BUILDING = STEERING << 1;
 	constexpr uint32_t PLAYER = BUILDING << 1;
 }

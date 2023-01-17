@@ -2,9 +2,10 @@
 #include "EntityScene.h"
 #include "PlayerFactory.h"
 #include "BuildingFactory.h"
-#include "CollisionSystem.h"
 #include "DynamicsSystem.h"
 #include "PlayerSystem.h"
+#include "CollisionSystem.h"
+#include "SteeringSystem.h"
 #include "Utility.h"
 #include "SteeringEntity.h"
 
@@ -163,8 +164,9 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	transform.Orientate(forward);
 #endif
 
-	Dynamics::Update(mComponents, dt);
 	Players::Update(mComponents, input, dt);
+	Steering::Update(mComponents, dt);
+	Dynamics::Update(mComponents, dt);
 	Collision::Update(mComponents);
 }
 

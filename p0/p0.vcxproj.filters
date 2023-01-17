@@ -145,6 +145,12 @@
     <ClCompile Include="src\Hierarchy.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="src\SteeringBehaviour.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SteeringSystem.cpp">
+      <Filter>ECS\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -267,6 +273,12 @@
     </ClInclude>
     <ClInclude Include="src\Hierarchy.h">
       <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SteeringBehaviour.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SteeringSystem.h">
+      <Filter>ECS\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -156,10 +156,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\SteeringBehaviour.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\SteeringEntity.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\SteeringSystem.cpp" />
     <ClCompile Include="src\TestScene.cpp" />
     <ClCompile Include="src\Utility.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -204,7 +209,9 @@
     <ClInclude Include="src\Rigidbody.h" />
     <ClInclude Include="src\Dynamics.h" />
     <ClInclude Include="src\Steering.h" />
+    <ClInclude Include="src\SteeringBehaviour.h" />
     <ClInclude Include="src\SteeringEntity.h" />
+    <ClInclude Include="src\SteeringSystem.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Transform.h" />
     <ClInclude Include="src\pch.h" />
