@@ -23,8 +23,6 @@ namespace Collision
 		Resolve(components, collisions);
 	}
 
-	// Passing Components is more convenient than passing spheres and capsules directly.
-	// Can modify this later if we need to hit-test specific groups of geometry rather than all geometry.
 	void Collect(const Components& components, std::vector<HitPair>& collisions)
 	{
 		std::vector<SphereCollider> staticSpheres;
@@ -158,50 +156,53 @@ namespace Collision
 
 	void Resolve(Components& components, const std::vector<HitPair>& collisions)
 	{
-		// Might want to negate mtv so that it always resolves player
 		for (const HitPair& collision : collisions)
 		{
-			// All entities might as well have identifiers since there's only like 5 possible identifiers as of now
-			assert(components.identifiers.GetComponent(collision.hits[0]) != nullptr);
-			assert(components.identifiers.GetComponent(collision.hits[1]) != nullptr);
-			Tags::Tag tagA = components.identifiers.GetComponent(collision.hits[0])->tag;
-			Tags::Tag tagB = components.identifiers.GetComponent(collision.hits[1])->tag;
+			if (components.identifiers.HasComponent(collision.hits[0]) &&
+				components.identifiers.HasComponent(collision.hits[1]))
+			{
+				Tags::Tag tagA = components.identifiers.GetComponent(collision.hits[0])->tag;
+				Tags::Tag tagB = components.identifiers.GetComponent(collision.hits[1])->tag;
 
-			if (tagA == Tags::PLAYER && tagB == Tags::PLAYER)
-			{
-				OnPlayerPlayer(collision.hits[0], collision.hits[1], collision.mtv, components);
-			}
+				// Player-Player
+				if (tagA == Tags::PLAYER && tagB == Tags::PLAYER)
+				{
+					OnPlayerPlayer(collision.hits[0], collision.hits[1], collision.mtv, components);
+				}
 
-			else if (tagA == Tags::PLAYER && tagB == Tags::BUILDING)
-			{
-				OnPlayerBuilding(collision.hits[0], collision.hits[1], collision.mtv, components);
-			}
-			else if (tagA == Tags::BUILDING && tagB == Tags::PLAYER)
-			{
-				OnPlayerBuilding(collision.hits[1], collision.hits[0], collision.mtv, components);
-			}
+				// Player-Building
+				else if (tagA == Tags::PLAYER && tagB == Tags::BUILDING)
+				{
+					OnPlayerBuilding(collision.hits[0], collision.hits[1], collision.mtv, components);
+				}
+				else if (tagA == Tags::BUILDING && tagB == Tags::PLAYER)
+				{
+					OnPlayerBuilding(collision.hits[1], collision.hits[0], collision.mtv, components);
+				}
 
-			else if (tagA == Tags::PLAYER && tagB == Tags::PROJECTILE)
-			{
-				OnPlayerProjectile(collision.hits[0], collision.hits[1], collision.mtv, components);
-			}
-			else if (tagA == Tags::PROJECTILE && tagB == Tags::PLAYER)
-			{
-				OnPlayerProjectile(collision.hits[1], collision.hits[0], collision.mtv, components);
-			}
+				// Player-Projectile
+				else if (tagA == Tags::PLAYER && tagB == Tags::PROJECTILE)
+				{
+					OnPlayerProjectile(collision.hits[0], collision.hits[1], collision.mtv, components);
+				}
+				else if (tagA == Tags::PROJECTILE && tagB == Tags::PLAYER)
+				{
+					OnPlayerProjectile(collision.hits[1], collision.hits[0], collision.mtv, components);
+				}
 
-			else if (tagA == Tags::BUILDING && tagB == Tags::PROJECTILE)
-			{
-				OnBuildingProjectile(collision.hits[0], collision.hits[1], collision.mtv, components);
+				// Building-Projectile
+				else if (tagA == Tags::BUILDING && tagB == Tags::PROJECTILE)
+				{
+					OnBuildingProjectile(collision.hits[0], collision.hits[1], collision.mtv, components);
+				}
+				else if (tagA == Tags::PROJECTILE && tagB == Tags::BUILDING)
+				{
+					OnBuildingProjectile(collision.hits[1], collision.hits[0], collision.mtv, components);
+				}
 			}
-			else if (tagA == Tags::PROJECTILE && tagB == Tags::BUILDING)
-			{
-				OnBuildingProjectile(collision.hits[1], collision.hits[0], collision.mtv, components);
-			}
-
 			else
 			{
-				Print("***ERROR -- UNHANDLED COLLISION***");
+				Print("***WARNING: UNHANDLED COLLISION***");
 			}
 		}
 	}
@@ -227,13 +228,26 @@ namespace Collision
 	{
 		assert(components.identifiers.GetComponent(player)->tag == Tags::PLAYER);
 		assert(components.identifiers.GetComponent(projectile)->tag == Tags::PROJECTILE);
-
 	}
 
 	void OnBuildingProjectile(Entity building, Entity projectile, const Vector3& mtv, Components& components)
 	{
 		assert(components.identifiers.GetComponent(building)->tag == Tags::BUILDING);
 		assert(components.identifiers.GetComponent(projectile)->tag == Tags::PROJECTILE);
-
 	}
 }
+
+// Instead of re-querrying all collisions for a single entity, just resolve everything in Resolve().
+/*
+std::vector<Hit> All(Components& components, Entity entity)
+{
+	std::vector<HitPair> collisions;
+	Collect(components, collisions);
+}
+
+Hit Nearest(Components& components, Entity entity)
+{
+	std::vector<HitPair> collisions;
+	Collect(components, collisions);
+}
+*/

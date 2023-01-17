@@ -22,7 +22,7 @@ Entity CreateBuilding(Components& components,
 		case Building::PENTA:
 		{
 			BoundZ(capsule, bounds);
-			transform.TranslateZ(capsule.hh);
+			//transform.TranslateZ(capsule.hh);
 			transform.RotateX(90.0f);
 			break;
 		}

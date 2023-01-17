@@ -11,10 +11,8 @@ namespace Dynamics
 		for (size_t i = 0; i < components.rigidbodies.Count(); i++)
 		{
 			Entity entity = components.rigidbodies.GetEntity(i);
-			if (components.players.GetComponent(entity) != nullptr) continue; // Player uses custom physics
+			if (components.players.HasComponent(entity)) continue; // Player uses custom physics
 
-			assert(components.transforms.GetComponent(entity) != nullptr);
-			assert(&components.rigidbodies[i] != nullptr);
 			EntityTransform& transform = *components.transforms.GetComponent(entity);
 			Rigidbody& body = components.rigidbodies[i];
 

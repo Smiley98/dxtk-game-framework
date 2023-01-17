@@ -179,8 +179,8 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
 	Debug::Sphere(mComponents.transforms.GetComponent(mArriver)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
 	Debug::Sphere(mComponents.transforms.GetComponent(mWanderer)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumPurple);
-	Debug::Sphere(mComponents.transforms.GetComponent(mRandomSeeker)->Translation(), 50.0f, mView, mProj, graphics, Colors::White);
-	Debug::Sphere(mComponents.transforms.GetComponent(mRandomTarget)->Translation(), 50.0f, mView, mProj, graphics, Colors::Black);
+	Debug::Sphere(mComponents.transforms.GetComponent(mRandomSeeker)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumAquamarine);
+	Debug::Sphere(mComponents.transforms.GetComponent(mRandomTarget)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumOrchid);
 #endif
 
 #if SPLINE
@@ -200,7 +200,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		EntityTransform& buildingTransform = *mComponents.transforms.GetComponent(i);
 		EntityTransform& colliderTransform = *mComponents.transforms.GetComponent(child);
 
-		//Debug::Capsule(colliderTransform, collider.r, collider.hh, mView, mProj, graphics);
+		Debug::Capsule(colliderTransform, collider.r, collider.hh, mView, mProj, graphics);
 		sBuildingRenderer.Render(building, buildingTransform.World(), mView, mProj, graphics);
 	}
 #endif

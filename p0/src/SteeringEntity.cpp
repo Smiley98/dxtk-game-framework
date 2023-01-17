@@ -8,9 +8,9 @@ namespace Steering
 {
 	void Arrive(Entity target, Entity seeker, float maxSpeed, float dt, Components& components)
 	{
-		assert(components.transforms.GetComponent(seeker) != nullptr);
-		assert(components.transforms.GetComponent(target) != nullptr);
-		assert(components.rigidbodies.GetComponent(seeker) != nullptr);
+		assert(components.transforms.HasComponent(seeker));
+		assert(components.transforms.HasComponent(target));
+		assert(components.rigidbodies.HasComponent(seeker));
 
 		// 1. Add steering force towards target
 		Rigidbody& rb = *components.rigidbodies.GetComponent(seeker);
@@ -31,8 +31,8 @@ namespace Steering
 
 	void Wander(Entity seeker, float maxSpeed, float radius, Components& components)
 	{
-		assert(components.transforms.GetComponent(seeker) != nullptr);
-		assert(components.rigidbodies.GetComponent(seeker) != nullptr);
+		assert(components.transforms.HasComponent(seeker));
+		assert(components.rigidbodies.HasComponent(seeker));
 
 		components.rigidbodies.GetComponent(seeker)->acceleration = Wander(
 			components.transforms.GetComponent(seeker)->Translation(),
@@ -43,9 +43,9 @@ namespace Steering
 
 	void Seek(Entity target, Entity seeker, float maxSpeed, Components& components)
 	{
-		assert(components.transforms.GetComponent(seeker) != nullptr);
-		assert(components.transforms.GetComponent(target) != nullptr);
-		assert(components.rigidbodies.GetComponent(seeker) != nullptr);
+		assert(components.transforms.HasComponent(seeker));
+		assert(components.transforms.HasComponent(target));
+		assert(components.rigidbodies.HasComponent(seeker));
 
 		components.rigidbodies.GetComponent(seeker)->acceleration = Seek(
 			components.transforms.GetComponent(target)->Translation(),
@@ -56,9 +56,9 @@ namespace Steering
 
 	void Flee(Entity target, Entity seeker, float maxSpeed, Components& components)
 	{
-		assert(components.transforms.GetComponent(seeker) != nullptr);
-		assert(components.transforms.GetComponent(target) != nullptr);
-		assert(components.rigidbodies.GetComponent(seeker) != nullptr);
+		assert(components.transforms.HasComponent(seeker));
+		assert(components.transforms.HasComponent(target));
+		assert(components.rigidbodies.HasComponent(seeker));
 		
 		components.rigidbodies.GetComponent(seeker)->acceleration = Flee(
 			components.transforms.GetComponent(target)->Translation(),
@@ -69,10 +69,10 @@ namespace Steering
 
 	void Pursue(Entity target, Entity seeker, float maxSpeed, float dt, Components& components)
 	{
-		assert(components.transforms.GetComponent(seeker) != nullptr);
-		assert(components.transforms.GetComponent(target) != nullptr);
-		assert(components.rigidbodies.GetComponent(seeker) != nullptr);
-		assert(components.rigidbodies.GetComponent(target) != nullptr);
+		assert(components.transforms.HasComponent(seeker));
+		assert(components.transforms.HasComponent(target));
+		assert(components.rigidbodies.HasComponent(seeker));
+		assert(components.rigidbodies.HasComponent(target));
 
 		components.rigidbodies.GetComponent(seeker)->acceleration = Pursue(
 			components.transforms.GetComponent(target)->Translation(),
@@ -85,10 +85,10 @@ namespace Steering
 
 	void Evade(Entity target, Entity seeker, float maxSpeed, float dt, Components& components)
 	{
-		assert(components.transforms.GetComponent(seeker) != nullptr);
-		assert(components.transforms.GetComponent(target) != nullptr);
-		assert(components.rigidbodies.GetComponent(seeker) != nullptr);
-		assert(components.rigidbodies.GetComponent(target) != nullptr);
+		assert(components.transforms.HasComponent(seeker));
+		assert(components.transforms.HasComponent(target));
+		assert(components.rigidbodies.HasComponent(seeker));
+		assert(components.rigidbodies.HasComponent(target));
 
 		components.rigidbodies.GetComponent(seeker)->acceleration = Evade(
 			components.transforms.GetComponent(target)->Translation(),

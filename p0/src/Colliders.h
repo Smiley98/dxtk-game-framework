@@ -1,6 +1,6 @@
 #pragma once
 #include "CollisionMath.h"
-#include "HitPair.h"
+#include "Hits.h"
 #include <vector>
 
 // This file is an excellent example of everything wrong with C++ and object-oriented programming.

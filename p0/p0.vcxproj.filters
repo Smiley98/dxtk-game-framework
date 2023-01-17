@@ -222,7 +222,7 @@
     <ClInclude Include="src\PlayerSystem.h">
       <Filter>ECS\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="src\HitPair.h">
+    <ClInclude Include="src\Hits.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\CollisionSystem.h">
