@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "SteeringSystem.h"
 #include "SteeringEntity.h"
+#include "Steering.h"
 #include "Components.h"
+#include "Colliders.h"
 
 namespace Steering
 {
@@ -34,8 +36,33 @@ namespace Steering
 				break;
 
 			case SteeringBehaviour::AVOID:
+				Entity child = *components.hierarchies.GetComponent(entity)->children.begin();
+				Vector3 mtv;
+				bool collision = SphereSphere(
+					*components.transforms.GetComponent(behaviour.target),
+					*components.transforms.GetComponent(child),
+					*components.spheres.GetComponent(behaviour.target),
+					*components.spheres.GetComponent(child), mtv
+				);
+				// (Only using spheres for now).
+				// Seek to collider position + mtv if on collision course, otherwise seek to target.
+				if (collision)
+				{
+					Vector3 resolvedPosition = components.transforms.GetComponent(child)->Translation() + mtv;
+					Seek(resolvedPosition, components.transforms.GetComponent(entity)->Translation(),
+						components.rigidbodies.GetComponent(entity)->velocity, behaviour.maxSpeed);
+				}
+				else
+				{
+					Seek(behaviour.target, entity, behaviour.maxSpeed, components);
+				}
 				break;
 			}
 		}
 	}
 }
+
+// Not sure why ternary doesn't work here...
+//Collider* collider = components.spheres.HasComponent(child) ?
+//	new SphereCollider(child, childTransform, *components.spheres.GetComponent(child)) :
+//	new CapsuleCollider(child, childTransform, *components.capsules.GetComponent(child));

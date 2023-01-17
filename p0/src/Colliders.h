@@ -6,6 +6,11 @@
 // This file is an excellent example of everything wrong with C++ and object-oriented programming.
 struct Components;
 
+namespace Steering
+{
+	void Update(Components& components, float dt);
+}
+
 namespace Collision
 {
 	class SphereCollider;
@@ -43,6 +48,7 @@ namespace Collision
 		SphereCollider(const Entity& e, const EntityTransform& t, const Sphere& g) : Collider(e, t), geometry(g) {}
 
 		friend void Collect(const Components& components, std::vector<HitPair>& collisions);
+		friend void Steering::Update(Components& components, float dt);
 	};
 
 	class CapsuleCollider :
@@ -62,6 +68,7 @@ namespace Collision
 		CapsuleCollider() = default;
 
 		friend void Collect(const Components& components, std::vector<HitPair>& collisions);
+		friend void Steering::Update(Components& components, float dt);
 	};
 
 	inline bool SphereCollider::IsColliding(const SphereCollider& collider) const
