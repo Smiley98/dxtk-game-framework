@@ -1,13 +1,16 @@
 #include "pch.h"
 #include "EntityScene.h"
+
 #include "PlayerFactory.h"
 #include "BuildingFactory.h"
-#include "DynamicsSystem.h"
+#include "SteeringFactory.h"
+
 #include "PlayerSystem.h"
-#include "CollisionSystem.h"
 #include "SteeringSystem.h"
+#include "DynamicsSystem.h"
+#include "CollisionSystem.h"
+
 #include "Utility.h"
-#include "SteeringEntity.h"
 
 #define STEERING true
 #define SPLINE false
@@ -25,23 +28,12 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mComponents.transforms.GetComponent(mPlayer)->Translate(800.0f, 450.0f, 0.0f);
 
 #if STEERING
-	mSeeker = CreateEntity(mComponents);
-	mComponents.rigidbodies.Add(mSeeker);
-	mComponents.transforms.GetComponent(mSeeker)->Translate(100.0f, 450.0f, 0.0f);
-
-	mArriver = CreateEntity(mComponents);
-	mComponents.rigidbodies.Add(mArriver);
-	mComponents.transforms.GetComponent(mArriver)->Translate(100.0f, 450.0f, 0.0f);
-
-	mWanderer = CreateEntity(mComponents);
-	mComponents.rigidbodies.Add(mWanderer);
-	mComponents.transforms.GetComponent(mWanderer)->Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
-
-	mRandomSeeker = CreateEntity(mComponents);
-	mComponents.rigidbodies.Add(mRandomSeeker);
-
 	mRandomTarget = CreateEntity(mComponents);
 	mComponents.rigidbodies.Add(mRandomTarget);
+
+	mSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, 1000.0f, mPlayer);
+	mArriver = CreateSteering(mComponents, SteeringBehaviour::ARRIVE, 1000.0f, mPlayer);
+	mRandomSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, 1000.0f, mRandomTarget);
 
 	AddTimer("RandomTarget", 1.0f, [&] {
 		mComponents.transforms.GetComponent(mRandomTarget)->Translate
@@ -136,23 +128,6 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	const float av = 100.0f * dt;	// angular velocity
 	EntityTransform& transform = *mComponents.transforms.GetComponent(mPlayer);
 
-#if STEERING
-	Steering::Arrive(mPlayer, mArriver, 1000.0f, dt, mComponents);
-	Steering::Wander(mWanderer, 1000.0f, 10.0f, mComponents);
-	Steering::Seek(mPlayer, mSeeker, 1000.0f, mComponents);
-	Steering::Seek(mRandomTarget, mRandomSeeker, 1000.0f, mComponents);
-	//Steering::Flee(mPlayer, mSeeker, 1000.0f, mComponents);
-	//Steering::Pursue(mPlayer, mPursuer, 1000.0f, dt, mComponents);
-	// Do multiple integrations to improve pursue prediction
-
-	Vector3 wandererPosition = mComponents.transforms.GetComponent(mWanderer)->Translation();
-	if (wandererPosition.x > mWorldWidth || wandererPosition.x < 0.0f ||
-		wandererPosition.y > mWorldHeight || wandererPosition.y < 0.0f)
-	{
-		mComponents.transforms.GetComponent(mWanderer)->Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
-	}
-#endif
-
 #if SPLINE
 	Vector3 a = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
 	d += lv;
@@ -180,7 +155,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #if STEERING
 	Debug::Sphere(mComponents.transforms.GetComponent(mSeeker)->Translation(), 50.0f, mView, mProj, graphics);
 	Debug::Sphere(mComponents.transforms.GetComponent(mArriver)->Translation(), 50.0f, mView, mProj, graphics, Colors::PowderBlue);
-	Debug::Sphere(mComponents.transforms.GetComponent(mWanderer)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumPurple);
+	//Debug::Sphere(mComponents.transforms.GetComponent(mWanderer)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumPurple);
 	Debug::Sphere(mComponents.transforms.GetComponent(mRandomSeeker)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumAquamarine);
 	Debug::Sphere(mComponents.transforms.GetComponent(mRandomTarget)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumOrchid);
 #endif
@@ -239,3 +214,11 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 //		RemoveProcess("test");
 //	Print(std::to_string(process.Percentage()));
 //}, true);
+
+// Wandering behaviour test:
+//Vector3 wandererPosition = mComponents.transforms.GetComponent(mWanderer)->Translation();
+//if (wandererPosition.x > mWorldWidth || wandererPosition.x < 0.0f ||
+//	wandererPosition.y > mWorldHeight || wandererPosition.y < 0.0f)
+//{
+//	mComponents.transforms.GetComponent(mWanderer)->Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
+//}

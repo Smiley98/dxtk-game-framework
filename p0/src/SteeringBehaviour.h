@@ -4,7 +4,7 @@
 
 struct SteeringBehaviour
 {
-	enum Behaviour
+	enum Type : size_t
 	{
 		NONE,
 		SEEK,

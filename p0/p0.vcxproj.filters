@@ -151,6 +151,9 @@
     <ClCompile Include="src\SteeringSystem.cpp">
       <Filter>ECS\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\SteeringFactory.cpp">
+      <Filter>ECS\Factories</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -279,6 +282,9 @@
     </ClInclude>
     <ClInclude Include="src\SteeringSystem.h">
       <Filter>ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SteeringFactory.h">
+      <Filter>ECS\Factories</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
