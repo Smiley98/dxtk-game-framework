@@ -27,6 +27,21 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);
 	mComponents.transforms.GetComponent(mPlayer)->Translate(800.0f, 450.0f, 0.0f);
 
+	mParent = CreateEntity(mComponents);
+	mChild1 = CreateEntity(mComponents);
+	mChild2 = CreateEntity(mComponents);
+	EntityTransform& parent = *mComponents.transforms.GetComponent(mParent);
+	EntityTransform& child1 = *mComponents.transforms.GetComponent(mChild1);
+	EntityTransform& child2 = *mComponents.transforms.GetComponent(mChild2);
+	parent.Translate(mWorldWidth * 0.5f, 100.0f, 0.0f);
+	child1.DeltaTranslateY(100.0f);
+	child2.DeltaTranslateX(100.0f);
+	parent.DeltaRotateX(10.0f);
+	child1.DeltaRotateZ(30.0f);
+	child2.DeltaRotateY(60.0f);
+	AddChild(mParent, mChild1, mComponents);
+	AddChild(mChild1, mChild2, mComponents);
+
 #if STEERING
 	mRandomTarget = CreateEntity(mComponents);
 	mComponents.rigidbodies.Add(mRandomTarget);
@@ -211,18 +226,43 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//Debug::Sphere(mComponents.transforms.GetComponent(mWanderer)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumPurple);
 	//Debug::Sphere(mComponents.transforms.GetComponent(mRandomSeeker)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumAquamarine);
 	//Debug::Sphere(mComponents.transforms.GetComponent(mRandomTarget)->Translation(), 50.0f, mView, mProj, graphics, Colors::MediumOrchid);
-	Debug::Sphere(mComponents.transforms.GetComponent(mTarget1)->Translation(), 50.0f, mView, mProj, graphics);
-	Debug::Sphere(mComponents.transforms.GetComponent(mTarget2)->Translation(), 50.0f, mView, mProj, graphics);
-	Debug::Sphere(mComponents.transforms.GetComponent(mAvoider1)->Translation(), 50.0f, mView, mProj, graphics, Colors::Black);
-	Debug::Sphere(mComponents.transforms.GetComponent(mAvoider2)->Translation(), 50.0f, mView, mProj, graphics, Colors::Black);
-	Debug::Sphere(mComponents.transforms.GetComponent(
-		*mComponents.hierarchies.GetComponent(mAvoider1)->children.begin()
-	//)->WorldForward() * 100.0f + mComponents.transforms.GetComponent(mAvoider1)->Translation(), 50.0f, mView, mProj, graphics, Colors::Gray);
-	)->WorldTranslation(), 50.0f, mView, mProj, graphics, Colors::Gray);
-	Debug::Sphere(mComponents.transforms.GetComponent(
-		*mComponents.hierarchies.GetComponent(mAvoider2)->children.begin()
-	//)->WorldForward() * 100.0f + mComponents.transforms.GetComponent(mAvoider2)->Translation(), 50.0f, mView, mProj, graphics, Colors::Gray);
-	)->WorldTranslation(), 50.0f, mView, mProj, graphics, Colors::Gray);
+	
+	//Debug::Sphere(mComponents.transforms.GetComponent(mTarget1)->Translation(), 50.0f, mView, mProj, graphics);
+	//Debug::Sphere(mComponents.transforms.GetComponent(mTarget2)->Translation(), 50.0f, mView, mProj, graphics);
+	//Debug::Sphere(mComponents.transforms.GetComponent(mAvoider1)->Translation(), 50.0f, mView, mProj, graphics, Colors::Black);
+	//Debug::Sphere(mComponents.transforms.GetComponent(mAvoider2)->Translation(), 50.0f, mView, mProj, graphics, Colors::Black);
+	//Debug::Sphere(mComponents.transforms.GetComponent(
+	//	*mComponents.hierarchies.GetComponent(mAvoider1)->children.begin()
+	////)->WorldForward() * 100.0f + mComponents.transforms.GetComponent(mAvoider1)->Translation(), 50.0f, mView, mProj, graphics, Colors::Gray);
+	//)->WorldTranslation(), 50.0f, mView, mProj, graphics, Colors::Gray);
+	//Debug::Sphere(mComponents.transforms.GetComponent(
+	//	*mComponents.hierarchies.GetComponent(mAvoider2)->children.begin()
+	////)->WorldForward() * 100.0f + mComponents.transforms.GetComponent(mAvoider2)->Translation(), 50.0f, mView, mProj, graphics, Colors::Gray);
+	//)->WorldTranslation(), 50.0f, mView, mProj, graphics, Colors::Gray);
+
+	Debug::Primitive(Debug::TEAPOT,
+		Matrix::CreateScale(50.0f) * mComponents.transforms.GetComponent(mParent)->World(),
+		mView, mProj, graphics, Colors::Red);
+
+	Debug::Primitive(Debug::TEAPOT,
+		Matrix::CreateScale(50.0f) * mComponents.transforms.GetComponent(mChild1)->World(),
+		mView, mProj, graphics, Colors::Orange);
+
+	Debug::Primitive(Debug::TEAPOT,
+		Matrix::CreateScale(50.0f) * mComponents.transforms.GetComponent(mChild2)->World(),
+		mView, mProj, graphics, Colors::Yellow);
+
+	Debug::Primitive(Debug::TEAPOT,
+		Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(mComponents.transforms.GetComponent(mParent)->WorldPosition()),
+		mView, mProj, graphics, Colors::Green);
+
+	Debug::Primitive(Debug::TEAPOT,
+		Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(mComponents.transforms.GetComponent(mChild1)->WorldPosition()),
+		mView, mProj, graphics, Colors::Blue);
+
+	Debug::Primitive(Debug::TEAPOT,
+		Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(mComponents.transforms.GetComponent(mChild2)->WorldPosition()),
+		mView, mProj, graphics, Colors::Purple);
 #endif
 
 #if SPLINE

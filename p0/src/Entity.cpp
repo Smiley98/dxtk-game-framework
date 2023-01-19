@@ -65,3 +65,9 @@ void RemoveChild(Entity parent, Entity child, Components& components)
 	components.hierarchies.GetComponent(parent)->children.erase(child);
 	components.hierarchies.GetComponent(child)->parent = INVALID_ENTITY;
 }
+
+Entity Root(Entity entity, Components& components)
+{
+	Entity parent = components.hierarchies.GetComponent(entity)->parent;
+	return parent == INVALID_ENTITY ? parent : Root(parent, components);
+}

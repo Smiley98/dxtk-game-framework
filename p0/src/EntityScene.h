@@ -44,4 +44,5 @@ private:
 
 	Entity mSeeker, mArriver, mRandomSeeker, mRandomTarget;
 	Entity mAvoider1, mAvoider2, mTarget1, mTarget2;
+	Entity mParent, mChild1, mChild2;
 };

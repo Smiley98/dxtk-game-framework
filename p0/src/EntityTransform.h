@@ -2,6 +2,7 @@
 #include "Transform.h"
 #include "ComponentHash.h"
 #include "Entity.h"
+#include <vector>
 
 class Game;
 struct Components;
@@ -17,6 +18,27 @@ public:
 	Matrix World() const
 	{
 		return Parent() != nullptr ? Local() * Parent()->World() : Local();
+	}
+
+	Vector3 WorldPosition() const
+	{
+		EntityTransform* parent = Parent();
+		if (parent == nullptr) return Translation();
+
+		std::vector<EntityTransform*> parents;
+		while (parent != nullptr)
+		{
+			parents.push_back(parent);
+			parent = parent->Parent();
+		}
+		std::reverse(parents.begin(), parents.end());
+
+		Vector3 position = parents[0]->Translation();
+		for (size_t i = 1; i < parents.size(); i++)
+		{
+			position += Vector3::Transform(parents[i]->Translation(), parents[i - 1]->Rotation());
+		}
+		return position;
 	}
 
 	Vector3 WorldForward() const
