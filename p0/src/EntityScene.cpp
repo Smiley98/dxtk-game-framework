@@ -14,8 +14,8 @@
 
 #define STEERING false
 #define SPLINE false
-#define MAP false
-#define TEST_BUILDINGS true
+#define MAP true
+#define TEST_BUILDINGS false
 #define KEYBOARD true
 #define GAMEPAD false
 
