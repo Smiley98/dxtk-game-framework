@@ -48,8 +48,8 @@ namespace Steering
 				// Seek to collider position + mtv if on collision course, otherwise seek to target.
 				if (collision)
 				{
-					Vector3 resolvedPosition = components.transforms.GetComponent(child)->Translation() + mtv;
-					Seek(resolvedPosition, components.transforms.GetComponent(entity)->Translation(),
+					Vector3 resolvedPosition = components.transforms.GetComponent(child)->WorldPosition() + mtv;
+					Seek(resolvedPosition, components.transforms.GetComponent(entity)->WorldPosition(),
 						components.rigidbodies.GetComponent(entity)->velocity, behaviour.maxSpeed);
 				}
 				else

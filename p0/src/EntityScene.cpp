@@ -12,10 +12,10 @@
 
 #include "Utility.h"
 
-#define STEERING true
+#define STEERING false
 #define SPLINE false
 #define MAP false
-#define TEST_BUILDINGS false
+#define TEST_BUILDINGS true
 #define KEYBOARD true
 #define GAMEPAD false
 

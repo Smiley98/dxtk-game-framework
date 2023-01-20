@@ -20,6 +20,7 @@ Entity CreateBuilding(Components& components,
 		case Building::TD:
 		case Building::BMO:
 		case Building::PENTA:
+		case Building::PINK:
 		{
 			BoundZ(capsule, bounds);
 			//transform.TranslateZ(capsule.hh);
@@ -27,11 +28,11 @@ Entity CreateBuilding(Components& components,
 			break;
 		}
 
+		// TODO -- add multiple colliders for apartment and office.
 		case Building::APARTMENT:
 		case Building::CONDO:
 		case Building::DUPLEX:
 		case Building::OFFICE:
-		case Building::PINK:
 		{
 			BoundY(capsule, bounds);
 			break;

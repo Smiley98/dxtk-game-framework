@@ -219,9 +219,7 @@ namespace Collision
 		assert(components.identifiers.GetComponent(buildingCollider)->tag == Tags::BUILDING);
 
 		components.transforms.GetComponent(player)->DeltaTranslate(mtv);
-		components.buildings.GetComponent(
-			components.hierarchies.GetComponent(buildingCollider)->parent
-		)->durability -= 10.0f;
+		components.buildings.GetComponent(Root(buildingCollider, components))->durability -= 10.0f;
 	}
 
 	void OnPlayerProjectile(Entity player, Entity projectile, const Vector3& mtv, Components& components)
