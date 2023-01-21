@@ -74,7 +74,9 @@ private:
 	EntityTransform* Parent() const;
 
 	friend Entity CreateEntity(Components& components);
+	//friend EntityTransform& Get(Entity entity);
 	friend Game;
+
 	static Components* sComponents;
 };
 

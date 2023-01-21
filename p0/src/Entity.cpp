@@ -21,8 +21,6 @@ void DestroyEntity(Entity entity, Components& components)
 		c.identifiers.Remove(e);
 		c.rigidbodies.Remove(e);
 		c.colliders.Remove(e);
-		//c.spheres.Remove(e);
-		//c.capsules.Remove(e);
 		c.buildings.Remove(e);
 		c.players.Remove(e);
 		gLookup.erase(e);
@@ -73,3 +71,8 @@ Entity Root(Entity entity, Components& components)
 	Entity parent = components.hierarchies.GetComponent(entity)->parent;
 	return parent == INVALID_ENTITY ? entity : Root(parent, components);
 }
+
+//EntityTransform& Get(Entity entity)
+//{
+//	return *EntityTransform::sComponents->transforms.GetComponent(entity);
+//}

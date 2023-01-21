@@ -40,16 +40,17 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 	mSS.a = CreateSphere(-500.0f, 0.0f);
 	mSS.b = CreateSphere(-500.0f, 0.0f);
 
-	//mCC.a.Translate(500.0f, 0.0f, 0.0f);
-	//mCC.b.RotateZ(90.0f);
-	//
+	mCC.a = CreateCapsule(500.0f, 0.0f);
+	mCC.b = CreateCapsule(0.0f, 0.0f);
+	components.transforms.GetComponent(mCC.b)->RotateZ(90.0f);
+
 	//mSC.a = { 0.0f, 250.0f, 0.0f };
 	//mSC.b.Translate(0.0f, 250.0f, 0.0f);
 	//mSC.b.RotateZ(90.0f);
-	//
+	
 	//mSoccer.player.RotateZ(-45.0f);
 	//mSoccer.player.Translate(-500.0f, -500.0f, 0.0f);
-	//
+	
 	//mRange.target = { 0.0f, -500.0f, 0.0f };
 	//mRange.viewer.Translate(0.0f, -400.0f, 0.0f);
 }
@@ -96,12 +97,16 @@ void CollisionScene::OnUpdate(float dt, float tt, const DX::Input& input)
 		Collision::IsColliding(mSS.a, mSS.b, mtv, mComponents) ? mtv : Vector3::Zero);
 	mSS.color = Collision::IsColliding(mSS.a, mSS.b, mtv, mComponents) ? Colors::Red : Colors::Green;
 
-	/*
-	mCC.b.Translate(Vector3{ mCC.a.Translation().x, hh + r, 0.0f } + Vector3{ cos(tt) * speed, 0.0f, 0.0f });
-	mCC.b.DeltaRotateZ(speed);
-	mCC.b.DeltaTranslate(CapsuleCapsule(mCC.a, mCC.b, r, r, hh, hh, mtv) ? mtv : Vector3::Zero);
-	mCC.color = CapsuleCapsule(mCC.a, mCC.b, r, r, hh, hh) ? Colors::Red : Colors::Green;
+	mComponents.transforms.GetComponent(mCC.b)->Translate(
+		Vector3{ mComponents.transforms.GetComponent(mCC.a)->Translation().x, hh + r, 0.0f } +
+		Vector3{ cos(tt) * speed, 0.0f, 0.0f });
+	mComponents.transforms.GetComponent(mCC.b)->DeltaRotateZ(speed);
 
+	mComponents.transforms.GetComponent(mCC.b)->DeltaTranslate(
+		Collision::IsColliding(mCC.a, mCC.b, mtv, mComponents) ? mtv : Vector3::Zero);
+	mCC.color = Collision::IsColliding(mCC.a, mCC.b, mtv, mComponents) ? Colors::Red : Colors::Green;
+
+	/*
 	mSC.b.Translate(mSC.a + Vector3{ cos(tt) * hh, -r, 0.0f });
 	mSC.b.DeltaTranslate(SphereCapsule(mSC.a, mSC.b, r, r, hh, mtv) ? mtv : Vector3::Zero);
 	mSC.color = SphereCapsule(mSC.a, mSC.b, r, r, hh) ? Colors::Red : Colors::Green;
@@ -134,14 +139,19 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Debug::Sphere(tB.WorldPosition(), r, mView, mProj, graphics, mSS.color, true);
 	}
 	
-/*
-	Vector3 aNearest, bNearest;
-	NearestCylinderPoints(mCC.a, mCC.b, hh, hh, aNearest, bNearest);
-	Debug::Sphere(aNearest, r, mView, mProj, graphics, Colors::Black);
-	Debug::Sphere(bNearest, r, mView, mProj, graphics, Colors::White);
-	Debug::Capsule(mCC.a, r, hh, mView, mProj, graphics, mCC.color, true);
-	Debug::Capsule(mCC.b, r, hh, mView, mProj, graphics, mCC.color, true);
+	{
+		EntityTransform& tA = *mComponents.transforms.GetComponent(mCC.a);
+		EntityTransform& tB = *mComponents.transforms.GetComponent(mCC.b);
+		Vector3 aNearest, bNearest;
+		NearestCylinderPoints(tA.WorldPosition(), tB.WorldPosition(), tA.WorldForward(), tB.WorldForward(),
+			hh, hh, aNearest, bNearest);
+		Debug::Sphere(aNearest, r, mView, mProj, graphics, Colors::Black);
+		Debug::Sphere(bNearest, r, mView, mProj, graphics, Colors::White);
+		Debug::Capsule(tA.WorldPosition(), tA.WorldForward(), r, hh, mView, mProj, graphics, mCC.color, true);
+		Debug::Capsule(tB.WorldPosition(), tB.WorldForward(), r, hh, mView, mProj, graphics, mCC.color, true);
+	}
 
+/*
 	Debug::Sphere(mSC.a, r, mView, mProj, graphics, mSC.color, true);
 	Debug::Capsule(mSC.b, r, hh, mView, mProj, graphics, mSC.color, true);
 
