@@ -4,5 +4,4 @@
 
 struct Components;
 class BuildingRenderer;
-Entity CreateBuilding(Components& components,
-	Building::Type type, const BuildingRenderer& renderer);
+Entity CreateBuilding(Components& components, Building::Type type, const BuildingRenderer& renderer);

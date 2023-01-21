@@ -118,7 +118,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\Geometry.cpp">
+    <ClCompile Include="src\Collider.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -131,7 +131,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\DynamicsSystem.cpp" />
-    <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MainScene.cpp" />
     <ClCompile Include="src\MiscRenderer.cpp" />
@@ -176,10 +175,8 @@
     <ClInclude Include="src\BuildingFactory.h" />
     <ClInclude Include="src\BuildingRenderer.h" />
     <ClInclude Include="src\Building.h" />
-    <ClInclude Include="src\Colliders.h" />
     <ClInclude Include="src\CollisionMath.h" />
     <ClInclude Include="src\CollisionSystem.h" />
-    <ClInclude Include="src\ComponentDef.h" />
     <ClInclude Include="src\ComponentMap.h" />
     <ClInclude Include="src\ComponentHash.h" />
     <ClInclude Include="src\Components.h" />
@@ -192,13 +189,11 @@
     <ClInclude Include="src\EntityScene.h" />
     <ClInclude Include="src\EntityTransform.h" />
     <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\Geometry.h" />
+    <ClInclude Include="src\Collider.h" />
     <ClInclude Include="src\Hierarchy.h" />
-    <ClInclude Include="src\Hits.h" />
     <ClInclude Include="src\Identifier.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\DynamicsSystem.h" />
-    <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\MainScene.h" />
     <ClInclude Include="src\MathUtilities.h" />
     <ClInclude Include="src\MiscRenderer.h" />

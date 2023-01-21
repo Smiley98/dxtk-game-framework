@@ -34,6 +34,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <array>
 #include <cassert>
 #include <cmath>
 #include <cstddef>
@@ -48,6 +49,7 @@
 #include <string>
 #include <system_error>
 #include <tuple>
+#include <vector>
 
 #ifdef _DEBUG
 #include <dxgidebug.h>

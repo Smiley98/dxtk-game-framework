@@ -5,7 +5,8 @@
 
 struct Hierarchy
 {
-	static uint32_t Hash();
 	Entity parent = INVALID_ENTITY;
 	std::unordered_set<Entity> children;
+
+	static uint32_t Hash();
 };

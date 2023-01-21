@@ -1,7 +1,6 @@
 #pragma once
 #include "DeviceResources.h"
-#include "EntityTransform.h"
-#include "Geometry.h"
+#include "CollisionMath.h"
 #include <memory>
 
 namespace Debug
@@ -28,13 +27,12 @@ namespace Debug
 		std::shared_ptr<DX::DeviceResources> graphics,
 		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
-	void Capsule(const EntityTransform& transform, float radius, float halfHeight,
+	void Capsule(const Vector3& position, const Vector3& direction, float radius, float halfHeight,
 		const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics,
 		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
 	void InRange(
-		//const EntityTransform& viewer,
 		const Vector3& position, const Vector3& direction,
 		const Vector3& target, float length, float fov, /*(degrees)*/
 		const Matrix& view, const Matrix& proj,

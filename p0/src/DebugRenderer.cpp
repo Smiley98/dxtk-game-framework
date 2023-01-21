@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "DebugRenderer.h"
-#include "CollisionMath.h"
 
 using namespace DirectX;
 
@@ -75,7 +74,7 @@ namespace Debug
 		shape->Draw(Matrix::CreateTranslation(position), view, proj, color, nullptr, wireframe);
 	}
 
-	void Capsule(const EntityTransform& transform, float radius, float halfHeight,
+	void Capsule(const Vector3& position, const Vector3& direction, float radius, float halfHeight,
 		const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics,
 		DirectX::XMVECTOR color, bool wireframe)
 	{
@@ -85,10 +84,16 @@ namespace Debug
 
 		Vector3 upper;
 		Vector3 lower;
-		CylinderBounds(transform.WorldPosition(), transform.WorldForward(), halfHeight, upper, lower);
+		CylinderBounds(position, direction, halfHeight, upper, lower);
+
+		Transform transform;
+		transform.Translate(position);
+		transform.Orientate(direction);
+		//Matrix::CreateWorld(position, direction, Vector3::UnitZ);
+		// This does right-up-forward instead of forward-right-up (XYZ vs ZXY)...
 
 		sphere->Draw(Matrix::CreateTranslation(upper), view, proj, color, nullptr, wireframe);
 		sphere->Draw(Matrix::CreateTranslation(lower), view, proj, color, nullptr, wireframe);
-		cylinder->Draw(transform.World(), view, proj, color, nullptr, wireframe);
+		cylinder->Draw(transform.Local(), view, proj, color, nullptr, wireframe);
 	}
 }

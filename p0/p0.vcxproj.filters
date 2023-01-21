@@ -37,9 +37,6 @@
     <Filter Include="ECS">
       <UniqueIdentifier>{34949342-79b0-49cb-94be-4bef182c6bf9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Map">
-      <UniqueIdentifier>{5e8ce3ac-e0f9-4ec4-9598-ab562d541809}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ECS\Components">
       <UniqueIdentifier>{3e02ec86-57c2-4afd-bf56-80d6081969b4}</UniqueIdentifier>
     </Filter>
@@ -93,9 +90,6 @@
     <ClCompile Include="src\EntityScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="src\Map.cpp">
-      <Filter>Map</Filter>
-    </ClCompile>
     <ClCompile Include="src\Utility.cpp" />
     <ClCompile Include="src\MiscRenderer.cpp">
       <Filter>Renderers</Filter>
@@ -112,7 +106,7 @@
     <ClCompile Include="src\BuildingFactory.cpp">
       <Filter>ECS\Factories</Filter>
     </ClCompile>
-    <ClCompile Include="src\Geometry.cpp">
+    <ClCompile Include="src\Collider.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\PlayerSystem.cpp">
@@ -186,9 +180,6 @@
     <ClInclude Include="src\EntityScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="src\Map.h">
-      <Filter>Map</Filter>
-    </ClInclude>
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Utility.h" />
     <ClInclude Include="src\Timer.h" />
@@ -222,17 +213,11 @@
     <ClInclude Include="src\Components.h">
       <Filter>ECS</Filter>
     </ClInclude>
-    <ClInclude Include="src\Colliders.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Geometry.h">
+    <ClInclude Include="src\Collider.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\PlayerSystem.h">
       <Filter>ECS\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hits.h">
-      <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\CollisionSystem.h">
       <Filter>ECS\Systems</Filter>
@@ -252,9 +237,6 @@
     <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\Steering.h">
       <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ComponentDef.h">
-      <Filter>ECS</Filter>
     </ClInclude>
     <ClInclude Include="src\SteeringEntity.h">
       <Filter>Math</Filter>

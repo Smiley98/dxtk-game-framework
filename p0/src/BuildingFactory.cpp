@@ -2,7 +2,6 @@
 #include "BuildingFactory.h"
 #include "BuildingRenderer.h"
 #include "Components.h"
-#include "Utility.h"
 
 Entity CreateBuilding(Components& components,
 	Building::Type type, const BuildingRenderer& renderer)

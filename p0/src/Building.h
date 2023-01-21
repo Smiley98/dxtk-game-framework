@@ -1,7 +1,6 @@
 #pragma once
-#include "SimpleMath.h"
 #include "ComponentHash.h"
-#include "Entity.h"
+#include "SimpleMath.h"
 
 struct Building
 {

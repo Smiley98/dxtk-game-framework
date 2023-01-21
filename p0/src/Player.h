@@ -1,5 +1,5 @@
 #pragma once
-#include "SimpleMath.h"
+#include "ComponentHash.h"
 
 struct Player
 {

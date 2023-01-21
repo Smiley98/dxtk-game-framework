@@ -2,8 +2,8 @@
 #include "SteeringSystem.h"
 #include "SteeringEntity.h"
 #include "Steering.h"
-#include "Components.h"
 #include "CollisionSystem.h"
+#include "Components.h"
 
 namespace Steering
 {
@@ -38,12 +38,6 @@ namespace Steering
 			case SteeringBehaviour::AVOID:
 				Entity child = *components.hierarchies.GetComponent(entity)->children.begin();
 				Vector3 mtv;
-				//bool collision = SphereSphere(
-				//	*components.transforms.GetComponent(behaviour.target),
-				//	*components.transforms.GetComponent(child),
-				//	*components.spheres.GetComponent(behaviour.target),
-				//	*components.spheres.GetComponent(child), mtv
-				//);
 				
 				// Seek to collider position + mtv if on collision course, otherwise seek to target.
 				bool collision = Collision::IsColliding(behaviour.target, child, mtv, components);
@@ -62,8 +56,3 @@ namespace Steering
 		}
 	}
 }
-
-// Not sure why ternary doesn't work here...
-//Collider* collider = components.spheres.HasComponent(child) ?
-//	new SphereCollider(child, childTransform, *components.spheres.GetComponent(child)) :
-//	new CapsuleCollider(child, childTransform, *components.capsules.GetComponent(child));

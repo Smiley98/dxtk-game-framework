@@ -1,5 +1,4 @@
 #pragma once
-#include "SimpleMath.h"
 #include "MathUtilities.h"
 #define Y_FORWARD true
 

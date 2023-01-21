@@ -1,6 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "Map.h"
 #include "Curves.h"
 
 class EntityScene :

@@ -12,12 +12,10 @@ namespace ComponentHash
 
 	// Physics Components
 	constexpr uint32_t RIGIDBODY = IDENTIFIER << 1;
-	constexpr uint32_t SPHERE = RIGIDBODY << 1;
-	constexpr uint32_t CAPSULE = SPHERE << 1;
-	constexpr uint32_t COLLIDER = CAPSULE << 1;
+	constexpr uint32_t COLLIDER = RIGIDBODY << 1;
 
 	// Gameplay Components
-	constexpr uint32_t STEERING = CAPSULE << 1;
+	constexpr uint32_t STEERING = COLLIDER << 1;
 	constexpr uint32_t BUILDING = STEERING << 1;
 	constexpr uint32_t PLAYER = BUILDING << 1;
 }

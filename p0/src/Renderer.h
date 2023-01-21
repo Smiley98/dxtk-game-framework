@@ -1,7 +1,6 @@
 #pragma once
 #include "DXTK.h"
-#include "Transform.h"
-#include <vector>
+#include "MathUtilities.h"
 
 class Renderer
 {

@@ -14,8 +14,8 @@
 
 #define STEERING false
 #define SPLINE false
-#define MAP true
-#define TEST_BUILDINGS false
+#define MAP false
+#define TEST_BUILDINGS true
 #define KEYBOARD true
 #define GAMEPAD false
 
@@ -201,9 +201,9 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	EntityTransform& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
-	//Capsule& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
 	Collider& playerCollider = *mComponents.colliders.GetComponent(mPlayer);
-	Debug::Capsule(playerTransform, playerCollider.r, playerCollider.hh, mView, mProj, graphics);
+	Debug::Capsule(playerTransform.WorldPosition(), playerTransform.WorldForward(),
+		playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
 
 #if STEERING
@@ -237,7 +237,6 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	for (Entity i : mBuildings)
 	{
 		Entity child = *mComponents.hierarchies.GetComponent(i)->children.begin();
-		//Capsule& collider = *mComponents.capsules.GetComponent(child);
 		Collider& collider = *mComponents.colliders.GetComponent(child);
 		Building& building = *mComponents.buildings.GetComponent(i);
 		EntityTransform& buildingTransform = *mComponents.transforms.GetComponent(i);
@@ -252,15 +251,17 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	for (Entity i : mTestBuildings)
 	{
 		Entity child = *mComponents.hierarchies.GetComponent(i)->children.begin();
-		Capsule& collider = *mComponents.capsules.GetComponent(child);
+		Collider& collider = *mComponents.colliders.GetComponent(child);
 		Building& building = *mComponents.buildings.GetComponent(i);
 		EntityTransform& buildingTransform = *mComponents.transforms.GetComponent(i);
 		EntityTransform& colliderTransform = *mComponents.transforms.GetComponent(child);
 
-		Debug::Capsule(colliderTransform, collider.r, collider.hh, mView, mProj, graphics);
+		Debug::Capsule(colliderTransform.WorldPosition(), colliderTransform.WorldForward(),
+			collider.r, collider.hh, mView, mProj, graphics);
 		sBuildingRenderer.Render(building, buildingTransform.World(), mView, mProj, graphics);
 	}
-	Debug::Capsule(playerTransform, playerCollider.r, playerCollider.hh, mView, mProj, graphics);
+	Debug::Capsule(playerTransform.WorldPosition(), playerTransform.WorldForward(),
+		playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 #endif
 }
 

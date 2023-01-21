@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "MainScene.h"
-#include "DebugRenderer.h"
 
 using namespace DirectX;
 

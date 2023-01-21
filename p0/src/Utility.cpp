@@ -2,8 +2,6 @@
 #include "Utility.h"
 #include <debugapi.h>
 
-using namespace DirectX::SimpleMath;
-
 void Print(const Vector2& vector)
 {
 	char buffer[64];

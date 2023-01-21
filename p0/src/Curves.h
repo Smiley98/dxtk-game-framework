@@ -1,5 +1,4 @@
 #pragma once
-#include "Transform.h"
 #include "MathUtilities.h"
 #include <vector>
 
@@ -10,6 +9,7 @@ struct SamplePoint
 };
 
 using SpeedTable = std::vector<std::vector<SamplePoint>>;
+using namespace DirectX::SimpleMath;
 
 inline void IndexCatmull(const std::vector<Vector3>& points, size_t i, Vector3& p0, Vector3& p1, Vector3& p2, Vector3& p3)
 {

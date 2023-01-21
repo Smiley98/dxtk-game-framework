@@ -1,10 +1,13 @@
 #pragma once
 #include "ComponentMap.h"
+
 #include "EntityTransform.h"
 #include "Hierarchy.h"
 #include "Identifier.h"
+
 #include "Rigidbody.h"
-#include "Geometry.h"
+#include "Collider.h"
+
 #include "SteeringBehaviour.h"
 #include "Building.h"
 #include "Player.h"
@@ -18,8 +21,6 @@ struct Components
 
 	// Physics Components
 	ComponentMap<Rigidbody> rigidbodies;
-	//ComponentMap<Sphere> spheres;
-	//ComponentMap<Capsule> capsules;
 	ComponentMap<Collider> colliders;
 
 	// Gameplay Components

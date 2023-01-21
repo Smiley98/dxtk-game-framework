@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "PlayerFactory.h"
-#include "Components.h"
 #include "PlayerRenderer.h"
-#include "Constants.h"
+#include "Components.h"
 
 Entity CreatePlayer(Components& components, const PlayerRenderer& renderer)
 {
