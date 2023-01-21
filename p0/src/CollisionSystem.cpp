@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "CollisionSystem.h"
+#include "CollisionMath.h"
 #include "PlayerSystem.h"
 #include "Colliders.h"
+#include "Hits.h"
 #include "Components.h"
 #include "Utility.h"
 #include <assert.h>
@@ -16,6 +18,81 @@ namespace Collision
 	void Collect(const Components& components, std::vector<HitPair>& collisions);
 	void Resolve(Components& components, const std::vector<HitPair>& collisions);
 
+	// mtv resolves b from a
+	bool IsColliding(Entity a, Entity b, Vector3& mtv, Components& components)
+	{
+		EntityTransform& tA = *components.transforms.GetComponent(a);
+		EntityTransform& tB = *components.transforms.GetComponent(b);
+		Collider& cA = *components.colliders.GetComponent(a);
+		Collider& cB = *components.colliders.GetComponent(b);
+		bool collision = false;
+
+		switch (cA.type)
+		{
+		case Collider::SPHERE:
+			switch (cB.type)
+			{
+			case Collider::SPHERE:
+				collision = SphereSphere(
+					tA.WorldPosition(), tB.WorldPosition(),
+					cA.r, cB.r,
+				mtv);
+				break;
+
+			case Collider::CAPSULE:
+				collision = SphereCapsule(
+					tA.WorldPosition(), tB.WorldPosition(), tB.WorldForward(),
+					cA.r, cB.r, cB.hh,
+				mtv);
+				break;
+
+			//case Collider::BOX:
+			//	break;
+			}
+			break;
+
+		case Collider::CAPSULE:
+			switch (cB.type)
+			{
+			case Collider::SPHERE:
+				collision = SphereCapsule(
+					tB.WorldPosition(), tA.WorldPosition(), tA.WorldForward(),
+					cA.r, cB.r, cB.hh,
+				mtv);
+				mtv = -mtv;
+				break;
+
+			case Collider::CAPSULE:
+				collision = CapsuleCapsule(
+					tA.WorldPosition(), tB.WorldPosition(),
+					tA.WorldForward(), tB.WorldForward(),
+					cA.r, cB.r, cA.hh, cB.hh,
+				mtv);
+				break;
+
+			//case Collider::BOX:
+			//	break;
+			}
+			break;
+		
+		//case Collider::BOX:
+		//	switch (cB.type)
+		//	{
+		//	case Collider::SPHERE:
+		//		break;
+		//
+		//	case Collider::CAPSULE:
+		//		break;
+		//
+		//	case Collider::BOX:
+		//		break;
+		//	}
+		//	break;
+		}
+
+		return collision;
+	}
+
 	void Update(Components& components)
 	{
 		std::vector<HitPair> collisions;
@@ -29,23 +106,36 @@ namespace Collision
 		std::vector<Entity> dynamicSpheres;
 		std::vector<Entity> staticCapsules;
 		std::vector<Entity> dynamicCapsules;
+		//std::vector<Entity> staticBoxes;
+		//std::vector<Entity> dynamicBoxes;
 
-		// Separate static vs dynamic spheres
-		for (size_t i = 0; i < components.spheres.Count(); i++)
+		// Sort based on movement and geometry categories
+		for (size_t i = 0; i < components.colliders.Count(); i++)
 		{
-			if (components.spheres[i].dynamic)
-				dynamicSpheres.push_back(components.spheres.GetEntity(i));
-			else
-				staticSpheres.push_back(components.spheres.GetEntity(i));
-		}
+			const Collider& collider = components.colliders[i];
+			switch (collider.type)
+			{
+			case Collider::SPHERE:
+				if (collider.dynamic)
+					dynamicSpheres.push_back(components.colliders.GetEntity(i));
+				else
+					staticSpheres.push_back(components.colliders.GetEntity(i));
+				break;
 
-		// Separate static vs dynamic capsules
-		for (size_t i = 0; i < components.capsules.Count(); i++)
-		{
-			if (components.capsules[i].dynamic)
-				dynamicCapsules.push_back(components.capsules.GetEntity(i));
-			else
-				staticCapsules.push_back(components.capsules.GetEntity(i));
+			case Collider::CAPSULE:
+				if (collider.dynamic)
+					dynamicCapsules.push_back(components.colliders.GetEntity(i));
+				else
+					staticCapsules.push_back(components.colliders.GetEntity(i));
+				break;
+
+			//case Collider::BOX:
+			//	if (collider.dynamic)
+			//		dynamicBoxes.push_back(components.colliders.GetEntity(i));
+			//	else
+			//		staticBoxes.push_back(components.colliders.GetEntity(i));
+			//	break;
+			}
 		}
 
 		// Static spheres vs dynamic spheres & dynamic capsules
@@ -53,25 +143,31 @@ namespace Collision
 		{
 			for (Entity b : dynamicSpheres)
 			{
+				const EntityTransform& tA = *components.transforms.GetComponent(a);
+				const EntityTransform& tB = *components.transforms.GetComponent(b);
+				const Collider& cA = *components.colliders.GetComponent(a);
+				const Collider& cB = *components.colliders.GetComponent(b);
+
 				Vector3 mtv;
 				if (SphereSphere(
-					*components.transforms.GetComponent(a),
-					*components.transforms.GetComponent(b),
-					*components.spheres.GetComponent(a),
-					*components.spheres.GetComponent(b),
-					mtv))
+					tA.WorldPosition(), tB.WorldPosition(),
+					cA.r, cB.r,
+				mtv))
 					collisions.push_back({ a, b, mtv });
 			}
 
 			for (Entity b : dynamicCapsules)
 			{
+				const EntityTransform& tA = *components.transforms.GetComponent(a);
+				const EntityTransform& tB = *components.transforms.GetComponent(b);
+				const Collider& cA = *components.colliders.GetComponent(a);
+				const Collider& cB = *components.colliders.GetComponent(b);
+
 				Vector3 mtv;
 				if (SphereCapsule(
-					*components.transforms.GetComponent(a),
-					*components.transforms.GetComponent(b),
-					*components.spheres.GetComponent(a),
-					*components.capsules.GetComponent(b),
-					mtv))
+					tA.WorldPosition(), tB.WorldPosition(), tB.WorldForward(),
+					cA.r, cB.r, cB.hh,
+				mtv))
 					collisions.push_back({ a, b, mtv });
 			}
 		}
@@ -81,25 +177,32 @@ namespace Collision
 		{
 			for (Entity b : dynamicSpheres)
 			{
+				const EntityTransform& tA = *components.transforms.GetComponent(a);
+				const EntityTransform& tB = *components.transforms.GetComponent(b);
+				const Collider& cA = *components.colliders.GetComponent(a);
+				const Collider& cB = *components.colliders.GetComponent(b);
+
 				Vector3 mtv;
 				if (SphereCapsule(
-					*components.transforms.GetComponent(b),
-					*components.transforms.GetComponent(a),
-					*components.spheres.GetComponent(b),
-					*components.capsules.GetComponent(a),
-					mtv))
+					tB.WorldPosition(), tA.WorldPosition(), tA.WorldForward(),
+					cB.r, cA.r, cA.hh,
+				mtv))
 					collisions.push_back({ a, b, -mtv });
 			}
 
 			for (Entity b : dynamicCapsules)
 			{
+				const EntityTransform& tA = *components.transforms.GetComponent(a);
+				const EntityTransform& tB = *components.transforms.GetComponent(b);
+				const Collider& cA = *components.colliders.GetComponent(a);
+				const Collider& cB = *components.colliders.GetComponent(b);
+
 				Vector3 mtv;
 				if (CapsuleCapsule(
-					*components.transforms.GetComponent(a),
-					*components.transforms.GetComponent(b),
-					*components.capsules.GetComponent(a),
-					*components.capsules.GetComponent(b),
-					mtv))
+					tA.WorldPosition(), tB.WorldPosition(),
+					tA.WorldForward(), tB.WorldForward(),
+					cA.r, cB.r, cA.hh, cB.hh,
+				mtv))
 					collisions.push_back({ a, b, mtv });
 			}
 		}
@@ -110,25 +213,32 @@ namespace Collision
 			for (Entity b : dynamicSpheres)
 			{
 				if (a == b) continue;
+
+				const EntityTransform& tA = *components.transforms.GetComponent(a);
+				const EntityTransform& tB = *components.transforms.GetComponent(b);
+				const Collider& cA = *components.colliders.GetComponent(a);
+				const Collider& cB = *components.colliders.GetComponent(b);
+
 				Vector3 mtv;
 				if (SphereSphere(
-					*components.transforms.GetComponent(a),
-					*components.transforms.GetComponent(b),
-					*components.spheres.GetComponent(a),
-					*components.spheres.GetComponent(b),
-					mtv))
+					tA.WorldPosition(), tB.WorldPosition(),
+					cA.r, cB.r,
+				mtv))
 					collisions.push_back({ a, b, mtv });
 			}
 
 			for (Entity b : dynamicCapsules)
 			{
+				const EntityTransform& tA = *components.transforms.GetComponent(a);
+				const EntityTransform& tB = *components.transforms.GetComponent(b);
+				const Collider& cA = *components.colliders.GetComponent(a);
+				const Collider& cB = *components.colliders.GetComponent(b);
+
 				Vector3 mtv;
 				if (SphereCapsule(
-					*components.transforms.GetComponent(a),
-					*components.transforms.GetComponent(b),
-					*components.spheres.GetComponent(a),
-					*components.capsules.GetComponent(b),
-					mtv))
+					tA.WorldPosition(), tB.WorldPosition(), tB.WorldForward(),
+					cA.r, cB.r, cB.hh,
+				mtv))
 					collisions.push_back({ a, b, mtv });
 			}
 		}
@@ -139,13 +249,18 @@ namespace Collision
 			for (Entity b : dynamicCapsules)
 			{
 				if (a == b) continue;
+
+				const EntityTransform& tA = *components.transforms.GetComponent(a);
+				const EntityTransform& tB = *components.transforms.GetComponent(b);
+				const Collider& cA = *components.colliders.GetComponent(a);
+				const Collider& cB = *components.colliders.GetComponent(b);
+
 				Vector3 mtv;
 				if (CapsuleCapsule(
-					*components.transforms.GetComponent(a),
-					*components.transforms.GetComponent(b),
-					*components.capsules.GetComponent(a),
-					*components.capsules.GetComponent(b),
-					mtv))
+					tA.WorldPosition(), tB.WorldPosition(),
+					tA.WorldForward(), tB.WorldForward(),
+					cA.r, cB.r, cA.hh, cB.hh,
+				mtv))
 					collisions.push_back({ a, b, mtv });
 			}
 		}
@@ -360,6 +475,134 @@ void Collect(const Components& components, std::vector<HitPair>& collisions)
 			{
 				collisions.push_back({ a.entity, b.entity, mtv });
 			}
+		}
+	}
+}
+
+void Collect2(const Components& components, std::vector<HitPair>& collisions)
+{
+	std::vector<Entity> staticSpheres;
+	std::vector<Entity> dynamicSpheres;
+	std::vector<Entity> staticCapsules;
+	std::vector<Entity> dynamicCapsules;
+
+	// Separate static vs dynamic spheres
+	for (size_t i = 0; i < components.spheres.Count(); i++)
+	{
+		if (components.spheres[i].dynamic)
+			dynamicSpheres.push_back(components.spheres.GetEntity(i));
+		else
+			staticSpheres.push_back(components.spheres.GetEntity(i));
+	}
+
+	// Separate static vs dynamic capsules
+	for (size_t i = 0; i < components.capsules.Count(); i++)
+	{
+		if (components.capsules[i].dynamic)
+			dynamicCapsules.push_back(components.capsules.GetEntity(i));
+		else
+			staticCapsules.push_back(components.capsules.GetEntity(i));
+	}
+
+	// Static spheres vs dynamic spheres & dynamic capsules
+	for (Entity a : staticSpheres)
+	{
+		for (Entity b : dynamicSpheres)
+		{
+			Vector3 mtv;
+			if (SphereSphere(
+				*components.transforms.GetComponent(a),
+				*components.transforms.GetComponent(b),
+				*components.spheres.GetComponent(a),
+				*components.spheres.GetComponent(b),
+				mtv))
+				collisions.push_back({ a, b, mtv });
+		}
+
+		for (Entity b : dynamicCapsules)
+		{
+			Vector3 mtv;
+			if (SphereCapsule(
+				*components.transforms.GetComponent(a),
+				*components.transforms.GetComponent(b),
+				*components.spheres.GetComponent(a),
+				*components.capsules.GetComponent(b),
+				mtv))
+				collisions.push_back({ a, b, mtv });
+		}
+	}
+
+	// Static capsules vs dynamic spheres & dynamic capsules
+	for (Entity a : staticCapsules)
+	{
+		for (Entity b : dynamicSpheres)
+		{
+			Vector3 mtv;
+			if (SphereCapsule(
+				*components.transforms.GetComponent(b),
+				*components.transforms.GetComponent(a),
+				*components.spheres.GetComponent(b),
+				*components.capsules.GetComponent(a),
+				mtv))
+				collisions.push_back({ a, b, -mtv });
+		}
+
+		for (Entity b : dynamicCapsules)
+		{
+			Vector3 mtv;
+			if (CapsuleCapsule(
+				*components.transforms.GetComponent(a),
+				*components.transforms.GetComponent(b),
+				*components.capsules.GetComponent(a),
+				*components.capsules.GetComponent(b),
+				mtv))
+				collisions.push_back({ a, b, mtv });
+		}
+	}
+
+	// Dynamic spheres vs dynamic spheres & dynamic capsules
+	for (Entity a : dynamicSpheres)
+	{
+		for (Entity b : dynamicSpheres)
+		{
+			if (a == b) continue;
+			Vector3 mtv;
+			if (SphereSphere(
+				*components.transforms.GetComponent(a),
+				*components.transforms.GetComponent(b),
+				*components.spheres.GetComponent(a),
+				*components.spheres.GetComponent(b),
+				mtv))
+				collisions.push_back({ a, b, mtv });
+		}
+
+		for (Entity b : dynamicCapsules)
+		{
+			Vector3 mtv;
+			if (SphereCapsule(
+				*components.transforms.GetComponent(a),
+				*components.transforms.GetComponent(b),
+				*components.spheres.GetComponent(a),
+				*components.capsules.GetComponent(b),
+				mtv))
+				collisions.push_back({ a, b, mtv });
+		}
+	}
+
+	// Dynamic capsules vs dynamic capsules
+	for (Entity a : dynamicCapsules)
+	{
+		for (Entity b : dynamicCapsules)
+		{
+			if (a == b) continue;
+			Vector3 mtv;
+			if (CapsuleCapsule(
+				*components.transforms.GetComponent(a),
+				*components.transforms.GetComponent(b),
+				*components.capsules.GetComponent(a),
+				*components.capsules.GetComponent(b),
+				mtv))
+				collisions.push_back({ a, b, mtv });
 		}
 	}
 }

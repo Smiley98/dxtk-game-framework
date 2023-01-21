@@ -13,7 +13,10 @@ Entity CreateBuilding(Components& components,
 	components.identifiers.Add(collider).tag = Tags::BUILDING;
 
 	EntityTransform& transform = *components.transforms.GetComponent(collider);
-	Capsule& capsule = components.capsules.Add(collider);
+	Collider& capsule = components.colliders.Add(collider);
+	capsule.type = Collider::CAPSULE;
+	capsule.dynamic = false;
+
 	Vector3 bounds = renderer.Bounds(type);
 	switch (type)
 	{
@@ -38,7 +41,6 @@ Entity CreateBuilding(Components& components,
 			break;
 		}
 	}
-	capsule.dynamic = false;
 
 	Building& building = components.buildings.Add(entity);
 	building.durability = renderer.MaxDurability(type);

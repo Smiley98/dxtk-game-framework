@@ -1,20 +1,22 @@
 #include "Geometry.h"
 #include "SimpleMath.h"
 
-void BoundY(Capsule& capsule, const DirectX::SimpleMath::Vector3& bounds)
+void BoundY(Collider& collider, const DirectX::SimpleMath::Vector3& bounds)
 {
+	assert(collider.type = Collider::CAPSULE);
 	float r = bounds.x;
 	float hh = bounds.y - r;
-	capsule.r = r;
-	capsule.hh = hh;
+	collider.r = r;
+	collider.hh = hh;
 }
 
-void BoundZ(Capsule& capsule, const DirectX::SimpleMath::Vector3& bounds)
+void BoundZ(Collider& collider, const DirectX::SimpleMath::Vector3& bounds)
 {
+	assert(collider.type = Collider::CAPSULE);
 	float r = bounds.x;
 	float hh = bounds.z - r;
-	capsule.r = r;
-	capsule.hh = hh;
+	collider.r = r;
+	collider.hh = hh;
 }
 
 uint32_t Sphere::Hash()
@@ -25,4 +27,9 @@ uint32_t Sphere::Hash()
 uint32_t Capsule::Hash()
 {
 	return ComponentHash::CAPSULE;
+}
+
+uint32_t Collider::Hash()
+{
+	return ComponentHash::COLLIDER;
 }

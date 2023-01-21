@@ -201,7 +201,8 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	EntityTransform& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
-	Capsule& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
+	//Capsule& playerCollider = *mComponents.capsules.GetComponent(mPlayer);
+	Collider& playerCollider = *mComponents.colliders.GetComponent(mPlayer);
 	Debug::Capsule(playerTransform, playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
 
@@ -236,7 +237,8 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	for (Entity i : mBuildings)
 	{
 		Entity child = *mComponents.hierarchies.GetComponent(i)->children.begin();
-		Capsule& collider = *mComponents.capsules.GetComponent(child);
+		//Capsule& collider = *mComponents.capsules.GetComponent(child);
+		Collider& collider = *mComponents.colliders.GetComponent(child);
 		Building& building = *mComponents.buildings.GetComponent(i);
 		EntityTransform& buildingTransform = *mComponents.transforms.GetComponent(i);
 		EntityTransform& colliderTransform = *mComponents.transforms.GetComponent(child);

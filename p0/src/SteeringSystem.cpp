@@ -3,7 +3,7 @@
 #include "SteeringEntity.h"
 #include "Steering.h"
 #include "Components.h"
-#include "Colliders.h"
+#include "CollisionSystem.h"
 
 namespace Steering
 {
@@ -38,14 +38,15 @@ namespace Steering
 			case SteeringBehaviour::AVOID:
 				Entity child = *components.hierarchies.GetComponent(entity)->children.begin();
 				Vector3 mtv;
-				bool collision = SphereSphere(
-					*components.transforms.GetComponent(behaviour.target),
-					*components.transforms.GetComponent(child),
-					*components.spheres.GetComponent(behaviour.target),
-					*components.spheres.GetComponent(child), mtv
-				);
-				// (Only using spheres for now).
+				//bool collision = SphereSphere(
+				//	*components.transforms.GetComponent(behaviour.target),
+				//	*components.transforms.GetComponent(child),
+				//	*components.spheres.GetComponent(behaviour.target),
+				//	*components.spheres.GetComponent(child), mtv
+				//);
+				
 				// Seek to collider position + mtv if on collision course, otherwise seek to target.
+				bool collision = Collision::IsColliding(behaviour.target, child, mtv, components);
 				if (collision)
 				{
 					Vector3 resolvedPosition = components.transforms.GetComponent(child)->WorldPosition() + mtv;

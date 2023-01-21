@@ -14,9 +14,10 @@ Entity CreatePlayer(Components& components, const PlayerRenderer& renderer)
 	player.steering = 250.0f;
 	player.type = Player::VAN;
 
-	Capsule& capsule = components.capsules.Add(entity);
-	BoundY(capsule, renderer.Bounds());
-	capsule.dynamic = true;
+	Collider& collider = components.colliders.Add(entity);
+	collider.type = Collider::CAPSULE;
+	collider.dynamic = true;
+	BoundY(collider, renderer.Bounds());
 
 	return entity;
 }

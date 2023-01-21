@@ -20,8 +20,9 @@ void DestroyEntity(Entity entity, Components& components)
 		c.transforms.Remove(e);
 		c.identifiers.Remove(e);
 		c.rigidbodies.Remove(e);
-		c.spheres.Remove(e);
-		c.capsules.Remove(e);
+		c.colliders.Remove(e);
+		//c.spheres.Remove(e);
+		//c.capsules.Remove(e);
 		c.buildings.Remove(e);
 		c.players.Remove(e);
 		gLookup.erase(e);

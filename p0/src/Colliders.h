@@ -1,5 +1,5 @@
 #pragma once
-#include "CollisionMath.h"
+/*#include "CollisionMath.h"
 #include "Hits.h"
 #include <vector>
 
@@ -113,3 +113,4 @@ namespace Collision
 		return SphereCapsule(collider.transform, transform, collider.geometry, geometry, mtv);
 	}
 }
+*/

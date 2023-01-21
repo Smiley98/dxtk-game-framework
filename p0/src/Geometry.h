@@ -21,6 +21,27 @@ struct Capsule : public Geometry
 	static uint32_t Hash();
 };
 
+struct Collider
+{
+	union
+	{
+		struct { float r; };
+		struct { float r, hh; };
+		struct { float x, y, z; };
+	};
+
+	enum
+	{
+		SPHERE,
+		CAPSULE,
+		BOX
+	} type;
+
+	bool dynamic = false;
+
+	static uint32_t Hash();
+};
+
 namespace DirectX
 {
 	namespace SimpleMath
@@ -29,5 +50,5 @@ namespace DirectX
 	}
 }
 
-void BoundY(Capsule& capsule, const DirectX::SimpleMath::Vector3& bounds);
-void BoundZ(Capsule& capsule, const DirectX::SimpleMath::Vector3& bounds);
+void BoundY(Collider& collider, const DirectX::SimpleMath::Vector3& bounds);
+void BoundZ(Collider& collider, const DirectX::SimpleMath::Vector3& bounds);

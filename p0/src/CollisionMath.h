@@ -5,11 +5,18 @@
 #undef max
 
 // Outputs the top and bottom of a cylinder relative to its forward vector
-inline void CylinderBounds(const EntityTransform& transform, float halfHeight, Vector3& top, Vector3& bot)
+//inline void CylinderBounds(const EntityTransform& transform, float halfHeight, Vector3& top, Vector3& bot)
+//{
+//	Vector3 forward = transform.WorldForward();
+//	top = transform.WorldPosition() + forward * halfHeight;
+//	bot = transform.WorldPosition() - forward * halfHeight;
+//}
+
+inline void CylinderBounds(const Vector3& position, const Vector3& direction, float halfHeight,
+	Vector3& top, Vector3& bot)
 {
-	Vector3 forward = transform.WorldForward();
-	top = transform.WorldPosition() + forward * halfHeight;
-	bot = transform.WorldPosition() - forward * halfHeight;
+	top = position + direction * halfHeight;
+	bot = position - direction * halfHeight;
 }
 
 // Projects point P along line AB
@@ -22,13 +29,17 @@ inline Vector3 Project(const Vector3& a, const Vector3& b, const Vector3& p)
 
 // Determines the two closest points along cylinders A and B
 inline void NearestCylinderPoints(
-	const EntityTransform& tA, const EntityTransform& tB,
+	//const EntityTransform& tA, const EntityTransform& tB,
+	const Vector3& tA, const Vector3& tB,
+	const Vector3& dA, const Vector3& dB,
 	float hhA, float hhB,
 	Vector3& nearestA, Vector3& nearestB)
 {
 	Vector3 aTop, aBot, bTop, bBot;
-	CylinderBounds(tA, hhA, aTop, aBot);
-	CylinderBounds(tB, hhB, bTop, bBot);
+	//CylinderBounds(tA, hhA, aTop, aBot);
+	//CylinderBounds(tB, hhB, bTop, bBot);
+	CylinderBounds(tA, dA, hhA, aTop, aBot);
+	CylinderBounds(tB, dB, hhB, bTop, bBot);
 
 	Vector3 vectors[4]{
 		bTop - aTop,	// A-top to B-top
@@ -87,6 +98,61 @@ inline bool SphereSphere(
 	return colliding;
 }
 
+//*****************
+// Capsule-Capsule
+//*****************
+
+// Boolean hit-test
+inline bool CapsuleCapsule(
+	//const EntityTransform& tA, const EntityTransform& tB,
+	const Vector3& tA, const Vector3& tB,
+	const Vector3& dA, const Vector3& dB,
+	float rA, float rB, float hhA, float hhB)
+{
+	Vector3 nearestA, nearestB;
+	//NearestCylinderPoints(tA, tB, hhA, hhB, nearestA, nearestB);
+	NearestCylinderPoints(tA, tB, dA, dB, hhA, hhB, nearestA, nearestB);
+	return SphereSphere(nearestA, nearestB, rA, rB);
+}
+
+// MTV resolves b from a
+inline bool CapsuleCapsule(
+	//const EntityTransform& tA, const EntityTransform& tB,
+	const Vector3& tA, const Vector3& tB,
+	const Vector3& dA, const Vector3& dB,
+	float rA, float rB, float hhA, float hhB, Vector3& mtv)
+{
+	Vector3 nearestA, nearestB;
+	//NearestCylinderPoints(tA, tB, hhA, hhB, nearestA, nearestB);
+	NearestCylinderPoints(tA, tB, dA, dB, hhA, hhB, nearestA, nearestB);
+	return SphereSphere(nearestA, nearestB, rA, rB, mtv);
+}
+
+//*****************
+// Sphere-Capsule
+//*****************
+
+// Boolean hit-test
+inline bool SphereCapsule(
+	const Vector3& tA, const Vector3& tB, const Vector3& dB,
+	float rA, float rB, float hhB)
+{
+	Vector3 top, bot;
+	CylinderBounds(tB, dB, hhB, top, bot);
+	return SphereSphere(tA, Project(bot, top, tA), rA, rB);
+}
+
+// MTV resolves b from a
+inline bool SphereCapsule(
+	const Vector3& tA, const Vector3& tB, const Vector3& dB,
+	float rA, float rB, float hhB, Vector3& mtv)
+{
+	Vector3 top, bot;
+	CylinderBounds(tB, dB, hhB, top, bot);
+	return SphereSphere(tA, Project(bot, top, tA), rA, rB, mtv);
+}
+
+/*
 // Boolean wrapper
 inline bool SphereSphere(
 	const EntityTransform& tA, const EntityTransform& tB,
@@ -181,19 +247,17 @@ inline bool CapsuleCapsule(
 	const Capsule& gA, const Capsule& gB, Vector3& mtv)
 {
 	return CapsuleCapsule(tA, tB, gA.r, gB.r, gA.hh, gB.hh, mtv);
-}
+}*/
 
 //*****************
 // Miscellaneous
 //*****************
-inline bool InRange(const EntityTransform& viewer, const Vector3& target, float length, float fov /*(degrees)*/)
+inline bool InRange(
+	const Vector3& position, const Vector3& direction, const Vector3& target,
+	float length, float fov /*(degrees)*/)
 {
-	if ((target - viewer.WorldPosition()).Length() > length)
-		return false;
-
-	Vector3 viewerDirection = viewer.WorldForward();
-	Vector3 targetDirection = (target - viewer.WorldPosition());
+	if ((target - position).Length() > length) return false;
+	Vector3 targetDirection = (target - position);
 	targetDirection.Normalize();
-
-	return targetDirection.Dot(viewerDirection) > cosf(DirectX::XM_RADIANS * fov * 0.5f);
+	return targetDirection.Dot(direction) > cosf(DirectX::XM_RADIANS * fov * 0.5f);
 }

@@ -18,8 +18,9 @@ struct Components
 
 	// Physics Components
 	ComponentMap<Rigidbody> rigidbodies;
-	ComponentMap<Sphere> spheres;
-	ComponentMap<Capsule> capsules;
+	//ComponentMap<Sphere> spheres;
+	//ComponentMap<Capsule> capsules;
+	ComponentMap<Collider> colliders;
 
 	// Gameplay Components
 	ComponentMap<SteeringBehaviour> steering;

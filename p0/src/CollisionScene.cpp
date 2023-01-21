@@ -63,7 +63,7 @@ void CollisionScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
 	const float speed = 100.0f * dt;
 	Vector3 mtv;
-
+/*
 	mSS.b = mSS.a;
 	mSS.b += { r* cos(tt), r* sin(tt), 0.0f };
 	mSS.b += SphereSphere(mSS.a, mSS.b, r, r, mtv) ? mtv : Vector3::Zero;
@@ -86,14 +86,14 @@ void CollisionScene::OnUpdate(float dt, float tt, const DX::Input& input)
 		mSoccer.player.Translate(-500.0f, -500.0f, 0.0f);
 		mSoccer.ball = Vector3::Zero;
 	}
-
+	*/
 	mRange.viewer.RotateZ(tt * 100.0f);
 }
 
 void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	auto context = graphics->GetD3DDeviceContext();
-
+/*
 	Vector3 direction = mSS.b - mSS.a;
 	direction.Normalize();
 	Debug::Sphere(mSS.a + r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
@@ -116,4 +116,5 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	Debug::InRange(mRange.viewer, mRange.target, mRange.length, mRange.fov, mView, mProj, graphics);
 	Debug::Sphere(mRange.target, r, mView, mProj, graphics);
+*/
 }
