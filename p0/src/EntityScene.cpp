@@ -48,10 +48,10 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	
 	mAvoider1 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget1);
 	mAvoider2 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget2);
-	Entity collider1 = CreateEntity(mComponents, 0.0f, 100.0f);
-	Entity collider2 = CreateEntity(mComponents, 0.0f, 100.0f);
-	AddSphere(collider1, r, mComponents);
-	AddSphere(collider2, r, mComponents);
+	Entity collider1 = CreateEntity(mComponents, 0.0f, r + hh);
+	Entity collider2 = CreateEntity(mComponents, 0.0f, r + hh);
+	AddCapsule(collider1, r, hh, mComponents);
+	AddCapsule(collider2, r, hh, mComponents);
 	AddChild(mAvoider1, collider1, mComponents);
 	AddChild(mAvoider2, collider2, mComponents);
 
@@ -213,9 +213,17 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #if STEERING
 	auto drawSphere = [&](Entity entity, XMVECTOR color = Colors::White)
 	{
-		Debug::Sphere(mComponents.transforms.GetComponent(entity)->Translation(),
+		Debug::Sphere(mComponents.transforms.GetComponent(entity)->WorldPosition(),
 			r, mView, mProj, graphics, color);
 	};
+
+	auto drawCapsule = [&](Entity entity, XMVECTOR color = Colors::White)
+	{
+		EntityTransform& transform = *mComponents.transforms.GetComponent(entity);
+		Debug::Capsule(transform.WorldPosition(), transform.WorldForward(),
+			r, hh, mView, mProj, graphics, color);
+	};
+
 	//drawSphere(mSeeker);
 	//drawSphere(mArriver, Colors::PowderBlue);
 	//drawSphere(mRandomSeeker, Colors::MediumAquamarine);
@@ -226,14 +234,9 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	drawSphere(mTarget2);
 	drawSphere(mAvoider1, Colors::Black);
 	drawSphere(mAvoider2, Colors::Black);
+	drawCapsule(*mComponents.hierarchies.GetComponent(mAvoider1)->children.begin(), Colors::Gray);
+	drawCapsule(*mComponents.hierarchies.GetComponent(mAvoider2)->children.begin(), Colors::Gray);
 
-	Debug::Sphere(mComponents.transforms.GetComponent(
-		*mComponents.hierarchies.GetComponent(mAvoider1)->children.begin()
-	)->WorldPosition(), r, mView, mProj, graphics, Colors::Gray);
-
-	Debug::Sphere(mComponents.transforms.GetComponent(
-		*mComponents.hierarchies.GetComponent(mAvoider2)->children.begin()
-	)->WorldPosition(), r, mView, mProj, graphics, Colors::Gray);
 #endif
 
 #if SPLINE
