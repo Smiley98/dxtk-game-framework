@@ -52,9 +52,11 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 	mSoccer.player = CreateCapsule(-500.0f, -500.0f);
 	mSoccer.ball = CreateSphere(0.0f, 0.0f);
 	components.transforms.GetComponent(mSoccer.player)->RotateZ(-45.0f);
-	
-	//mRange.target = { 0.0f, -500.0f, 0.0f };
-	//mRange.viewer.Translate(0.0f, -400.0f, 0.0f);
+
+	mRange.viewer = CreateEntity(components);
+	mRange.target = CreateEntity(components);
+	components.transforms.GetComponent(mRange.viewer)->Translate(0.0f, -400.0f, 0.0f);
+	components.transforms.GetComponent(mRange.target)->Translate(0.0f, -500.0f, 0.0f);
 }
 
 CollisionScene::~CollisionScene()
@@ -134,7 +136,7 @@ void CollisionScene::OnUpdate(float dt, float tt, const DX::Input& input)
 		tBall.Translate(Vector3::Zero);
 	}
 
-	//mRange.viewer.RotateZ(tt * 100.0f);
+	mComponents.transforms.GetComponent(mRange.viewer)->RotateZ(tt * 100.0f);
 }
 
 void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -182,8 +184,11 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Debug::Sphere(tBall.WorldPosition(), r, mView, mProj, graphics, mSoccer.color, true);
 	}
 
-/*
-	Debug::InRange(mRange.viewer, mRange.target, mRange.length, mRange.fov, mView, mProj, graphics);
-	Debug::Sphere(mRange.target, r, mView, mProj, graphics);
-*/
+	{
+		EntityTransform& tViewer = *mComponents.transforms.GetComponent(mRange.viewer);
+		EntityTransform& tTarget = *mComponents.transforms.GetComponent(mRange.target);
+		Debug::InRange(tViewer.WorldPosition(), tViewer.WorldForward(), tTarget.WorldPosition(),
+			mRange.length, mRange.fov, mView, mProj, graphics);
+		Debug::Sphere(tTarget.WorldPosition(), r, mView, mProj, graphics);
+	}
 }

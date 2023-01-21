@@ -42,12 +42,12 @@ namespace Debug
 		float length = line.Length();
 		line.Normalize();
 
-		EntityTransform transform;
+		Transform transform;
 		transform.Translate(a + line * length * 0.5f);
 		transform.Orientate(line);
 		
 		auto box = GeometricPrimitive::CreateBox(graphics->GetD3DDeviceContext(), { thickness, length, 1.0f });
-		box->Draw(transform.World(), view, proj, color);
+		box->Draw(transform.Local(), view, proj, color);
 	}
 
 	void InRange(const Vector3& position, const Vector3& direction, const Vector3& target, float length, float fov,
