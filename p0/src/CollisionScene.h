@@ -19,37 +19,40 @@ public:
 private:
 	struct TestSphereSphere
 	{
-		Vector3 a;
-		Vector3 b;
+		Entity a;
+		Entity b;
 		Color color;
 	} mSS;	// sphere-sphere
 
 	struct TestCapsuleCapsule
 	{
-		EntityTransform a;
-		EntityTransform b;
+		Entity a;
+		Entity b;
 		Color color;
 	} mCC;	// capsule-capsule
 
 	struct TestSphereCapsule
 	{
-		Vector3 a;
-		EntityTransform b;
+		Entity a;
+		Entity b;
 		Color color;
 	} mSC;	// sphere-capsule (resolves capsule)
 
 	struct TestSoccer
 	{
-		EntityTransform player;
-		Vector3 ball;
+		Entity player;
+		Entity ball;
 		Color color;
 	} mSoccer;	// capsule-sphere (resolves sphere)
 
 	struct TestRange
 	{
-		EntityTransform viewer;
-		Vector3 target;
+		Entity viewer;
+		Entity target;
 		float fov = 45.0f;
 		float length = 100.0f;
 	} mRange;	// FoV-test
+
+	Entity CreateSphere(float x, float y);
+	Entity CreateCapsule(float x, float y);
 };
