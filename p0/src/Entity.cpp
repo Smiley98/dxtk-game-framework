@@ -12,6 +12,13 @@ Entity CreateEntity(Components& components)
 	return entity;
 }
 
+Entity CreateEntity(Components& components, float x, float y, float z)
+{
+	Entity entity = CreateEntity(components);
+	components.transforms.GetComponent(entity)->Translate(x, y, z);
+	return entity;
+}
+
 void DestroyEntity(Entity entity, Components& components)
 {
 	auto destroy = [&](Entity e, Components& c) {

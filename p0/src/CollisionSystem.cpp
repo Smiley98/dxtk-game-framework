@@ -34,11 +34,8 @@ namespace Collision
 		EntityTransform& tB = *components.transforms.GetComponent(b);
 		Collider& cA = *components.colliders.GetComponent(a);
 		Collider& cB = *components.colliders.GetComponent(b);
+		assert(cA.type != Collider::NONE && cB.type != Collider::NONE);
 		bool collision = false;
-
-		Vector3 dA = tA.WorldForward();
-		Vector3 pA = tA.WorldPosition();
-		Vector3 pB = tB.WorldPosition();
 
 		switch (cA.type)
 		{
@@ -119,6 +116,7 @@ namespace Collision
 		for (size_t i = 0; i < components.colliders.Count(); i++)
 		{
 			const Collider& collider = components.colliders[i];
+			assert(collider.type != Collider::NONE);
 			switch (collider.type)
 			{
 			case Collider::SPHERE:

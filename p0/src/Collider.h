@@ -1,6 +1,8 @@
 #pragma once
 #include "ComponentHash.h"
+#include "Entity.h"
 
+struct Components;
 struct Collider
 {
 	union
@@ -12,15 +14,19 @@ struct Collider
 
 	enum
 	{
+		NONE,
 		SPHERE,
 		CAPSULE,
 		BOX
-	} type;
+	} type = NONE;
 
 	bool dynamic = false;
 
 	static uint32_t Hash();
 };
+
+void AddSphere(Entity entity, float r, Components& components);
+void AddCapsule(Entity entity, float r, float hh, Components& components);
 
 namespace DirectX
 {

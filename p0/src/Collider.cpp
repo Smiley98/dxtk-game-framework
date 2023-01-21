@@ -1,5 +1,21 @@
 #include "Collider.h"
 #include "SimpleMath.h"
+#include "Components.h"
+
+void AddSphere(Entity entity, float r, Components& components)
+{
+	Collider& collider = components.colliders.Add(entity);
+	collider.type = Collider::SPHERE;
+	collider.r = r;
+}
+
+void AddCapsule(Entity entity, float r, float hh, Components& components)
+{
+	Collider& collider = components.colliders.Add(entity);
+	collider.type = Collider::CAPSULE;
+	collider.r = r;
+	collider.hh = hh;
+}
 
 void BoundY(Collider& collider, const DirectX::SimpleMath::Vector3& bounds)
 {

@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "SteeringSystem.h"
 #include "SteeringEntity.h"
-#include "Steering.h"
 #include "CollisionSystem.h"
+#include "Collider.h"
+#include "Steering.h"
 #include "Components.h"
 
 namespace Steering
@@ -37,13 +38,19 @@ namespace Steering
 
 			case SteeringBehaviour::AVOID:
 				Entity child = *components.hierarchies.GetComponent(entity)->children.begin();
-				Vector3 mtv;
 				
-				// Seek to collider position + mtv if on collision course, otherwise seek to target.
-				bool collision = Collision::IsColliding(behaviour.target, child, mtv, components);
-				if (collision)
+				// Seek collider position + mtv if on collision course, otherwise seek target.
+				Vector3 mtv;
+				if (Collision::IsColliding(behaviour.target, child, mtv, components))
 				{
-					Vector3 resolvedPosition = components.transforms.GetComponent(child)->WorldPosition() + mtv;
+					EntityTransform& transform = *components.transforms.GetComponent(child);
+					Collider& collider = *components.colliders.GetComponent(child);
+
+					// TODO -- determine contact points within collision functions
+					Vector3 resolvedPosition = transform.WorldPosition() + mtv;
+					if (collider.type == Collider::CAPSULE)
+						resolvedPosition += transform.WorldForward() * collider.hh;
+
 					Seek(resolvedPosition, components.transforms.GetComponent(entity)->WorldPosition(),
 						components.rigidbodies.GetComponent(entity)->velocity, behaviour.maxSpeed);
 				}

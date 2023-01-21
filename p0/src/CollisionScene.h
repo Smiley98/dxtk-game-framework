@@ -53,6 +53,6 @@ private:
 		float length = 100.0f;
 	} mRange;	// FoV-test
 
-	Entity CreateSphere(float x, float y);
-	Entity CreateCapsule(float x, float y);
+	//Entity CreateSphere(float x, float y);
+	//Entity CreateCapsule(float x, float y);
 };

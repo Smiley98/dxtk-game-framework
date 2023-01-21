@@ -14,49 +14,54 @@ namespace
 
 using namespace DirectX;
 
-Entity CollisionScene::CreateSphere(float x, float y)
-{
-	Entity entity = CreateEntity(mComponents);
-	Collider& collider = mComponents.colliders.Add(entity);
-	collider.type = Collider::SPHERE;
-	collider.r = r;
-	mComponents.transforms.GetComponent(entity)->Translate(x, y, 0.0f);
-	return entity;
-}
-
-Entity CollisionScene::CreateCapsule(float x, float y)
-{
-	Entity entity = CreateEntity(mComponents);
-	Collider& collider = mComponents.colliders.Add(entity);
-	collider.type = Collider::CAPSULE;
-	collider.r = r;
-	collider.hh = hh;
-	mComponents.transforms.GetComponent(entity)->Translate(x, y, 0.0f);
-	return entity;
-}
+//Entity CollisionScene::CreateSphere(float x, float y)
+//{
+//	Entity entity = CreateEntity(mComponents, x, y);
+//	AddSphere(entity, r, mComponents);
+//	return entity;
+//}
+//
+//Entity CollisionScene::CreateCapsule(float x, float y)
+//{
+//	Entity entity = CreateEntity(mComponents, x, y);
+//	AddCapsule(entity, r, hh, mComponents);
+//	return entity;
+//}
 
 CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components) :
 	Scene(graphics, audio, components)
 {
-	mSS.a = CreateSphere(-500.0f, 0.0f);
-	mSS.b = CreateSphere(-500.0f, 0.0f);
+	auto createSphere = [&](float x, float y) -> Entity
+	{
+		Entity entity = CreateEntity(mComponents, x, y);
+		AddSphere(entity, r, mComponents);
+		return entity;
+	};
 
-	mCC.a = CreateCapsule(500.0f, 0.0f);
-	mCC.b = CreateCapsule(0.0f, 0.0f);
+	auto createCapsule = [&](float x, float y) -> Entity
+	{
+		Entity entity = CreateEntity(mComponents, x, y);
+		AddCapsule(entity, r, hh, mComponents);
+		return entity;
+	};
+
+	mSS.a = createSphere(-500.0f, 0.0f);
+	mSS.b = createSphere(-500.0f, 0.0f);
+
+	mCC.a = createCapsule(500.0f, 0.0f);
+	mCC.b = createCapsule(0.0f, 0.0f);
 	components.transforms.GetComponent(mCC.b)->RotateZ(90.0f);
 
-	mSC.a = CreateSphere(0.0f, 250.0f);
-	mSC.b = CreateCapsule(0.0f, 250.0f);
+	mSC.a = createSphere(0.0f, 250.0f);
+	mSC.b = createCapsule(0.0f, 250.0f);
 	components.transforms.GetComponent(mSC.b)->RotateZ(90.0f);
 	
-	mSoccer.player = CreateCapsule(-500.0f, -500.0f);
-	mSoccer.ball = CreateSphere(0.0f, 0.0f);
+	mSoccer.player = createCapsule(-500.0f, -500.0f);
+	mSoccer.ball = createSphere(0.0f, 0.0f);
 	components.transforms.GetComponent(mSoccer.player)->RotateZ(-45.0f);
 
-	mRange.viewer = CreateEntity(components);
-	mRange.target = CreateEntity(components);
-	components.transforms.GetComponent(mRange.viewer)->Translate(0.0f, -400.0f, 0.0f);
-	components.transforms.GetComponent(mRange.target)->Translate(0.0f, -500.0f, 0.0f);
+	mRange.viewer = CreateEntity(components, 0.0f, -400.0f);
+	mRange.target = CreateEntity(components, 0.0f, -500.0f);
 }
 
 CollisionScene::~CollisionScene()

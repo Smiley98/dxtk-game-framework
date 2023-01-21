@@ -7,6 +7,7 @@ static constexpr Entity INVALID_ENTITY = 0;
 struct Components;
 
 Entity CreateEntity(Components& components);
+Entity CreateEntity(Components& components, float x, float y, float z = 0.0f);
 void DestroyEntity(Entity entity, Components& components);
 
 void AddChild(Entity parent, Entity child, Components& components);
