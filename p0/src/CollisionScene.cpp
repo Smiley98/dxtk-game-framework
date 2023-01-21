@@ -44,6 +44,9 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 	mCC.b = CreateCapsule(0.0f, 0.0f);
 	components.transforms.GetComponent(mCC.b)->RotateZ(90.0f);
 
+	mSC.a = CreateSphere(0.0f, 250.0f);
+	mSC.b = CreateCapsule(0.0f, 250.0f);
+	components.transforms.GetComponent(mSC.b)->RotateZ(90.0f);
 	//mSC.a = { 0.0f, 250.0f, 0.0f };
 	//mSC.b.Translate(0.0f, 250.0f, 0.0f);
 	//mSC.b.RotateZ(90.0f);
@@ -106,11 +109,17 @@ void CollisionScene::OnUpdate(float dt, float tt, const DX::Input& input)
 		Collision::IsColliding(mCC.a, mCC.b, mtv, mComponents) ? mtv : Vector3::Zero);
 	mCC.color = Collision::IsColliding(mCC.a, mCC.b, mtv, mComponents) ? Colors::Red : Colors::Green;
 
-	/*
-	mSC.b.Translate(mSC.a + Vector3{ cos(tt) * hh, -r, 0.0f });
-	mSC.b.DeltaTranslate(SphereCapsule(mSC.a, mSC.b, r, r, hh, mtv) ? mtv : Vector3::Zero);
-	mSC.color = SphereCapsule(mSC.a, mSC.b, r, r, hh) ? Colors::Red : Colors::Green;
+	mComponents.transforms.GetComponent(mSC.b)->Translate(
+		mComponents.transforms.GetComponent(mSC.a)->Translation() + Vector3{ cos(tt) * hh, -r, 0.0f });
 
+	mComponents.transforms.GetComponent(mSC.b)->DeltaTranslate(
+		Collision::IsColliding(mSC.a, mSC.b, mtv, mComponents) ? mtv : Vector3::Zero);
+	mSC.color = Collision::IsColliding(mSC.a, mSC.b, mtv, mComponents) ? Colors::Red : Colors::Green;
+	//mSC.b.Translate(mSC.a + Vector3{ cos(tt) * hh, -r, 0.0f });
+	//mSC.b.DeltaTranslate(SphereCapsule(mSC.a, mSC.b, r, r, hh, mtv) ? mtv : Vector3::Zero);
+	//mSC.color = SphereCapsule(mSC.a, mSC.b, r, r, hh) ? Colors::Red : Colors::Green;
+
+	/*
 	mSoccer.player.DeltaTranslate(mSoccer.player.Forward() * speed);
 	mSoccer.ball += SphereCapsule(mSoccer.ball, mSoccer.player, r, r, hh, mtv) ? -mtv : Vector3::Zero;
 	mSoccer.color = SphereCapsule(mSoccer.ball, mSoccer.player, r, r, hh) ? Colors::Red : Colors::Green;
@@ -143,18 +152,24 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		EntityTransform& tA = *mComponents.transforms.GetComponent(mCC.a);
 		EntityTransform& tB = *mComponents.transforms.GetComponent(mCC.b);
 		Vector3 aNearest, bNearest;
-		NearestCylinderPoints(tA.WorldPosition(), tB.WorldPosition(), tA.WorldForward(), tB.WorldForward(),
-			hh, hh, aNearest, bNearest);
+		NearestCylinderPoints(
+			tA.WorldPosition(), tB.WorldPosition(),
+			tA.WorldForward(), tB.WorldForward(),
+		hh, hh, aNearest, bNearest);
 		Debug::Sphere(aNearest, r, mView, mProj, graphics, Colors::Black);
 		Debug::Sphere(bNearest, r, mView, mProj, graphics, Colors::White);
 		Debug::Capsule(tA.WorldPosition(), tA.WorldForward(), r, hh, mView, mProj, graphics, mCC.color, true);
 		Debug::Capsule(tB.WorldPosition(), tB.WorldForward(), r, hh, mView, mProj, graphics, mCC.color, true);
 	}
 
+	{
+		EntityTransform& tA = *mComponents.transforms.GetComponent(mSC.a);
+		EntityTransform& tB = *mComponents.transforms.GetComponent(mSC.b);
+		Debug::Sphere(tA.WorldPosition(), r, mView, mProj, graphics, mSC.color, true);
+		Debug::Capsule(tB.WorldPosition(), tB.WorldForward(), r, hh, mView, mProj, graphics, mSC.color, true);
+	}
+	
 /*
-	Debug::Sphere(mSC.a, r, mView, mProj, graphics, mSC.color, true);
-	Debug::Capsule(mSC.b, r, hh, mView, mProj, graphics, mSC.color, true);
-
 	Debug::Capsule(mSoccer.player, r, hh, mView, mProj, graphics, mSoccer.color, true);
 	Debug::Sphere(mSoccer.ball, r, mView, mProj, graphics, mSoccer.color, true);
 
