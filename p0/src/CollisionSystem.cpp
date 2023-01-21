@@ -36,6 +36,10 @@ namespace Collision
 		Collider& cB = *components.colliders.GetComponent(b);
 		bool collision = false;
 
+		Vector3 dA = tA.WorldForward();
+		Vector3 pA = tA.WorldPosition();
+		Vector3 pB = tB.WorldPosition();
+
 		switch (cA.type)
 		{
 		case Collider::SPHERE:
@@ -66,7 +70,7 @@ namespace Collision
 			case Collider::SPHERE:
 				collision = SphereCapsule(
 					tB.WorldPosition(), tA.WorldPosition(), tA.WorldForward(),
-					cA.r, cB.r, cB.hh,
+					cB.r, cA.r, cA.hh,
 				mtv);
 				mtv = -mtv;
 				break;
