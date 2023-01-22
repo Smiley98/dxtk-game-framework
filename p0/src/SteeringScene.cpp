@@ -9,44 +9,46 @@
 
 #include "Utility.h"
 
+#define SEEK_PLAYER false
+
 namespace
 {
-	constexpr float r = 50.0f;
-	constexpr float hh = 150.0f;
+	// Player capsule collider dimensions
+	constexpr float r = 33.0f;
+	constexpr float hh = 43.0f;
 }
 
 using namespace DirectX;
 
+void SteeringScene::Reset()
+{
+	EntityTransform& t1 = *mComponents.transforms.GetComponent(mAvoider1);
+	EntityTransform& t2 = *mComponents.transforms.GetComponent(mAvoider2);
+
+	t1.Translate({ Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight), 0.0f });
+	t2.Translate({ Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight), 0.0f });
+	while (((t2.WorldPosition() - t1.WorldPosition()).Length() < 1000.0f))
+	{
+		t1.Translate({ Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight), 0.0f });
+		t2.Translate({ Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight), 0.0f });
+	}
+
+	Vector3 v12 = t2.WorldPosition() - t1.WorldPosition();
+	Vector3 v21 = t1.WorldPosition() - t2.WorldPosition();
+	t1.Orientate(v12);
+	t2.Orientate(v21);
+}
+
 SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components)
 	: Scene(graphics, audio, components)
 {
+#if SEEK_PLAYER
 	mRandomTarget = CreateEntity(mComponents);
 	mComponents.rigidbodies.Add(mRandomTarget);
 
 	mSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, 1000.0f, sPlayer);
 	mArriver = CreateSteering(mComponents, SteeringBehaviour::ARRIVE, 1000.0f, sPlayer);
 	mRandomSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, 1000.0f, mRandomTarget);
-
-	mTarget1 = CreateEntity(mComponents, mWorldWidth * 0.01f, mWorldHeight * 0.5f);
-	mTarget2 = CreateEntity(mComponents, mWorldWidth * 0.99f, mWorldHeight * 0.5f);
-	AddSphere(mTarget1, r, mComponents);
-	AddSphere(mTarget2, r, mComponents);
-
-	mAvoider1 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget1);
-	mAvoider2 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget2);
-	AddSphere(mAvoider1, r, mComponents);
-	AddSphere(mAvoider2, r, mComponents);
-	mComponents.transforms.GetComponent(mAvoider1)->RotateZ(-90.0f);
-	mComponents.transforms.GetComponent(mAvoider2)->RotateZ(90.0f);
-	mComponents.transforms.GetComponent(mAvoider1)->Translate(mWorldWidth * 0.45f, mWorldHeight * 0.5f, 0.0f);
-	mComponents.transforms.GetComponent(mAvoider2)->Translate(mWorldWidth * 0.55f, mWorldHeight * 0.5f, 0.0f);
-
-	Entity collider1 = CreateEntity(mComponents, 0.0f, r + hh);
-	Entity collider2 = CreateEntity(mComponents, 0.0f, r + hh);
-	AddCapsule(collider1, r, hh, mComponents);
-	AddCapsule(collider2, r, hh, mComponents);
-	AddChild(mAvoider1, collider1, mComponents);
-	AddChild(mAvoider2, collider2, mComponents);
 
 	AddTimer("RandomTarget", 1.0f, [&] {
 		mComponents.transforms.GetComponent(mRandomTarget)->Translate
@@ -55,36 +57,27 @@ SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std:
 			Random(0.0f, mWorldHeight),
 			0.0f
 		);
-		}, true);
+	}, true);
+#else
+	mAvoider1 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f);
+	mAvoider2 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f);
+	mComponents.steering.GetComponent(mAvoider1)->target = mAvoider2;
+	mComponents.steering.GetComponent(mAvoider2)->target = mAvoider1;
+	AddCapsule(mAvoider1, r, hh, mComponents);
+	AddCapsule(mAvoider2, r, hh, mComponents);
+	Reset();
 
-	AddTimer("targets", 2.0f, [&] {
-		static bool flip;
-	if (flip)
-	{
-		mComponents.steering.GetComponent(mAvoider1)->target = mAvoider2;
-		mComponents.steering.GetComponent(mAvoider2)->target = mAvoider1;
-	}
-	else
-	{
-		mComponents.transforms.GetComponent(mTarget1)->Translate
-		(
-			Random(0.0f, mWorldWidth),
-			Random(0.0f, mWorldHeight),
-			0.0f
-		);
+	Entity collider1 = CreateEntity(mComponents, 0.0f, r * 3.0f + hh);
+	Entity collider2 = CreateEntity(mComponents, 0.0f, r * 3.0f + hh);
+	AddCapsule(collider1, r, hh * 2.0f, mComponents);
+	AddCapsule(collider2, r, hh * 2.0f, mComponents);
+	AddChild(mAvoider1, collider1, mComponents);
+	AddChild(mAvoider2, collider2, mComponents);
 
-		mComponents.transforms.GetComponent(mTarget2)->Translate
-		(
-			Random(0.0f, mWorldWidth),
-			Random(0.0f, mWorldHeight),
-			0.0f
-		);
-
-		mComponents.steering.GetComponent(mAvoider1)->target = mTarget1;
-		mComponents.steering.GetComponent(mAvoider2)->target = mTarget2;
-	}
-	flip = !flip;
-		}, true);
+	AddTimer("Reset", 2.0f, [&] {
+		Reset();
+	}, true);
+#endif
 }
 
 SteeringScene::~SteeringScene()
@@ -129,42 +122,44 @@ void SteeringScene::OnUpdate(float dt, float tt, const DX::Input& input)
 
 void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	auto drawSphere = [&](Entity entity, float radius, XMVECTOR color = Colors::White)
+	auto drawSphere = [&](Entity entity, float radius,
+		XMVECTOR color = Colors::White, bool wireframe = false)
 	{
 		Debug::Sphere(mComponents.transforms.GetComponent(entity)->WorldPosition(),
-			radius, mView, mProj, graphics, color);
+			radius, mView, mProj, graphics, color, wireframe);
 	};
 
-	auto drawCapsule = [&](Entity entity, float radius, float halfHeight, XMVECTOR color = Colors::White)
+	auto drawCapsule = [&](Entity entity, float radius, float halfHeight,
+		XMVECTOR color = Colors::White, bool wireframe = false)
 	{
 		EntityTransform& transform = *mComponents.transforms.GetComponent(entity);
 		Debug::Capsule(transform.WorldPosition(), transform.WorldForward(),
-			radius, halfHeight, mView, mProj, graphics, color);
+			radius, halfHeight, mView, mProj, graphics, color, wireframe);
 	};
 
-	//drawSphere(mSeeker, r);
-	//drawSphere(mArriver, r, Colors::PowderBlue);
-	//drawSphere(mRandomSeeker, r, Colors::MediumAquamarine);
-	//drawSphere(mRandomTarget, r, Colors::MediumOrchid);
-	//drawSphere(mWanderer, r, Colors::MediumPurple);
+#if SEEK_PLAYER
+	drawSphere(mSeeker, r);
+	drawSphere(mArriver, r, Colors::PowderBlue);
+	drawSphere(mRandomSeeker, r, Colors::MediumAquamarine);
+	drawSphere(mRandomTarget, r, Colors::MediumOrchid);
+	drawSphere(mWanderer, r, Colors::MediumPurple);
 
-	drawSphere(mTarget1, r);
-	drawSphere(mTarget2, r);
-	drawSphere(mAvoider1, r, Colors::Black);
-	drawSphere(mAvoider2, r, Colors::Black);
+	Vector3 wandererPosition = mComponents.transforms.GetComponent(mWanderer)->Translation();
+	if (wandererPosition.x > mWorldWidth  || wandererPosition.x < 0.0f ||
+		wandererPosition.y > mWorldHeight || wandererPosition.y < 0.0f)
+	{
+		mComponents.transforms.GetComponent(mWanderer)->Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
+	}
+#else
+	sPlayerRenderer.Render(mComponents.transforms.GetComponent(mAvoider1)->World(), mView, mProj, graphics);
+	sPlayerRenderer.Render(mComponents.transforms.GetComponent(mAvoider2)->World(), mView, mProj, graphics);
 
-	Entity child1 = *mComponents.hierarchies.GetComponent(mAvoider1)->children.begin();
-	Entity child2 = *mComponents.hierarchies.GetComponent(mAvoider2)->children.begin();
-	Collider& avoidCollider1 = *mComponents.colliders.GetComponent(child1);
-	Collider& avoidCollider2 = *mComponents.colliders.GetComponent(child2);
-	drawCapsule(child1, avoidCollider1.r, avoidCollider1.hh, Colors::Gray);
-	drawCapsule(child2, avoidCollider2.r, avoidCollider2.hh, Colors::Gray);
+	// Uncomment to render sensor colliders
+	//Entity child1 = *mComponents.hierarchies.GetComponent(mAvoider1)->children.begin();
+	//Entity child2 = *mComponents.hierarchies.GetComponent(mAvoider2)->children.begin();
+	//Collider& avoidCollider1 = *mComponents.colliders.GetComponent(child1);
+	//Collider& avoidCollider2 = *mComponents.colliders.GetComponent(child2);
+	//drawCapsule(child1, avoidCollider1.r, avoidCollider1.hh, Colors::Gray, true);
+	//drawCapsule(child2, avoidCollider2.r, avoidCollider2.hh, Colors::Gray, true);
+#endif
 }
-
-// Wandering behaviour test:
-//Vector3 wandererPosition = mComponents.transforms.GetComponent(mWanderer)->Translation();
-//if (wandererPosition.x > mWorldWidth || wandererPosition.x < 0.0f ||
-//	wandererPosition.y > mWorldHeight || wandererPosition.y < 0.0f)
-//{
-//	mComponents.transforms.GetComponent(mWanderer)->Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
-//}

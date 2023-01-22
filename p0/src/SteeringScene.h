@@ -17,6 +17,8 @@ public:
 
 private:
     Entity mSeeker, mArriver, mRandomSeeker, mRandomTarget;
-    Entity mAvoider1, mAvoider2, mTarget1, mTarget2;
+    Entity mAvoider1, mAvoider2;
+
+    void Reset();
 };
 
