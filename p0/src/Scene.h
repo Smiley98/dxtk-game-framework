@@ -19,13 +19,16 @@ class Scene
 {
 public:
 	enum Type {
+		// TODO -- Make an actual video game xD xD xD
 		//SPLASH,
 		//LOADOUT,
 		//MAP,
 		//MAIN,
+
 		TEST,
 		COLLISION,
-		//PHYSICS,
+		STEERING,
+		SPLINE,
 		ENTITY,
 		NONE
 	};
@@ -78,9 +81,14 @@ protected:
 	static BuildingRenderer sBuildingRenderer;
 	static MiscRenderer sMiscRenderer;
 
+	// Entities shared between scenes
+	static Entity sPlayer;
+
 	// Common members
 	Matrix mView;
 	Matrix mProj;
+	const float mWorldWidth = 1600;
+	const float mWorldHeight = 900;
 
 	Components& mComponents;
 

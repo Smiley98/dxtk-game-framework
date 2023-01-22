@@ -182,3 +182,61 @@ void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphi
 //mProj = XMMatrixPerspectiveFovRH(fovAngleY, aspectRatio, near, far);
 //mView = XMMatrixLookAtLH({ 0.0f, 50.0f, 50.0f }, Vector3::Zero, Vector3::Up);
 //mProj = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, n, f);
+
+// Triangle test:
+//sMiscRenderer.Triangle(
+//	{ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f },
+//mView, mProj, graphics);
+
+// Timer test:
+//AddTimer("test", 1.0f, [this] {
+//	Print("Callback");
+//}, false);
+//
+// Process test:
+//AddProcess("test", 1.0f / 10.0f, 1.0f, [this](const Process& process) {
+//	if (process.Percentage() > 0.5f)
+//		RemoveProcess("test");
+//	Print(std::to_string(process.Percentage()));
+//}, true);
+
+// Position ("teapot") test:
+//mParent = CreateEntity(mComponents);
+//mChild1 = CreateEntity(mComponents);
+//mChild2 = CreateEntity(mComponents);
+//EntityTransform& parent = *mComponents.transforms.GetComponent(mParent);
+//EntityTransform& child1 = *mComponents.transforms.GetComponent(mChild1);
+//EntityTransform& child2 = *mComponents.transforms.GetComponent(mChild2);
+//parent.Translate(mWorldWidth * 0.5f, 100.0f, 0.0f);
+//parent.DeltaTranslate(100.0f, 100.0f, 100.0f);
+//child1.DeltaTranslate(100.0f, 100.0f, 100.0f);
+//child2.DeltaTranslate(100.0f, 100.0f, 100.0f);
+//parent.DeltaRotateX(45.0f);
+//child1.DeltaRotateY(45.0f);
+//child2.DeltaRotateZ(45.0f);
+//AddChild(mParent, mChild1, mComponents);
+//AddChild(mChild1, mChild2, mComponents);
+
+//Debug::Primitive(Debug::TEAPOT,
+//	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mParent)->World(),
+//	mView, mProj, graphics, Colors::Red);
+//
+//Debug::Primitive(Debug::TEAPOT,
+//	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mChild1)->World(),
+//	mView, mProj, graphics, Colors::Orange);
+//
+//Debug::Primitive(Debug::TEAPOT,
+//	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mChild2)->World(),
+//	mView, mProj, graphics, Colors::Yellow);
+//
+//Debug::Primitive(Debug::TEAPOT,
+//	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mParent)->WorldPosition()),
+//	mView, mProj, graphics, Colors::Green);
+//
+//Debug::Primitive(Debug::TEAPOT,
+//	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mChild1)->WorldPosition()),
+//	mView, mProj, graphics, Colors::Blue);
+//
+//Debug::Primitive(Debug::TEAPOT,
+//	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mChild2)->WorldPosition()),
+//	mView, mProj, graphics, Colors::Purple);

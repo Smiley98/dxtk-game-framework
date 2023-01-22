@@ -148,6 +148,12 @@
     <ClCompile Include="src\SteeringFactory.cpp">
       <Filter>ECS\Factories</Filter>
     </ClCompile>
+    <ClCompile Include="src\SteeringScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SplineScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -267,6 +273,12 @@
     </ClInclude>
     <ClInclude Include="src\SteeringFactory.h">
       <Filter>ECS\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SteeringScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SplineScene.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

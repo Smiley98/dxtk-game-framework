@@ -49,5 +49,5 @@ private:
     DX::Input mInput;
 
     Components mComponents;
-    Scene::Type mScene = Scene::ENTITY;
+    Scene::Type mScene = Scene::STEERING;
 };

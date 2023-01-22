@@ -12,10 +12,7 @@
 
 #include "Utility.h"
 
-#define STEERING true
-#define SPLINE false
-#define MAP false
-#define TEST_BUILDINGS false
+#define MAP true
 
 namespace
 {
@@ -28,85 +25,6 @@ using namespace DirectX;
 EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components)
 	: Scene(graphics, audio, components)
 {
-	mPlayer = CreatePlayer(mComponents, sPlayerRenderer);
-	mComponents.transforms.GetComponent(mPlayer)->Translate(800.0f, 450.0f, 0.0f);
-
-#if STEERING
-	mRandomTarget = CreateEntity(mComponents);
-	mComponents.rigidbodies.Add(mRandomTarget);
-
-	mSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, 1000.0f, mPlayer);
-	mArriver = CreateSteering(mComponents, SteeringBehaviour::ARRIVE, 1000.0f, mPlayer);
-	mRandomSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, 1000.0f, mRandomTarget);
-
-	mTarget1 = CreateEntity(mComponents, mWorldWidth * 0.01f, mWorldHeight * 0.5f);
-	mTarget2 = CreateEntity(mComponents, mWorldWidth * 0.99f, mWorldHeight * 0.5f);
-	AddSphere(mTarget1, r, mComponents);
-	AddSphere(mTarget2, r, mComponents);
-	
-	mAvoider1 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget1);
-	mAvoider2 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget2);
-	AddSphere(mAvoider1, r, mComponents);
-	AddSphere(mAvoider2, r, mComponents);
-	mComponents.transforms.GetComponent(mAvoider1)->RotateZ(-90.0f);
-	mComponents.transforms.GetComponent(mAvoider2)->RotateZ(90.0f);
-	mComponents.transforms.GetComponent(mAvoider1)->Translate(mWorldWidth * 0.45f, mWorldHeight * 0.5f, 0.0f);
-	mComponents.transforms.GetComponent(mAvoider2)->Translate(mWorldWidth * 0.55f, mWorldHeight * 0.5f, 0.0f);
-	
-	Entity collider1 = CreateEntity(mComponents, 0.0f, r + hh);
-	Entity collider2 = CreateEntity(mComponents, 0.0f, r + hh);
-	AddCapsule(collider1, r, hh, mComponents);
-	AddCapsule(collider2, r, hh, mComponents);
-	AddChild(mAvoider1, collider1, mComponents);
-	AddChild(mAvoider2, collider2, mComponents);
-
-	AddTimer("RandomTarget", 1.0f, [&] {
-		mComponents.transforms.GetComponent(mRandomTarget)->Translate
-		(
-			Random(0.0f, mWorldWidth),
-			Random(0.0f, mWorldHeight),
-			0.0f
-		);
-	}, true);
-
-	AddTimer("targets", 2.0f, [&] {
-		static bool flip;
-		if (flip)
-		{
-			mComponents.steering.GetComponent(mAvoider1)->target = mAvoider2;
-			mComponents.steering.GetComponent(mAvoider2)->target = mAvoider1;
-		}
-		else
-		{
-			mComponents.transforms.GetComponent(mTarget1)->Translate
-			(
-				Random(0.0f, mWorldWidth),
-				Random(0.0f, mWorldHeight),
-				0.0f
-			);
-
-			mComponents.transforms.GetComponent(mTarget2)->Translate
-			(
-				Random(0.0f, mWorldWidth),
-				Random(0.0f, mWorldHeight),
-				0.0f
-			);
-
-			mComponents.steering.GetComponent(mAvoider1)->target = mTarget1;
-			mComponents.steering.GetComponent(mAvoider2)->target = mTarget2;
-		}
-		flip = !flip;
-	}, true);
-#endif
-
-#if SPLINE
-	mSpeedTable = CreateSpeedTable(mSpline, 16);
-	mHeadlights = CreateEntity(mComponents);
-	mComponents.transforms.GetComponent(mHeadlights)->TranslateY(80.0f);
-	mComponents.transforms.GetComponent(mHeadlights)->Scale(100.0f);
-	AddChild(mPlayer, mHeadlights, mComponents);
-#endif
-
 #if MAP
 	const int rows = 4;
 	const int cols = 8;
@@ -126,9 +44,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		x = xStep * 0.5f;
 		y += yStep;
 	}
-#endif
-
-#if TEST_BUILDINGS
+#else
 	float step = mWorldWidth / mTestBuildings.size();
 	for (size_t i = 0; i < mTestBuildings.size(); i++)
 	{
@@ -148,16 +64,11 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_RADIANS;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-#if SPLINE
-	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
-	mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
-#else
 	mView = Matrix::CreateLookAt(
 		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
 		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
 		Vector3::Up);
 	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
-#endif
 }
 
 void EntityScene::OnBegin()
@@ -178,75 +89,18 @@ void EntityScene::OnResume()
 
 void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
-	const float lv = 250.0f * dt;	// linear velocity
-	const float av = 100.0f * dt;	// angular velocity
-	EntityTransform& transform = *mComponents.transforms.GetComponent(mPlayer);
-
-#if SPLINE
-	Vector3 a = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
-	d += lv;
-	UpdateCatmull(d, interval, sample, mSpline, mSpeedTable);
-	Vector3 b = Catmull(DistanceToInterpolation(d, mSpeedTable, interval, sample), interval, mSpline);
-	Vector3 forward = b - a;
-	forward.Normalize();
-	transform.Translate(a);
-	transform.Orientate(forward);
-#endif
-
 	Players::Update(mComponents, input, dt);
-	Steering::Update(mComponents, dt);
 	Dynamics::Update(mComponents, dt);
 	Collision::Update(mComponents);
 }
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	EntityTransform& playerTransform = *mComponents.transforms.GetComponent(mPlayer);
-	Collider& playerCollider = *mComponents.colliders.GetComponent(mPlayer);
+	EntityTransform& playerTransform = *mComponents.transforms.GetComponent(sPlayer);
+	Collider& playerCollider = *mComponents.colliders.GetComponent(sPlayer);
 	Debug::Capsule(playerTransform.WorldPosition(), playerTransform.WorldForward(),
 		playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
-
-#if STEERING
-	auto drawSphere = [&](Entity entity, float radius, XMVECTOR color = Colors::White)
-	{
-		Debug::Sphere(mComponents.transforms.GetComponent(entity)->WorldPosition(),
-			radius, mView, mProj, graphics, color);
-	};
-
-	auto drawCapsule = [&](Entity entity, float radius, float halfHeight, XMVECTOR color = Colors::White)
-	{
-		EntityTransform& transform = *mComponents.transforms.GetComponent(entity);
-		Debug::Capsule(transform.WorldPosition(), transform.WorldForward(),
-			radius, halfHeight, mView, mProj, graphics, color);
-	};
-
-	//drawSphere(mSeeker, r);
-	//drawSphere(mArriver, r, Colors::PowderBlue);
-	//drawSphere(mRandomSeeker, r, Colors::MediumAquamarine);
-	//drawSphere(mRandomTarget, r, Colors::MediumOrchid);
-	//drawSphere(mWanderer, r, Colors::MediumPurple);
-
-	drawSphere(mTarget1, r);
-	drawSphere(mTarget2, r);
-	drawSphere(mAvoider1, r, Colors::Black);
-	drawSphere(mAvoider2, r, Colors::Black);
-	
-	Entity child1 = *mComponents.hierarchies.GetComponent(mAvoider1)->children.begin();
-	Entity child2 = *mComponents.hierarchies.GetComponent(mAvoider2)->children.begin();
-	Collider& avoidCollider1 = *mComponents.colliders.GetComponent(child1);
-	Collider& avoidCollider2 = *mComponents.colliders.GetComponent(child2);
-	drawCapsule(child1, avoidCollider1.r, avoidCollider1.hh, Colors::Gray);
-	drawCapsule(child2, avoidCollider2.r, avoidCollider2.hh, Colors::Gray);
-#endif
-
-#if SPLINE
-	for (const Vector3& position : mSpline)
-		Debug::Primitive(Debug::SPHERE,
-			Matrix::CreateScale(r) * Matrix::CreateTranslation(position), mView, mProj, graphics);
-
-	sMiscRenderer.Cone(mComponents.transforms.GetComponent(mHeadlights)->World(), mView, mProj, graphics);
-#endif
 
 #if MAP
 	for (Entity i : mBuildings)
@@ -261,9 +115,7 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 			collider.r, collider.hh, mView, mProj, graphics);
 		sBuildingRenderer.Render(building, buildingTransform.World(), mView, mProj, graphics);
 	}
-#endif
-
-#if TEST_BUILDINGS
+#else
 	for (Entity i : mTestBuildings)
 	{
 		Entity child = *mComponents.hierarchies.GetComponent(i)->children.begin();
@@ -280,69 +132,3 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		playerCollider.r, playerCollider.hh, mView, mProj, graphics);
 #endif
 }
-
-// Triangle test:
-//sMiscRenderer.Triangle(
-//	{ 0.0f, 0.0f, 0.0f }, { 100.0f, -100.0f, 0.0f }, { -100.0f, -100.0f, 0.0f },
-//mView, mProj, graphics);
-
-// Timer test:
-//AddTimer("test", 1.0f, [this] {
-//	Print("Callback");
-//}, false);
-//
-// Process test:
-//AddProcess("test", 1.0f / 10.0f, 1.0f, [this](const Process& process) {
-//	if (process.Percentage() > 0.5f)
-//		RemoveProcess("test");
-//	Print(std::to_string(process.Percentage()));
-//}, true);
-
-// Wandering behaviour test:
-//Vector3 wandererPosition = mComponents.transforms.GetComponent(mWanderer)->Translation();
-//if (wandererPosition.x > mWorldWidth || wandererPosition.x < 0.0f ||
-//	wandererPosition.y > mWorldHeight || wandererPosition.y < 0.0f)
-//{
-//	mComponents.transforms.GetComponent(mWanderer)->Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
-//}
-
-// Position ("teapot") test:
-//mParent = CreateEntity(mComponents);
-//mChild1 = CreateEntity(mComponents);
-//mChild2 = CreateEntity(mComponents);
-//EntityTransform& parent = *mComponents.transforms.GetComponent(mParent);
-//EntityTransform& child1 = *mComponents.transforms.GetComponent(mChild1);
-//EntityTransform& child2 = *mComponents.transforms.GetComponent(mChild2);
-//parent.Translate(mWorldWidth * 0.5f, 100.0f, 0.0f);
-//parent.DeltaTranslate(100.0f, 100.0f, 100.0f);
-//child1.DeltaTranslate(100.0f, 100.0f, 100.0f);
-//child2.DeltaTranslate(100.0f, 100.0f, 100.0f);
-//parent.DeltaRotateX(45.0f);
-//child1.DeltaRotateY(45.0f);
-//child2.DeltaRotateZ(45.0f);
-//AddChild(mParent, mChild1, mComponents);
-//AddChild(mChild1, mChild2, mComponents);
-
-//Debug::Primitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mParent)->World(),
-//	mView, mProj, graphics, Colors::Red);
-//
-//Debug::Primitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mChild1)->World(),
-//	mView, mProj, graphics, Colors::Orange);
-//
-//Debug::Primitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mChild2)->World(),
-//	mView, mProj, graphics, Colors::Yellow);
-//
-//Debug::Primitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mParent)->WorldPosition()),
-//	mView, mProj, graphics, Colors::Green);
-//
-//Debug::Primitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mChild1)->WorldPosition()),
-//	mView, mProj, graphics, Colors::Blue);
-//
-//Debug::Primitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mChild2)->WorldPosition()),
-//	mView, mProj, graphics, Colors::Purple);

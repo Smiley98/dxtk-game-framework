@@ -20,27 +20,4 @@ public:
 private:
 	std::vector<Entity> mBuildings;
 	std::array<Entity, Building::COUNT> mTestBuildings;
-
-	Entity mPlayer;
-	Entity mHeadlights;
-
-	const float fov = 60.0f;
-	const float range = 400.0f;
-
-	float mWorldWidth = 1600;
-	float mWorldHeight = 900;
-
-	std::vector<Vector3> mSpline = {
-		Vector3{ 500.0f, -300.0f, -500.0f },
-		Vector3{ -500.0f, -300.0f, 500.0f },
-		Vector3{ -500.0f, 300.0f, 500.0f },
-		Vector3{ 500.0f, 300.0f, -500.0f }
-	};
-	SpeedTable mSpeedTable;
-
-	float t = 0.0f, d = 0.0f;
-	size_t interval = 0, sample = 0;
-
-	Entity mSeeker, mArriver, mRandomSeeker, mRandomTarget;
-	Entity mAvoider1, mAvoider2, mTarget1, mTarget2;
 };

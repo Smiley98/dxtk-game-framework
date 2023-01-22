@@ -2,9 +2,12 @@
 #include "Scene.h"
 #include "TestScene.h"
 #include "CollisionScene.h"
+#include "SteeringScene.h"
+#include "SplineScene.h"
 #include "EntityScene.h"
 #include "MainScene.h"
-#include "Entity.h"
+
+#include "PlayerFactory.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -15,6 +18,8 @@ Scene::Type Scene::sType = NONE;
 PlayerRenderer Scene::sPlayerRenderer;
 BuildingRenderer Scene::sBuildingRenderer;
 MiscRenderer Scene::sMiscRenderer;
+
+Entity Scene::sPlayer = INVALID_ENTITY;
 
 Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components) :
 	mComponents(components)
@@ -31,13 +36,18 @@ void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_pt
 	sBuildingRenderer.Load(graphics);
 	sMiscRenderer.Load(graphics);
 
+	sPlayer = CreatePlayer(components, sPlayerRenderer);
+	components.transforms.GetComponent(sPlayer)->Translate(800.0f, 450.0f, 0.0f);
+
 	//sScenes[SPLASH] = new SplashScene(graphics, audio, components);
 	//sScenes[LOADOUT] = new LoadoutScene(graphics, audio, components);
 	//sScenes[MAP] = new MapScene(graphics, audio, components);
 	//sScenes[MAIN] = new MainScene(graphics, audio, components);
+
 	sScenes[TEST] = new TestScene(graphics, audio, components);
 	sScenes[COLLISION] = new CollisionScene(graphics, audio, components);
-	//sScenes[PHYSICS] = new PhysicsScene(graphics, audio, components);
+	sScenes[STEERING] = new SteeringScene(graphics, audio, components);
+	sScenes[SPLINE] = new SplineScene(graphics, audio, components);
 	sScenes[ENTITY] = new EntityScene(graphics, audio, components);
 }
 
