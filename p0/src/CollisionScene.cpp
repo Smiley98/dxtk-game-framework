@@ -14,20 +14,6 @@ namespace
 
 using namespace DirectX;
 
-//Entity CollisionScene::CreateSphere(float x, float y)
-//{
-//	Entity entity = CreateEntity(mComponents, x, y);
-//	AddSphere(entity, r, mComponents);
-//	return entity;
-//}
-//
-//Entity CollisionScene::CreateCapsule(float x, float y)
-//{
-//	Entity entity = CreateEntity(mComponents, x, y);
-//	AddCapsule(entity, r, hh, mComponents);
-//	return entity;
-//}
-
 CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components) :
 	Scene(graphics, audio, components)
 {

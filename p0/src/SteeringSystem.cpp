@@ -37,22 +37,17 @@ namespace Steering
 				break;
 
 			case SteeringBehaviour::AVOID:
-				Entity child = *components.hierarchies.GetComponent(entity)->children.begin();
-				
 				// Seek collider position + mtv if on collision course, otherwise seek target.
+				// (This is fine even if the collider is a capsule because whether you're seeking the
+				// actual sphere contact point, or mtv relative to the centre, you'll still evade).
 				Vector3 mtv;
+				Entity child = *components.hierarchies.GetComponent(entity)->children.begin();
 				if (Collision::IsColliding(behaviour.target, child, mtv, components))
 				{
 					EntityTransform& transform = *components.transforms.GetComponent(child);
-					Collider& collider = *components.colliders.GetComponent(child);
-
-					// TODO -- determine contact points within collision functions
+					Rigidbody& rb = *components.rigidbodies.GetComponent(entity);
 					Vector3 resolvedPosition = transform.WorldPosition() + mtv;
-					if (collider.type == Collider::CAPSULE)
-						resolvedPosition += transform.WorldForward() * collider.hh;
-
-					Seek(resolvedPosition, components.transforms.GetComponent(entity)->WorldPosition(),
-						components.rigidbodies.GetComponent(entity)->velocity, behaviour.maxSpeed);
+					rb.acceleration = Seek(resolvedPosition, transform.WorldPosition(), rb.velocity, behaviour.maxSpeed);
 				}
 				else
 				{

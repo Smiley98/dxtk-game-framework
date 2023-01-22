@@ -50,6 +50,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mAvoider2 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget2);
 	Entity collider1 = CreateEntity(mComponents, 0.0f, r + hh);
 	Entity collider2 = CreateEntity(mComponents, 0.0f, r + hh);
+	//AddSphere(collider1, 100.0f, mComponents);
 	AddCapsule(collider1, r, hh, mComponents);
 	AddCapsule(collider2, r, hh, mComponents);
 	AddChild(mAvoider1, collider1, mComponents);
@@ -211,32 +212,37 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
 
 #if STEERING
-	auto drawSphere = [&](Entity entity, XMVECTOR color = Colors::White)
+	auto drawSphere = [&](Entity entity, float radius, XMVECTOR color = Colors::White)
 	{
 		Debug::Sphere(mComponents.transforms.GetComponent(entity)->WorldPosition(),
-			r, mView, mProj, graphics, color);
+			radius, mView, mProj, graphics, color);
 	};
 
-	auto drawCapsule = [&](Entity entity, XMVECTOR color = Colors::White)
+	auto drawCapsule = [&](Entity entity, float radius, float halfHeight, XMVECTOR color = Colors::White)
 	{
 		EntityTransform& transform = *mComponents.transforms.GetComponent(entity);
 		Debug::Capsule(transform.WorldPosition(), transform.WorldForward(),
-			r, hh, mView, mProj, graphics, color);
+			radius, halfHeight, mView, mProj, graphics, color);
 	};
 
-	//drawSphere(mSeeker);
-	//drawSphere(mArriver, Colors::PowderBlue);
-	//drawSphere(mRandomSeeker, Colors::MediumAquamarine);
-	//drawSphere(mRandomTarget, Colors::MediumOrchid);
-	//drawSphere(mWanderer, Colors::MediumPurple);
+	//drawSphere(mSeeker, r);
+	//drawSphere(mArriver, r, Colors::PowderBlue);
+	//drawSphere(mRandomSeeker, r, Colors::MediumAquamarine);
+	//drawSphere(mRandomTarget, r, Colors::MediumOrchid);
+	//drawSphere(mWanderer, r, Colors::MediumPurple);
 
-	drawSphere(mTarget1);
-	drawSphere(mTarget2);
-	drawSphere(mAvoider1, Colors::Black);
-	drawSphere(mAvoider2, Colors::Black);
-	drawCapsule(*mComponents.hierarchies.GetComponent(mAvoider1)->children.begin(), Colors::Gray);
-	drawCapsule(*mComponents.hierarchies.GetComponent(mAvoider2)->children.begin(), Colors::Gray);
-
+	drawSphere(mTarget1, r);
+	drawSphere(mTarget2, r);
+	drawSphere(mAvoider1, r, Colors::Black);
+	drawSphere(mAvoider2, r, Colors::Black);
+	
+	Entity child1 = *mComponents.hierarchies.GetComponent(mAvoider1)->children.begin();
+	Entity child2 = *mComponents.hierarchies.GetComponent(mAvoider2)->children.begin();
+	Collider& avoidCollider1 = *mComponents.colliders.GetComponent(child1);
+	Collider& avoidCollider2 = *mComponents.colliders.GetComponent(child2);
+	//drawSphere(child1, avoidCollider1.r, Colors::Gray);
+	drawCapsule(child1, avoidCollider1.r, avoidCollider1.hh, Colors::Gray);
+	drawCapsule(child2, avoidCollider2.r, avoidCollider2.hh, Colors::Gray);
 #endif
 
 #if SPLINE
