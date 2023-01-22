@@ -16,8 +16,6 @@
 #define SPLINE false
 #define MAP false
 #define TEST_BUILDINGS false
-#define KEYBOARD true
-#define GAMEPAD false
 
 namespace
 {
@@ -41,16 +39,22 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mArriver = CreateSteering(mComponents, SteeringBehaviour::ARRIVE, 1000.0f, mPlayer);
 	mRandomSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, 1000.0f, mRandomTarget);
 
-	mTarget1 = CreateEntity(mComponents);
-	mTarget2 = CreateEntity(mComponents);
+	mTarget1 = CreateEntity(mComponents, mWorldWidth * 0.01f, mWorldHeight * 0.5f);
+	mTarget2 = CreateEntity(mComponents, mWorldWidth * 0.99f, mWorldHeight * 0.5f);
 	AddSphere(mTarget1, r, mComponents);
 	AddSphere(mTarget2, r, mComponents);
 	
 	mAvoider1 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget1);
 	mAvoider2 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f, mTarget2);
+	AddSphere(mAvoider1, r, mComponents);
+	AddSphere(mAvoider2, r, mComponents);
+	mComponents.transforms.GetComponent(mAvoider1)->RotateZ(-90.0f);
+	mComponents.transforms.GetComponent(mAvoider2)->RotateZ(90.0f);
+	mComponents.transforms.GetComponent(mAvoider1)->Translate(mWorldWidth * 0.45f, mWorldHeight * 0.5f, 0.0f);
+	mComponents.transforms.GetComponent(mAvoider2)->Translate(mWorldWidth * 0.55f, mWorldHeight * 0.5f, 0.0f);
+	
 	Entity collider1 = CreateEntity(mComponents, 0.0f, r + hh);
 	Entity collider2 = CreateEntity(mComponents, 0.0f, r + hh);
-	//AddSphere(collider1, 100.0f, mComponents);
 	AddCapsule(collider1, r, hh, mComponents);
 	AddCapsule(collider2, r, hh, mComponents);
 	AddChild(mAvoider1, collider1, mComponents);
@@ -69,35 +73,27 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		static bool flip;
 		if (flip)
 		{
-			mComponents.transforms.GetComponent(mTarget1)->Translate
-			(
-				mWorldWidth * 0.5f,
-				mWorldHeight * 0.25f,
-				0.0f
-			);
-
-			mComponents.transforms.GetComponent(mTarget2)->Translate
-			(
-				mWorldWidth * 0.25f,
-				mWorldHeight * 0.5f,
-				0.0f
-			);
+			mComponents.steering.GetComponent(mAvoider1)->target = mAvoider2;
+			mComponents.steering.GetComponent(mAvoider2)->target = mAvoider1;
 		}
 		else
 		{
 			mComponents.transforms.GetComponent(mTarget1)->Translate
 			(
-				mWorldWidth * 0.5f,
-				mWorldHeight * 0.75f,
+				Random(0.0f, mWorldWidth),
+				Random(0.0f, mWorldHeight),
 				0.0f
 			);
 
 			mComponents.transforms.GetComponent(mTarget2)->Translate
 			(
-				mWorldWidth * 0.75f,
-				mWorldHeight * 0.5f,
+				Random(0.0f, mWorldWidth),
+				Random(0.0f, mWorldHeight),
 				0.0f
 			);
+
+			mComponents.steering.GetComponent(mAvoider1)->target = mTarget1;
+			mComponents.steering.GetComponent(mAvoider2)->target = mTarget2;
 		}
 		flip = !flip;
 	}, true);
@@ -240,7 +236,6 @@ void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	Entity child2 = *mComponents.hierarchies.GetComponent(mAvoider2)->children.begin();
 	Collider& avoidCollider1 = *mComponents.colliders.GetComponent(child1);
 	Collider& avoidCollider2 = *mComponents.colliders.GetComponent(child2);
-	//drawSphere(child1, avoidCollider1.r, Colors::Gray);
 	drawCapsule(child1, avoidCollider1.r, avoidCollider1.hh, Colors::Gray);
 	drawCapsule(child2, avoidCollider2.r, avoidCollider2.hh, Colors::Gray);
 #endif
