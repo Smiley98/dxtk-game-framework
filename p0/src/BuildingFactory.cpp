@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "BuildingFactory.h"
 #include "BuildingRenderer.h"
+#include "DebugRenderer.h"
 #include "Components.h"
 
 Entity CreateBuilding(Components& components,
@@ -46,4 +47,44 @@ Entity CreateBuilding(Components& components,
 	building.type = type;
 
 	return entity;
+}
+
+std::vector<Entity> CreateMap(Map map, Components& components, const BuildingRenderer& renderer,
+	float worldWidth, float worldHeight)
+{
+	std::vector<Entity> buildings;
+
+	switch (map)
+	{
+	case LOBSTER_DINNER:
+		break;
+
+	case AFTERNOON_DRIVE:
+		break;
+
+	case MINTY_AFTERSHAVE:
+	{
+		const int rows = 4;
+		const int cols = 8;
+		const float xStep = worldWidth / cols;
+		const float yStep = worldHeight / rows;
+		float x = xStep * 0.5f;
+		float y = yStep * 0.5f;
+		for (int i = 0; i < rows; i++)
+		{
+			for (int j = 0; j < cols; j++)
+			{
+				Entity building = CreateBuilding(components, Building::TD, renderer);
+				components.transforms.GetComponent(building)->Translate(x, y, 0.0f);
+				buildings.push_back(building);
+				x += xStep;
+			}
+			x = xStep * 0.5f;
+			y += yStep;
+		}
+	}
+		break;
+	}
+
+	return buildings;
 }

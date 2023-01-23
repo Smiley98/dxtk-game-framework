@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "BuildingRenderer.h"
+#include "DebugRenderer.h"
+#include "Components.h"
 
 void BuildingRenderer::Load(std::shared_ptr<DX::DeviceResources> graphics)
 {
@@ -38,6 +40,33 @@ void BuildingRenderer::Render(const Building& building,
 	mModels[building.type]->Draw(graphics->GetD3DDeviceContext(), *mStates, world, view, proj);
 }
 
+void BuildingRenderer::DebugBuilding(Entity entity, Components& components,
+	const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics, bool capsule)
+{
+	Entity child = *components.hierarchies.GetComponent(entity)->children.begin();
+	Collider& collider = *components.colliders.GetComponent(child);
+	Building& building = *components.buildings.GetComponent(entity);
+	EntityTransform& buildingTransform = *components.transforms.GetComponent(entity);
+	EntityTransform& colliderTransform = *components.transforms.GetComponent(child);
+
+	if (capsule)
+	{
+		Debug::Capsule(colliderTransform.WorldPosition(), colliderTransform.WorldForward(),
+			collider.r, collider.hh, view, proj, graphics);
+	}
+	
+	Render(building, buildingTransform.World(), view, proj, graphics);
+}
+
+void BuildingRenderer::DebugMap(std::vector<Entity> map, Components& components,
+	const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics, bool capsule)
+{
+	for (Entity building : map)
+	{
+		DebugBuilding(building, components, view, proj, graphics, capsule);
+	}
+}
+
 const DirectX::Model& BuildingRenderer::Model(Building::Type type) const
 {
 	return *mModels[type];
@@ -50,7 +79,8 @@ Vector3 BuildingRenderer::Bounds(Building::Type type) const
 
 float BuildingRenderer::MaxDurability(Building::Type type) const
 {
-	static std::array<float, Building::COUNT> durabilities{
+	static std::array<float, Building::COUNT> durabilities
+	{
 	100.0f,	// TD
 	100.0f,	// APARTMENT
 	100.0f, // BMO

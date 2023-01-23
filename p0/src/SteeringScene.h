@@ -19,6 +19,8 @@ private:
     Entity mSeeker, mArriver, mRandomSeeker, mRandomTarget;
     Entity mAvoider1, mAvoider2;
 
+    std::vector<Entity> mMap;
+
     void Reset();
 };
 

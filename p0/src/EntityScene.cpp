@@ -26,24 +26,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	: Scene(graphics, audio, components)
 {
 #if MAP
-	const int rows = 4;
-	const int cols = 8;
-	const float xStep = mWorldWidth / cols;
-	const float yStep = mWorldHeight / rows;
-	float x = xStep * 0.5f;
-	float y = yStep * 0.5f;
-	for (int i = 0; i < rows; i++)
-	{
-		for (int j = 0; j < cols; j++)
-		{
-			Entity building = CreateBuilding(mComponents, Building::TD, sBuildingRenderer);
-			mComponents.transforms.GetComponent(building)->Translate(x, y, 0.0f);
-			mBuildings.push_back(building);
-			x += xStep;
-		}
-		x = xStep * 0.5f;
-		y += yStep;
-	}
+	mMap = CreateMap(Map::MINTY_AFTERSHAVE, components, sBuildingRenderer, mWorldWidth, mWorldHeight);
 #else
 	float step = mWorldWidth / mTestBuildings.size();
 	for (size_t i = 0; i < mTestBuildings.size(); i++)
@@ -96,39 +79,11 @@ void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	EntityTransform& playerTransform = *mComponents.transforms.GetComponent(sPlayer);
-	Collider& playerCollider = *mComponents.colliders.GetComponent(sPlayer);
-	Debug::Capsule(playerTransform.WorldPosition(), playerTransform.WorldForward(),
-		playerCollider.r, playerCollider.hh, mView, mProj, graphics);
-	sPlayerRenderer.Render(playerTransform.World(), mView, mProj, graphics);
-
+	sPlayerRenderer.DebugPlayer(sPlayer, mComponents, mView, mProj, graphics, false);
 #if MAP
-	for (Entity i : mBuildings)
-	{
-		Entity child = *mComponents.hierarchies.GetComponent(i)->children.begin();
-		Collider& collider = *mComponents.colliders.GetComponent(child);
-		Building& building = *mComponents.buildings.GetComponent(i);
-		EntityTransform& buildingTransform = *mComponents.transforms.GetComponent(i);
-		EntityTransform& colliderTransform = *mComponents.transforms.GetComponent(child);
-
-		Debug::Capsule(colliderTransform.WorldPosition(), colliderTransform.WorldForward(),
-			collider.r, collider.hh, mView, mProj, graphics);
-		sBuildingRenderer.Render(building, buildingTransform.World(), mView, mProj, graphics);
-	}
+	sBuildingRenderer.DebugMap(mMap, mComponents, mView, mProj, graphics, false);
 #else
 	for (Entity i : mTestBuildings)
-	{
-		Entity child = *mComponents.hierarchies.GetComponent(i)->children.begin();
-		Collider& collider = *mComponents.colliders.GetComponent(child);
-		Building& building = *mComponents.buildings.GetComponent(i);
-		EntityTransform& buildingTransform = *mComponents.transforms.GetComponent(i);
-		EntityTransform& colliderTransform = *mComponents.transforms.GetComponent(child);
-
-		Debug::Capsule(colliderTransform.WorldPosition(), colliderTransform.WorldForward(),
-			collider.r, collider.hh, mView, mProj, graphics);
-		sBuildingRenderer.Render(building, buildingTransform.World(), mView, mProj, graphics);
-	}
-	Debug::Capsule(playerTransform.WorldPosition(), playerTransform.WorldForward(),
-		playerCollider.r, playerCollider.hh, mView, mProj, graphics);
+		sBuildingRenderer.DebugBuilding(i, mComponents, mView, mProj, graphics, true);
 #endif
 }

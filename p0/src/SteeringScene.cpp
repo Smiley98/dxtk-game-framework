@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SteeringScene.h"
 #include "SteeringFactory.h"
+#include "BuildingFactory.h"
 #include "PlayerFactory.h"
 
 #include "PlayerSystem.h"
@@ -42,6 +43,8 @@ void SteeringScene::Reset()
 SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components)
 	: Scene(graphics, audio, components)
 {
+	mMap = CreateMap(Map::MINTY_AFTERSHAVE, components, sBuildingRenderer, mWorldWidth, mWorldHeight);
+
 #if SEEK_PLAYER
 	mRandomTarget = CreateEntity(mComponents);
 	mComponents.rigidbodies.Add(mRandomTarget);
@@ -136,6 +139,8 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Debug::Capsule(transform.WorldPosition(), transform.WorldForward(),
 			radius, halfHeight, mView, mProj, graphics, color, wireframe);
 	};
+
+	sBuildingRenderer.DebugMap(mMap, mComponents, mView, mProj, graphics, true);
 
 #if SEEK_PLAYER
 	drawSphere(mSeeker, r);

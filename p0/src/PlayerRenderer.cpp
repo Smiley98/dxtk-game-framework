@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "PlayerRenderer.h"
+#include "DebugRenderer.h"
+#include "Components.h"
 
 using namespace DirectX;
 
@@ -32,6 +34,19 @@ void PlayerRenderer::Render(const Matrix& world, const Matrix& view, const Matri
 	std::shared_ptr<DX::DeviceResources> graphics) const
 {
 	mVan->Draw(graphics->GetD3DDeviceContext(), *mStates, world, view, proj);
+}
+
+void PlayerRenderer::DebugPlayer(Entity entity, Components& components,
+	const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics, bool capsule)
+{
+	EntityTransform& playerTransform = *components.transforms.GetComponent(entity);
+	Collider& playerCollider = *components.colliders.GetComponent(entity);
+	if (capsule)
+	{
+		Debug::Capsule(playerTransform.WorldPosition(), playerTransform.WorldForward(),
+			playerCollider.r, playerCollider.hh, view, proj, graphics);
+	}
+	Render(playerTransform.World(), view, proj, graphics);
 }
 
 Vector3 PlayerRenderer::Bounds(/*Player::Type type*/) const
