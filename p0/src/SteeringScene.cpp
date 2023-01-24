@@ -15,6 +15,7 @@
 
 #include "Utility.h"
 
+#define AVOID_AHEAD true
 #define SEEK_PLAYER true
 #define SPEED_MAX 1000.0f
 
@@ -23,6 +24,8 @@ namespace
 	// Player capsule collider dimensions
 	constexpr float r = 33.0f;
 	constexpr float hh = 43.0f;
+	constexpr float sphereRadius = 20.0f;
+	constexpr float sensorRadius = sphereRadius * 2.0f;
 }
 
 using namespace DirectX;
@@ -52,13 +55,20 @@ SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std:
 	mMap = CreateMap(Map::MINTY_AFTERSHAVE, components, sBuildingRenderer, mWorldWidth, mWorldHeight);
 
 #if SEEK_PLAYER
+	mWanderer = CreateEntity(mComponents, mWorldWidth * 0.5f, mWorldHeight * 0.5f);
 	mRandomTarget = CreateEntity(mComponents, Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight));
 	mAvoidingSeeker = CreateEntity(mComponents, Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight));
-	mWanderer = CreateEntity(mComponents, mWorldWidth * 0.5f, mWorldHeight * 0.5f);
+	mSensor = CreateEntity(mComponents, 0.0f, sphereRadius + sensorRadius);
 	mComponents.rigidbodies.Add(mAvoidingSeeker);
 	mComponents.rigidbodies.Add(mRandomTarget);
 	mComponents.rigidbodies.Add(mWanderer);
+	mComponents.rigidbodies.Add(mSensor);
+#if AVOID_AHEAD
+	AddSphere(mSensor, sensorRadius, mComponents);
+	AddChild(mAvoidingSeeker, mSensor, mComponents);
+#else
 	AddSphere(mAvoidingSeeker, 50.0f, mComponents);
+#endif
 
 	mSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, SPEED_MAX, sPlayer);
 	mArriver = CreateSteering(mComponents, SteeringBehaviour::ARRIVE, SPEED_MAX, sPlayer);
@@ -138,7 +148,11 @@ void SteeringScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	{
 		Entity buildingCollider = *mComponents.hierarchies.GetComponent(building)->children.begin();
 		Hit hit;
+#if AVOID_AHEAD
+		if (Collision::IsColliding(buildingCollider, mSensor, hit.mtv, mComponents))
+#else
 		if (Collision::IsColliding(buildingCollider, mAvoidingSeeker, hit.mtv, mComponents))
+#endif
 		{
 			hit.entity = buildingCollider;
 			collisions.push_back(hit);
@@ -147,7 +161,7 @@ void SteeringScene::OnUpdate(float dt, float tt, const DX::Input& input)
 
 	if (collisions.empty())
 	{
-		Steering::Seek(mRandomTarget, mAvoidingSeeker, SPEED_MAX, mComponents);
+		Steering::Arrive(mRandomTarget, mAvoidingSeeker, SPEED_MAX, dt, mComponents);
 	}
 	else
 	{
@@ -201,7 +215,12 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//drawSphere(mSeeker, r);
 	//drawSphere(mArriver, r, Colors::PowderBlue);
 
+#if AVOID_AHEAD
+	drawSphere(mAvoidingSeeker, sphereRadius, Colors::MediumAquamarine);
+	drawSphere(mSensor, sensorRadius, Colors::Lime, true);
+#else
 	drawSphere(mAvoidingSeeker, mComponents.colliders.GetComponent(mAvoidingSeeker)->r, Colors::MediumAquamarine);
+#endif
 	drawSphere(mRandomTarget, r, Colors::MediumOrchid);
 #else
 	sPlayerRenderer.Render(mComponents.transforms.GetComponent(mAvoider1)->World(), mView, mProj, graphics);
