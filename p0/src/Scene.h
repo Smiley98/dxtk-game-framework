@@ -37,14 +37,16 @@ public:
 	virtual ~Scene() = 0;
 
 	// Constructors/destructors
-	static void Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components);
+	static void Create(
+		std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio,
+		Components& components, Type type);
 	static void Destroy();
 
 	// Handle window resize event
 	static void Resize(std::shared_ptr<DX::DeviceResources> graphics);
 
 	// Sets internal scene to passed in scene and calls its begin handler (starts the game)
-	static void Run(Type type);
+	static void Run();
 
 	// Ends the current scene and begins [type] scene 
 	static void Change(Type type);

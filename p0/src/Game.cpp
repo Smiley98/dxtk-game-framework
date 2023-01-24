@@ -43,8 +43,7 @@ void Game::Initialize(HWND window, int width, int height)
     CreateDeviceDependentResources();
     mDeviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
-
-    Scene::Run(mScene);
+    Scene::Run();
 }
 
 // Main runs this function as frequently as possible -- whenever the Win32 event queue is empty
@@ -178,7 +177,7 @@ void Game::GetDefaultSize(int& width, int& height) const noexcept
 // These are the resources that depend on the device.
 void Game::CreateDeviceDependentResources()
 {
-    Scene::Create(mDeviceResources, mAudioEngine, mComponents);
+    Scene::Create(mDeviceResources, mAudioEngine, mComponents, mScene);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -198,7 +197,7 @@ void Game::OnDeviceRestored()
 {
     CreateDeviceDependentResources();
     CreateWindowSizeDependentResources();
-    Scene::Run(mScene);
+    Scene::Run();
 }
 #pragma endregion
 

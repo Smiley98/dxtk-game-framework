@@ -30,7 +30,9 @@ Scene::~Scene()
 {
 }
 
-void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components)
+void Scene::Create(
+	std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio,
+	Components& components, Type type)
 {
 	sPlayerRenderer.Load(graphics);
 	sBuildingRenderer.Load(graphics);
@@ -44,11 +46,15 @@ void Scene::Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_pt
 	//sScenes[MAP] = new MapScene(graphics, audio, components);
 	//sScenes[MAIN] = new MainScene(graphics, audio, components);
 
-	sScenes[TEST] = new TestScene(graphics, audio, components);
-	sScenes[COLLISION] = new CollisionScene(graphics, audio, components);
+	// Note, be careful when debugging with multiple scenes at a time.
+	// For example, instantiating the same map 2+ times breaks collisions.
+	
+	sType = type;
+	//sScenes[TEST] = new TestScene(graphics, audio, components);
+	//sScenes[COLLISION] = new CollisionScene(graphics, audio, components);
 	sScenes[STEERING] = new SteeringScene(graphics, audio, components);
-	sScenes[SPLINE] = new SplineScene(graphics, audio, components);
-	sScenes[ENTITY] = new EntityScene(graphics, audio, components);
+	//sScenes[SPLINE] = new SplineScene(graphics, audio, components);
+	//sScenes[ENTITY] = new EntityScene(graphics, audio, components);
 }
 
 void Scene::Destroy()
@@ -57,24 +63,27 @@ void Scene::Destroy()
 	sBuildingRenderer.Unload();
 	sMiscRenderer.Unload();
 
-	sType = NONE;
-	for (Scene* scene : sScenes)
-	{
-		delete scene;
-		scene = nullptr;
-	}
+	// Temporarily disabled so I can run a single scene without crashing
+	//sType = NONE;
+	//for (Scene* scene : sScenes)
+	//{
+	//	delete scene;
+	//	scene = nullptr;
+	//}
 }
 
 void Scene::Resize(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	for (Scene* scene : sScenes)
-		scene->OnResize(graphics);
+	// Temporarily disabled so I can run a single scene without crashing
+	//for (Scene* scene : sScenes)
+	//	scene->OnResize(graphics);
+
+	sScenes[sType]->OnResize(graphics);
 }
 
-void Scene::Run(Type type)
+void Scene::Run()
 {
-	sType = type;
-	sScenes[type]->OnBegin();
+	sScenes[sType]->OnBegin();
 }
 
 void Scene::Change(Type type)
