@@ -7,10 +7,16 @@
 #include "PlayerSystem.h"
 #include "SteeringSystem.h"
 #include "DynamicsSystem.h"
+#include "CollisionSystem.h"
+
+#include "Steering.h"
+#include "SteeringEntity.h"
+#include "DebugRenderer.h"
 
 #include "Utility.h"
 
-#define SEEK_PLAYER false
+#define SEEK_PLAYER true
+#define SPEED_MAX 1000.0f
 
 namespace
 {
@@ -46,14 +52,18 @@ SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std:
 	mMap = CreateMap(Map::MINTY_AFTERSHAVE, components, sBuildingRenderer, mWorldWidth, mWorldHeight);
 
 #if SEEK_PLAYER
-	mRandomTarget = CreateEntity(mComponents);
+	mRandomTarget = CreateEntity(mComponents, Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight));
+	mAvoidingSeeker = CreateEntity(mComponents, Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight));
+	mWanderer = CreateEntity(mComponents, mWorldWidth * 0.5f, mWorldHeight * 0.5f);
+	mComponents.rigidbodies.Add(mAvoidingSeeker);
 	mComponents.rigidbodies.Add(mRandomTarget);
+	mComponents.rigidbodies.Add(mWanderer);
+	AddSphere(mAvoidingSeeker, 50.0f, mComponents);
 
-	mSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, 1000.0f, sPlayer);
-	mArriver = CreateSteering(mComponents, SteeringBehaviour::ARRIVE, 1000.0f, sPlayer);
-	mRandomSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, 1000.0f, mRandomTarget);
+	mSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, SPEED_MAX, sPlayer);
+	mArriver = CreateSteering(mComponents, SteeringBehaviour::ARRIVE, SPEED_MAX, sPlayer);
 
-	AddTimer("RandomTarget", 1.0f, [&] {
+	AddTimer("RandomTarget", 5.0f, [&] {
 		mComponents.transforms.GetComponent(mRandomTarget)->Translate
 		(
 			Random(0.0f, mWorldWidth),
@@ -62,8 +72,8 @@ SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std:
 		);
 	}, true);
 #else
-	mAvoider1 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f);
-	mAvoider2 = CreateSteering(mComponents, SteeringBehaviour::AVOID, 1000.0f);
+	mAvoider1 = CreateSteering(mComponents, SteeringBehaviour::AVOID, SPEED_MAX);
+	mAvoider2 = CreateSteering(mComponents, SteeringBehaviour::AVOID, SPEED_MAX);
 	mComponents.steering.GetComponent(mAvoider1)->target = mAvoider2;
 	mComponents.steering.GetComponent(mAvoider2)->target = mAvoider1;
 	AddCapsule(mAvoider1, r, hh, mComponents);
@@ -118,6 +128,44 @@ void SteeringScene::OnResume()
 
 void SteeringScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
+	struct Hit
+	{
+		Entity entity;
+		Vector3 mtv;
+	};
+	std::vector<Hit> collisions;
+	for (Entity building : mMap)
+	{
+		Entity buildingCollider = *mComponents.hierarchies.GetComponent(building)->children.begin();
+		Hit hit;
+		if (Collision::IsColliding(buildingCollider, mAvoidingSeeker, hit.mtv, mComponents))
+		{
+			hit.entity = buildingCollider;
+			collisions.push_back(hit);
+		}
+	}
+
+	if (collisions.empty())
+	{
+		Steering::Seek(mRandomTarget, mAvoidingSeeker, SPEED_MAX, mComponents);
+	}
+	else
+	{
+		EntityTransform& transform = *mComponents.transforms.GetComponent(mAvoidingSeeker);
+		Vector3 p = transform.WorldPosition();
+		std::sort(collisions.begin(), collisions.end(),
+			[&](const Hit& a, const Hit& b)
+			{
+				Vector3 vA = mComponents.transforms.GetComponent(a.entity)->WorldPosition();
+				Vector3 vB = mComponents.transforms.GetComponent(a.entity)->WorldPosition();
+				return (vA - p).LengthSquared() < (vB - p).LengthSquared();
+			}
+		);
+
+		Rigidbody& rb = *mComponents.rigidbodies.GetComponent(mAvoidingSeeker);
+		rb.acceleration = Steering::Seek(p + collisions[0].mtv, p, rb.velocity, SPEED_MAX);
+	}
+
 	Players::Update(mComponents, input, dt);
 	Steering::Update(mComponents, dt);
 	Dynamics::Update(mComponents, dt);
@@ -140,21 +188,21 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 			radius, halfHeight, mView, mProj, graphics, color, wireframe);
 	};
 
-	sBuildingRenderer.DebugMap(mMap, mComponents, mView, mProj, graphics, true);
+	for (Entity building : mMap)
+	{
+		Debug::Sphere(
+			mComponents.transforms.GetComponent(building)->WorldPosition(),
+			45.0f, mView, mProj, graphics, Colors::Black);
+	}
+	//sBuildingRenderer.DebugMap(mMap, mComponents, mView, mProj, graphics);
 
 #if SEEK_PLAYER
-	drawSphere(mSeeker, r);
-	drawSphere(mArriver, r, Colors::PowderBlue);
-	drawSphere(mRandomSeeker, r, Colors::MediumAquamarine);
-	drawSphere(mRandomTarget, r, Colors::MediumOrchid);
-	drawSphere(mWanderer, r, Colors::MediumPurple);
+	//sPlayerRenderer.Render(mComponents.transforms.GetComponent(sPlayer)->World(), mView, mProj, graphics);
+	//drawSphere(mSeeker, r);
+	//drawSphere(mArriver, r, Colors::PowderBlue);
 
-	Vector3 wandererPosition = mComponents.transforms.GetComponent(mWanderer)->Translation();
-	if (wandererPosition.x > mWorldWidth  || wandererPosition.x < 0.0f ||
-		wandererPosition.y > mWorldHeight || wandererPosition.y < 0.0f)
-	{
-		mComponents.transforms.GetComponent(mWanderer)->Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
-	}
+	drawSphere(mAvoidingSeeker, mComponents.colliders.GetComponent(mAvoidingSeeker)->r, Colors::MediumAquamarine);
+	drawSphere(mRandomTarget, r, Colors::MediumOrchid);
 #else
 	sPlayerRenderer.Render(mComponents.transforms.GetComponent(mAvoider1)->World(), mView, mProj, graphics);
 	sPlayerRenderer.Render(mComponents.transforms.GetComponent(mAvoider2)->World(), mView, mProj, graphics);
@@ -168,3 +216,18 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//drawCapsule(child2, avoidCollider2.r, avoidCollider2.hh, Colors::Gray, true);
 #endif
 }
+
+// Wandering demo
+//Steering::Wander(mWanderer, 1000.0f, 500.0f, mComponents);
+//drawSphere(mWanderer, r, Colors::MediumPurple);
+//Vector3 wandererPosition = mComponents.transforms.GetComponent(mWanderer)->Translation();
+//if (wandererPosition.x > mWorldWidth  || wandererPosition.x < 0.0f ||
+//	wandererPosition.y > mWorldHeight || wandererPosition.y < 0.0f)
+//{
+//	EntityTransform& transform = *mComponents.transforms.GetComponent(mWanderer);
+//	Rigidbody& rb = *mComponents.rigidbodies.GetComponent(mWanderer);
+//	rb.acceleration = Vector3::Zero;
+//	rb.velocity = Vector3::Zero;
+//	transform.Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
+//	transform.Orientate(RandomSpherePoint(1.0f));
+//}

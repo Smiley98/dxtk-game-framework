@@ -16,7 +16,7 @@ public:
    void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
-    Entity mSeeker, mArriver, mRandomSeeker, mRandomTarget;
+    Entity mSeeker, mArriver, mWanderer, mAvoidingSeeker, mRandomTarget;
     Entity mAvoider1, mAvoider2;
 
     std::vector<Entity> mMap;
