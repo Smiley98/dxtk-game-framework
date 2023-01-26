@@ -61,20 +61,17 @@ void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	transform.Orientate(forward);
 
 	Vector3 position = transform.WorldPosition();
-	float shortedDistance = std::numeric_limits<float>::max();
-	size_t nearestIndex = 0;
-	for (size_t i = 0; i < mSpline.size(); i++)
+	float shortestDistance = std::numeric_limits<float>::max();
+	for (size_t i = 1; i <= mSpline.size(); i++)
 	{
-		float distance = (position - mSpline[i]).LengthSquared();
-		if (distance < shortedDistance)
+		Vector3 projection = Project(mSpline[i - 1], mSpline[i % mSpline.size()], position);
+		float distance = (position - projection).LengthSquared();
+		if (distance < shortestDistance)
 		{
-			shortedDistance = distance;
-			nearestIndex = i;
+			shortestDistance = distance;
+			mNearest = projection;
 		}
 	}
-	mNearest = Project(mSpline[nearestIndex], mSpline[(nearestIndex + 1) % mSpline.size()], position);
-	// Projection is working correctly. Issue is mNearest becomes i + 1 at 50%+ cause distance...
-	// Must change the way target is calculated, ie choose line, then only switch once within proximity to end
 }
 
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
