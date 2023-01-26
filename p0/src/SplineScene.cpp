@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SplineScene.h"
+#include "Utility.h"
 
 using namespace DirectX;
 
@@ -58,14 +59,33 @@ void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	EntityTransform& transform = *mComponents.transforms.GetComponent(sPlayer);
 	transform.Translate(a);
 	transform.Orientate(forward);
+
+	Vector3 position = transform.WorldPosition();
+	float shortedDistance = std::numeric_limits<float>::max();
+	size_t nearestIndex = 0;
+	for (size_t i = 0; i < mSpline.size(); i++)
+	{
+		float distance = (position - mSpline[i]).LengthSquared();
+		if (distance < shortedDistance)
+		{
+			shortedDistance = distance;
+			nearestIndex = i;
+		}
+	}
+	mNearest = Project(mSpline[nearestIndex], mSpline[(nearestIndex + 1) % mSpline.size()], position);
+	// Projection is working correctly. Issue is mNearest becomes i + 1 at 50%+ cause distance...
+	// Must change the way target is calculated, ie choose line, then only switch once within proximity to end
 }
 
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	for (const Vector3& position : mSpline)
-		Debug::Primitive(Debug::SPHERE,
-			Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(position), mView, mProj, graphics);
+		Debug::Sphere(position, 50.0f, mView, mProj, graphics);
 
+	for (size_t i = 1; i <= mSpline.size(); i++)
+		Debug::Line(mSpline[i - 1], mSpline[i % mSpline.size()], 10.0f, mView, mProj, graphics);
+
+	Debug::Sphere(mNearest, 50.0f, mView, mProj, graphics);
 	sPlayerRenderer.Render(mComponents.transforms.GetComponent(sPlayer)->World(), mView, mProj, graphics);
 	sMiscRenderer.Cone(mComponents.transforms.GetComponent(mHeadlights)->World(), mView, mProj, graphics);
 }

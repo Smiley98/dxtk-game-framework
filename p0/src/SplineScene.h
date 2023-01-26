@@ -24,6 +24,7 @@ private:
         Vector3{ -500.0f, 300.0f, 500.0f },
         Vector3{ 500.0f, 300.0f, -500.0f }
     };
+    Vector3 mNearest;
     SpeedTable mSpeedTable;
 
     Entity mHeadlights;
