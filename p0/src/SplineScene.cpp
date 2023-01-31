@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SplineScene.h"
+#include "Gameplay.h"
 #include "Utility.h"
 
 using namespace DirectX;
@@ -11,8 +12,6 @@ SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mComponents.transforms.GetComponent(mHeadlights)->TranslateY(80.0f);
 	mComponents.transforms.GetComponent(mHeadlights)->Scale(100.0f);
 	AddChild(sPlayer, mHeadlights, mComponents);
-
-	mSpeedTable = CreateSpeedTable(mSpline, 16);
 }
 
 SplineScene::~SplineScene()
@@ -47,24 +46,17 @@ void SplineScene::OnResume()
 
 void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
-	static size_t interval = 0;
-	static size_t sample = 0;
+	static SpeedTable speedTable = CreateSpeedTable(mPoints, 16);
 	static float distance = 0.0f;
-	Vector3 a = Catmull(DistanceToInterpolation(distance, mSpeedTable, interval, sample), interval, mSpline);
-	distance += 250.0f * dt;
-	UpdateCatmull(distance, interval, sample, mSpline, mSpeedTable);
-	Vector3 b = Catmull(DistanceToInterpolation(distance, mSpeedTable, interval, sample), interval, mSpline);
-	Vector3 forward = b - a;
-	forward.Normalize();
-	EntityTransform& transform = *mComponents.transforms.GetComponent(sPlayer);
-	transform.Translate(a);
-	transform.Orientate(forward);
+	static size_t sample = 0;
+	static size_t point = 0;
+	FollowPath(dt, 250.0f, distance, point, sample, mPoints, speedTable, sPlayer, mComponents);
 
-	Vector3 position = transform.WorldPosition();
+	Vector3 position = mComponents.transforms.GetComponent(sPlayer)->WorldPosition();
 	float shortestDistance = std::numeric_limits<float>::max();
-	for (size_t i = 1; i <= mSpline.size(); i++)
+	for (size_t i = 1; i <= mPoints.size(); i++)
 	{
-		Vector3 projection = Project(mSpline[i - 1], mSpline[i % mSpline.size()], position);
+		Vector3 projection = Project(mPoints[i - 1], mPoints[i % mPoints.size()], position);
 		float distance = (position - projection).LengthSquared();
 		if (distance < shortestDistance)
 		{
@@ -76,11 +68,11 @@ void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
 
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	for (const Vector3& position : mSpline)
+	for (const Vector3& position : mPoints)
 		Debug::Sphere(position, 50.0f, mView, mProj, graphics);
 
-	for (size_t i = 1; i <= mSpline.size(); i++)
-		Debug::Line(mSpline[i - 1], mSpline[i % mSpline.size()], 10.0f, mView, mProj, graphics);
+	for (size_t i = 1; i <= mPoints.size(); i++)
+		Debug::Line(mPoints[i - 1], mPoints[i % mPoints.size()], 10.0f, mView, mProj, graphics);
 
 	Debug::Sphere(mNearest, 50.0f, mView, mProj, graphics);
 	sPlayerRenderer.Render(mComponents.transforms.GetComponent(sPlayer)->World(), mView, mProj, graphics);

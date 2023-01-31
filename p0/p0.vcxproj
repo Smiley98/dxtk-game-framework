@@ -122,6 +122,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Gameplay.cpp" />
     <ClCompile Include="src\Hierarchy.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -160,10 +161,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\SteeringEntity.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="src\SteeringFactory.cpp" />
     <ClCompile Include="src\SteeringScene.cpp" />
     <ClCompile Include="src\SteeringSystem.cpp" />
@@ -192,6 +189,7 @@
     <ClInclude Include="src\EntityTransform.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Collider.h" />
+    <ClInclude Include="src\Gameplay.h" />
     <ClInclude Include="src\Hierarchy.h" />
     <ClInclude Include="src\Identifier.h" />
     <ClInclude Include="src\Input.h" />
@@ -209,7 +207,6 @@
     <ClInclude Include="src\SplineScene.h" />
     <ClInclude Include="src\Steering.h" />
     <ClInclude Include="src\SteeringBehaviour.h" />
-    <ClInclude Include="src\SteeringEntity.h" />
     <ClInclude Include="src\SteeringFactory.h" />
     <ClInclude Include="src\SteeringScene.h" />
     <ClInclude Include="src\SteeringSystem.h" />

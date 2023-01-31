@@ -12,6 +12,6 @@ namespace DirectX
 struct Components;
 namespace Collision
 {
-	bool IsColliding(Entity a, Entity b, DirectX::SimpleMath::Vector3& mtv, Components& components);
 	void Update(Components& components);
+	bool IsColliding(Entity a, Entity b, Vector3& mtv, Components& components);
 }

@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "SteeringSystem.h"
-#include "SteeringEntity.h"
 #include "CollisionSystem.h"
 #include "Collider.h"
 #include "Steering.h"
 #include "Components.h"
+#include "Gameplay.h"
 
 namespace Steering
 {

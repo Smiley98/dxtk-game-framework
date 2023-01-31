@@ -10,14 +10,14 @@
 #include "CollisionSystem.h"
 
 #include "Steering.h"
-#include "SteeringEntity.h"
-#include "DebugRenderer.h"
+#include "Gameplay.h"
 
+#include "DebugRenderer.h"
 #include "Utility.h"
 
-#define MAZE false
+#define MAZE true
 #define CHICKEN false
-#define BEHAVIOURS true
+#define BEHAVIOURS false
 #define AVOID_AHEAD true
 #define SPEED_MAX 1000.0f
 
@@ -156,7 +156,7 @@ void SteeringScene::OnUpdate(float dt, float tt, const DX::Input& input)
 			transform.Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
 			transform.Orientate(RandomSpherePoint(1.0f));
 		}
-		Steering::Wander(mWanderer, 1000.0f, 500.0f, mComponents);
+		Wander(mWanderer, 1000.0f, 500.0f, mComponents);
 		rb.acceleration.z = 0.0f;
 	}
 #endif
@@ -185,7 +185,7 @@ void SteeringScene::OnUpdate(float dt, float tt, const DX::Input& input)
 
 	if (collisions.empty())
 	{
-		Steering::Arrive(mRandomTarget, mAvoidingSeeker, SPEED_MAX, dt, mComponents);
+		Arrive(mRandomTarget, mAvoidingSeeker, SPEED_MAX, dt, mComponents);
 	}
 	else
 	{

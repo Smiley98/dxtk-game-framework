@@ -27,82 +27,6 @@ namespace Collision
 		Resolve(components, collisions);
 	}
 
-	// mtv resolves b from a
-	bool IsColliding(Entity a, Entity b, Vector3& mtv, Components& components)
-	{
-		EntityTransform& tA = *components.transforms.GetComponent(a);
-		EntityTransform& tB = *components.transforms.GetComponent(b);
-		Collider& cA = *components.colliders.GetComponent(a);
-		Collider& cB = *components.colliders.GetComponent(b);
-		assert(cA.type != Collider::NONE && cB.type != Collider::NONE);
-		bool collision = false;
-
-		switch (cA.type)
-		{
-		case Collider::SPHERE:
-			switch (cB.type)
-			{
-			case Collider::SPHERE:
-				collision = SphereSphere(
-					tA.WorldPosition(), tB.WorldPosition(),
-					cA.r, cB.r,
-				mtv);
-				break;
-
-			case Collider::CAPSULE:
-				collision = SphereCapsule(
-					tA.WorldPosition(), tB.WorldPosition(), tB.WorldForward(),
-					cA.r, cB.r, cB.hh,
-				mtv);
-				break;
-
-			//case Collider::BOX:
-			//	break;
-			}
-			break;
-
-		case Collider::CAPSULE:
-			switch (cB.type)
-			{
-			case Collider::SPHERE:
-				collision = SphereCapsule(
-					tB.WorldPosition(), tA.WorldPosition(), tA.WorldForward(),
-					cB.r, cA.r, cA.hh,
-				mtv);
-				mtv = -mtv;
-				break;
-
-			case Collider::CAPSULE:
-				collision = CapsuleCapsule(
-					tA.WorldPosition(), tB.WorldPosition(),
-					tA.WorldForward(), tB.WorldForward(),
-					cA.r, cB.r, cA.hh, cB.hh,
-				mtv);
-				break;
-
-			//case Collider::BOX:
-			//	break;
-			}
-			break;
-		
-		//case Collider::BOX:
-		//	switch (cB.type)
-		//	{
-		//	case Collider::SPHERE:
-		//		break;
-		//
-		//	case Collider::CAPSULE:
-		//		break;
-		//
-		//	case Collider::BOX:
-		//		break;
-		//	}
-		//	break;
-		}
-
-		return collision;
-	}
-
 	void Collect(const Components& components, std::vector<HitPair>& collisions)
 	{
 		std::vector<Entity> staticSpheres;
@@ -348,5 +272,81 @@ namespace Collision
 	{
 		assert(components.identifiers.GetComponent(building)->tag == Tags::BUILDING);
 		assert(components.identifiers.GetComponent(projectile)->tag == Tags::PROJECTILE);
+	}
+
+	// mtv resolves b from a
+	bool IsColliding(Entity a, Entity b, Vector3& mtv, Components& components)
+	{
+		EntityTransform& tA = *components.transforms.GetComponent(a);
+		EntityTransform& tB = *components.transforms.GetComponent(b);
+		Collider& cA = *components.colliders.GetComponent(a);
+		Collider& cB = *components.colliders.GetComponent(b);
+		assert(cA.type != Collider::NONE && cB.type != Collider::NONE);
+		bool collision = false;
+
+		switch (cA.type)
+		{
+		case Collider::SPHERE:
+			switch (cB.type)
+			{
+			case Collider::SPHERE:
+				collision = SphereSphere(
+					tA.WorldPosition(), tB.WorldPosition(),
+					cA.r, cB.r,
+					mtv);
+				break;
+
+			case Collider::CAPSULE:
+				collision = SphereCapsule(
+					tA.WorldPosition(), tB.WorldPosition(), tB.WorldForward(),
+					cA.r, cB.r, cB.hh,
+					mtv);
+				break;
+
+				//case Collider::BOX:
+				//	break;
+			}
+			break;
+
+		case Collider::CAPSULE:
+			switch (cB.type)
+			{
+			case Collider::SPHERE:
+				collision = SphereCapsule(
+					tB.WorldPosition(), tA.WorldPosition(), tA.WorldForward(),
+					cB.r, cA.r, cA.hh,
+					mtv);
+				mtv = -mtv;
+				break;
+
+			case Collider::CAPSULE:
+				collision = CapsuleCapsule(
+					tA.WorldPosition(), tB.WorldPosition(),
+					tA.WorldForward(), tB.WorldForward(),
+					cA.r, cB.r, cA.hh, cB.hh,
+					mtv);
+				break;
+
+				//case Collider::BOX:
+				//	break;
+			}
+			break;
+
+			//case Collider::BOX:
+			//	switch (cB.type)
+			//	{
+			//	case Collider::SPHERE:
+			//		break;
+			//
+			//	case Collider::CAPSULE:
+			//		break;
+			//
+			//	case Collider::BOX:
+			//		break;
+			//	}
+			//	break;
+		}
+
+		return collision;
 	}
 }
