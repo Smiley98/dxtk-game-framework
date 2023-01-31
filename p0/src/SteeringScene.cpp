@@ -15,8 +15,10 @@
 
 #include "Utility.h"
 
+#define MAZE false
+#define CHICKEN false
+#define BEHAVIOURS true
 #define AVOID_AHEAD true
-#define SEEK_PLAYER true
 #define SPEED_MAX 1000.0f
 
 namespace
@@ -54,14 +56,19 @@ SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std:
 {
 	mMap = CreateMap(Map::MINTY_AFTERSHAVE, components, sBuildingRenderer, mWorldWidth, mWorldHeight);
 
-#if SEEK_PLAYER
+#if BEHAVIOURS
+	mSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, SPEED_MAX, sPlayer);
+	mArriver = CreateSteering(mComponents, SteeringBehaviour::ARRIVE, SPEED_MAX, sPlayer);
 	mWanderer = CreateEntity(mComponents, mWorldWidth * 0.5f, mWorldHeight * 0.5f);
+	mComponents.rigidbodies.Add(mWanderer);
+#endif
+	
+#if MAZE
 	mRandomTarget = CreateEntity(mComponents, Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight));
 	mAvoidingSeeker = CreateEntity(mComponents, Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight));
 	mSensor = CreateEntity(mComponents, 0.0f, sphereRadius + sensorRadius);
-	mComponents.rigidbodies.Add(mAvoidingSeeker);
 	mComponents.rigidbodies.Add(mRandomTarget);
-	mComponents.rigidbodies.Add(mWanderer);
+	mComponents.rigidbodies.Add(mAvoidingSeeker);
 	mComponents.rigidbodies.Add(mSensor);
 #if AVOID_AHEAD
 	AddSphere(mSensor, sensorRadius, mComponents);
@@ -69,9 +76,6 @@ SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std:
 #else
 	AddSphere(mAvoidingSeeker, 50.0f, mComponents);
 #endif
-
-	mSeeker = CreateSteering(mComponents, SteeringBehaviour::SEEK, SPEED_MAX, sPlayer);
-	mArriver = CreateSteering(mComponents, SteeringBehaviour::ARRIVE, SPEED_MAX, sPlayer);
 
 	AddTimer("RandomTarget", 5.0f, [&] {
 		mComponents.transforms.GetComponent(mRandomTarget)->Translate
@@ -81,7 +85,9 @@ SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std:
 			0.0f
 		);
 	}, true);
-#else
+#endif
+
+#if CHICKEN
 	mAvoider1 = CreateSteering(mComponents, SteeringBehaviour::AVOID, SPEED_MAX);
 	mAvoider2 = CreateSteering(mComponents, SteeringBehaviour::AVOID, SPEED_MAX);
 	mComponents.steering.GetComponent(mAvoider1)->target = mAvoider2;
@@ -138,6 +144,24 @@ void SteeringScene::OnResume()
 
 void SteeringScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
+#if BEHAVIOURS
+	{
+		Rigidbody& rb = *mComponents.rigidbodies.GetComponent(mWanderer);
+		EntityTransform& transform = *mComponents.transforms.GetComponent(mWanderer);
+		if (transform.Translation().x > mWorldWidth || transform.Translation().x < 0.0f ||
+			transform.Translation().y > mWorldHeight || transform.Translation().y < 0.0f)
+		{
+			rb.acceleration = Vector3::Zero;
+			rb.velocity = Vector3::Zero;
+			transform.Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
+			transform.Orientate(RandomSpherePoint(1.0f));
+		}
+		Steering::Wander(mWanderer, 1000.0f, 500.0f, mComponents);
+		rb.acceleration.z = 0.0f;
+	}
+#endif
+
+#if MAZE
 	struct Hit
 	{
 		Entity entity;
@@ -179,6 +203,7 @@ void SteeringScene::OnUpdate(float dt, float tt, const DX::Input& input)
 		Rigidbody& rb = *mComponents.rigidbodies.GetComponent(mAvoidingSeeker);
 		rb.acceleration = Steering::Seek(p + collisions[0].mtv, p, rb.velocity, SPEED_MAX);
 	}
+#endif
 
 	Players::Update(mComponents, input, dt);
 	Steering::Update(mComponents, dt);
@@ -202,18 +227,20 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 			radius, halfHeight, mView, mProj, graphics, color, wireframe);
 	};
 
+#if BEHAVIOURS
+	sPlayerRenderer.Render(mComponents.transforms.GetComponent(sPlayer)->World(), mView, mProj, graphics);
+	drawSphere(mSeeker, r);
+	drawSphere(mArriver, r, Colors::PowderBlue);
+	drawSphere(mWanderer, r, Colors::MediumPurple);
+#endif
+
+#if MAZE
 	for (Entity building : mMap)
 	{
 		Debug::Sphere(
 			mComponents.transforms.GetComponent(building)->WorldPosition(),
 			45.0f, mView, mProj, graphics, Colors::Black);
 	}
-	//sBuildingRenderer.DebugMap(mMap, mComponents, mView, mProj, graphics);
-
-#if SEEK_PLAYER
-	//sPlayerRenderer.Render(mComponents.transforms.GetComponent(sPlayer)->World(), mView, mProj, graphics);
-	//drawSphere(mSeeker, r);
-	//drawSphere(mArriver, r, Colors::PowderBlue);
 
 #if AVOID_AHEAD
 	drawSphere(mAvoidingSeeker, sphereRadius, Colors::MediumAquamarine);
@@ -222,31 +249,18 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	drawSphere(mAvoidingSeeker, mComponents.colliders.GetComponent(mAvoidingSeeker)->r, Colors::MediumAquamarine);
 #endif
 	drawSphere(mRandomTarget, r, Colors::MediumOrchid);
-#else
+#endif
+
+#if CHICKEN
 	sPlayerRenderer.Render(mComponents.transforms.GetComponent(mAvoider1)->World(), mView, mProj, graphics);
 	sPlayerRenderer.Render(mComponents.transforms.GetComponent(mAvoider2)->World(), mView, mProj, graphics);
 
 	// Uncomment to render sensor colliders
-	//Entity child1 = *mComponents.hierarchies.GetComponent(mAvoider1)->children.begin();
-	//Entity child2 = *mComponents.hierarchies.GetComponent(mAvoider2)->children.begin();
-	//Collider& avoidCollider1 = *mComponents.colliders.GetComponent(child1);
-	//Collider& avoidCollider2 = *mComponents.colliders.GetComponent(child2);
-	//drawCapsule(child1, avoidCollider1.r, avoidCollider1.hh, Colors::Gray, true);
-	//drawCapsule(child2, avoidCollider2.r, avoidCollider2.hh, Colors::Gray, true);
+	Entity child1 = *mComponents.hierarchies.GetComponent(mAvoider1)->children.begin();
+	Entity child2 = *mComponents.hierarchies.GetComponent(mAvoider2)->children.begin();
+	Collider& avoidCollider1 = *mComponents.colliders.GetComponent(child1);
+	Collider& avoidCollider2 = *mComponents.colliders.GetComponent(child2);
+	drawCapsule(child1, avoidCollider1.r, avoidCollider1.hh, Colors::Gray, true);
+	drawCapsule(child2, avoidCollider2.r, avoidCollider2.hh, Colors::Gray, true);
 #endif
 }
-
-// Wandering demo
-//Steering::Wander(mWanderer, 1000.0f, 500.0f, mComponents);
-//drawSphere(mWanderer, r, Colors::MediumPurple);
-//Vector3 wandererPosition = mComponents.transforms.GetComponent(mWanderer)->Translation();
-//if (wandererPosition.x > mWorldWidth  || wandererPosition.x < 0.0f ||
-//	wandererPosition.y > mWorldHeight || wandererPosition.y < 0.0f)
-//{
-//	EntityTransform& transform = *mComponents.transforms.GetComponent(mWanderer);
-//	Rigidbody& rb = *mComponents.rigidbodies.GetComponent(mWanderer);
-//	rb.acceleration = Vector3::Zero;
-//	rb.velocity = Vector3::Zero;
-//	transform.Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
-//	transform.Orientate(RandomSpherePoint(1.0f));
-//}

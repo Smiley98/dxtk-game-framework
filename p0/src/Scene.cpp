@@ -52,8 +52,8 @@ void Scene::Create(
 	sType = type;
 	//sScenes[TEST] = new TestScene(graphics, audio, components);
 	//sScenes[COLLISION] = new CollisionScene(graphics, audio, components);
-	//sScenes[STEERING] = new SteeringScene(graphics, audio, components);
-	sScenes[SPLINE] = new SplineScene(graphics, audio, components);
+	sScenes[STEERING] = new SteeringScene(graphics, audio, components);
+	//sScenes[SPLINE] = new SplineScene(graphics, audio, components);
 	//sScenes[ENTITY] = new EntityScene(graphics, audio, components);
 }
 
