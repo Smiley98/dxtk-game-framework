@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SplineScene.h"
-#include "Gameplay.h"
+#include "EntityFunctions.h"
 #include "Utility.h"
 
 using namespace DirectX;
@@ -12,6 +12,14 @@ SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	mComponents.transforms.GetComponent(mHeadlights)->TranslateY(80.0f);
 	mComponents.transforms.GetComponent(mHeadlights)->Scale(100.0f);
 	AddChild(sPlayer, mHeadlights, mComponents);
+
+	mSpline.points = {
+		Vector3{ 500.0f, -300.0f, -500.0f },
+		Vector3{ -500.0f, -300.0f, 500.0f },
+		Vector3{ -500.0f, 300.0f, 500.0f },
+		Vector3{ 500.0f, 300.0f, -500.0f }
+	};
+	mSpline.speedTable = CreateSpeedTable(mSpline.points, 16);
 }
 
 SplineScene::~SplineScene()
@@ -46,23 +54,20 @@ void SplineScene::OnResume()
 
 void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
-	static SpeedTable speedTable = CreateSpeedTable(mPoints, 16);
-	static float distance = 0.0f;
-	static size_t sample = 0;
-	static size_t point = 0;
-	FollowPath(dt, 250.0f, distance, point, sample, mPoints, speedTable, sPlayer, mComponents);
+	FollowPath(dt, 250.0f, mSpline, sPlayer, mComponents);
 
 	Vector3 position = mComponents.transforms.GetComponent(sPlayer)->WorldPosition();
-	mNearest = NearestProjection(position, mPoints);
+	mNearest = NearestProjection(position, mSpline.points);
 }
 
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	for (const Vector3& position : mPoints)
+	for (const Vector3& position : mSpline.points)
 		Debug::Sphere(position, 50.0f, mView, mProj, graphics);
 
-	for (size_t i = 1; i <= mPoints.size(); i++)
-		Debug::Line(mPoints[i - 1], mPoints[i % mPoints.size()], 10.0f, mView, mProj, graphics);
+	for (size_t i = 1; i <= mSpline.points.size(); i++)
+		Debug::Line(mSpline.points[i - 1], mSpline.points[i % mSpline.points.size()], 10.0f,
+			mView, mProj, graphics);
 
 	Debug::Sphere(mNearest, 50.0f, mView, mProj, graphics);
 	sPlayerRenderer.Render(mComponents.transforms.GetComponent(sPlayer)->World(), mView, mProj, graphics);

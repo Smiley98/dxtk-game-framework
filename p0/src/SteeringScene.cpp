@@ -10,7 +10,7 @@
 #include "CollisionSystem.h"
 
 #include "Steering.h"
-#include "Gameplay.h"
+#include "EntityFunctions.h"
 
 #include "DebugRenderer.h"
 #include "Utility.h"

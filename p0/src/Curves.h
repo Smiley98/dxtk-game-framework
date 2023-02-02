@@ -11,6 +11,15 @@ struct SamplePoint
 using SpeedTable = std::vector<std::vector<SamplePoint>>;
 using Points = std::vector<Vector3>;
 
+struct Spline
+{
+    Points points;
+    size_t point = 0;
+    size_t sample = 0;
+    float distance = 0.0f;
+    SpeedTable speedTable;
+};
+
 inline Vector3 NearestProjection(const Vector3& position, const Points& points)
 {
     Vector3 nearest;
@@ -63,25 +72,24 @@ inline SpeedTable CreateSpeedTable(const Points& points, size_t samplesPerPoint 
     return speedTable;
 }
 
-inline float DistanceToInterpolation(float distance, const SpeedTable& speedTable, size_t point, size_t sample)
+inline float DistanceToInterpolation(const Spline& spline)
 {
-    const size_t sampleCount = speedTable[0].size();
-    SamplePoint current = speedTable[point][sample];
-    SamplePoint next = speedTable[point][(sample + 1) % sampleCount];
-    return Lerp(current.t, next.t, (distance - current.d) / (next.d - current.d));
+    const size_t sampleCount = spline.speedTable[0].size();
+    SamplePoint current = spline.speedTable[spline.point][spline.sample];
+    SamplePoint next = spline.speedTable[spline.point][(spline.sample + 1) % sampleCount];
+    return Lerp(current.t, next.t, (spline.distance - current.d) / (next.d - current.d));
 }
 
-inline void UpdateCatmull(float& distance, size_t& point, size_t& sample,
-    const Points& points, const SpeedTable& speedTable)
+inline void UpdateCatmull(Spline& spline)
 {
-    const size_t sampleCount = speedTable[0].size();
-    while (distance > speedTable[point][(sample + 1) % sampleCount].d)
+    const size_t sampleCount = spline.speedTable[0].size();
+    while (spline.distance > spline.speedTable[spline.point][(spline.sample + 1) % sampleCount].d)
     {
-        if (++sample >= sampleCount)
+        if (++spline.sample >= sampleCount)
         {
-            ++point %= speedTable.size();
-            sample = 0;
-            distance = 0.0f;
+            ++spline.point %= spline.speedTable.size();
+            spline.sample = 0;
+            spline.distance = 0.0f;
         }
     }
 }

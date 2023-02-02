@@ -124,9 +124,6 @@
     <ClCompile Include="src\Player.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\SteeringEntity.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
     <ClCompile Include="src\Rigidbody.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
@@ -153,6 +150,9 @@
     </ClCompile>
     <ClCompile Include="src\SplineScene.cpp">
       <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EntityFunctions.cpp">
+      <Filter>ECS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,9 +244,6 @@
     <ClInclude Include="src\Steering.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\SteeringEntity.h">
-      <Filter>Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\Dynamics.h">
       <Filter>Math</Filter>
     </ClInclude>
@@ -279,6 +276,9 @@
     </ClInclude>
     <ClInclude Include="src\SplineScene.h">
       <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EntityFunctions.h">
+      <Filter>ECS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

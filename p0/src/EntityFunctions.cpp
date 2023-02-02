@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Gameplay.h"
+#include "EntityFunctions.h"
 #include "Components.h"
 
 #include "Steering.h"
@@ -99,13 +99,12 @@ void Wander(Entity seeker, float maxSpeed, float radius, Components& components)
 }
 
 void FollowPath(
-	float dt, float lv, float& distance, size_t& point, size_t& sample,
-	const Points& points, const SpeedTable& speedTable, Entity entity, Components& components)
+	float dt, float lv, Spline& spline, Entity entity, Components& components)
 {
-	Vector3 a = Catmull(DistanceToInterpolation(distance, speedTable, point, sample), point, points);
-	distance += lv * dt;
-	UpdateCatmull(distance, point, sample, points, speedTable);
-	Vector3 b = Catmull(DistanceToInterpolation(distance, speedTable, point, sample), point, points);
+	Vector3 a = Catmull(DistanceToInterpolation(spline), spline.point, spline.points);
+	spline.distance += lv * dt;
+	UpdateCatmull(spline);
+	Vector3 b = Catmull(DistanceToInterpolation(spline), spline.point, spline.points);
 
 	Vector3 forward = b - a;
 	forward.Normalize();

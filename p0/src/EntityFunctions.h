@@ -10,6 +10,4 @@ void Evade(Entity target, Entity seeker, float maxSpeed, float dt, Components& c
 void Arrive(Entity target, Entity seeker, float maxSpeed, float dt, Components& components);
 void Wander(Entity seeker, float maxSpeed, float radius, Components& components);
 
-void FollowPath(
-	float dt, float lv, float& distance, size_t& point, size_t& sample,
-	const Points& points, const SpeedTable& speedTable, Entity entity, Components& components);
+void FollowPath(float dt, float lv, Spline& spline, Entity entity, Components& components);

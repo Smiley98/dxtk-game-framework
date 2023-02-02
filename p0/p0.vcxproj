@@ -122,7 +122,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Gameplay.cpp" />
+    <ClCompile Include="src\EntityFunctions.cpp" />
     <ClCompile Include="src\Hierarchy.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -189,7 +189,7 @@
     <ClInclude Include="src\EntityTransform.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Collider.h" />
-    <ClInclude Include="src\Gameplay.h" />
+    <ClInclude Include="src\EntityFunctions.h" />
     <ClInclude Include="src\Hierarchy.h" />
     <ClInclude Include="src\Identifier.h" />
     <ClInclude Include="src\Input.h" />

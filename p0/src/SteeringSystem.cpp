@@ -4,7 +4,7 @@
 #include "Collider.h"
 #include "Steering.h"
 #include "Components.h"
-#include "Gameplay.h"
+#include "EntityFunctions.h"
 
 namespace Steering
 {
