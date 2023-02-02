@@ -1,22 +1,11 @@
 #pragma once
-#include "SimpleMath.h"
-#undef min
-#undef max
-using namespace DirectX::SimpleMath;
+#include "MathUtilities.h"
 
 inline void CylinderBounds(const Vector3& position, const Vector3& direction, float halfHeight,
 	Vector3& top, Vector3& bot)
 {
 	top = position + direction * halfHeight;
 	bot = position - direction * halfHeight;
-}
-
-// Projects point P along line AB
-inline Vector3 Project(const Vector3& a, const Vector3& b, const Vector3& p)
-{
-	Vector3 AB = b - a;
-	float t = (p - a).Dot(AB) / AB.Dot(AB);
-	return a + std::min(std::max(t, 0.0f), 1.0f) * AB;
 }
 
 // Determines the two closest points along cylinders A and B

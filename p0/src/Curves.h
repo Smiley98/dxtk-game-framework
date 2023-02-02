@@ -11,6 +11,23 @@ struct SamplePoint
 using SpeedTable = std::vector<std::vector<SamplePoint>>;
 using Points = std::vector<Vector3>;
 
+inline Vector3 NearestProjection(const Vector3& position, const Points& points)
+{
+    Vector3 nearest;
+    float shortestDistance = std::numeric_limits<float>::max();
+    for (size_t i = 1; i <= points.size(); i++)
+    {
+        Vector3 projection = Project(points[i - 1], points[i % points.size()], position);
+        float distance = (position - projection).LengthSquared();
+        if (distance < shortestDistance)
+        {
+            shortestDistance = distance;
+            nearest = projection;
+        }
+    }
+    return nearest;
+}
+
 inline void IndexCatmull(const Points& points, size_t i, Vector3& p0, Vector3& p1, Vector3& p2, Vector3& p3)
 {
 	size_t n = points.size();

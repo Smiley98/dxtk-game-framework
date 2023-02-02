@@ -53,17 +53,7 @@ void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	FollowPath(dt, 250.0f, distance, point, sample, mPoints, speedTable, sPlayer, mComponents);
 
 	Vector3 position = mComponents.transforms.GetComponent(sPlayer)->WorldPosition();
-	float shortestDistance = std::numeric_limits<float>::max();
-	for (size_t i = 1; i <= mPoints.size(); i++)
-	{
-		Vector3 projection = Project(mPoints[i - 1], mPoints[i % mPoints.size()], position);
-		float distance = (position - projection).LengthSquared();
-		if (distance < shortestDistance)
-		{
-			shortestDistance = distance;
-			mNearest = projection;
-		}
-	}
+	mNearest = NearestProjection(position, mPoints);
 }
 
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)

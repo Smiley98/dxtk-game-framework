@@ -1,6 +1,8 @@
 #pragma once
 #include <SimpleMath.h>
 #include <cstdlib>
+#undef min
+#undef max
 
 using namespace DirectX::SimpleMath;
 
@@ -18,6 +20,14 @@ inline float Random(float min, float max)
 inline float Lerp(float a, float b, float t)
 {
 	return a * (1.0f - t) + (b * t);
+}
+
+// Projects point P along line AB
+inline Vector3 Project(const Vector3& a, const Vector3& b, const Vector3& p)
+{
+	Vector3 AB = b - a;
+	float t = (p - a).Dot(AB) / AB.Dot(AB);
+	return a + std::min(std::max(t, 0.0f), 1.0f) * AB;
 }
 
 inline Vector3 RandomSpherePoint(float radius)
