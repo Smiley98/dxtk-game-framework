@@ -20,6 +20,9 @@ public:
 private:
     Spline mSpline;
     Vector3 mNearest;
+    Vector3 mFutureNearest;
 
+    Entity mVan;
     Entity mHeadlights;
+    Entity mTarget;
 };
