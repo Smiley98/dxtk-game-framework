@@ -75,14 +75,14 @@ void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	for (const Vector3& position : mSpline.points)
-		Debug::Sphere(position, r, mView, mProj, graphics);
+		Debug::DrawSphere(position, r, mView, mProj, graphics);
 
 	for (size_t i = 1; i <= mSpline.points.size(); i++)
-		Debug::Line(mSpline.points[i - 1], mSpline.points[i % mSpline.points.size()], 10.0f,
+		Debug::DrawLine(mSpline.points[i - 1], mSpline.points[i % mSpline.points.size()], 10.0f,
 			mView, mProj, graphics);
 
-	Debug::Sphere(mNearest, r, mView, mProj, graphics);
-	Debug::Sphere(mFutureNearest, r, mView, mProj, graphics);
+	Debug::DrawSphere(mNearest, r, mView, mProj, graphics);
+	Debug::DrawSphere(mFutureNearest, r, mView, mProj, graphics);
 	sPlayerRenderer.Render(sComponents.transforms.GetComponent(sPlayer)->World(), mView, mProj, graphics);
 }
 

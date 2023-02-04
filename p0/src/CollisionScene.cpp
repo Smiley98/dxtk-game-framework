@@ -140,10 +140,10 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Vector3 direction = tB.WorldPosition() - tA.WorldPosition();
 		direction.Normalize();
 
-		Debug::Sphere(tA.WorldPosition() + r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
-		Debug::Sphere(tB.WorldPosition() - r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
-		Debug::Sphere(tA.WorldPosition(), r, mView, mProj, graphics, mSS.color, true);
-		Debug::Sphere(tB.WorldPosition(), r, mView, mProj, graphics, mSS.color, true);
+		Debug::DrawSphere(tA.WorldPosition() + r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
+		Debug::DrawSphere(tB.WorldPosition() - r * 0.5f * direction, r * 0.5f, mView, mProj, graphics);
+		Debug::DrawSphere(tA.WorldPosition(), r, mView, mProj, graphics, mSS.color, true);
+		Debug::DrawSphere(tB.WorldPosition(), r, mView, mProj, graphics, mSS.color, true);
 	}
 	
 	{
@@ -155,31 +155,31 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 			tA.WorldForward(), tB.WorldForward(),
 		hh, hh, aNearest, bNearest);
 
-		Debug::Sphere(aNearest, r, mView, mProj, graphics, Colors::Black);
-		Debug::Sphere(bNearest, r, mView, mProj, graphics, Colors::White);
-		Debug::Capsule(tA.WorldPosition(), tA.WorldForward(), r, hh, mView, mProj, graphics, mCC.color, true);
-		Debug::Capsule(tB.WorldPosition(), tB.WorldForward(), r, hh, mView, mProj, graphics, mCC.color, true);
+		Debug::DrawSphere(aNearest, r, mView, mProj, graphics, Colors::Black);
+		Debug::DrawSphere(bNearest, r, mView, mProj, graphics, Colors::White);
+		Debug::DrawCapsule(tA.WorldPosition(), tA.WorldForward(), r, hh, mView, mProj, graphics, mCC.color, true);
+		Debug::DrawCapsule(tB.WorldPosition(), tB.WorldForward(), r, hh, mView, mProj, graphics, mCC.color, true);
 	}
 
 	{
 		EntityTransform& tA = *sComponents.transforms.GetComponent(mSC.a);
 		EntityTransform& tB = *sComponents.transforms.GetComponent(mSC.b);
-		Debug::Sphere(tA.WorldPosition(), r, mView, mProj, graphics, mSC.color, true);
-		Debug::Capsule(tB.WorldPosition(), tB.WorldForward(), r, hh, mView, mProj, graphics, mSC.color, true);
+		Debug::DrawSphere(tA.WorldPosition(), r, mView, mProj, graphics, mSC.color, true);
+		Debug::DrawCapsule(tB.WorldPosition(), tB.WorldForward(), r, hh, mView, mProj, graphics, mSC.color, true);
 	}
 	
 	{
 		EntityTransform& tPlayer = *sComponents.transforms.GetComponent(mSoccer.player);
 		EntityTransform& tBall = *sComponents.transforms.GetComponent(mSoccer.ball);
-		Debug::Capsule(tPlayer.WorldPosition(), tPlayer.WorldForward(), r, hh, mView, mProj, graphics, mSoccer.color, true);
-		Debug::Sphere(tBall.WorldPosition(), r, mView, mProj, graphics, mSoccer.color, true);
+		Debug::DrawCapsule(tPlayer.WorldPosition(), tPlayer.WorldForward(), r, hh, mView, mProj, graphics, mSoccer.color, true);
+		Debug::DrawSphere(tBall.WorldPosition(), r, mView, mProj, graphics, mSoccer.color, true);
 	}
 
 	{
 		EntityTransform& tViewer = *sComponents.transforms.GetComponent(mRange.viewer);
 		EntityTransform& tTarget = *sComponents.transforms.GetComponent(mRange.target);
-		Debug::InRange(tViewer.WorldPosition(), tViewer.WorldForward(), tTarget.WorldPosition(),
+		Debug::DrawFoV(tViewer.WorldPosition(), tViewer.WorldForward(), tTarget.WorldPosition(),
 			mRange.length, mRange.fov, mView, mProj, graphics);
-		Debug::Sphere(tTarget.WorldPosition(), r, mView, mProj, graphics);
+		Debug::DrawSphere(tTarget.WorldPosition(), r, mView, mProj, graphics);
 	}
 }

@@ -129,12 +129,12 @@ inline bool SphereCapsule(
 //*****************
 // Miscellaneous
 //*****************
-inline bool InRange(
+inline bool InFoV(
 	const Vector3& position, const Vector3& direction, const Vector3& target,
-	float length, float fov /*(degrees)*/)
+	float length, float degrees)
 {
 	if ((target - position).Length() > length) return false;
 	Vector3 targetDirection = (target - position);
 	targetDirection.Normalize();
-	return targetDirection.Dot(direction) > cosf(DirectX::XM_RADIANS * fov * 0.5f);
+	return targetDirection.Dot(direction) > cosf(DirectX::XM_RADIANS * degrees * 0.5f);
 }

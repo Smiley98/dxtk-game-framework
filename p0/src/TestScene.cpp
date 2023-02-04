@@ -217,26 +217,26 @@ void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphi
 //AddChild(mParent, mChild1, mComponents);
 //AddChild(mChild1, mChild2, mComponents);
 
-//Debug::Primitive(Debug::TEAPOT,
+//Debug::DrawPrimitive(Debug::TEAPOT,
 //	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mParent)->World(),
 //	mView, mProj, graphics, Colors::Red);
 //
-//Debug::Primitive(Debug::TEAPOT,
+//Debug::DrawPrimitive(Debug::TEAPOT,
 //	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mChild1)->World(),
 //	mView, mProj, graphics, Colors::Orange);
 //
-//Debug::Primitive(Debug::TEAPOT,
+//Debug::DrawPrimitive(Debug::TEAPOT,
 //	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mChild2)->World(),
 //	mView, mProj, graphics, Colors::Yellow);
 //
-//Debug::Primitive(Debug::TEAPOT,
+//Debug::DrawPrimitive(Debug::TEAPOT,
 //	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mParent)->WorldPosition()),
 //	mView, mProj, graphics, Colors::Green);
 //
-//Debug::Primitive(Debug::TEAPOT,
+//Debug::DrawPrimitive(Debug::TEAPOT,
 //	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mChild1)->WorldPosition()),
 //	mView, mProj, graphics, Colors::Blue);
 //
-//Debug::Primitive(Debug::TEAPOT,
+//Debug::DrawPrimitive(Debug::TEAPOT,
 //	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mChild2)->WorldPosition()),
 //	mView, mProj, graphics, Colors::Purple);

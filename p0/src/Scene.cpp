@@ -8,6 +8,7 @@
 #include "MainScene.h"
 
 #include "PlayerFactory.h"
+#include "DebugRenderer.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -154,7 +155,9 @@ void Scene::Update(float dt, float tt, const DX::Input& input)
 
 void Scene::Render(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	sScenes[sType]->OnRender(graphics);
+	Scene& scene = *sScenes[sType];
+	scene.OnRender(graphics);
+	Debug::DrawDeferred(scene.mView, scene.mProj, graphics);
 }
 
 Scene::Type Scene::Current()

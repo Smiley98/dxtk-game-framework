@@ -51,8 +51,8 @@ void BuildingRenderer::DebugBuilding(Entity entity, Components& components,
 
 	if (capsule)
 	{
-		Debug::Capsule(colliderTransform.WorldPosition(), colliderTransform.WorldForward(),
-			collider.r, collider.hh, view, proj, graphics);
+		Debug::DrawCapsule(colliderTransform.WorldPosition(), colliderTransform.WorldForward(),
+			collider.r, collider.hh, view, proj, graphics, DirectX::Colors::White, false, true);
 	}
 	
 	Render(building, buildingTransform.World(), view, proj, graphics);

@@ -43,8 +43,8 @@ void PlayerRenderer::DebugPlayer(Entity entity, Components& components,
 	Collider& playerCollider = *components.colliders.GetComponent(entity);
 	if (capsule)
 	{
-		Debug::Capsule(playerTransform.WorldPosition(), playerTransform.WorldForward(),
-			playerCollider.r, playerCollider.hh, view, proj, graphics);
+		Debug::DrawCapsule(playerTransform.WorldPosition(), playerTransform.WorldForward(),
+			playerCollider.r, playerCollider.hh, view, proj, graphics, DirectX::Colors::White, false, true);
 	}
 	Render(playerTransform.World(), view, proj, graphics);
 }
