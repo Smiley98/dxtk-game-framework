@@ -30,3 +30,16 @@ struct FoV
 	float length = 0.0f;
 	float degrees = 0.0f;
 };
+
+struct AABB
+{
+	Vector3 position;
+	Vector3 extents;
+};
+
+struct OOBB
+{
+	Vector3 position;
+	Vector3 direction;
+	Vector3 extents;
+};

@@ -6,13 +6,13 @@ using namespace DirectX;
 
 namespace Debug
 {
+	// And yet some people say multi-inheritance shouldn't exist :p xD
 	struct GeometryRender
 	{
 		XMVECTOR color = Colors::White;
 		bool wireframe = false;
 	};
 
-	// And yet some people say multi-inheritance shouldn't exist... xD
 	struct SphereRender : public GeometryRender, public Sphere {};
 	struct CapsuleRender : public GeometryRender, public Capsule {};
 
@@ -33,12 +33,6 @@ namespace Debug
 	std::vector<LineRender> gLines;
 	std::vector<FoVRender> gFoVs;
 
-	void DrawSphere(const SphereRender& sphere, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
-	{
-		auto shape = GeometricPrimitive::CreateSphere(graphics->GetD3DDeviceContext(), sphere.radius * 2.0f);
-		shape->Draw(Matrix::CreateTranslation(sphere.position), view, proj, sphere.color, nullptr, sphere.wireframe);
-	}
-
 	void DrawSphere(const Vector3& position, float radius, XMVECTOR color, bool wireframe)
 	{
 		SphereRender sphere;
@@ -47,6 +41,45 @@ namespace Debug
 		sphere.position = position;
 		sphere.radius = radius;
 		gSpheres.push_back(std::move(sphere));
+	}
+
+	void DrawCapsule(const Vector3& position, const Vector3& direction, float radius, float halfHeight, XMVECTOR color, bool wireframe)
+	{
+		CapsuleRender capsule;
+		capsule.color = color;
+		capsule.wireframe = wireframe;
+		capsule.position = position;
+		capsule.direction = direction;
+		capsule.radius = radius;
+		capsule.halfHeight = halfHeight;
+		gCapsules.push_back(std::move(capsule));
+	}
+
+	void DrawLine(const Vector3& a, const Vector3& b, float thickness, XMVECTOR color)
+	{
+		LineRender line;
+		line.color = color;
+		line.start = a;
+		line.end = b;
+		line.thickness = thickness;
+		gLines.push_back(std::move(line));
+	}
+
+	void DrawFoV(const Vector3& position, const Vector3& direction, const Vector3& target, float length, float degrees, XMVECTOR color)
+	{
+		FoVRender fov;
+		fov.position = position;
+		fov.direction = direction;
+		fov.target = target;
+		fov.length = length;
+		fov.degrees = degrees;
+		gFoVs.push_back(std::move(fov));
+	}
+
+	void DrawSphere(const SphereRender& sphere, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
+	{
+		auto shape = GeometricPrimitive::CreateSphere(graphics->GetD3DDeviceContext(), sphere.radius * 2.0f);
+		shape->Draw(Matrix::CreateTranslation(sphere.position), view, proj, sphere.color, nullptr, sphere.wireframe);
 	}
 
 	void DrawCapsule(const CapsuleRender& capsule, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
@@ -68,18 +101,6 @@ namespace Debug
 		cylinder->Draw(transform.Local(), view, proj, capsule.color, nullptr, capsule.wireframe);
 	}
 
-	void DrawCapsule(const Vector3& position, const Vector3& direction, float radius, float halfHeight, XMVECTOR color, bool wireframe)
-	{
-		CapsuleRender capsule;
-		capsule.color = color;
-		capsule.wireframe = wireframe;
-		capsule.position = position;
-		capsule.direction = direction;
-		capsule.radius = radius;
-		capsule.halfHeight = halfHeight;
-		gCapsules.push_back(std::move(capsule));
-	}
-
 	void DrawLine(const LineRender& line, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		Vector3 direction = line.end - line.start;
@@ -92,16 +113,6 @@ namespace Debug
 
 		auto box = GeometricPrimitive::CreateBox(graphics->GetD3DDeviceContext(), { line.thickness, length, 1.0f });
 		box->Draw(transform.Local(), view, proj, line.color);
-	}
-
-	void DrawLine(const Vector3& a, const Vector3& b, float thickness, XMVECTOR color)
-	{
-		LineRender line;
-		line.color = color;
-		line.start = a;
-		line.end = b;
-		line.thickness = thickness;
-		gLines.push_back(std::move(line));
 	}
 
 	void DrawFoV(const FoVRender& fov, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
@@ -123,17 +134,6 @@ namespace Debug
 
 		DrawLine(leftLine,  view, proj, graphics);
 		DrawLine(rightLine, view, proj, graphics);
-	}
-
-	void DrawFoV(const Vector3& position, const Vector3& direction, const Vector3& target, float length, float degrees, XMVECTOR color)
-	{
-		FoVRender fov;
-		fov.position = position;
-		fov.direction = direction;
-		fov.target = target;
-		fov.length = length;
-		fov.degrees = degrees;
-		gFoVs.push_back(std::move(fov));
 	}
 
 	void DrawDeferred(const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
@@ -185,6 +185,3 @@ namespace Debug
 		}
 	}
 }
-
-//Matrix::CreateWorld(position, direction, Vector3::UnitZ);
-// This does right-up-forward instead of forward-right-up (XYZ vs ZXY)...
