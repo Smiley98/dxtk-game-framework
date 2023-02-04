@@ -41,7 +41,7 @@ void SplineScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 
 void SplineScene::OnBegin()
 {
-	sComponents.transforms.GetComponent(sPlayer)->Translate(mSpline.points[0]);
+	sComponents.GetTransform(sPlayer).Translate(mSpline.points[0]);
 }
 
 void SplineScene::OnEnd()
@@ -61,8 +61,8 @@ void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	//static float lv = 250.0f;
 	//FollowPath(dt, lv, mSpline, sPlayer, mComponents);
 
-	EntityTransform& transform = *sComponents.transforms.GetComponent(sPlayer);
-	Rigidbody& rb = *sComponents.rigidbodies.GetComponent(sPlayer);
+	EntityTransform& transform = sComponents.GetTransform(sPlayer);
+	Rigidbody& rb = sComponents.GetRigidbody(sPlayer);
 
 	mNearest = NearestProjection(transform.WorldPosition(), mSpline.points);
 	mFutureNearest = NearestProjection(
@@ -82,10 +82,10 @@ void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	Debug::DrawSphere(mNearest, r);
 	Debug::DrawSphere(mFutureNearest, r);
-	sPlayerRenderer.Render(sComponents.transforms.GetComponent(sPlayer)->World(), mView, mProj, graphics);
+	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
 }
 
-//sMiscRenderer.Cone(mComponents.transforms.GetComponent(mHeadlights)->World(), mView, mProj, graphics);
 //mHeadlights = CreateEntity(mComponents);
-//mComponents.transforms.GetComponent(mHeadlights)->TranslateY(80.0f);
-//mComponents.transforms.GetComponent(mHeadlights)->Scale(100.0f);
+//mComponents.GetTransform(mHeadlights).TranslateY(80.0f);
+//mComponents.GetTransform(mHeadlights).Scale(100.0f);
+//sMiscRenderer.Cone(mComponents.GetTransform(mHeadlights)->World(), mView, mProj, graphics);

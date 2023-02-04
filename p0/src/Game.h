@@ -47,6 +47,6 @@ private:
     std::shared_ptr<DX::DeviceResources> mDeviceResources;
     std::shared_ptr<DirectX::AudioEngine> mAudioEngine;
     DX::Input mInput;
-
+    
     Scene::Type mScene = Scene::SPLINE;
 };

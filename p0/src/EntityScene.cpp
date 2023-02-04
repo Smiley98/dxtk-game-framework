@@ -32,7 +32,7 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	for (size_t i = 0; i < mTestBuildings.size(); i++)
 	{
 		mTestBuildings[i] = CreateBuilding(sComponents, (Building::Type)i, sBuildingRenderer);
-		sComponents.transforms.GetComponent(mTestBuildings[i])->Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
+		sComponents.GetTransform(mTestBuildings[i]).Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
 	}
 #endif
 }

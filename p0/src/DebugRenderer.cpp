@@ -24,6 +24,7 @@ namespace Debug
 
 	struct FoVRender : public FoV
 	{
+		float thickness = 0.0f;
 		XMVECTOR inColor = Colors::Green;
 		XMVECTOR outColor = Colors::Red;
 	};
@@ -36,36 +37,40 @@ namespace Debug
 	void DrawSphere(const Vector3& position, float radius, XMVECTOR color, bool wireframe)
 	{
 		SphereRender sphere;
-		sphere.color = color;
-		sphere.wireframe = wireframe;
 		sphere.position = position;
 		sphere.radius = radius;
+
+		sphere.color = color;
+		sphere.wireframe = wireframe;
 		gSpheres.push_back(std::move(sphere));
 	}
 
 	void DrawCapsule(const Vector3& position, const Vector3& direction, float radius, float halfHeight, XMVECTOR color, bool wireframe)
 	{
 		CapsuleRender capsule;
-		capsule.color = color;
-		capsule.wireframe = wireframe;
 		capsule.position = position;
 		capsule.direction = direction;
 		capsule.radius = radius;
 		capsule.halfHeight = halfHeight;
+
+		capsule.color = color;
+		capsule.wireframe = wireframe;
 		gCapsules.push_back(std::move(capsule));
 	}
 
 	void DrawLine(const Vector3& a, const Vector3& b, float thickness, XMVECTOR color)
 	{
 		LineRender line;
-		line.color = color;
 		line.start = a;
 		line.end = b;
+
+		line.color = color;
 		line.thickness = thickness;
 		gLines.push_back(std::move(line));
 	}
 
-	void DrawFoV(const Vector3& position, const Vector3& direction, const Vector3& target, float length, float degrees, XMVECTOR color)
+	void DrawFoV(const Vector3& position, const Vector3& direction, const Vector3& target, float length, float degrees,
+		float thickness, XMVECTOR inColor, XMVECTOR outColor)
 	{
 		FoVRender fov;
 		fov.position = position;
@@ -73,6 +78,10 @@ namespace Debug
 		fov.target = target;
 		fov.length = length;
 		fov.degrees = degrees;
+
+		fov.thickness = thickness;
+		fov.inColor = inColor;
+		fov.outColor = outColor;
 		gFoVs.push_back(std::move(fov));
 	}
 
@@ -129,6 +138,7 @@ namespace Debug
 		rightLine.end = fov.position + right.Forward() * fov.length;
 		leftLine.end = fov.position + left.Forward() * fov.length;
 		leftLine.start = rightLine.start = fov.position;
+		leftLine.thickness = rightLine.thickness = fov.thickness;
 		leftLine.color = rightLine.color =
 			InFoV(fov.position, fov.direction, fov.target, fov.length, fov.degrees) ? fov.inColor : fov.outColor;
 

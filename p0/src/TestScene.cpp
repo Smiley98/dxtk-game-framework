@@ -72,9 +72,9 @@ void TestScene::OnBegin()
 	AddChild(mParent, mChild1, sComponents);
 	AddChild(mParent, mChild2, sComponents);
 
-	EntityTransform& parent = *sComponents.transforms.GetComponent(mParent);
-	EntityTransform& child1 = *sComponents.transforms.GetComponent(mChild1);
-	EntityTransform& child2 = *sComponents.transforms.GetComponent(mChild2);
+	EntityTransform& parent = sComponents.GetTransform(mParent);
+	EntityTransform& child1 = sComponents.GetTransform(mChild1);
+	EntityTransform& child2 = sComponents.GetTransform(mChild2);
 
 	child1.Scale(2.0f);
 	child2.Scale(2.0f);
@@ -101,9 +101,9 @@ void TestScene::OnResume()
 
 void TestScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
-	sComponents.transforms.GetComponent(mParent)->RotateY(tt * 50.0f);
-	sComponents.transforms.GetComponent(mChild1)->RotateX(tt * 50.0f);
-	sComponents.transforms.GetComponent(mChild2)->RotateZ(tt * 50.0f);
+	sComponents.GetTransform(mParent).RotateY(tt * 50.0f);
+	sComponents.GetTransform(mChild1).RotateX(tt * 50.0f);
+	sComponents.GetTransform(mChild2).RotateZ(tt * 50.0f);
 }
 
 void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -123,9 +123,9 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//mSprites->End();
 	//graphics->PIXEndEvent();
 
-	mShape->Draw(sComponents.transforms.GetComponent(mParent)->World(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(sComponents.transforms.GetComponent(mChild1)->World(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(sComponents.transforms.GetComponent(mChild2)->World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(sComponents.GetTransform(mParent).World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(sComponents.GetTransform(mChild1).World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(sComponents.GetTransform(mChild2).World(), mView, mProj, Colors::White, mTexture1.Get());
 
 	graphics->PIXEndEvent();
 }
@@ -204,9 +204,9 @@ void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphi
 //mParent = CreateEntity(mComponents);
 //mChild1 = CreateEntity(mComponents);
 //mChild2 = CreateEntity(mComponents);
-//EntityTransform& parent = *mComponents.transforms.GetComponent(mParent);
-//EntityTransform& child1 = *mComponents.transforms.GetComponent(mChild1);
-//EntityTransform& child2 = *mComponents.transforms.GetComponent(mChild2);
+//EntityTransform& parent = mComponents.GetTransform(mParent);
+//EntityTransform& child1 = mComponents.GetTransform(mChild1);
+//EntityTransform& child2 = mComponents.GetTransform(mChild2);
 //parent.Translate(mWorldWidth * 0.5f, 100.0f, 0.0f);
 //parent.DeltaTranslate(100.0f, 100.0f, 100.0f);
 //child1.DeltaTranslate(100.0f, 100.0f, 100.0f);
@@ -218,25 +218,25 @@ void XM_CALLCONV TestScene::DrawGrid(std::shared_ptr<DX::DeviceResources> graphi
 //AddChild(mChild1, mChild2, mComponents);
 
 //Debug::DrawPrimitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mParent)->World(),
+//	Matrix::CreateScale(50.0f) * mComponents.GetTransform(mParent).World(),
 //	mView, mProj, graphics, Colors::Red);
 //
 //Debug::DrawPrimitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mChild1)->World(),
+//	Matrix::CreateScale(50.0f) * mComponents.GetTransform(mChild1).World(),
 //	mView, mProj, graphics, Colors::Orange);
 //
 //Debug::DrawPrimitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* mComponents.transforms.GetComponent(mChild2)->World(),
+//	Matrix::CreateScale(50.0f) * mComponents.GetTransform(mChild2).World(),
 //	mView, mProj, graphics, Colors::Yellow);
 //
 //Debug::DrawPrimitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mParent)->WorldPosition()),
+//	Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(mComponents.GetTransform(mParent).WorldPosition()),
 //	mView, mProj, graphics, Colors::Green);
 //
 //Debug::DrawPrimitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mChild1)->WorldPosition()),
+//	Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(mComponents.GetTransform(mChild1).WorldPosition()),
 //	mView, mProj, graphics, Colors::Blue);
 //
 //Debug::DrawPrimitive(Debug::TEAPOT,
-//	Matrix::CreateScale(50.0f)* Matrix::CreateTranslation(mComponents.transforms.GetComponent(mChild2)->WorldPosition()),
+//	Matrix::CreateScale(50.0f) * Matrix::CreateTranslation(mComponents.GetTransform(mChild2).WorldPosition()),
 //	mView, mProj, graphics, Colors::Purple);

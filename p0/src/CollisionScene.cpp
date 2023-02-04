@@ -36,15 +36,15 @@ CollisionScene::CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, st
 
 	mCC.a = createCapsule(500.0f, 0.0f);
 	mCC.b = createCapsule(0.0f, 0.0f);
-	sComponents.transforms.GetComponent(mCC.b)->RotateZ(90.0f);
+	sComponents.GetTransform(mCC.b).RotateZ(90.0f);
 
 	mSC.a = createSphere(0.0f, 250.0f);
 	mSC.b = createCapsule(0.0f, 250.0f);
-	sComponents.transforms.GetComponent(mSC.b)->RotateZ(90.0f);
+	sComponents.GetTransform(mSC.b).RotateZ(90.0f);
 	
 	mSoccer.player = createCapsule(-500.0f, -500.0f);
 	mSoccer.ball = createSphere(0.0f, 0.0f);
-	sComponents.transforms.GetComponent(mSoccer.player)->RotateZ(-45.0f);
+	sComponents.GetTransform(mSoccer.player).RotateZ(-45.0f);
 
 	mRange.viewer = CreateEntity(sComponents, 0.0f, -400.0f);
 	mRange.target = CreateEntity(sComponents, 0.0f, -500.0f);
@@ -85,35 +85,33 @@ void CollisionScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	Vector3 mtv;
 
 	// Sphere-Sphere
-	sComponents.transforms.GetComponent(mSS.b)->Translate(
-		sComponents.transforms.GetComponent(mSS.a)->Translation());
-	sComponents.transforms.GetComponent(mSS.b)->DeltaTranslate(r* cos(tt), r* sin(tt), 0.0f);
+	sComponents.GetTransform(mSS.b).Translate(sComponents.GetTransform(mSS.a).Translation());
+	sComponents.GetTransform(mSS.b).DeltaTranslate(r* cos(tt), r* sin(tt), 0.0f);
 
-	sComponents.transforms.GetComponent(mSS.b)->DeltaTranslate(
+	sComponents.GetTransform(mSS.b).DeltaTranslate(
 		Collision::IsColliding(mSS.a, mSS.b, mtv, sComponents) ? mtv : Vector3::Zero);
 	mSS.color = Collision::IsColliding(mSS.a, mSS.b, mtv, sComponents) ? Colors::Red : Colors::Green;
 
 	// Capsule-Capsule
-	sComponents.transforms.GetComponent(mCC.b)->Translate(
-		Vector3{ sComponents.transforms.GetComponent(mCC.a)->Translation().x, hh + r, 0.0f } +
+	sComponents.GetTransform(mCC.b).Translate(
+		Vector3{ sComponents.GetTransform(mCC.a).Translation().x, hh + r, 0.0f } +
 		Vector3{ cos(tt) * speed, 0.0f, 0.0f });
-	sComponents.transforms.GetComponent(mCC.b)->DeltaRotateZ(speed);
+	sComponents.GetTransform(mCC.b).DeltaRotateZ(speed);
 
-	sComponents.transforms.GetComponent(mCC.b)->DeltaTranslate(
+	sComponents.GetTransform(mCC.b).DeltaTranslate(
 		Collision::IsColliding(mCC.a, mCC.b, mtv, sComponents) ? mtv : Vector3::Zero);
 	mCC.color = Collision::IsColliding(mCC.a, mCC.b, mtv, sComponents) ? Colors::Red : Colors::Green;
 
 	// Sphere-Capsule
-	sComponents.transforms.GetComponent(mSC.b)->Translate(
-		sComponents.transforms.GetComponent(mSC.a)->Translation() + Vector3{ cos(tt) * hh, -r, 0.0f });
+	sComponents.GetTransform(mSC.b).Translate(sComponents.GetTransform(mSC.a).Translation() + Vector3{ cos(tt) * hh, -r, 0.0f });
 
-	sComponents.transforms.GetComponent(mSC.b)->DeltaTranslate(
+	sComponents.GetTransform(mSC.b).DeltaTranslate(
 		Collision::IsColliding(mSC.a, mSC.b, mtv, sComponents) ? mtv : Vector3::Zero);
 	mSC.color = Collision::IsColliding(mSC.a, mSC.b, mtv, sComponents) ? Colors::Red : Colors::Green;
 
 	// Capsule-Sphere (soccer)
-	EntityTransform& tPlayer = *sComponents.transforms.GetComponent(mSoccer.player);
-	EntityTransform& tBall = *sComponents.transforms.GetComponent(mSoccer.ball);
+	EntityTransform& tPlayer = sComponents.GetTransform(mSoccer.player);
+	EntityTransform& tBall = sComponents.GetTransform(mSoccer.ball);
 
 	tPlayer.DeltaTranslate(tPlayer.Forward() * speed);
 	tBall.DeltaTranslate(Collision::IsColliding(mSoccer.player, mSoccer.ball, mtv, sComponents) ?
@@ -127,7 +125,7 @@ void CollisionScene::OnUpdate(float dt, float tt, const DX::Input& input)
 		tBall.Translate(Vector3::Zero);
 	}
 
-	sComponents.transforms.GetComponent(mRange.viewer)->RotateZ(tt * 100.0f);
+	sComponents.GetTransform(mRange.viewer).RotateZ(tt * 100.0f);
 }
 
 void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -135,8 +133,8 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	auto context = graphics->GetD3DDeviceContext();
 
 	{
-		EntityTransform& tA = *sComponents.transforms.GetComponent(mSS.a);
-		EntityTransform& tB = *sComponents.transforms.GetComponent(mSS.b);
+		EntityTransform& tA = sComponents.GetTransform(mSS.a);
+		EntityTransform& tB = sComponents.GetTransform(mSS.b);
 		Vector3 direction = tB.WorldPosition() - tA.WorldPosition();
 		direction.Normalize();
 
@@ -147,8 +145,8 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	}
 	
 	{
-		EntityTransform& tA = *sComponents.transforms.GetComponent(mCC.a);
-		EntityTransform& tB = *sComponents.transforms.GetComponent(mCC.b);
+		EntityTransform& tA = sComponents.GetTransform(mCC.a);
+		EntityTransform& tB = sComponents.GetTransform(mCC.b);
 		Vector3 aNearest, bNearest;
 		NearestCylinderPoints(
 			tA.WorldPosition(), tB.WorldPosition(),
@@ -162,22 +160,22 @@ void CollisionScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	}
 
 	{
-		EntityTransform& tA = *sComponents.transforms.GetComponent(mSC.a);
-		EntityTransform& tB = *sComponents.transforms.GetComponent(mSC.b);
+		EntityTransform& tA = sComponents.GetTransform(mSC.a);
+		EntityTransform& tB = sComponents.GetTransform(mSC.b);
 		Debug::DrawSphere(tA.WorldPosition(), r, mSC.color, true);
 		Debug::DrawCapsule(tB.WorldPosition(), tB.WorldForward(), r, hh, mSC.color, true);
 	}
 	
 	{
-		EntityTransform& tPlayer = *sComponents.transforms.GetComponent(mSoccer.player);
-		EntityTransform& tBall = *sComponents.transforms.GetComponent(mSoccer.ball);
+		EntityTransform& tPlayer = sComponents.GetTransform(mSoccer.player);
+		EntityTransform& tBall = sComponents.GetTransform(mSoccer.ball);
 		Debug::DrawCapsule(tPlayer.WorldPosition(), tPlayer.WorldForward(), r, hh, mSoccer.color, true);
 		Debug::DrawSphere(tBall.WorldPosition(), r, mSoccer.color, true);
 	}
 
 	{
-		EntityTransform& tViewer = *sComponents.transforms.GetComponent(mRange.viewer);
-		EntityTransform& tTarget = *sComponents.transforms.GetComponent(mRange.target);
+		EntityTransform& tViewer = sComponents.GetTransform(mRange.viewer);
+		EntityTransform& tTarget = sComponents.GetTransform(mRange.target);
 		Debug::DrawFoV(tViewer.WorldPosition(), tViewer.WorldForward(), tTarget.WorldPosition(), mRange.length, mRange.fov);
 		Debug::DrawSphere(tTarget.WorldPosition(), r);
 	}
