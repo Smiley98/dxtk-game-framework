@@ -37,9 +37,7 @@ public:
 	virtual ~Scene() = 0;
 
 	// Constructors/destructors
-	static void Create(
-		std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio,
-		Components& components, Type type);
+	static void Create(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Type type);
 	static void Destroy();
 
 	// Handle window resize event
@@ -60,7 +58,7 @@ public:
 	static Type Current();
 
 protected:
-	Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components);
+	Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
 	virtual void OnResize(std::shared_ptr<DX::DeviceResources> graphics) = 0;
 
 	virtual void OnBegin() = 0;
@@ -83,7 +81,8 @@ protected:
 	static BuildingRenderer sBuildingRenderer;
 	static MiscRenderer sMiscRenderer;
 
-	// Entities shared between scenes
+	// Resources shared between scenes (easiest to have a single components pool)
+	static Components sComponents;
 	static Entity sPlayer;
 
 	// Common members
@@ -91,8 +90,6 @@ protected:
 	Matrix mProj;
 	const float mWorldWidth = 1600;
 	const float mWorldHeight = 900;
-
-	Components& mComponents;
 
 private:
 	static std::array<Scene*, NONE> sScenes;

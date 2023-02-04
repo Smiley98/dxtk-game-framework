@@ -3,7 +3,7 @@
 #include "Transform.h"
 #include "Entity.h"
 
-class Game;
+class Scene;
 struct Components;
 
 class EntityTransform : public Transform
@@ -74,8 +74,7 @@ private:
 	EntityTransform* Parent() const;
 
 	friend Entity CreateEntity(Components& components);
-	//friend EntityTransform& Get(Entity entity);
-	friend Game;
+	friend Scene;
 
 	static Components* sComponents;
 };

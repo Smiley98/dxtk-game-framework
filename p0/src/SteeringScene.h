@@ -4,7 +4,7 @@ class SteeringScene :
     public Scene
 {
 public:
-    SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components);
+    SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
     ~SteeringScene() final;
 
    void OnResize(std::shared_ptr<DX::DeviceResources> graphics) final;

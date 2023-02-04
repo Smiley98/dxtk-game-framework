@@ -4,8 +4,8 @@
 
 using namespace DirectX;
 
-TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components)
-	: Scene(graphics, audio, components)
+TestScene::TestScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
+	: Scene(graphics, audio)
 {
 	//mWaveBank = std::make_unique<WaveBank>(audio.get(), L"assets/sounds/adpcmdroid.xwb");
 	//mSoundEffect = std::make_unique<SoundEffect>(audio.get(), L"assets/music/MusicMono_adpcm.wav");
@@ -66,15 +66,15 @@ void TestScene::OnBegin()
 
 	// Note that moving along forward vectors will translate "upwards" since the engine uses
 	// Y_FORWARD but this scene is Z_FORWARD.
-	mParent = CreateEntity(mComponents);
-	mChild1 = CreateEntity(mComponents);
-	mChild2 = CreateEntity(mComponents);
-	AddChild(mParent, mChild1, mComponents);
-	AddChild(mParent, mChild2, mComponents);
+	mParent = CreateEntity(sComponents);
+	mChild1 = CreateEntity(sComponents);
+	mChild2 = CreateEntity(sComponents);
+	AddChild(mParent, mChild1, sComponents);
+	AddChild(mParent, mChild2, sComponents);
 
-	EntityTransform& parent = *mComponents.transforms.GetComponent(mParent);
-	EntityTransform& child1 = *mComponents.transforms.GetComponent(mChild1);
-	EntityTransform& child2 = *mComponents.transforms.GetComponent(mChild2);
+	EntityTransform& parent = *sComponents.transforms.GetComponent(mParent);
+	EntityTransform& child1 = *sComponents.transforms.GetComponent(mChild1);
+	EntityTransform& child2 = *sComponents.transforms.GetComponent(mChild2);
 
 	child1.Scale(2.0f);
 	child2.Scale(2.0f);
@@ -101,9 +101,9 @@ void TestScene::OnResume()
 
 void TestScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
-	mComponents.transforms.GetComponent(mParent)->RotateY(tt * 50.0f);
-	mComponents.transforms.GetComponent(mChild1)->RotateX(tt * 50.0f);
-	mComponents.transforms.GetComponent(mChild2)->RotateZ(tt * 50.0f);
+	sComponents.transforms.GetComponent(mParent)->RotateY(tt * 50.0f);
+	sComponents.transforms.GetComponent(mChild1)->RotateX(tt * 50.0f);
+	sComponents.transforms.GetComponent(mChild2)->RotateZ(tt * 50.0f);
 }
 
 void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -123,9 +123,9 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//mSprites->End();
 	//graphics->PIXEndEvent();
 
-	mShape->Draw(mComponents.transforms.GetComponent(mParent)->World(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(mComponents.transforms.GetComponent(mChild1)->World(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(mComponents.transforms.GetComponent(mChild2)->World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(sComponents.transforms.GetComponent(mParent)->World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(sComponents.transforms.GetComponent(mChild1)->World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(sComponents.transforms.GetComponent(mChild2)->World(), mView, mProj, Colors::White, mTexture1.Get());
 
 	graphics->PIXEndEvent();
 }

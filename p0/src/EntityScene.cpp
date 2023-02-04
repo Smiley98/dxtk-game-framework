@@ -12,7 +12,7 @@
 
 #include "Utility.h"
 
-#define MAP true
+#define MAP false
 
 namespace
 {
@@ -22,17 +22,17 @@ namespace
 
 using namespace DirectX;
 
-EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components)
-	: Scene(graphics, audio, components)
+EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
+	: Scene(graphics, audio)
 {
 #if MAP
-	mMap = CreateMap(Map::MINTY_AFTERSHAVE, components, sBuildingRenderer, mWorldWidth, mWorldHeight);
+	mMap = CreateMap(Map::MINTY_AFTERSHAVE, sComponents, sBuildingRenderer, mWorldWidth, mWorldHeight);
 #else
 	float step = mWorldWidth / mTestBuildings.size();
 	for (size_t i = 0; i < mTestBuildings.size(); i++)
 	{
-		mTestBuildings[i] = CreateBuilding(mComponents, (Building::Type)i, sBuildingRenderer);
-		mComponents.transforms.GetComponent(mTestBuildings[i])->Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
+		mTestBuildings[i] = CreateBuilding(sComponents, (Building::Type)i, sBuildingRenderer);
+		sComponents.transforms.GetComponent(mTestBuildings[i])->Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
 	}
 #endif
 }
@@ -72,18 +72,18 @@ void EntityScene::OnResume()
 
 void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
-	Players::Update(mComponents, input, dt);
-	Dynamics::Update(mComponents, dt);
-	Collision::Update(mComponents);
+	Players::Update(sComponents, input, dt);
+	Dynamics::Update(sComponents, dt);
+	Collision::Update(sComponents);
 }
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	sPlayerRenderer.DebugPlayer(sPlayer, mComponents, mView, mProj, graphics, false);
+	sPlayerRenderer.DebugPlayer(sPlayer, sComponents, mView, mProj, graphics, false);
 #if MAP
-	sBuildingRenderer.DebugMap(mMap, mComponents, mView, mProj, graphics, false);
+	sBuildingRenderer.DebugMap(mMap, sComponents, mView, mProj, graphics, false);
 #else
 	for (Entity i : mTestBuildings)
-		sBuildingRenderer.DebugBuilding(i, mComponents, mView, mProj, graphics, true);
+		sBuildingRenderer.DebugBuilding(i, sComponents, mView, mProj, graphics, true);
 #endif
 }

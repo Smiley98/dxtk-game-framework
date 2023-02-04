@@ -1,8 +1,6 @@
 #include "Entity.h"
 #include "Components.h"
 
-std::unordered_map<Entity, uint32_t> gLookup;
-
 Entity CreateEntity(Components& components)
 {
 	static Entity entity = 0;
@@ -78,8 +76,3 @@ Entity Root(Entity entity, Components& components)
 	Entity parent = components.hierarchies.GetComponent(entity)->parent;
 	return parent == INVALID_ENTITY ? entity : Root(parent, components);
 }
-
-//EntityTransform& Get(Entity entity)
-//{
-//	return *EntityTransform::sComponents->transforms.GetComponent(entity);
-//}

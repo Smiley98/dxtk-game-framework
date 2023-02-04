@@ -3,8 +3,8 @@
 
 using namespace DirectX;
 
-MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components)
-	: Scene(graphics, audio, components)
+MainScene::MainScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
+	: Scene(graphics, audio)
 {
 	auto context = graphics->GetD3DDeviceContext();
 	auto device = graphics->GetD3DDevice();

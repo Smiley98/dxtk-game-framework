@@ -14,7 +14,6 @@ Game::Game() noexcept(false)
     mStepTimer.SetTargetElapsedSeconds(1.0 / 50.0);
     mDeviceResources = std::make_shared<DX::DeviceResources>();
     mDeviceResources->RegisterDeviceNotify(this);
-    EntityTransform::sComponents = &mComponents;
 }
 
 Game::~Game()
@@ -177,7 +176,7 @@ void Game::GetDefaultSize(int& width, int& height) const noexcept
 // These are the resources that depend on the device.
 void Game::CreateDeviceDependentResources()
 {
-    Scene::Create(mDeviceResources, mAudioEngine, mComponents, mScene);
+    Scene::Create(mDeviceResources, mAudioEngine, mScene);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.

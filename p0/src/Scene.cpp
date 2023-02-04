@@ -19,10 +19,11 @@ PlayerRenderer Scene::sPlayerRenderer;
 BuildingRenderer Scene::sBuildingRenderer;
 MiscRenderer Scene::sMiscRenderer;
 
-Entity Scene::sPlayer = INVALID_ENTITY;
+std::unordered_map<Entity, uint32_t> gLookup;	// Global component hashes (see ComponentMap.h)
+Components Scene::sComponents;					// All components (shared between scenes)
+Entity Scene::sPlayer = INVALID_ENTITY;			// Player shared between scenes
 
-Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components) :
-	mComponents(components)
+Scene::Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 {
 }
 
@@ -31,30 +32,31 @@ Scene::~Scene()
 }
 
 void Scene::Create(
-	std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio,
-	Components& components, Type type)
+	std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Type type)
 {
+	EntityTransform::sComponents = &sComponents;
+
 	sPlayerRenderer.Load(graphics);
 	sBuildingRenderer.Load(graphics);
 	sMiscRenderer.Load(graphics);
 
-	sPlayer = CreatePlayer(components, sPlayerRenderer);
-	components.transforms.GetComponent(sPlayer)->Translate(800.0f, 450.0f, 0.0f);
+	sPlayer = CreatePlayer(sComponents, sPlayerRenderer);
+	sComponents.transforms.GetComponent(sPlayer)->Translate(800.0f, 450.0f, 0.0f);
 
-	//sScenes[SPLASH] = new SplashScene(graphics, audio, components);
-	//sScenes[LOADOUT] = new LoadoutScene(graphics, audio, components);
-	//sScenes[MAP] = new MapScene(graphics, audio, components);
-	//sScenes[MAIN] = new MainScene(graphics, audio, components);
+	//sScenes[SPLASH] = new SplashScene(graphics, audio);
+	//sScenes[LOADOUT] = new LoadoutScene(graphics, audio);
+	//sScenes[MAP] = new MapScene(graphics, audio);
+	//sScenes[MAIN] = new MainScene(graphics, audio);
 
 	// Note, be careful when debugging with multiple scenes at a time.
 	// For example, instantiating the same map 2+ times breaks collisions.
 	
 	sType = type;
-	//sScenes[TEST] = new TestScene(graphics, audio, components);
-	//sScenes[COLLISION] = new CollisionScene(graphics, audio, components);
-	//sScenes[STEERING] = new SteeringScene(graphics, audio, components);
-	sScenes[SPLINE] = new SplineScene(graphics, audio, components);
-	//sScenes[ENTITY] = new EntityScene(graphics, audio, components);
+	//sScenes[COLLISION] = new CollisionScene(graphics, audio);
+	//sScenes[STEERING] = new SteeringScene(graphics, audio);
+	sScenes[SPLINE] = new SplineScene(graphics, audio);
+	//sScenes[ENTITY] = new EntityScene(graphics, audio);
+	//sScenes[TEST] = new TestScene(graphics, audio);
 }
 
 void Scene::Destroy()

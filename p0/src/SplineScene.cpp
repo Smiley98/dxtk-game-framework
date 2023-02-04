@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SplineScene.h"
 #include "EntityFunctions.h"
+#include "PlayerSystem.h"
 #include "DynamicsSystem.h"
 #include "Dynamics.h"
 #include "Utility.h"
@@ -10,11 +11,10 @@ using namespace DirectX;
 namespace
 {
 	float r = 50.0f;
-	float lv = 200.0f;
 }
 
-SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components)
-	: Scene(graphics, audio, components)
+SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
+	: Scene(graphics, audio)
 {
 	mSpline.points = {
 		Vector3{ 500.0f, -300.0f, -500.0f },
@@ -23,21 +23,6 @@ SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		Vector3{ 500.0f, 300.0f, -500.0f }
 	};
 	mSpline.speedTable = CreateSpeedTable(mSpline.points, 16);
-
-	mHeadlights = CreateEntity(mComponents);
-	mComponents.transforms.GetComponent(mHeadlights)->TranslateY(80.0f);
-	mComponents.transforms.GetComponent(mHeadlights)->Scale(100.0f);
-
-	mVan = CreateEntity(mComponents);
-	AddChild(mVan, mHeadlights, mComponents);
-
-	Rigidbody& rb = mComponents.rigidbodies.Add(mVan);
-	EntityTransform& transform = *mComponents.transforms.GetComponent(mVan);
-	rb.velocity.x = -cosf(150.0f * XM_RADIANS) * lv;
-	rb.velocity.y = sinf(150.0f * XM_RADIANS) * lv;
-	rb.velocity.Normalize();
-	transform.Orientate(rb.velocity);
-	transform.Translate((mSpline.points[1] - mSpline.points[0]) * 0.5f);
 }
 
 SplineScene::~SplineScene()
@@ -56,6 +41,7 @@ void SplineScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 
 void SplineScene::OnBegin()
 {
+	sComponents.transforms.GetComponent(sPlayer)->Translate(mSpline.points[0]);
 }
 
 void SplineScene::OnEnd()
@@ -72,12 +58,18 @@ void SplineScene::OnResume()
 
 void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
 {
-	EntityTransform& transform = *mComponents.transforms.GetComponent(mVan);
-	//FollowPath(dt, lv, mSpline, mVan, mComponents);
+	//static float lv = 250.0f;
+	//FollowPath(dt, lv, mSpline, sPlayer, mComponents);
+
+	EntityTransform& transform = *sComponents.transforms.GetComponent(sPlayer);
+	Rigidbody& rb = *sComponents.rigidbodies.GetComponent(sPlayer);
+
 	mNearest = NearestProjection(transform.WorldPosition(), mSpline.points);
-	mFutureNearest = NearestProjection(transform.WorldPosition() + transform.Forward() * lv, mSpline.points);
-	//Dynamics::Integrate()
-	//Dynamics::Update(mComponents, dt);
+	mFutureNearest = NearestProjection(
+		transform.WorldPosition() + Dynamics::Integrate(rb.velocity, rb.acceleration, 0.5f), mSpline.points);
+
+	Players::Update(sComponents, input, dt);
+	Dynamics::Update(sComponents, dt);
 }
 
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -91,6 +83,10 @@ void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 
 	Debug::Sphere(mNearest, r, mView, mProj, graphics);
 	Debug::Sphere(mFutureNearest, r, mView, mProj, graphics);
-	sPlayerRenderer.Render(mComponents.transforms.GetComponent(mVan)->World(), mView, mProj, graphics);
-	//sMiscRenderer.Cone(mComponents.transforms.GetComponent(mHeadlights)->World(), mView, mProj, graphics);
+	sPlayerRenderer.Render(sComponents.transforms.GetComponent(sPlayer)->World(), mView, mProj, graphics);
 }
+
+//sMiscRenderer.Cone(mComponents.transforms.GetComponent(mHeadlights)->World(), mView, mProj, graphics);
+//mHeadlights = CreateEntity(mComponents);
+//mComponents.transforms.GetComponent(mHeadlights)->TranslateY(80.0f);
+//mComponents.transforms.GetComponent(mHeadlights)->Scale(100.0f);

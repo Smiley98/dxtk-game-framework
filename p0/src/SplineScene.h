@@ -6,7 +6,7 @@ class SplineScene :
     public Scene
 {
 public:
-    SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components);
+    SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
     ~SplineScene() final;
 
     void OnResize(std::shared_ptr<DX::DeviceResources> graphics) final;
@@ -21,8 +21,4 @@ private:
     Spline mSpline;
     Vector3 mNearest;
     Vector3 mFutureNearest;
-
-    Entity mVan;
-    Entity mHeadlights;
-    Entity mTarget;
 };

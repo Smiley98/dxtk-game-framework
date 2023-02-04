@@ -5,7 +5,7 @@ class CollisionScene :
     public Scene
 {
 public:
-    CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio, Components& components);
+    CollisionScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
     ~CollisionScene() final;
 
     void OnResize(std::shared_ptr<DX::DeviceResources> graphics) final;

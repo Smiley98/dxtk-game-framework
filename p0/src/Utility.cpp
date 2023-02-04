@@ -30,3 +30,24 @@ void Print(const std::string& message)
 	sprintf(buffer, "%s\n", message.c_str());
 	OutputDebugStringA(buffer);
 }
+
+std::string ToString(const Vector2& vector)
+{
+	return "x: " + std::to_string(vector.x) +
+		" y: " + std::to_string(vector.y);
+}
+
+std::string ToString(const Vector3& vector)
+{
+	return "x: " + std::to_string(vector.x) +
+		" y: " + std::to_string(vector.y) +
+		" z: " + std::to_string(vector.z);
+}
+
+std::string ToString(const Vector4& vector)
+{
+	return "x: " + std::to_string(vector.x) +
+		" y: " + std::to_string(vector.y) +
+		" z: " + std::to_string(vector.z) +
+		" w: " + std::to_string(vector.w);
+}
