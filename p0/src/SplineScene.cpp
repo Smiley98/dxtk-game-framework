@@ -56,7 +56,7 @@ void SplineScene::OnResume()
 {
 }
 
-void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
+void SplineScene::OnUpdate(float dt, float tt)
 {
 	//static float lv = 250.0f;
 	//FollowPath(dt, lv, mSpline, sPlayer, mComponents);
@@ -68,7 +68,7 @@ void SplineScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	mFutureNearest = NearestProjection(
 		transform.WorldPosition() + Dynamics::Integrate(rb.velocity, rb.acceleration, 0.5f), mSpline.points);
 
-	Players::Update(sComponents, input, dt);
+	Players::Update(sComponents, dt);
 	Dynamics::Update(sComponents, dt);
 }
 

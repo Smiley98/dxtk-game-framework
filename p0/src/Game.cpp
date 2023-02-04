@@ -29,8 +29,7 @@ Game::~Game()
 // since Scene expects them to be initialized by then.
 void Game::Initialize(HWND window, int width, int height)
 {
-    mInput.mouse.SetWindow(window);
-
+    Mouse::Get().SetWindow(window);
     AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
 #ifdef _DEBUG
     eflags |= AudioEngine_Debug;
@@ -48,13 +47,8 @@ void Game::Initialize(HWND window, int width, int height)
 // Main runs this function as frequently as possible -- whenever the Win32 event queue is empty
 void Game::Tick()
 {
-    mStepTimer.Tick([&] {
-        Scene::Update(
-            (float)mStepTimer.GetElapsedSeconds(),
-            (float)mStepTimer.GetTotalSeconds(),
-        mInput);
-    });
-
+    // Keyboard, Mouse and GamePad are singletons, and they're polled at their own rate so no point in passing to Update().
+    mStepTimer.Tick([&] { Scene::Update((float)mStepTimer.GetElapsedSeconds(), (float)mStepTimer.GetTotalSeconds()); });
     Input();
     Audio();
     Render();
@@ -62,17 +56,17 @@ void Game::Tick()
 
 void Game::Input()
 {
-    auto const pad = mInput.gamePad.GetState(0);
-    if (pad.IsConnected())
+    GamePad::State padState = GamePad::Get().GetState(0);
+    if (padState.IsConnected())
     {
-        if (pad.IsViewPressed())
+        if (padState.IsViewPressed())
         {
             ExitGame();
         }
     }
 
-    auto const kb = mInput.keyboard.GetState();
-    if (kb.Escape)
+    Keyboard::State keyState = Keyboard::Get().GetState();
+    if (keyState.Escape)
     {
         ExitGame();
     }

@@ -17,7 +17,7 @@ protected:
 	virtual void OnPause() override;
 	virtual void OnResume() override;
 
-	virtual void OnUpdate(float dt, float tt, const DX::Input& input) override;
+	virtual void OnUpdate(float dt, float tt) override;
 	virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) override;
 
 private:

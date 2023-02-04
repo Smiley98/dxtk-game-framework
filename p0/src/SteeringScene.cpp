@@ -142,7 +142,7 @@ void SteeringScene::OnResume()
 {
 }
 
-void SteeringScene::OnUpdate(float dt, float tt, const DX::Input& input)
+void SteeringScene::OnUpdate(float dt, float tt)
 {
 #if BEHAVIOURS
 	{
@@ -205,7 +205,7 @@ void SteeringScene::OnUpdate(float dt, float tt, const DX::Input& input)
 	}
 #endif
 
-	Players::Update(sComponents, input, dt);
+	Players::Update(sComponents, dt);
 	Steering::Update(sComponents, dt);
 	Dynamics::Update(sComponents, dt);
 }

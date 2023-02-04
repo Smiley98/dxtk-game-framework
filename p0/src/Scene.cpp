@@ -113,10 +113,10 @@ void Scene::Resume()
 	scene->mPaused = false;
 }
 
-void Scene::Update(float dt, float tt, const DX::Input& input)
+void Scene::Update(float dt, float tt)
 {
 	Scene& scene = *sScenes[sType];
-	scene.OnUpdate(dt, tt, input);
+	scene.OnUpdate(dt, tt);
 
 	for (auto& [key, val] : scene.mTimers)
 		val.Tick(dt);

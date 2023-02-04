@@ -70,9 +70,9 @@ void EntityScene::OnResume()
 {
 }
 
-void EntityScene::OnUpdate(float dt, float tt, const DX::Input& input)
+void EntityScene::OnUpdate(float dt, float tt)
 {
-	Players::Update(sComponents, input, dt);
+	Players::Update(sComponents, dt);
 	Dynamics::Update(sComponents, dt);
 	Collision::Update(sComponents);
 }

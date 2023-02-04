@@ -8,7 +8,7 @@
 
 namespace Players
 {
-	void Update(Components& components, const DX::Input& input, float dt)
+	void Update(Components& components, float dt)
 	{
 		using namespace DirectX;
 		using namespace SimpleMath;
@@ -48,7 +48,7 @@ namespace Players
 #endif
 			
 #if KEYBOARD
-			Keyboard::State keys = input.keyboard.GetState();
+			Keyboard::State keys = Keyboard::Get().GetState();
 			if (keys.W)
 				translation = FORWARD;
 			else if (keys.S)

@@ -99,7 +99,7 @@ void TestScene::OnResume()
 {
 }
 
-void TestScene::OnUpdate(float dt, float tt, const DX::Input& input)
+void TestScene::OnUpdate(float dt, float tt)
 {
 	sComponents.GetTransform(mParent).RotateY(tt * 50.0f);
 	sComponents.GetTransform(mChild1).RotateX(tt * 50.0f);

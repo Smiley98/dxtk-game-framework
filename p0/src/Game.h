@@ -43,10 +43,12 @@ private:
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
 
-    DX::StepTimer mStepTimer;
     std::shared_ptr<DX::DeviceResources> mDeviceResources;
     std::shared_ptr<DirectX::AudioEngine> mAudioEngine;
-    DX::Input mInput;
-    
+    DirectX::Keyboard mKeyboarrd;
+    DirectX::GamePad mGamePad;
+    DirectX::Mouse mMouse;
+
+    DX::StepTimer mStepTimer;
     Scene::Type mScene = Scene::SPLINE;
 };
