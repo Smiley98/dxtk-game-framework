@@ -50,10 +50,7 @@ void BuildingRenderer::DebugBuilding(Entity entity, Components& components,
 	EntityTransform& colliderTransform = *components.transforms.GetComponent(child);
 
 	if (capsule)
-	{
-		Debug::DrawCapsule(colliderTransform.WorldPosition(), colliderTransform.WorldForward(),
-			collider.r, collider.hh, view, proj, graphics, DirectX::Colors::White, false, true);
-	}
+		Debug::DrawCapsule(colliderTransform.WorldPosition(), colliderTransform.WorldForward(), collider.r, collider.hh);
 	
 	Render(building, buildingTransform.World(), view, proj, graphics);
 }
@@ -62,9 +59,7 @@ void BuildingRenderer::DebugMap(std::vector<Entity> map, Components& components,
 	const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics, bool capsule)
 {
 	for (Entity building : map)
-	{
 		DebugBuilding(building, components, view, proj, graphics, capsule);
-	}
 }
 
 const DirectX::Model& BuildingRenderer::Model(Building::Type type) const

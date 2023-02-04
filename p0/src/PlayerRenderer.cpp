@@ -44,7 +44,7 @@ void PlayerRenderer::DebugPlayer(Entity entity, Components& components,
 	if (capsule)
 	{
 		Debug::DrawCapsule(playerTransform.WorldPosition(), playerTransform.WorldForward(),
-			playerCollider.r, playerCollider.hh, view, proj, graphics, DirectX::Colors::White, false, true);
+			playerCollider.r, playerCollider.hh, DirectX::Colors::White, false);
 	}
 	Render(playerTransform.World(), view, proj, graphics);
 }

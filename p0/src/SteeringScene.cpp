@@ -215,16 +215,14 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	auto drawSphere = [&](Entity entity, float radius,
 		XMVECTOR color = Colors::White, bool wireframe = false)
 	{
-		Debug::DrawSphere(sComponents.transforms.GetComponent(entity)->WorldPosition(),
-			radius, mView, mProj, graphics, color, wireframe);
+		Debug::DrawSphere(sComponents.transforms.GetComponent(entity)->WorldPosition(), radius, color, wireframe);
 	};
 
 	auto drawCapsule = [&](Entity entity, float radius, float halfHeight,
 		XMVECTOR color = Colors::White, bool wireframe = false)
 	{
 		EntityTransform& transform = *sComponents.transforms.GetComponent(entity);
-		Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(),
-			radius, halfHeight, mView, mProj, graphics, color, wireframe);
+		Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(), radius, halfHeight, color, wireframe);
 	};
 
 #if BEHAVIOURS
@@ -238,9 +236,7 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	for (Entity building : mMap)
 	{
 		//sBuildingRenderer.DebugBuilding(building, sComponents, mView, mProj, graphics);
-		Debug::DrawSphere(
-			sComponents.transforms.GetComponent(building)->WorldPosition(),
-			45.0f, mView, mProj, graphics, Colors::Black);
+		Debug::DrawSphere(sComponents.transforms.GetComponent(building)->WorldPosition(), 45.0f, Colors::Black);
 	}
 
 #if AVOID_AHEAD

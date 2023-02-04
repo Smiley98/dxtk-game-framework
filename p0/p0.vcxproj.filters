@@ -280,6 +280,9 @@
     <ClInclude Include="src\EntityFunctions.h">
       <Filter>ECS</Filter>
     </ClInclude>
+    <ClInclude Include="src\Geometry.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">
