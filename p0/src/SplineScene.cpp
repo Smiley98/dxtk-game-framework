@@ -17,10 +17,10 @@ SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	: Scene(graphics, audio)
 {
 	mSpline.points = {
-		Vector3{ 500.0f, -300.0f, -500.0f },
-		Vector3{ -500.0f, -300.0f, 500.0f },
-		Vector3{ -500.0f, 300.0f, 500.0f },
-		Vector3{ 500.0f, 300.0f, -500.0f }
+		Vector3{ 500.0f, -300.0f, 0.0f },
+		Vector3{ -500.0f, -300.0f, 0.0f },
+		Vector3{ -500.0f, 300.0f, 0.0f },
+		Vector3{ 500.0f, 300.0f, -0.0f }
 	};
 	mSpline.speedTable = CreateSpeedTable(mSpline.points, 16);
 }
@@ -59,28 +59,33 @@ void SplineScene::OnResume()
 void SplineScene::OnUpdate(float dt, float tt)
 {
 	//static float lv = 250.0f;
-	//FollowPath(dt, lv, mSpline, sPlayer, mComponents);
+	//FollowPath(dt, lv, mSpline, sPlayer, sComponents);
 
 	EntityTransform& transform = sComponents.GetTransform(sPlayer);
 	Rigidbody& rb = sComponents.GetRigidbody(sPlayer);
-
 	mNearest = NearestProjection(transform.WorldPosition(), mSpline.points);
 	mFutureNearest = NearestProjection(
 		transform.WorldPosition() + Dynamics::Integrate(rb.velocity, rb.acceleration, 0.5f), mSpline.points);
-
+	
 	Players::Update(sComponents, dt);
 	Dynamics::Update(sComponents, dt);
 }
 
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	for (const Vector3& position : mSpline.points)
-		Debug::DrawSphere(position, r);
+	//for (const Vector3& position : mSpline.points)
+	//	Debug::DrawSphere(position, r);
 
 	for (size_t i = 1; i <= mSpline.points.size(); i++)
 		Debug::DrawLine(mSpline.points[i - 1], mSpline.points[i % mSpline.points.size()], 10.0f);
 
-	Debug::DrawSphere(mNearest, r);
+	for (size_t i = 1; i <= mSpline.points.size(); i++)
+	{
+		Debug::DrawSphere(proj(mSpline.points[i - 1], mSpline.points[i % mSpline.points.size()],
+			sComponents.GetTransform(sPlayer).WorldPosition()), r);
+	}
+
+	//Debug::DrawSphere(mNearest, r);
 	Debug::DrawSphere(mFutureNearest, r);
 	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
 }
