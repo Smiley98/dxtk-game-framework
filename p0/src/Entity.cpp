@@ -1,5 +1,6 @@
 #include "Entity.h"
 #include "Components.h"
+#include "MathUtilities.h"
 
 Entity CreateEntity(Components& components)
 {
@@ -10,10 +11,17 @@ Entity CreateEntity(Components& components)
 	return entity;
 }
 
+Entity CreateEntity(Components& components, const Vector3& position)
+{
+	Entity entity = CreateEntity(components);
+	components.GetTransform(entity).Translate(position);
+	return entity;
+}
+
 Entity CreateEntity(Components& components, float x, float y, float z)
 {
 	Entity entity = CreateEntity(components);
-	components.transforms.GetComponent(entity)->Translate(x, y, z);
+	components.GetTransform(entity).Translate(x, y, z);
 	return entity;
 }
 

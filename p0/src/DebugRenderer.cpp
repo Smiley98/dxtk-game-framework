@@ -58,11 +58,11 @@ namespace Debug
 		gCapsules.push_back(std::move(capsule));
 	}
 
-	void DrawLine(const Vector3& a, const Vector3& b, float thickness, XMVECTOR color)
+	void DrawLine(const Vector3& start, const Vector3& end, float thickness, XMVECTOR color)
 	{
 		LineRender line;
-		line.start = a;
-		line.end = b;
+		line.start = start;
+		line.end = end;
 
 		line.color = color;
 		line.thickness = thickness;

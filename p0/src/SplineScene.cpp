@@ -23,6 +23,22 @@ SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		Vector3{ 500.0f, 300.0f, -0.0f }
 	};
 	mSpline.speedTable = CreateSpeedTable(mSpline.points, 16);
+
+	for (size_t i = 0; i < mSpline.points.size(); i++)
+	{
+		Vector3 A = mSpline.points[i];
+		Vector3 B = mSpline.points[(i + 1) % mSpline.points.size()];
+		mTrack.lines[i] = { A, B };
+
+		Vector3 centre = Vector3::Lerp(A, B, 0.5f);
+		Vector3 direction = B - A;
+		direction.Normalize();
+
+		Entity bounds = CreateEntity(sComponents, centre);
+		AddCapsule(bounds, r, (centre - A).Length(), sComponents);
+		sComponents.GetTransform(bounds).Orientate(direction);
+		mTrack.bounds[i] = bounds;
+	}
 }
 
 SplineScene::~SplineScene()
@@ -73,19 +89,24 @@ void SplineScene::OnUpdate(float dt, float tt)
 
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	//for (const Vector3& position : mSpline.points)
-	//	Debug::DrawSphere(position, r);
+	//for (size_t i = 0; i < 4; i++)
+	//{
+	//	Vector3 current = mSpline.points[i];
+	//	Vector3 next = mSpline.points[(i + 1) % mSpline.points.size()];
+	//	Debug::DrawSphere(current, r);
+	//	Debug::DrawLine(current, next, 10.0f);
+	//	Debug::DrawSphere(Project(current, next, sComponents.GetTransform(sPlayer).WorldPosition()), r);
+	//}
 
-	for (size_t i = 1; i <= mSpline.points.size(); i++)
-		Debug::DrawLine(mSpline.points[i - 1], mSpline.points[i % mSpline.points.size()], 10.0f);
-
-	for (size_t i = 1; i <= mSpline.points.size(); i++)
+	for (size_t i = 0; i < 4; i++)
 	{
-		Debug::DrawSphere(proj(mSpline.points[i - 1], mSpline.points[i % mSpline.points.size()],
-			sComponents.GetTransform(sPlayer).WorldPosition()), r);
+		EntityTransform& transform = sComponents.GetTransform(mTrack.bounds[i]);
+		Collider& collider = sComponents.GetCollider(mTrack.bounds[i]);
+		Debug::DrawLine(mTrack.lines[i].start, mTrack.lines[i].end);
+		Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(), r, collider.hh, Colors::White, true);
 	}
 
-	//Debug::DrawSphere(mNearest, r);
+	Debug::DrawSphere(mNearest, r);
 	Debug::DrawSphere(mFutureNearest, r);
 	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
 }

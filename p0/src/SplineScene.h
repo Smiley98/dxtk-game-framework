@@ -1,6 +1,18 @@
 #pragma once
 #include "Scene.h"
 #include "Curves.h"
+#include "Geometry.h"
+
+struct CheckPoint
+{
+
+};
+
+struct Track
+{
+    std::array<Entity, 4> bounds;
+    std::array<Line, 4> lines;
+};
 
 class SplineScene :
     public Scene
@@ -21,4 +33,7 @@ private:
     Spline mSpline;
     Vector3 mNearest;
     Vector3 mFutureNearest;
+
+    Track mTrack;
+    std::array<Entity, 4> mRacers;
 };
