@@ -45,9 +45,6 @@ private:
 
     std::shared_ptr<DX::DeviceResources> mDeviceResources;
     std::shared_ptr<DirectX::AudioEngine> mAudioEngine;
-    DirectX::Keyboard mKeyboarrd;
-    DirectX::GamePad mGamePad;
-    DirectX::Mouse mMouse;
 
     DX::StepTimer mStepTimer;
     Scene::Type mScene = Scene::SPLINE;

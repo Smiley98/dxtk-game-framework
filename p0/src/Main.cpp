@@ -44,6 +44,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 1;
 
     srand(time(nullptr));
+
+    std::unique_ptr<Keyboard> gKeyboard = std::make_unique<Keyboard>();
+    std::unique_ptr<GamePad> gGamePad = std::make_unique<GamePad>();
+    std::unique_ptr<Mouse> gMouse = std::make_unique<Mouse>();
     gGame = std::make_unique<Game>();
 
     // Register class and create window
@@ -103,6 +107,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     }
 
     gGame.reset();
+    gMouse.reset();
+    gGamePad.reset();
+    gKeyboard.reset();
 
     CoUninitialize();
 

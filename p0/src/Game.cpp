@@ -47,7 +47,6 @@ void Game::Initialize(HWND window, int width, int height)
 // Main runs this function as frequently as possible -- whenever the Win32 event queue is empty
 void Game::Tick()
 {
-    // Keyboard, Mouse and GamePad are singletons, and they're polled at their own rate so no point in passing to Update().
     mStepTimer.Tick([&] { Scene::Update((float)mStepTimer.GetElapsedSeconds(), (float)mStepTimer.GetTotalSeconds()); });
     Input();
     Audio();
