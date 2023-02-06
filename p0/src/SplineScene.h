@@ -20,9 +20,6 @@ public:
 
 private:
     Spline mSpline;
-    //Vector3 mNearest;
-    //Vector3 mFutureNearest;
-
 
     std::array<Entity, 4> mRacers;
     std::array<Entity, 4> mCheckpoints;
