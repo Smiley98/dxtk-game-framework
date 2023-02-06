@@ -1,5 +1,6 @@
 #pragma once
 #include "Geometry.h"
+#include <vector>
 #include <cstdlib>
 #undef min
 #undef max
@@ -43,6 +44,24 @@ inline Vector3 Project(const Vector3& a, const Vector3& b, const Vector3& p)
 inline Vector3 Project(const Line& line, const Vector3& point)
 {
 	return Project(line.start, line.end, point);
+}
+
+inline Vector3 NearestProjection(const Vector3& position, const std::vector<Line>& lines, size_t& index)
+{
+	Vector3 nearest;
+	float shortestDistance = std::numeric_limits<float>::max();
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		Vector3 projection = Project(lines[i], position);
+		float distance = (position - projection).LengthSquared();
+		if (distance < shortestDistance)
+		{
+			shortestDistance = distance;
+			nearest = projection;
+			index = i;
+		}
+	}
+	return nearest;
 }
 
 inline Vector3 RandomSpherePoint(float radius)

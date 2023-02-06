@@ -29,20 +29,26 @@ SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		Vector3{ 500.0f, 300.0f, -0.0f }
 	};
 	mSpline.speedTable = CreateSpeedTable(mSpline.points, 16);
+	mSplineFollower = CreateEntity(sComponents);
 
 	for (size_t i = 0; i < mSpline.points.size(); i++)
 	{
 		Vector3 A = mSpline.points[i];
 		Vector3 B = mSpline.points[(i + 1) % mSpline.points.size()];
-		mLines[i] = { A, B };
-		mCheckpoints[i] = CreateEntity(sComponents, A);
+		mLines.push_back({ A, B });
+
+		mCheckpoints.push_back(CreateEntity(sComponents, A));
 		AddCapsule(mCheckpoints[i], 25.0f, 200.0f, sComponents);
 		static float angle = 45.0f;
 		sComponents.GetTransform(mCheckpoints[i]).RotateZ(angle);
 		angle += 90.0f;
-		mIntervals[i] = i;
+
 		CreateRacer(i);
 	}
+
+	sComponents.GetTransform(sPlayer).Translate(
+		Vector3::Lerp(mSpline.points[0], mSpline.points[2], 0.5f)
+	);
 }
 
 SplineScene::~SplineScene()
@@ -61,9 +67,6 @@ void SplineScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 
 void SplineScene::OnBegin()
 {
-	sComponents.GetTransform(sPlayer).Translate(
-		Vector3::Lerp(mSpline.points[0], mSpline.points[2], 0.5f)
-	);
 }
 
 void SplineScene::OnEnd()
@@ -80,8 +83,8 @@ void SplineScene::OnResume()
 
 void SplineScene::OnUpdate(float dt, float tt)
 {
-	//static float lv = 250.0f;
-	//FollowPath(dt, lv, mSpline, sPlayer, sComponents);
+	static float lv = 500.0f;
+	FollowPath(dt, lv, mSpline, mSplineFollower, sComponents);
 
 	for (size_t i = 0; i < 4; i++)
 		FollowTrack(mRacers[i]);
@@ -96,21 +99,22 @@ void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		EntityTransform& transform = sComponents.GetTransform(mCheckpoints[i]);
 		Collider& collider = sComponents.GetCollider(mCheckpoints[i]);
-		Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(), collider.r, collider.hh, Colors::White, true);
+		//Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(), collider.r, collider.hh, Colors::White, true);
 		Debug::DrawLine(mLines[i].start, mLines[i].end);
 		sPlayerRenderer.Render(sComponents.GetTransform(mRacers[i]).World(), mView, mProj, graphics);
 	}
 
+	sPlayerRenderer.Render(sComponents.GetTransform(mSplineFollower).World(), mView, mProj, graphics);
 	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
 }
 
 void SplineScene::CreateRacer(size_t index)
 {
 	Entity racer = CreateEntity(sComponents,
-		Vector3::Lerp(mSpline.points[index], mSpline.points[(index + 1) % mIntervals.size()], 0.5f));
+		Vector3::Lerp(mLines[index].start, mLines[index].end, 0.5f));
 	sComponents.rigidbodies.Add(racer).velocity = RandomCirclePoint(1.0f) * 100.0f;
 	AddCapsule(racer, racerR, racerHH, sComponents);
-	mRacers[index] = racer;
+	mRacers.push_back(racer);
 }
 
 void SplineScene::FollowTrack(Entity& entity)
@@ -118,7 +122,7 @@ void SplineScene::FollowTrack(Entity& entity)
 	size_t index = 0;
 	EntityTransform& transform = sComponents.GetTransform(entity);
 	Vector3 position = transform.WorldPosition();
-	Vector3 nearest = NearestProjection(position, mSpline.points, index);
+	Vector3 nearest = NearestProjection(position, mLines, index);
 	index = Collision::IsColliding(entity, mCheckpoints[index], sComponents) ? (index + 1) % mLines.size() : index;
 	Vector3 toEnd = mLines[index].end - nearest;
 	toEnd.Normalize();
@@ -126,5 +130,5 @@ void SplineScene::FollowTrack(Entity& entity)
 	static const float predictionTime = 0.5f;
 	Rigidbody& rb = sComponents.GetRigidbody(entity);
 	Vector3 prediction = Project(mLines[index], position + Dynamics::Integrate(rb.velocity.Length() * toEnd, rb.acceleration, predictionTime));
-	rb.acceleration = Steering::Seek(prediction, position, rb.velocity, 500.0f);
+	rb.acceleration = Steering::Seek(prediction, position, rb.velocity, 750.0f);
 }

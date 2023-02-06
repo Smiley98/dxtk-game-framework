@@ -20,11 +20,11 @@ public:
 
 private:
     Spline mSpline;
+    Entity mSplineFollower;
 
-    std::array<Entity, 4> mRacers;
-    std::array<Entity, 4> mCheckpoints;
-    std::array<size_t, 4> mIntervals;
-    std::array<Line, 4> mLines;
+    std::vector<Entity> mRacers;
+    std::vector<Entity> mCheckpoints;
+    std::vector<Line> mLines;
 
     void CreateRacer(size_t index);
     void FollowTrack(Entity& entity);
