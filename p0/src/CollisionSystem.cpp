@@ -349,4 +349,74 @@ namespace Collision
 
 		return collision;
 	}
+
+	bool IsColliding(Entity a, Entity b, Components& components)
+	{
+		EntityTransform& tA = *components.transforms.GetComponent(a);
+		EntityTransform& tB = *components.transforms.GetComponent(b);
+		Collider& cA = *components.colliders.GetComponent(a);
+		Collider& cB = *components.colliders.GetComponent(b);
+		assert(cA.type != Collider::NONE && cB.type != Collider::NONE);
+		bool collision = false;
+
+		switch (cA.type)
+		{
+		case Collider::SPHERE:
+			switch (cB.type)
+			{
+			case Collider::SPHERE:
+				collision = SphereSphere(
+					tA.WorldPosition(), tB.WorldPosition(),
+					cA.r, cB.r);
+				break;
+
+			case Collider::CAPSULE:
+				collision = SphereCapsule(
+					tA.WorldPosition(), tB.WorldPosition(), tB.WorldForward(),
+					cA.r, cB.r, cB.hh);
+				break;
+
+				//case Collider::BOX:
+				//	break;
+			}
+			break;
+
+		case Collider::CAPSULE:
+			switch (cB.type)
+			{
+			case Collider::SPHERE:
+				collision = SphereCapsule(
+					tB.WorldPosition(), tA.WorldPosition(), tA.WorldForward(),
+					cB.r, cA.r, cA.hh);
+				break;
+
+			case Collider::CAPSULE:
+				collision = CapsuleCapsule(
+					tA.WorldPosition(), tB.WorldPosition(),
+					tA.WorldForward(), tB.WorldForward(),
+					cA.r, cB.r, cA.hh, cB.hh);
+				break;
+
+				//case Collider::BOX:
+				//	break;
+			}
+			break;
+
+			//case Collider::BOX:
+			//	switch (cB.type)
+			//	{
+			//	case Collider::SPHERE:
+			//		break;
+			//
+			//	case Collider::CAPSULE:
+			//		break;
+			//
+			//	case Collider::BOX:
+			//		break;
+			//	}
+			//	break;
+		}
+
+		return collision;
+	}
 }

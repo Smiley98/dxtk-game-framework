@@ -1,5 +1,6 @@
 #pragma once
-#include "MathUtilities.h"
+#include <SimpleMath.h>
+using namespace DirectX::SimpleMath;
 // Only used in DebugRenderer at the moment because it doesn't make sense to couple geometry with position for collisions.
 
 struct Sphere

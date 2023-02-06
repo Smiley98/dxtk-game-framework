@@ -14,4 +14,5 @@ namespace Collision
 {
 	void Update(Components& components);
 	bool IsColliding(Entity a, Entity b, Vector3& mtv, Components& components);
+	bool IsColliding(Entity a, Entity b, Components& components);
 }

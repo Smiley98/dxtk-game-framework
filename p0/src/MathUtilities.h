@@ -1,10 +1,8 @@
 #pragma once
-#include <SimpleMath.h>
+#include "Geometry.h"
 #include <cstdlib>
 #undef min
 #undef max
-
-using namespace DirectX::SimpleMath;
 
 namespace DirectX
 {
@@ -22,6 +20,11 @@ inline float Lerp(float a, float b, float t)
 	return a * (1.0f - t) + (b * t);
 }
 
+inline float InverseLerp(float n, float a, float b)
+{
+	return (n - a) / (b - a);
+}
+
 inline Vector3 Direction(const Vector3& A, const Vector3& B)
 {
 	Vector3 direction = B - A;
@@ -35,6 +38,11 @@ inline Vector3 Project(const Vector3& a, const Vector3& b, const Vector3& p)
 	Vector3 AB = b - a;
 	float t = (p - a).Dot(AB) / AB.Dot(AB);
 	return a + std::min(std::max(t, 0.0f), 1.0f) * AB;
+}
+
+inline Vector3 Project(const Line& line, const Vector3& point)
+{
+	return Project(line.start, line.end, point);
 }
 
 inline Vector3 RandomSpherePoint(float radius)
@@ -53,3 +61,15 @@ inline Vector3 RandomCirclePoint(float radius)
 	float r = u > 1.0f ? 2.0f - u : u;
 	return Vector3(r * cosf(t), r * sinf(t), 0.0f);
 }
+
+// Not very practical inverse-lerping anything other than scalars
+//template<typename T>
+//T InverseLerp(const T& n, const T& a, const T& b)
+//{
+//	return (n - a) / (b - a);
+//}
+//
+//inline Vector3 InverseLerp(const Vector3& n, const Vector3& a, const Vector3& b)
+//{
+//	return (n - a) / (b - a);
+//}
