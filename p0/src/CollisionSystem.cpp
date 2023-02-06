@@ -251,6 +251,8 @@ namespace Collision
 	{
 		assert(components.identifiers.GetComponent(playerA)->tag == Tags::PLAYER);
 		assert(components.identifiers.GetComponent(playerB)->tag == Tags::PLAYER);
+		components.transforms.GetComponent(playerA)->DeltaTranslate(-mtv);
+		components.transforms.GetComponent(playerB)->DeltaTranslate(mtv);
 	}
 
 	void OnPlayerBuilding(Entity player, Entity buildingCollider, const Vector3& mtv, Components& components)
