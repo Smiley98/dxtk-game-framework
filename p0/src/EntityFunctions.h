@@ -9,5 +9,6 @@ void Pursue(Entity target, Entity seeker, float maxSpeed, float dt, Components& 
 void Evade(Entity target, Entity seeker, float maxSpeed, float dt, Components& components);
 void Arrive(Entity target, Entity seeker, float maxSpeed, float dt, Components& components);
 void Wander(Entity seeker, float maxSpeed, float radius, Components& components);
+void Wander2d(Entity seeker, float maxSpeed, float radius, Components& components);
 
 void FollowPath(float dt, float lv, Spline& spline, Entity entity, Components& components);

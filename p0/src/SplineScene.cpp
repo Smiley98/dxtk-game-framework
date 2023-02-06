@@ -11,7 +11,16 @@ using namespace DirectX;
 namespace
 {
 	float r = 50.0f;
+
+	// Player capsule collider dimensions
+	constexpr float racerR = 33.0f;
+	constexpr float racerHH = 43.0f;
 }
+
+//void SeekTrack(Entity racer, const Track& track)
+//{
+//
+//}
 
 SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	: Scene(graphics, audio)
@@ -24,20 +33,19 @@ SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	};
 	mSpline.speedTable = CreateSpeedTable(mSpline.points, 16);
 
+	Vector3 startPosition = Vector3::Lerp(mSpline.points[0], mSpline.points[1], 0.5f);
+	mRacer = CreateEntity(sComponents, startPosition + Vector3{ 0.0f, racerR / 3.0f, 0.0f });
+
+	sComponents.rigidbodies.Add(mRacer);
+	AddCapsule(mRacer, racerR, racerHH, sComponents);
+
 	for (size_t i = 0; i < mSpline.points.size(); i++)
 	{
 		Vector3 A = mSpline.points[i];
 		Vector3 B = mSpline.points[(i + 1) % mSpline.points.size()];
-		mTrack.lines[i] = { A, B };
-
-		Vector3 centre = Vector3::Lerp(A, B, 0.5f);
-		Vector3 direction = B - A;
-		direction.Normalize();
-
-		Entity bounds = CreateEntity(sComponents, centre);
-		AddCapsule(bounds, r, (centre - A).Length(), sComponents);
-		sComponents.GetTransform(bounds).Orientate(direction);
-		mTrack.bounds[i] = bounds;
+		mLines[i] = { A, B };
+		mCheckpoints[i] = CreateEntity(sComponents, A);
+		AddSphere(mCheckpoints[i], r, sComponents);
 	}
 }
 
@@ -82,36 +90,48 @@ void SplineScene::OnUpdate(float dt, float tt)
 	mNearest = NearestProjection(transform.WorldPosition(), mSpline.points);
 	mFutureNearest = NearestProjection(
 		transform.WorldPosition() + Dynamics::Integrate(rb.velocity, rb.acceleration, 0.5f), mSpline.points);
-	
+
 	Players::Update(sComponents, dt);
 	Dynamics::Update(sComponents, dt);
 }
 
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	//for (size_t i = 0; i < 4; i++)
-	//{
-	//	Vector3 current = mSpline.points[i];
-	//	Vector3 next = mSpline.points[(i + 1) % mSpline.points.size()];
-	//	Debug::DrawSphere(current, r);
-	//	Debug::DrawLine(current, next, 10.0f);
-	//	Debug::DrawSphere(Project(current, next, sComponents.GetTransform(sPlayer).WorldPosition()), r);
-	//}
-
 	for (size_t i = 0; i < 4; i++)
 	{
-		EntityTransform& transform = sComponents.GetTransform(mTrack.bounds[i]);
-		Collider& collider = sComponents.GetCollider(mTrack.bounds[i]);
-		Debug::DrawLine(mTrack.lines[i].start, mTrack.lines[i].end);
-		Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(), r, collider.hh, Colors::White, true);
+		Debug::DrawSphere(sComponents.GetTransform(mCheckpoints[i]).WorldPosition(), r, Colors::White, true);
+		Debug::DrawLine(mLines[i].start, mLines[i].end);
 	}
 
 	Debug::DrawSphere(mNearest, r);
 	Debug::DrawSphere(mFutureNearest, r);
 	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
+	sPlayerRenderer.Render(sComponents.GetTransform(mRacer).World(), mView, mProj, graphics);
 }
 
-//mHeadlights = CreateEntity(mComponents);
-//mComponents.GetTransform(mHeadlights).TranslateY(80.0f);
-//mComponents.GetTransform(mHeadlights).Scale(100.0f);
-//sMiscRenderer.Cone(mComponents.GetTransform(mHeadlights)->World(), mView, mProj, graphics);
+void SplineScene::FollowTrack(Entity& entity)
+{
+	size_t index = 0;
+	EntityTransform& transform = sComponents.GetTransform(entity);
+	Vector3 nearest = NearestProjection(transform.WorldPosition(), mSpline.points, index);
+
+	
+}
+
+/*
+//std::array<Entity, 4> mBounds;
+// No need for bounds because racers seek the track regardless of how off-course they are.
+// Would also need to create bounds along the edges of the track instead of encompassing the track
+// 
+//Vector3 centre = Vector3::Lerp(A, B, 0.5f);
+//Vector3 direction = B - A;
+//direction.Normalize();
+//Entity bounds = CreateEntity(sComponents, centre);
+//AddCapsule(bounds, r * 2.0f, (centre - A).Length(), sComponents);
+//sComponents.GetTransform(bounds).Orientate(direction);
+//mBounds[i] = bounds;
+// 
+//EntityTransform& transform = sComponents.GetTransform(mBounds[i]);
+//Collider& collider = sComponents.GetCollider(mBounds[i]);
+//Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(), collider.r, collider.hh, Colors::White, true);
+*/

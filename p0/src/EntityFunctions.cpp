@@ -98,6 +98,18 @@ void Wander(Entity seeker, float maxSpeed, float radius, Components& components)
 	);
 }
 
+void Wander2d(Entity seeker, float maxSpeed, float radius, Components& components)
+{
+	assert(components.transforms.HasComponent(seeker));
+	assert(components.rigidbodies.HasComponent(seeker));
+
+	components.rigidbodies.GetComponent(seeker)->acceleration = Steering::Wander2d(
+		components.transforms.GetComponent(seeker)->Translation(),
+		components.rigidbodies.GetComponent(seeker)->velocity,
+		maxSpeed, radius
+	);
+}
+
 void FollowPath(
 	float dt, float lv, Spline& spline, Entity entity, Components& components)
 {

@@ -3,17 +3,6 @@
 #include "Curves.h"
 #include "Geometry.h"
 
-struct CheckPoint
-{
-
-};
-
-struct Track
-{
-    std::array<Entity, 4> bounds;
-    std::array<Line, 4> lines;
-};
-
 class SplineScene :
     public Scene
 {
@@ -34,6 +23,9 @@ private:
     Vector3 mNearest;
     Vector3 mFutureNearest;
 
-    Track mTrack;
-    std::array<Entity, 4> mRacers;
+    Entity mRacer;
+    std::array<Entity, 4> mCheckpoints;
+    std::array<Line, 4> mLines;
+
+    void FollowTrack(Entity& entity);
 };
