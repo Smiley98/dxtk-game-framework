@@ -135,6 +135,7 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MainScene.cpp" />
     <ClCompile Include="src\MiscRenderer.cpp" />
+    <ClCompile Include="src\PathScene.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -197,6 +198,7 @@
     <ClInclude Include="src\MainScene.h" />
     <ClInclude Include="src\MathUtilities.h" />
     <ClInclude Include="src\MiscRenderer.h" />
+    <ClInclude Include="src\PathScene.h" />
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\PlayerFactory.h" />
     <ClInclude Include="src\PlayerRenderer.h" />

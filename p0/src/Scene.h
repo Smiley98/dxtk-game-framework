@@ -28,6 +28,7 @@ public:
 		COLLISION,
 		STEERING,
 		SPLINE,
+		PATH,
 		ENTITY,
 		NONE
 	};
