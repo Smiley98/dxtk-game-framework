@@ -30,11 +30,6 @@ SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	};
 	mSpline.speedTable = CreateSpeedTable(mSpline.points, 16);
 
-	Vector3 startPosition = Vector3::Lerp(mSpline.points[0], mSpline.points[1], 0.5f);
-	mRacer = CreateEntity(sComponents, startPosition + Vector3{ 0.0f, racerR / 3.0f, 0.0f });
-	sComponents.rigidbodies.Add(mRacer).velocity = RandomCirclePoint(1.0f) * 100.0f;
-	AddCapsule(mRacer, racerR, racerHH, sComponents);
-
 	for (size_t i = 0; i < mSpline.points.size(); i++)
 	{
 		Vector3 A = mSpline.points[i];
@@ -46,6 +41,7 @@ SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 		sComponents.GetTransform(mCheckpoints[i]).RotateZ(angle);
 		angle += 90.0f;
 		mIntervals[i] = i;
+		CreateRacer(i);
 	}
 }
 
@@ -96,7 +92,9 @@ void SplineScene::OnUpdate(float dt, float tt)
 	//mNearest = NearestProjection(transform.WorldPosition(), mSpline.points);
 	//mFutureNearest = NearestProjection(
 	//	transform.WorldPosition() + Dynamics::Integrate(rb.velocity, rb.acceleration, 0.5f), mSpline.points);
-	FollowTrack(mRacer);
+
+	for (size_t i = 0; i < 4; i++)
+		FollowTrack(mRacers[i]);
 	Players::Update(sComponents, dt);
 	Dynamics::Update(sComponents, dt);
 }
@@ -109,10 +107,19 @@ void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Collider& collider = sComponents.GetCollider(mCheckpoints[i]);
 		//Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(), collider.r, collider.hh, Colors::White, true);
 		Debug::DrawLine(mLines[i].start, mLines[i].end);
+		sPlayerRenderer.Render(sComponents.GetTransform(mRacers[i]).World(), mView, mProj, graphics);
 	}
 
 	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
-	sPlayerRenderer.Render(sComponents.GetTransform(mRacer).World(), mView, mProj, graphics);
+}
+
+void SplineScene::CreateRacer(size_t index)
+{
+	Entity racer = CreateEntity(sComponents,
+		Vector3::Lerp(mSpline.points[index], mSpline.points[(index + 1) % mIntervals.size()], 0.5f));
+	sComponents.rigidbodies.Add(racer).velocity = RandomCirclePoint(1.0f) * 100.0f;
+	AddCapsule(racer, racerR, racerHH, sComponents);
+	mRacers[index] = racer;
 }
 
 void SplineScene::FollowTrack(Entity& entity)
