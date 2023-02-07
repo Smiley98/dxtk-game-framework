@@ -69,6 +69,7 @@ namespace Debug
 
 		box.color = color;
 		box.wireframe = wireframe;
+		gBoxes.push_back(std::move(box));
 	}
 
 	void DrawLine(const Vector3& start, const Vector3& end, float thickness, XMVECTOR color)

@@ -47,5 +47,5 @@ private:
     std::shared_ptr<DirectX::AudioEngine> mAudioEngine;
 
     DX::StepTimer mStepTimer;
-    Scene::Type mScene = Scene::SPLINE;
+    Scene::Type mScene = Scene::PATH;
 };
