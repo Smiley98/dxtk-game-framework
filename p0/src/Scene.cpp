@@ -83,8 +83,9 @@ void Scene::Resize(std::shared_ptr<DX::DeviceResources> graphics)
 	//for (Scene* scene : sScenes)
 	//	scene->OnResize(graphics);
 
-	sScenes[sType]->mViewport = Viewport(graphics->GetScreenViewport());
+	// Must call scene resize before updating viewport since it may modify view and proj!
 	sScenes[sType]->OnResize(graphics);
+	sScenes[sType]->mViewport = Viewport(graphics->GetScreenViewport());
 }
 
 void Scene::Run()
@@ -166,16 +167,6 @@ void Scene::Render(std::shared_ptr<DX::DeviceResources> graphics)
 Scene::Type Scene::Current()
 {
 	return sType;
-}
-
-Vector3 Scene::WorldToScreen(const Vector3& worldPoint)
-{
-	return mViewport.Project(worldPoint, mProj, mView, Matrix::Identity);
-}
-
-Vector3 Scene::ScreenToWorld(const Vector3& screenPoint)
-{
-	return mViewport.Unproject(screenPoint, mProj, mView, Matrix::Identity);
 }
 
 void Scene::AddTimer(const std::string& name, float duration, TimerCallback callback, bool repeat)

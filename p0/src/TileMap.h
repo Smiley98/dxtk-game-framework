@@ -3,17 +3,14 @@
 #include <array>
 #include <vector>
 
+class Scene;
 namespace Pathing
 {
-	struct Cell {
-		size_t row;	// y
-		size_t col;	// x
-	};
-
-	bool operator==(const Cell& a, const Cell& b)
+	struct Cell
 	{
-		return a.row == b.row && a.col == b.col;
-	}
+		size_t col;	// x
+		size_t row;	// y
+	};
 
 	enum TileType : size_t
 	{
@@ -29,31 +26,33 @@ namespace Pathing
 		TileType type;
 	};
 
+	constexpr size_t MAP_SIZE = 10;
+
+	// Draw in world-space and just convert indices
 	class TileMap
 	{
 	public:
-
+		Cell Index(const Vector3& screenPoint, const Scene& scene) const;
+		void RenderTile(TileType type, const Cell& cell, const Scene& scene) const;
+		void Render(const Scene& scene) const;
 
 	private:
-		std::vector<std::vector<Tile>> mTiles;
+		// outer = rows, inner = columns
+		std::array<std::array<size_t, MAP_SIZE>, MAP_SIZE> mTiles
+		{
+			std::array<size_t, MAP_SIZE>{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
+			std::array<size_t, MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			std::array<size_t, MAP_SIZE>{ 3, 0, 1, 1, 1, 1, 1, 1, 1, 0 },
+			std::array<size_t, MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
+			std::array<size_t, MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
+			std::array<size_t, MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
+			std::array<size_t, MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
+			std::array<size_t, MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
+			std::array<size_t, MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
+			std::array<size_t, MAP_SIZE>{ 3, 2, 1, 3, 2, 1, 3, 2, 1, 0 },
+		};
 
 		static std::array<DirectX::XMVECTOR, TileType::COUNT> sTileColors;
 		static std::array<float, TileType::COUNT> sTileCosts;
-	};
-
-	std::array<DirectX::XMVECTOR, TileType::COUNT> TileMap::sTileColors
-	{
-		DirectX::Colors::White,		// Air
-		DirectX::Colors::Green,		// Grass
-		DirectX::Colors::Blue,		// Water
-		DirectX::Colors::DarkGray	// Rock
-	};
-
-	std::array<float, TileType::COUNT> TileMap::sTileCosts
-	{
-		0.0f,	// Air
-		10.0f,	// Grass
-		50.0f,	// Water
-		100.0f	// Rock
 	};
 }

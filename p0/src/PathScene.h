@@ -1,5 +1,7 @@
 #pragma once
 #include "Scene.h"
+#include "TileMap.h"
+
 class PathScene : public Scene
 {
 public:
@@ -16,5 +18,5 @@ public:
 	void OnRender(std::shared_ptr<DX::DeviceResources> graphics) final;
 
 private:
-
+	Pathing::TileMap mMap;
 };
