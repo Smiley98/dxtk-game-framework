@@ -30,6 +30,8 @@ Game::~Game()
 void Game::Initialize(HWND window, int width, int height)
 {
     Mouse::Get().SetWindow(window);
+    //Mouse::Get().SetMode(Mouse::MODE_RELATIVE);
+
     AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
 #ifdef _DEBUG
     eflags |= AudioEngine_Debug;
@@ -175,7 +177,6 @@ void Game::CreateDeviceDependentResources()
 // Allocate all memory resources that change on a window SizeChanged event.
 void Game::CreateWindowSizeDependentResources()
 {
-    // RECT r = m_deviceResources->GetOutputSize(); // Use this internally if you want screen size information
     Scene::Resize(mDeviceResources);
 }
 

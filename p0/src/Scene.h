@@ -70,6 +70,9 @@ protected:
 	virtual void OnUpdate(float dt, float tt) = 0;
 	virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) = 0;
 
+	Vector3 WorldToScreen(const Vector3& worldPoint);
+	Vector3 ScreenToWorld(const Vector3& screenPoint);
+
 	void AddTimer(const std::string& name, float duration, TimerCallback callback, bool repeat);
 	void RemoveTimer(const std::string& name);
 
@@ -86,8 +89,9 @@ protected:
 	static Entity sPlayer;
 
 	// Common members
-	Matrix mView;
+	Viewport mViewport;
 	Matrix mProj;
+	Matrix mView;
 	const float mWorldWidth = 1600;
 	const float mWorldHeight = 900;
 
