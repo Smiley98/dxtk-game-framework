@@ -91,6 +91,7 @@ void SplineScene::OnUpdate(float dt, float tt)
 
 	Players::Update(sComponents, dt);
 	Dynamics::Update(sComponents, dt);
+	Collision::Update(sComponents);
 }
 
 void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -99,7 +100,7 @@ void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		EntityTransform& transform = sComponents.GetTransform(mCheckpoints[i]);
 		Collider& collider = sComponents.GetCollider(mCheckpoints[i]);
-		//Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(), collider.r, collider.hh, Colors::White, true);
+		Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(), collider.r, collider.hh, Colors::White, true);
 		Debug::DrawLine(mLines[i].start, mLines[i].end);
 		sPlayerRenderer.Render(sComponents.GetTransform(mRacers[i]).World(), mView, mProj, graphics);
 	}
@@ -112,6 +113,7 @@ void SplineScene::CreateRacer(size_t index)
 {
 	Entity racer = CreateEntity(sComponents,
 		Vector3::Lerp(mLines[index].start, mLines[index].end, 0.5f));
+	sComponents.identifiers.Add(racer).tag = Tags::PLAYER;
 	sComponents.rigidbodies.Add(racer).velocity = RandomCirclePoint(1.0f) * 100.0f;
 	AddCapsule(racer, racerR, racerHH, sComponents);
 	mRacers.push_back(racer);

@@ -11,6 +11,13 @@ Entity CreateEntity(Components& components)
 	return entity;
 }
 
+Entity CreateEntity(Components& components, float x, float y, float z)
+{
+	Entity entity = CreateEntity(components);
+	components.GetTransform(entity).Translate(x, y, z);
+	return entity;
+}
+
 Entity CreateEntity(Components& components, const Vector3& position)
 {
 	Entity entity = CreateEntity(components);
@@ -23,13 +30,6 @@ Entity CreateEntity(Components& components, const DirectX::SimpleMath::Vector3& 
 	Entity entity = CreateEntity(components);
 	components.GetTransform(entity).Translate(position);
 	components.GetTransform(entity).Orientate(direction);
-	return entity;
-}
-
-Entity CreateEntity(Components& components, float x, float y, float z)
-{
-	Entity entity = CreateEntity(components);
-	components.GetTransform(entity).Translate(x, y, z);
 	return entity;
 }
 
