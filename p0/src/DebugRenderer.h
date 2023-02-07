@@ -11,6 +11,9 @@ namespace Debug
 	void DrawCapsule(const Vector3& position, const Vector3& direction, float radius, float halfHeight,
 		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
 
+	void DrawBox(const Vector3& position, const Vector3& extents, const Vector3& direction = Vector3::UnitY,
+		DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
+
 	void DrawLine(const Vector3& start, const Vector3& end, float thickness = 10.0f,
 		DirectX::XMVECTOR color = DirectX::Colors::White);
 

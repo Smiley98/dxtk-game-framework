@@ -17,6 +17,13 @@ struct Capsule
 	float halfHeight = 0.0f;
 };
 
+struct Box
+{
+	Vector3 position;
+	Vector3 direction;
+	Vector3 extents;
+};
+
 struct Line
 {
 	Vector3 start;
@@ -32,15 +39,15 @@ struct FoV
 	float degrees = 0.0f;
 };
 
-struct AABB
-{
-	Vector3 position;
-	Vector3 extents;
-};
-
-struct OOBB
-{
-	Vector3 position;
-	Vector3 direction;
-	Vector3 extents;
-};
+//struct AABB
+//{
+//	Vector3 position;
+//	Vector3 extents;
+//};
+//
+//struct OOBB
+//{
+//	Vector3 position;
+//	Vector3 direction;
+//	Vector3 extents;
+//};

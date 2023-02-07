@@ -15,6 +15,7 @@ namespace Debug
 
 	struct SphereRender : public GeometryRender, public Sphere {};
 	struct CapsuleRender : public GeometryRender, public Capsule {};
+	struct BoxRender : public GeometryRender, public Box {};
 
 	struct LineRender : public Line
 	{
@@ -31,6 +32,7 @@ namespace Debug
 
 	std::vector<SphereRender> gSpheres;
 	std::vector<CapsuleRender> gCapsules;
+	std::vector<BoxRender> gBoxes;
 	std::vector<LineRender> gLines;
 	std::vector<FoVRender> gFoVs;
 
@@ -56,6 +58,17 @@ namespace Debug
 		capsule.color = color;
 		capsule.wireframe = wireframe;
 		gCapsules.push_back(std::move(capsule));
+	}
+
+	void DrawBox(const Vector3& position, const Vector3& extents, const Vector3& direction, DirectX::XMVECTOR color, bool wireframe)
+	{
+		BoxRender box;
+		box.position = position;
+		box.direction = direction;
+		box.extents = extents;
+
+		box.color = color;
+		box.wireframe = wireframe;
 	}
 
 	void DrawLine(const Vector3& start, const Vector3& end, float thickness, XMVECTOR color)
@@ -110,6 +123,18 @@ namespace Debug
 		cylinder->Draw(transform.Local(), view, proj, capsule.color, nullptr, capsule.wireframe);
 	}
 
+	void DrawBox(const BoxRender& box, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
+	{
+		auto cube = GeometricPrimitive::CreateCube(graphics->GetD3DDeviceContext());
+
+		Transform transform;
+		transform.Translate(box.position);
+		transform.Orientate(box.direction);
+		transform.Scale(box.extents * 2.0f);
+
+		cube->Draw(transform.Local(), view, proj, box.color, nullptr, box.wireframe);
+	}
+
 	void DrawLine(const LineRender& line, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
 	{
 		Vector3 direction = line.end - line.start;
@@ -154,6 +179,9 @@ namespace Debug
 		for (const CapsuleRender& capsule : gCapsules)
 			DrawCapsule(capsule, view, proj, graphics);
 
+		for (const BoxRender& box : gBoxes)
+			DrawBox(box, view, proj, graphics);
+
 		for (const LineRender& line : gLines)
 			DrawLine(line, view, proj, graphics);
 
@@ -162,6 +190,7 @@ namespace Debug
 
 		gSpheres.clear();
 		gCapsules.clear();
+		gBoxes.clear();
 		gLines.clear();
 		gFoVs.clear();
 	}
