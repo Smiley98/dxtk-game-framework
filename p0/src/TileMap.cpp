@@ -44,7 +44,7 @@ namespace Pathing
 
 		float halfWidth = tileWidth * 0.5f;
 		float halfHeight = tileHeight * 0.5f;
-		tilePosition = Vector3{ tilePosition.x + halfWidth, tilePosition.y + halfHeight, tilePosition.z };
+		tilePosition = Vector3{ tilePosition.x + halfWidth, tilePosition.y - halfHeight, tilePosition.z };
 		Vector3 tileExtents{ halfWidth, halfHeight, 1.0f };
 
 		Debug::DrawBox(tilePosition, tileExtents, Vector3::UnitY, sTileColors[type]);
