@@ -31,7 +31,7 @@ void PathScene::OnBegin()
 {
 	AddTimer("mouse", 0.1f, [&] {
 		Mouse::State mouse = Mouse::Get().GetState();
-		Pathing::Cell cell = mMap.Index({ (float)mouse.x, (float)mouse.y, 0.0f }, *this);
+		Tile::Cell cell = Tile::PointToCell({ (float)mouse.x, (float)mouse.y, 0.0f }, *this);
 		Print("row: " + std::to_string(cell.row) + " col :" + std::to_string(cell.col));
 	}, true);
 }
@@ -54,17 +54,6 @@ void PathScene::OnUpdate(float dt, float tt)
 
 void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	//Debug::DrawBox({ 800.0f, 450.0f, 0.0f }, { 160.0f, 90.0f, 1.0f });
-	mMap.Render(*this);
+	Tile::Render(mMap, *this);
 	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
 }
-
-/*
-AddTimer("mouse", 0.1f, [&] {
-	Mouse::State mouse = Mouse::Get().GetState();
-	Vector3 world = ScreenToWorld({ (float)mouse.x, (float)mouse.y, 0.0f });
-	Vector3 screen = WorldToScreen(world);
-	Print(world);
-	Print(screen);
-}, true);
-*/

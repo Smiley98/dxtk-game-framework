@@ -157,6 +157,8 @@
     <ClCompile Include="src\PathScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="src\TileMap.cpp" />
+    <ClCompile Include="src\Pathing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -288,6 +290,8 @@
     <ClInclude Include="src\PathScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="src\TileMap.h" />
+    <ClInclude Include="src\Pathing.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">
