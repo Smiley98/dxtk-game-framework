@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "DebugRenderer.h"
 
+// Tiles are in world-space
 namespace Tile
 {
 	bool operator==(const Cell& a, const Cell& b)
@@ -11,51 +12,20 @@ namespace Tile
 		return a.row == b.row && a.col == b.col;
 	}
 
-	/*
-	std::array<DirectX::XMVECTOR, TileType::COUNT> TileMap::sTileColors
-	{
-		DirectX::Colors::White,		// Air
-		DirectX::Colors::Green,		// Grass
-		DirectX::Colors::Blue,		// Water
-		DirectX::Colors::DarkGray	// Rock
-	};
-
-	std::array<float, TileType::COUNT> TileMap::sTileCosts
-	{
-		0.0f,	// Air
-		10.0f,	// Grass
-		50.0f,	// Water
-		100.0f	// Rock
-	};
-	*/
-
-	//Cell TileMap::Index(const Vector3& screenPoint, const Scene& scene) const
-	//{
-	//	Vector3 worldPoint = scene.ScreenToWorld(screenPoint);
-	//	worldPoint.y = scene.WorldHeight() - worldPoint.y;
-	//	size_t tileWidth = scene.WorldWidth() / MAP_SIZE;
-	//	size_t tileHeight = scene.WorldHeight() / MAP_SIZE;
-	//	return { (size_t)worldPoint.x / tileWidth, (size_t)worldPoint.y / tileHeight };
-	//}
-
 	void RenderTile(Type type, const Cell& cell, const Scene& scene)
 	{
 		float tileWidth = scene.WorldWidth() / (float)MAP_SIZE;
 		float tileHeight = scene.WorldHeight() / (float)MAP_SIZE;
-		Vector3 tilePosition{ tileWidth * cell.col, scene.WorldHeight() - tileHeight * cell.row, 0.0f };
-
-		float halfWidth = tileWidth * 0.5f;
-		float halfHeight = tileHeight * 0.5f;
-		tilePosition = Vector3{ tilePosition.x + halfWidth, tilePosition.y - halfHeight, tilePosition.z };
-		Vector3 tileExtents{ halfWidth, halfHeight, 1.0f };
-
-		Debug::DrawBox(tilePosition, tileExtents, Vector3::UnitY, Color(type));
+		Debug::DrawBox(
+			CellToWorld(cell, scene),
+			{ tileWidth * 0.5f, tileHeight * 0.5f, 1.0f },
+			Vector3::UnitY,
+			Color(type)
+		);
 	}
 
-	void Render(const Map& map, const Scene& scene)
+	void RenderMap(const Map& map, const Scene& scene)
 	{
-		float colSize = scene.WorldWidth()  / (float)MAP_SIZE;
-		float rowSize = scene.WorldHeight() / (float)MAP_SIZE;
 		for (size_t row = 0; row < MAP_SIZE; row++)
 		{
 			for (size_t col = 0; col < MAP_SIZE; col++)
@@ -65,19 +35,22 @@ namespace Tile
 		}
 	}
 
-	Cell PointToCell(const Vector3& point, const Scene& scene)
+	Cell WorldToCell(const Vector3& position, const Scene& scene)
 	{
-		Vector3 worldPoint = scene.ScreenToWorld(point);
-		worldPoint.y = scene.WorldHeight() - worldPoint.y;
 		size_t tileWidth = scene.WorldWidth() / MAP_SIZE;
 		size_t tileHeight = scene.WorldHeight() / MAP_SIZE;
-		return { (size_t)worldPoint.x / tileWidth, (size_t)worldPoint.y / tileHeight };
+		return { (size_t)position.x / tileWidth, (size_t)(scene.WorldHeight() - position.y) / tileHeight };
 	}
 
-	Vector3 CellToPoint(const Cell& cell, const Scene& scene)
+	Vector3 CellToWorld(const Cell& cell, const Scene& scene)
 	{
-
-		return Vector3();
+		size_t tileWidth = scene.WorldWidth() / MAP_SIZE;
+		size_t tileHeight = scene.WorldHeight() / MAP_SIZE;
+		return { 
+			cell.col * tileWidth + tileWidth * 0.5f,
+			scene.WorldHeight() - (cell.row * tileHeight + tileHeight * 0.5f),
+			0.0f
+		};
 	}
 
 	DirectX::XMVECTOR Color(Type type)
@@ -102,5 +75,10 @@ namespace Tile
 			100.0f	// Rock
 		};
 		return costs[type];
+	}
+
+	Type GetType(const Cell& cell, const Map& map)
+	{
+		return (Type)map[cell.row][cell.col];
 	}
 }
