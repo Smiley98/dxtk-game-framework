@@ -97,7 +97,7 @@ namespace Pathing {
                     continue;
 
                 // Calculate scores
-                gNew = true ? manhattan(neighbour, end) : euclidean(neighbour, end);
+                gNew = false ? manhattan(neighbour, end) : euclidean(neighbour, end);
                 hNew = Cost(GetType(neighbour, map));
 
                 // Append if unvisited or best score
@@ -128,14 +128,19 @@ namespace Pathing {
     std::vector<Cell> GetNeighbours(const Cell& cell, const Map& map)
     {
         std::vector<Cell> cells;
-        for (int row = cell.row - 1; row <= cell.row + 1 && row >= 0 && row < MAP_SIZE; row++)
-        {
-            for (int col = cell.col - 1; col <= cell.col + 1 && col >= 0 && col < MAP_SIZE; col++)
-            {
-                if (!(col == cell.col && row == cell.row))
-                    cells.push_back({ col, row });
-            }
-        }
+        // Diagonals
+        //for (int row = cell.row - 1; row <= cell.row + 1 && row >= 0 && row < MAP_SIZE; row++)
+        //{
+        //    for (int col = cell.col - 1; col <= cell.col + 1 && col >= 0 && col < MAP_SIZE; col++)
+        //    {
+        //        if (!(col == cell.col && row == cell.row))
+        //            cells.push_back({ col, row });
+        //    }
+        //}
+        if (cell.col - 1 >= 0) cells.push_back({ cell.col - 1, cell.row });
+        if (cell.col + 1 < MAP_SIZE) cells.push_back({ cell.col + 1, cell.row });
+        if (cell.row - 1 >= 0) cells.push_back({ cell.col, cell.row - 1 });
+        if (cell.row + 1 < MAP_SIZE) cells.push_back({ cell.col, cell.row + 1 });
         return cells;
     }
 }
