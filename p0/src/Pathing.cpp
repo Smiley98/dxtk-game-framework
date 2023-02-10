@@ -54,7 +54,7 @@ namespace Pathing {
         // Computationally expensive but treats diagonals as more expensive than adjacents
         auto euclidean = [](const Cell& a, const Cell& b) -> int {
             int dx = a.col - b.col;
-            int dy = a.col - b.col;
+            int dy = a.row - b.row;
             return sqrt(dx * dx + dy * dy);
         };
 
@@ -68,7 +68,7 @@ namespace Pathing {
         // Mark all nodes as unvisited (closed list = false) and append start to open list
         const int tileCount = MAP_SIZE * MAP_SIZE;
         std::vector<Node> tileNodes(tileCount);
-        std::priority_queue<Node, std::vector<Node>, decltype(predicate)> openList(predicate);
+        std::priority_queue<Node, std::vector<Node>, decltype(predicate) > openList(predicate);
         std::vector<bool> closedList(tileCount, false);
         tileNodes[index(start)].parent = start;
         openList.push({ start });
@@ -97,8 +97,8 @@ namespace Pathing {
                     continue;
 
                 // Calculate scores
-                gNew = tileNodes[index(currentCell)].g + 1;
-                hNew = false ? manhattan(neighbour, end) : euclidean(neighbour, end);
+                gNew = true ? manhattan(neighbour, end) : euclidean(neighbour, end);
+                hNew = Cost(GetType(neighbour, map));
 
                 // Append if unvisited or best score
                 if (tileNodes[neighbourIndex].f() == 0 || (gNew + hNew) < tileNodes[neighbourIndex].f())
@@ -128,11 +128,11 @@ namespace Pathing {
     std::vector<Cell> GetNeighbours(const Cell& cell, const Map& map)
     {
         std::vector<Cell> cells;
-        for (int col = cell.col - 1; col <= cell.col + 1 && col >= 0 && col < MAP_SIZE; col++)
+        for (int row = cell.row - 1; row <= cell.row + 1 && row >= 0 && row < MAP_SIZE; row++)
         {
-            for (int row = cell.row - 1; cell.row <= cell.row + 1 && row >= 0 && row < MAP_SIZE; row++)
+            for (int col = cell.col - 1; col <= cell.col + 1 && col >= 0 && col < MAP_SIZE; col++)
             {
-                if (!(col == cell.col && row == cell.row) && GetType({ col, row }, map) != Type::WATER)
+                if (!(col == cell.col && row == cell.row))
                     cells.push_back({ col, row });
             }
         }

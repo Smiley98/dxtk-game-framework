@@ -47,8 +47,6 @@ void PathScene::OnBegin()
 		Cell cell = WorldToCell(mMouseWorld, *this);
 		Print("row: " + std::to_string(cell.row) + " col :" + std::to_string(cell.col));
 	}, true);
-
-	mPath = FindPath({ 1, 8 }, { 8, 1 }, mMap);
 }
 
 void PathScene::OnEnd()
@@ -67,6 +65,7 @@ void PathScene::OnUpdate(float dt, float tt)
 {
 	Mouse::State mouse = Mouse::Get().GetState();
 	mMouseWorld = ScreenToWorld({ (float)mouse.x, (float)mouse.y, 0.0f });
+	mPath = FindPath({ 1, 8 }, WorldToCell(mMouseWorld, *this), mMap);
 }
 
 void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -74,9 +73,9 @@ void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	RenderMap(mMap, *this);
 	RenderPath(mPath, mMap);
 
-	Cell cell = WorldToCell(mMouseWorld, *this);
-	size_t type = GetType(cell, mMap);
-	RenderTile((Tile::Type)(++type % Tile::COUNT), WorldToCell(mMouseWorld, *this), *this);
+	//Cell cell = WorldToCell(mMouseWorld, *this);
+	//size_t type = GetType(cell, mMap);
+	//RenderTile((Tile::Type)(++type % Tile::COUNT), WorldToCell(mMouseWorld, *this), *this);
 
 	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
 }
