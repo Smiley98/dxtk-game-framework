@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "Pathing.h"
 
-/*
 namespace Pathing {
+    using namespace Tile;
     struct Node
     {
         Node()
@@ -17,7 +17,7 @@ namespace Pathing {
 
         Node(const Cell& cell, int g, int h)
         {
-            init(cell, { -1, -1 }, g, h);
+            init(cell, {}, g, h);
         }
 
         Node(const Cell& cell, const Cell& parentCell, int g, int h)
@@ -25,56 +25,52 @@ namespace Pathing {
             init(cell, parentCell, g, h);
         }
 
-        void init(const Cell& a_cell = { -1, -1 }, const Cell& a_parentCell = { -1, -1 }, int a_g = 0, int a_h = 0)
+        void init(const Cell& cell = {}, const Cell& parent = {}, int g = 0, int h = 0)
         {
-            cell = a_cell;
-            parentCell = a_parentCell;
-            g = a_g;
-            h = a_h;
+            this->cell = cell;
+            this->parent = parent;
+            this->g = g;
+            this->h = h;
         }
 
         int f() const { return g + h; }
 
         void Print()
         {
-            printf("Cell {%i,%i}: f = %i (%ig + %ih)\n", cell.x, cell.y, f(), g, h);
+            printf("Cell {%i,%i}: f = %i (%ig + %ih)\n", cell.col, cell.row, f(), g, h);
         }
 
-        Cell cell, parentCell;
+        Cell cell, parent;
         int g, h;
     };
 
-    Vector3 FollowPath(const Vector3& start, const Vector3& end, float speed, const TileMap& map)
+    Path FindPath(const Cell& start, const Cell& end, const Map& map)
     {
-        Path path = FindPath(map.GetCell(start), map.GetCell(end), map);
-        CPoint destination = path.empty() ? end : map.GetCellCentre(path.front());
-        return Ricochet(start, Math::normalize(destination - start) * speed, map);
-    }
-
-    Path FindPath(const Cell& start, const Cell& end, const CSimpleTileMap& map)
-    {
-        // computationally cheap but treats diagonals the same as adjacents
+        // Computationally cheap but treats diagonals the same as adjacents
         auto manhattan = [](const Cell& a, const Cell& b) -> int {
-            return abs(a.x - b.x) + abs(a.y - b.y);
+            return abs(a.col - b.col) + abs(a.row - b.row);
         };
 
-        // computationally expensive but treats diagonals as more expensive than adjacents
+        // Computationally expensive but treats diagonals as more expensive than adjacents
         auto euclidean = [](const Cell& a, const Cell& b) -> int {
-            int dx = a.x - b.x;
-            int dy = a.y - b.y;
-            return (int)sqrt(dx * dx + dy * dy);
+            int dx = a.col - b.col;
+            int dy = a.col - b.col;
+            return sqrt(dx * dx + dy * dy);
         };
 
         // priority_queue orders its elements *GREATEST* to least, but we want its elements
         // least-to-greatest in order to obtain the best rather than the worst path!
         auto predicate = [](const Node& a, const Node& b) -> bool { return a.f() > b.f(); };
 
+        // Flatten from 2D to 1D
+        auto index = [&](const Cell& cell) -> int { return cell.row * MAP_SIZE + cell.col; };
+
         // Mark all nodes as unvisited (closed list = false) and append start to open list
-        const int tileCount = map.GetMapSize() * map.GetMapSize();
+        const int tileCount = MAP_SIZE * MAP_SIZE;
         std::vector<Node> tileNodes(tileCount);
         std::priority_queue<Node, std::vector<Node>, decltype(predicate)> openList(predicate);
         std::vector<bool> closedList(tileCount, false);
-        tileNodes[map.GetCellIndex(start)].parentCell = start;
+        tileNodes[index(start)].parent = start;
         openList.push({ start });
 
         while (!openList.empty())
@@ -89,19 +85,19 @@ namespace Pathing {
 
             // Otherwise, add current cell to closed list and update g & h values of its neighbours
             openList.pop();
-            closedList[map.GetCellIndex(currentCell)] = true;
+            closedList[index(currentCell)] = true;
 
             int gNew, hNew;
             for (const Cell& neighbour : GetNeighbours(currentCell, map))
             {
-                const int neighbourIndex = map.GetCellIndex(neighbour);
+                const int neighbourIndex = index(neighbour);
 
                 // Skip if already visited
                 if (closedList[neighbourIndex])
                     continue;
 
                 // Calculate scores
-                gNew = tileNodes[map.GetCellIndex(currentCell)].g + 1;
+                gNew = tileNodes[index(currentCell)].g + 1;
                 hNew = false ? manhattan(neighbour, end) : euclidean(neighbour, end);
 
                 // Append if unvisited or best score
@@ -116,40 +112,28 @@ namespace Pathing {
         // Generate path by traversing parents then inverting
         Path path;
         Cell currentCell = end;
-        int currentIndex = map.GetCellIndex(currentCell);
+        int currentIndex = index(currentCell);
 
-        while (!(tileNodes[currentIndex].parentCell == currentCell))
+        while (!(tileNodes[currentIndex].parent == currentCell))
         {
             path.push_back(currentCell);
-            currentCell = tileNodes[currentIndex].parentCell;
-            currentIndex = map.GetCellIndex(currentCell);
+            currentCell = tileNodes[currentIndex].parent;
+            currentIndex = index(currentCell);
         }
         std::reverse(path.begin(), path.end());
 
         return path;
     }
 
-    void DrawPath(const Path& path, const TileMap& map)
-    {
-        if (path.size() > 1)
-        {
-            for (const Cell& cell : path)
-                map.DrawTile(cell, 1.0f, 0.0f, 0.0f);
-
-            map.DrawTile(path.front(), 0.5f, 0.0f, 0.0f);
-            map.DrawTile(path.back(), 0.0f, 0.5f, 0.0f);
-        }
-    }
-
-    std::vector<Cell> GetNeighbours(const Cell& cell, const TileMap& map)
+    std::vector<Cell> GetNeighbours(const Cell& cell, const Map& map)
     {
         std::vector<Cell> cells;
-        for (int i = cell.x - 1; i <= cell.x + 1 && i >= 0 && i < map.GetMapSize(); i++)
+        for (int col = cell.col - 1; col <= cell.col + 1 && col >= 0 && col < MAP_SIZE; col++)
         {
-            for (int j = cell.y - 1; j <= cell.y + 1 && j >= 0 && j < map.GetMapSize(); j++)
+            for (int row = cell.row - 1; cell.row <= cell.row + 1 && row >= 0 && row < MAP_SIZE; row++)
             {
-                if (!(i == cell.x && j == cell.y) && map.GetTileMapValue(i, j) == EMapValue::AIR)
-                    cells.push_back({ i, j });
+                if (!(col == cell.col && row == cell.row) && GetType({ col, row }, map) != Type::WATER)
+                    cells.push_back({ col, row });
             }
         }
         return cells;

@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#include "TileMap.h"
+#include "Pathing.h"
 
 class PathScene : public Scene
 {
@@ -20,17 +20,19 @@ public:
 private:
 	const Tile::Map mMap
 	{
-		std::array<size_t, Tile::MAP_SIZE>{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
-		std::array<size_t, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		std::array<size_t, Tile::MAP_SIZE>{ 3, 0, 1, 1, 1, 1, 1, 1, 1, 0 },
-		std::array<size_t, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
-		std::array<size_t, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
-		std::array<size_t, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
-		std::array<size_t, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
-		std::array<size_t, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
-		std::array<size_t, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
-		std::array<size_t, Tile::MAP_SIZE>{ 3, 2, 1, 3, 2, 1, 3, 2, 1, 0 },
+		std::array<int, Tile::MAP_SIZE>{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
+		std::array<int, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
+		std::array<int, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
+		std::array<int, Tile::MAP_SIZE>{ 3, 0, 0, 2, 2, 2, 2, 0, 0, 3 },
+		std::array<int, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 2, 0, 0, 3 },
+		std::array<int, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 2, 0, 0, 3 },
+		std::array<int, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 2, 0, 0, 3 },
+		std::array<int, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
+		std::array<int, Tile::MAP_SIZE>{ 3, 0, 0, 0, 0, 0, 0, 0, 0, 3 },
+		std::array<int, Tile::MAP_SIZE>{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
 	};
-
 	Vector3 mMouseWorld;
+	Pathing::Path mPath;
+
+	void RenderPath(const Pathing::Path& path, const Tile::Map& map);
 };

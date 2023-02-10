@@ -6,6 +6,19 @@
 
 using namespace DirectX;
 using namespace Tile;
+using namespace Pathing;
+
+void PathScene::RenderPath(const Path& path, const Map& map)
+{
+	if (!path.empty())
+	{
+		for (const Cell& cell : path)
+			RenderTileDebug(DirectX::Colors::Red, cell, *this);
+
+		RenderTileDebug(DirectX::Colors::Cyan, path.front(), *this);
+		RenderTileDebug(DirectX::Colors::Magenta, path.back(), *this);
+	}
+}
 
 PathScene::PathScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	: Scene(graphics, audio)
@@ -34,6 +47,8 @@ void PathScene::OnBegin()
 		Cell cell = WorldToCell(mMouseWorld, *this);
 		Print("row: " + std::to_string(cell.row) + " col :" + std::to_string(cell.col));
 	}, true);
+
+	mPath = FindPath({ 1, 8 }, { 8, 1 }, mMap);
 }
 
 void PathScene::OnEnd()
@@ -57,6 +72,7 @@ void PathScene::OnUpdate(float dt, float tt)
 void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	RenderMap(mMap, *this);
+	RenderPath(mPath, mMap);
 
 	Cell cell = WorldToCell(mMouseWorld, *this);
 	size_t type = GetType(cell, mMap);

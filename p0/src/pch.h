@@ -45,6 +45,7 @@
 #include <exception>
 #include <iterator>
 #include <memory>
+#include <queue>
 #include <stdexcept>
 #include <string>
 #include <system_error>

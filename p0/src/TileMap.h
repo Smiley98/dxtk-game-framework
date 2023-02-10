@@ -7,11 +7,12 @@ namespace Tile
 {
 	struct Cell
 	{
-		size_t col;	// x
-		size_t row;	// y
+		int col = -1;	// x
+		int row = -1;	// y
 	};
+	bool operator==(const Cell& a, const Cell& b);
 
-	enum Type : size_t
+	enum Type : int
 	{
 		AIR,
 		GRASS,
@@ -20,9 +21,10 @@ namespace Tile
 		COUNT
 	};
 
-	constexpr size_t MAP_SIZE = 10;
-	using Map = std::array<std::array<size_t, MAP_SIZE>, MAP_SIZE>;
+	constexpr size_t MAP_SIZE = 10U;
+	using Map = std::array<std::array<int, MAP_SIZE>, MAP_SIZE>;
 
+	void RenderTileDebug(DirectX::XMVECTOR color, const Cell& cell, const Scene& scene);
 	void RenderTile(Type type, const Cell& cell, const Scene& scene);
 	void RenderMap(const Map& map, const Scene& scene);
 
