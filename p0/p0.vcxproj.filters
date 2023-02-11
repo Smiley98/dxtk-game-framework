@@ -46,6 +46,12 @@
     <Filter Include="ECS\Systems">
       <UniqueIdentifier>{c34dce8f-1b0e-4194-847c-24a0180228c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Widgets">
+      <UniqueIdentifier>{7c8790ec-e499-4908-a7db-23d2bda2403d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pathing">
+      <UniqueIdentifier>{37e921a1-e97a-4536-b88c-1608705513f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\fonts\SegoeUI_18.spritefont">
@@ -157,8 +163,15 @@
     <ClCompile Include="src\PathScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="src\TileMap.cpp" />
-    <ClCompile Include="src\Pathing.cpp" />
+    <ClCompile Include="src\Button.cpp">
+      <Filter>Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pathing.cpp">
+      <Filter>Pathing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TileMap.cpp">
+      <Filter>Pathing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DeviceResources.h" />
@@ -290,8 +303,15 @@
     <ClInclude Include="src\PathScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="src\TileMap.h" />
-    <ClInclude Include="src\Pathing.h" />
+    <ClInclude Include="src\Button.h">
+      <Filter>Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pathing.h">
+      <Filter>Pathing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TileMap.h">
+      <Filter>Pathing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\music\musicmono_adpcm.wav">

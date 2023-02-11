@@ -64,6 +64,16 @@ inline Vector3 NearestProjection(const Vector3& position, const std::vector<Line
 	return nearest;
 }
 
+inline Vector3 WorldToScreen(const Vector3& worldPoint, const Space& space)
+{
+	return space.viewport.Project(worldPoint, space.proj, space.view, Matrix::Identity);
+};
+
+inline Vector3 ScreenToWorld(const Vector3& screenPoint, const Space& space)
+{
+	return space.viewport.Unproject(screenPoint, space.proj, space.view, Matrix::Identity);
+}
+
 inline Vector3 RandomSpherePoint(float radius)
 {
 	float z = Random(-1.0f, 1.0f);

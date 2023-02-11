@@ -13,10 +13,10 @@ void PathScene::RenderPath(const Path& path, const Map& map)
 	if (!path.empty())
 	{
 		for (const Cell& cell : path)
-			RenderTileDebug(DirectX::Colors::Red, cell, *this);
+			RenderTileDebug(DirectX::Colors::Red, cell);
 
-		RenderTileDebug(DirectX::Colors::Cyan, path.front(), *this);
-		RenderTileDebug(DirectX::Colors::Magenta, path.back(), *this);
+		RenderTileDebug(DirectX::Colors::Cyan, path.front());
+		RenderTileDebug(DirectX::Colors::Magenta, path.back());
 	}
 }
 
@@ -35,16 +35,23 @@ void PathScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_RADIANS;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-	float halfWidth = mWorldWidth * 0.5f;
-	float halfHeight = mWorldHeight * 0.5f;
-	mView = Matrix::CreateLookAt({ halfWidth, halfHeight, 1000.0f }, { halfWidth, halfHeight, 0.0f }, Vector3::Up);
-	mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
+
+	float halfWidth = mSpace.worldWidth * 0.5f;
+	float halfHeight = mSpace.worldHeight * 0.5f;
+	mSpace.proj = Matrix::CreateOrthographic(mSpace.worldWidth, mSpace.worldHeight, 0.1f, 10000.0f);
+	mSpace.view = Matrix::CreateLookAt(
+		{ halfWidth, halfHeight, 1000.0f },
+		{ halfWidth, halfHeight, 0.0f },
+		Vector3::Up
+	);
+
+	Tile::OnResize(mSpace.worldWidth, mSpace.worldHeight);
 }
 
 void PathScene::OnBegin()
 {
 	AddTimer("mouse", 0.1f, [&] {
-		Cell cell = WorldToCell(mMouseWorld, *this);
+		Cell cell = WorldToCell(mMouseWorld);
 		Print("row: " + std::to_string(cell.row) + " col :" + std::to_string(cell.col));
 	}, true);
 }
@@ -65,17 +72,17 @@ void PathScene::OnUpdate(float dt, float tt)
 {
 	Mouse::State mouse = Mouse::Get().GetState();
 	mMouseWorld = ScreenToWorld({ (float)mouse.x, (float)mouse.y, 0.0f });
-	mPath = FindPath({ 1, 8 }, WorldToCell(mMouseWorld, *this), mMap);
+	mPath = FindPath({ 1, 8 }, WorldToCell(mMouseWorld), mMap);
 }
 
 void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	RenderMap(mMap, *this);
+	RenderMap(mMap);
 	RenderPath(mPath, mMap);
 
-	//Cell cell = WorldToCell(mMouseWorld, *this);
+	//Cell cell = WorldToCell(mMouseWorld);
 	//size_t type = GetType(cell, mMap);
-	//RenderTile((Tile::Type)(++type % Tile::COUNT), WorldToCell(mMouseWorld, *this), *this);
+	//RenderTile((Tile::Type)(++type % Tile::COUNT), WorldToCell(mMouseWorld));
 
-	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
+	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mSpace.view, mSpace.proj, graphics);
 }

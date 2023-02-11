@@ -61,8 +61,8 @@ void SplineScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_RADIANS;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
-	mProj = Matrix::CreateOrthographic(mWorldWidth, mWorldHeight, 0.1f, 10000.0f);
+	mSpace.view = Matrix::CreateLookAt({ 0.0f, 0.0f, 1000.0f }, Vector3::Zero, Vector3::Up);
+	mSpace.proj = Matrix::CreateOrthographic(mSpace.worldWidth, mSpace.worldHeight, 0.1f, 10000.0f);
 }
 
 void SplineScene::OnBegin()
@@ -102,11 +102,11 @@ void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		Collider& collider = sComponents.GetCollider(mCheckpoints[i]);
 		Debug::DrawCapsule(transform.WorldPosition(), transform.WorldForward(), collider.r, collider.hh, Colors::White, true);
 		Debug::DrawLine(mLines[i].start, mLines[i].end);
-		sPlayerRenderer.Render(sComponents.GetTransform(mRacers[i]).World(), mView, mProj, graphics);
+		sPlayerRenderer.Render(sComponents.GetTransform(mRacers[i]).World(), mSpace.view, mSpace.proj, graphics);
 	}
 
-	sPlayerRenderer.Render(sComponents.GetTransform(mSplineFollower).World(), mView, mProj, graphics);
-	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
+	sPlayerRenderer.Render(sComponents.GetTransform(mSplineFollower).World(), mSpace.view, mSpace.proj, graphics);
+	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mSpace.view, mSpace.proj, graphics);
 }
 
 void SplineScene::CreateRacer(size_t index)

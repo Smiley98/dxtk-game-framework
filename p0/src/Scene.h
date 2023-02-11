@@ -57,21 +57,10 @@ public:
 
 	static Type Current();
 
-	Vector3 WorldToScreen(const Vector3& worldPoint) const
-	{
-		return mViewport.Project(worldPoint, mProj, mView, Matrix::Identity);
-	};
-
-	Vector3 ScreenToWorld(const Vector3& screenPoint) const
-	{
-		return mViewport.Unproject(screenPoint, mProj, mView, Matrix::Identity);
-	}
-
-	Viewport Screen() const { return mViewport; }
-	Matrix Proj() const { return mProj; }
-	Matrix View() const { return mView; }
-	float WorldWidth() const { return mWorldWidth; }
-	float WorldHeight() const { return mWorldHeight; }
+	static Vector3 WorldToScreen(const Vector3& worldPoint);
+	static Vector3 ScreenToWorld(const Vector3& screenPoint);
+	static float WorldWidth();
+	static float WorldHeight();
 
 protected:
 	Scene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio);
@@ -102,11 +91,7 @@ protected:
 	static Entity sPlayer;
 
 	// Common members
-	Viewport mViewport;
-	Matrix mProj;
-	Matrix mView;
-	const float mWorldWidth = 1600;
-	const float mWorldHeight = 900;
+	Space mSpace;
 
 private:
 	static std::array<Scene*, NONE> sScenes;

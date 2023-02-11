@@ -7,63 +7,64 @@
 // Tiles are in world-space
 namespace Tile
 {
+	int gTileWidth = 0;
+	int gTileHeight = 0;
+
 	bool operator==(const Cell& a, const Cell& b)
 	{
 		return a.row == b.row && a.col == b.col;
 	}
 
-	void RenderTileDebug(DirectX::XMVECTOR color, const Cell& cell, const Scene& scene)
+	void RenderTileDebug(DirectX::XMVECTOR color, const Cell& cell)
 	{
-		float tileWidth = scene.WorldWidth() / (float)MAP_SIZE;
-		float tileHeight = scene.WorldHeight() / (float)MAP_SIZE;
 		Debug::DrawBox(
-			CellToWorld(cell, scene),
-			{ tileWidth * 0.5f, tileHeight * 0.5f, 1.0f },
+			CellToWorld(cell),
+			{ gTileWidth * 0.5f, gTileHeight * 0.5f, 1.0f },
 			Vector3::UnitY,
 			color
 		);
 	}
 
-	void RenderTile(Type type, const Cell& cell, const Scene& scene)
+	void RenderTile(Type type, const Cell& cell)
 	{
-		float tileWidth = scene.WorldWidth() / (float)MAP_SIZE;
-		float tileHeight = scene.WorldHeight() / (float)MAP_SIZE;
 		Debug::DrawBox(
-			CellToWorld(cell, scene),
-			{ tileWidth * 0.5f, tileHeight * 0.5f, 1.0f },
+			CellToWorld(cell),
+			{ gTileWidth * 0.5f, gTileHeight * 0.5f, 1.0f },
 			Vector3::UnitY,
 			Color(type)
 		);
 	}
 
-	void RenderMap(const Map& map, const Scene& scene)
+	void RenderMap(const Map& map)
 	{
 		for (int row = 0; row < MAP_SIZE; row++)
 		{
 			for (int col = 0; col < MAP_SIZE; col++)
 			{
-				RenderTile((Type)map[row][col], { col, row }, scene);
+				RenderTile((Type)map[row][col], { col, row });
 			}
 		}
 	}
 
-	Cell WorldToCell(const Vector3& position, const Scene& scene)
+	Cell WorldToCell(const Vector3& position)
 	{
-		int tileWidth = scene.WorldWidth() / MAP_SIZE;
-		int tileHeight = scene.WorldHeight() / MAP_SIZE;
-		return { (int)position.x / tileWidth, (int)(scene.WorldHeight() - position.y) / tileHeight };
+		return { (int)position.x / gTileWidth, (int)(Scene::WorldHeight() - position.y) / gTileHeight };
 	}
 
-	Vector3 CellToWorld(const Cell& cell, const Scene& scene)
+	Vector3 CellToWorld(const Cell& cell)
 	{
-		int tileWidth = scene.WorldWidth() / MAP_SIZE;
-		int tileHeight = scene.WorldHeight() / MAP_SIZE;
 		return { 
-			cell.col * tileWidth + tileWidth * 0.5f,
-			scene.WorldHeight() - (cell.row * tileHeight + tileHeight * 0.5f),
+			cell.col * gTileWidth + gTileWidth * 0.5f,
+			Scene::WorldHeight() - (cell.row * gTileHeight + gTileHeight * 0.5f),
 			0.0f
 		};
 	}
+
+	void OnResize(float worldWidth, float worldHeight)
+	{
+		gTileWidth = worldWidth / MAP_SIZE;
+		gTileHeight = worldHeight / MAP_SIZE;
+;	}
 
 	DirectX::XMVECTOR Color(Type type)
 	{

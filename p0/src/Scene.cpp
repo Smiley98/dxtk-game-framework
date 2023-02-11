@@ -85,7 +85,7 @@ void Scene::Resize(std::shared_ptr<DX::DeviceResources> graphics)
 
 	// Must call scene resize before updating viewport since it may modify view and proj!
 	sScenes[sType]->OnResize(graphics);
-	sScenes[sType]->mViewport = Viewport(graphics->GetScreenViewport());
+	sScenes[sType]->mSpace.viewport = Viewport(graphics->GetScreenViewport());
 }
 
 void Scene::Run()
@@ -161,12 +161,32 @@ void Scene::Render(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	Scene& scene = *sScenes[sType];
 	scene.OnRender(graphics);
-	Debug::DrawDeferred(scene.mView, scene.mProj, graphics);
+	Debug::DrawDeferred(scene.mSpace.view, scene.mSpace.proj, graphics);
 }
 
 Scene::Type Scene::Current()
 {
 	return sType;
+}
+
+Vector3 Scene::WorldToScreen(const Vector3& worldPoint)
+{
+	return ::WorldToScreen(worldPoint, sScenes[sType]->mSpace);
+}
+
+Vector3 Scene::ScreenToWorld(const Vector3& screenPoint)
+{
+	return ::ScreenToWorld(screenPoint, sScenes[sType]->mSpace);
+}
+
+float Scene::WorldWidth()
+{
+	return sScenes[sType]->mSpace.worldWidth;
+}
+
+float Scene::WorldHeight()
+{
+	return sScenes[sType]->mSpace.worldHeight;
 }
 
 void Scene::AddTimer(const std::string& name, float duration, TimerCallback callback, bool repeat)

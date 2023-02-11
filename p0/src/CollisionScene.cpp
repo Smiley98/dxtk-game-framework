@@ -59,8 +59,8 @@ void CollisionScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const RECT size = graphics->GetOutputSize();
 	const float width = float(size.right - size.left);
 	const float height = float(size.bottom - size.top);
-	mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 100.0f }, {}, Vector3::UnitY);
-	mProj = Matrix::CreateOrthographic(width, height, 0.01f, 1000.0f);
+	mSpace.view = Matrix::CreateLookAt({ 0.0f, 0.0f, 100.0f }, {}, Vector3::UnitY);
+	mSpace.proj = Matrix::CreateOrthographic(width, height, 0.01f, 1000.0f);
 }
 
 void CollisionScene::OnBegin()

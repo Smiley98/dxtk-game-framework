@@ -1,7 +1,6 @@
 #pragma once
 #include <SimpleMath.h>
 using namespace DirectX::SimpleMath;
-// Only used in DebugRenderer at the moment because it doesn't make sense to couple geometry with position for collisions.
 
 struct Sphere
 {
@@ -39,15 +38,12 @@ struct FoV
 	float degrees = 0.0f;
 };
 
-//struct AABB
-//{
-//	Vector3 position;
-//	Vector3 extents;
-//};
-//
-//struct OOBB
-//{
-//	Vector3 position;
-//	Vector3 direction;
-//	Vector3 extents;
-//};
+struct Space
+{
+	Viewport viewport;
+	Matrix proj;
+	Matrix view;
+	const float worldWidth = 1600;
+	const float worldHeight = 900;
+	const float worldDepth = 10000.0f;
+};

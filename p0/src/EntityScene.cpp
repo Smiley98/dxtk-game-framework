@@ -25,13 +25,13 @@ EntityScene::EntityScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	: Scene(graphics, audio)
 {
 #if MAP
-	mMap = CreateMap(Map::MINTY_AFTERSHAVE, sComponents, sBuildingRenderer, mWorldWidth, mWorldHeight);
+	mMap = CreateMap(Map::MINTY_AFTERSHAVE, sComponents, sBuildingRenderer, mSpace.worldWidth, mSpace.worldHeight);
 #else
-	float step = mWorldWidth / mTestBuildings.size();
+	float step = mSpace.worldWidth / mTestBuildings.size();
 	for (size_t i = 0; i < mTestBuildings.size(); i++)
 	{
 		mTestBuildings[i] = CreateBuilding(sComponents, (Building::Type)i, sBuildingRenderer);
-		sComponents.GetTransform(mTestBuildings[i]).Translate(100.0f + i * step, mWorldHeight * 0.5f, 0.0f);
+		sComponents.GetTransform(mTestBuildings[i]).Translate(100.0f + i * step, mSpace.worldHeight * 0.5f, 0.0f);
 	}
 #endif
 }
@@ -46,11 +46,11 @@ void EntityScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_RADIANS;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-	mView = Matrix::CreateLookAt(
-		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
-		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
+	mSpace.view = Matrix::CreateLookAt(
+		{ mSpace.worldWidth * 0.5f, mSpace.worldHeight * 0.5f, 1000.0f },
+		{ mSpace.worldWidth * 0.5f, mSpace.worldHeight * 0.5f, 0.0f },
 		Vector3::Up);
-	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
+	mSpace.proj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
 }
 
 void EntityScene::OnBegin()
@@ -78,11 +78,11 @@ void EntityScene::OnUpdate(float dt, float tt)
 
 void EntityScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
-	sPlayerRenderer.DebugPlayer(sPlayer, sComponents, mView, mProj, graphics, false);
+	sPlayerRenderer.DebugPlayer(sPlayer, sComponents, mSpace.view, mSpace.proj, graphics, false);
 #if MAP
-	sBuildingRenderer.DebugMap(mMap, sComponents, mView, mProj, graphics, false);
+	sBuildingRenderer.DebugMap(mMap, sComponents, mSpace.view, mSpace.proj, graphics, false);
 #else
 	for (Entity i : mTestBuildings)
-		sBuildingRenderer.DebugBuilding(i, sComponents, mView, mProj, graphics, true);
+		sBuildingRenderer.DebugBuilding(i, sComponents, mSpace.view, mSpace.proj, graphics, true);
 #endif
 }

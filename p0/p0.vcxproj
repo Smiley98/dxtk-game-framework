@@ -105,6 +105,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\BuildingRenderer.cpp" />
+    <ClCompile Include="src\Button.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\DebugRenderer.cpp" />
     <ClCompile Include="src\DeviceResources.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="src\BuildingFactory.h" />
     <ClInclude Include="src\BuildingRenderer.h" />
     <ClInclude Include="src\Building.h" />
+    <ClInclude Include="src\Button.h" />
     <ClInclude Include="src\CollisionMath.h" />
     <ClInclude Include="src\CollisionSystem.h" />
     <ClInclude Include="src\ComponentMap.h" />

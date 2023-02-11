@@ -20,9 +20,7 @@ void MainScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_PI / 180.0f;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
-	//mView = Matrix::CreateLookAt({ 0.0f, 0.0f, 100.0f }, {}, Vector3::UnitY);
-	//mProj = Matrix::CreateOrthographic(width, height, 0.01f, 1000.0f);
+	mSpace.proj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.01f, 10000.0f);
 }
 
 void MainScene::OnBegin()
@@ -43,7 +41,7 @@ void MainScene::OnResume()
 
 void MainScene::OnUpdate(float dt, float tt)
 {
-	mView = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
+	mSpace.view = Matrix::CreateLookAt({ 0.0f, -100.0f, 1000.0f }, {}, Vector3::UnitY);
 }
 
 void MainScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)

@@ -37,12 +37,12 @@ void SteeringScene::Reset()
 	EntityTransform& t1 = sComponents.GetTransform(mAvoider1);
 	EntityTransform& t2 = sComponents.GetTransform(mAvoider2);
 
-	t1.Translate({ Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight), 0.0f });
-	t2.Translate({ Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight), 0.0f });
+	t1.Translate({ Random(0.0f, mSpace.worldWidth), Random(0.0f, mSpace.worldHeight), 0.0f });
+	t2.Translate({ Random(0.0f, mSpace.worldWidth), Random(0.0f, mSpace.worldHeight), 0.0f });
 	while (((t2.WorldPosition() - t1.WorldPosition()).Length() < 1000.0f))
 	{
-		t1.Translate({ Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight), 0.0f });
-		t2.Translate({ Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight), 0.0f });
+		t1.Translate({ Random(0.0f, mSpace.worldWidth), Random(0.0f, mSpace.worldHeight), 0.0f });
+		t2.Translate({ Random(0.0f, mSpace.worldWidth), Random(0.0f, mSpace.worldHeight), 0.0f });
 	}
 
 	Vector3 v12 = t2.WorldPosition() - t1.WorldPosition();
@@ -54,18 +54,18 @@ void SteeringScene::Reset()
 SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	: Scene(graphics, audio)
 {
-	mMap = CreateMap(Map::MINTY_AFTERSHAVE, sComponents, sBuildingRenderer, mWorldWidth, mWorldHeight);
+	mMap = CreateMap(Map::MINTY_AFTERSHAVE, sComponents, sBuildingRenderer, mSpace.worldWidth, mSpace.worldHeight);
 
 #if BEHAVIOURS
 	mSeeker = CreateSteering(sComponents, SteeringBehaviour::SEEK, SPEED_MAX, sPlayer);
 	mArriver = CreateSteering(sComponents, SteeringBehaviour::ARRIVE, SPEED_MAX, sPlayer);
-	mWanderer = CreateEntity(sComponents, mWorldWidth * 0.5f, mWorldHeight * 0.5f);
+	mWanderer = CreateEntity(sComponents, mSpace.worldWidth * 0.5f, mSpace.worldHeight * 0.5f);
 	sComponents.rigidbodies.Add(mWanderer);
 #endif
 	
 #if MAZE
-	mRandomTarget = CreateEntity(sComponents, Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight));
-	mAvoidingSeeker = CreateEntity(sComponents, Random(0.0f, mWorldWidth), Random(0.0f, mWorldHeight));
+	mRandomTarget = CreateEntity(sComponents, Random(0.0f, mSpace.worldWidth), Random(0.0f, mSpace.worldHeight));
+	mAvoidingSeeker = CreateEntity(sComponents, Random(0.0f, mSpace.worldWidth), Random(0.0f, mSpace.worldHeight));
 	mSensor = CreateEntity(sComponents, 0.0f, sphereRadius + sensorRadius);
 	sComponents.rigidbodies.Add(mRandomTarget);
 	sComponents.rigidbodies.Add(mAvoidingSeeker);
@@ -80,8 +80,8 @@ SteeringScene::SteeringScene(std::shared_ptr<DX::DeviceResources> graphics, std:
 	AddTimer("RandomTarget", 5.0f, [&] {
 		sComponents.GetTransform(mRandomTarget).Translate
 		(
-			Random(0.0f, mWorldWidth),
-			Random(0.0f, mWorldHeight),
+			Random(0.0f, mSpace.worldWidth),
+			Random(0.0f, mSpace.worldHeight),
 			0.0f
 		);
 	}, true);
@@ -119,11 +119,11 @@ void SteeringScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 60.0f * XM_RADIANS;
 	fovAngleY = aspectRatio < 1.0f ? fovAngleY * 2.0f : fovAngleY;
-	mView = Matrix::CreateLookAt(
-		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 1000.0f },
-		{ mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f },
+	mSpace.view = Matrix::CreateLookAt(
+		{ mSpace.worldWidth * 0.5f, mSpace.worldHeight * 0.5f, 1000.0f },
+		{ mSpace.worldWidth * 0.5f, mSpace.worldHeight * 0.5f, 0.0f },
 		Vector3::Up);
-	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
+	mSpace.proj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, 0.1f, 10000.0f);
 }
 
 void SteeringScene::OnBegin()
@@ -148,12 +148,12 @@ void SteeringScene::OnUpdate(float dt, float tt)
 	{
 		Rigidbody& rb = sComponents.GetRigidbody(mWanderer);
 		EntityTransform& transform = sComponents.GetTransform(mWanderer);
-		if (transform.Translation().x > mWorldWidth || transform.Translation().x < 0.0f ||
-			transform.Translation().y > mWorldHeight || transform.Translation().y < 0.0f)
+		if (transform.Translation().x > mSpace.worldWidth || transform.Translation().x < 0.0f ||
+			transform.Translation().y > mSpace.worldHeight || transform.Translation().y < 0.0f)
 		{
 			rb.acceleration = Vector3::Zero;
 			rb.velocity = Vector3::Zero;
-			transform.Translate(mWorldWidth * 0.5f, mWorldHeight * 0.5f, 0.0f);
+			transform.Translate(mSpace.worldWidth * 0.5f, mSpace.worldHeight * 0.5f, 0.0f);
 			transform.Orientate(RandomSpherePoint(1.0f));
 		}
 		Wander(mWanderer, 1000.0f, 500.0f, sComponents);
@@ -226,7 +226,7 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	};
 
 #if BEHAVIOURS
-	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mView, mProj, graphics);
+	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mSpace.view, mSpace.proj, graphics);
 	drawSphere(mSeeker, r);
 	drawSphere(mArriver, r, Colors::PowderBlue);
 	drawSphere(mWanderer, r, Colors::MediumPurple);
@@ -235,7 +235,7 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #if MAZE
 	for (Entity building : mMap)
 	{
-		//sBuildingRenderer.DebugBuilding(building, sComponents, mView, mProj, graphics);
+		//sBuildingRenderer.DebugBuilding(building, sComponents, mSpace.view, mSpace.proj, graphics);
 		Debug::DrawSphere(sComponents.GetTransform(building).WorldPosition(), 45.0f, Colors::Black);
 	}
 
@@ -249,8 +249,8 @@ void SteeringScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 #endif
 
 #if CHICKEN
-	sPlayerRenderer.Render(sComponents.GetTransform(mAvoider1).World(), mView, mProj, graphics);
-	sPlayerRenderer.Render(sComponents.GetTransform(mAvoider2).World(), mView, mProj, graphics);
+	sPlayerRenderer.Render(sComponents.GetTransform(mAvoider1).World(), mSpace.view, mSpace.proj, graphics);
+	sPlayerRenderer.Render(sComponents.GetTransform(mAvoider2).World(), mSpace.view, mSpace.proj, graphics);
 
 	// Uncomment to render sensor colliders
 	Entity child1 = *sComponents.GetHierarchy(mAvoider1).children.begin();

@@ -51,10 +51,10 @@ void TestScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 	const float aspectRatio = float(size.right) / float(size.bottom);
 	float fovAngleY = 70.0f * XM_RADIANS;
 	float n = 0.001f, f = 1000.0f;
-	mView = Matrix::CreateLookAt({ 0.0f, 50.0f, n }, Vector3::Zero, Vector3::Up);
-	mProj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, n, f);
-	mBatchEffect->SetProjection(mProj);
-	mBatchEffect->SetView(mView);
+	mSpace.view = Matrix::CreateLookAt({ 0.0f, 50.0f, n }, Vector3::Zero, Vector3::Up);
+	mSpace.proj = Matrix::CreatePerspectiveFieldOfView(fovAngleY, aspectRatio, n, f);
+	mBatchEffect->SetProjection(mSpace.proj);
+	mBatchEffect->SetView(mSpace.view);
 	mBatchEffect->SetWorld(Matrix::Identity);
 }
 
@@ -123,9 +123,9 @@ void TestScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	//mSprites->End();
 	//graphics->PIXEndEvent();
 
-	mShape->Draw(sComponents.GetTransform(mParent).World(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(sComponents.GetTransform(mChild1).World(), mView, mProj, Colors::White, mTexture1.Get());
-	mShape->Draw(sComponents.GetTransform(mChild2).World(), mView, mProj, Colors::White, mTexture1.Get());
+	mShape->Draw(sComponents.GetTransform(mParent).World(), mSpace.view, mSpace.proj, Colors::White, mTexture1.Get());
+	mShape->Draw(sComponents.GetTransform(mChild1).World(), mSpace.view, mSpace.proj, Colors::White, mTexture1.Get());
+	mShape->Draw(sComponents.GetTransform(mChild2).World(), mSpace.view, mSpace.proj, Colors::White, mTexture1.Get());
 
 	graphics->PIXEndEvent();
 }
