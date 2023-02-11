@@ -15,8 +15,9 @@ void PathScene::RenderPath(const Path& path, const Map& map)
 		for (const Cell& cell : path)
 			RenderTileDebug(DirectX::Colors::Red, cell);
 
-		RenderTileDebug(DirectX::Colors::Cyan, path.front());
-		RenderTileDebug(DirectX::Colors::Magenta, path.back());
+		// Start isn't included in Path but End is.
+		RenderTileDebug(DirectX::Colors::Cyan, mStart);
+		RenderTileDebug(DirectX::Colors::Magenta, mEnd);
 	}
 }
 

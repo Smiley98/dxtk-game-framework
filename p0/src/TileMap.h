@@ -4,6 +4,7 @@
 
 namespace Tile
 {
+	struct Node;
 	struct Cell
 	{
 		int col = -1;	// x
@@ -34,4 +35,47 @@ namespace Tile
 	DirectX::XMVECTOR Color(Type type);
 	float Cost(Type type);
 	Type GetType(const Cell& cell, const Map& map);
+
+    struct Node
+    {
+        Node()
+        {
+            init();
+        }
+
+        Node(const Cell& cell)
+        {
+            init(cell);
+        }
+
+        Node(const Cell& cell, int g, int h)
+        {
+            init(cell, {}, g, h);
+        }
+
+        Node(const Cell& cell, const Cell& parentCell, int g, int h)
+        {
+            init(cell, parentCell, g, h);
+        }
+
+        void init(const Cell& cell = {}, const Cell& parent = {}, int g = 0, int h = 0)
+        {
+            this->cell = cell;
+            this->parent = parent;
+            this->g = g;
+            this->h = h;
+        }
+
+        int f() const { return g + h; }
+
+        void Print()
+        {
+            printf("Cell {%i,%i}: f = %i (%ig + %ih)\n", cell.col, cell.row, f(), g, h);
+        }
+
+        void Render(const Map& map);
+
+        Cell cell, parent;
+        int g, h;
+    };
 }

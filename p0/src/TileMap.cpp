@@ -94,4 +94,25 @@ namespace Tile
 	{
 		return (Type)map[cell.row][cell.col];
 	}
+
+	void Node::Render(const Map& map)
+	{
+		static std::array<DirectX::XMVECTOR, 7> ramp
+		{
+			DirectX::Colors::Red,
+			DirectX::Colors::Orange,	
+			DirectX::Colors::Yellow,	
+			DirectX::Colors::Green,
+			DirectX::Colors::Blue,
+			DirectX::Colors::Purple,
+			DirectX::Colors::Black
+		};
+
+		//int score = f();
+		//if (score > 0)
+		//{
+		//	DirectX::XMVECTOR color = DirectX::Colors::Black;
+		//
+		//}
+	}
 }

@@ -3,48 +3,14 @@
 
 namespace Pathing {
     using namespace Tile;
-    struct Node
-    {
-        Node()
-        {
-            init();
-        }
-
-        Node(const Cell& cell)
-        {
-            init(cell);
-        }
-
-        Node(const Cell& cell, int g, int h)
-        {
-            init(cell, {}, g, h);
-        }
-
-        Node(const Cell& cell, const Cell& parentCell, int g, int h)
-        {
-            init(cell, parentCell, g, h);
-        }
-
-        void init(const Cell& cell = {}, const Cell& parent = {}, int g = 0, int h = 0)
-        {
-            this->cell = cell;
-            this->parent = parent;
-            this->g = g;
-            this->h = h;
-        }
-
-        int f() const { return g + h; }
-
-        void Print()
-        {
-            printf("Cell {%i,%i}: f = %i (%ig + %ih)\n", cell.col, cell.row, f(), g, h);
-        }
-
-        Cell cell, parent;
-        int g, h;
-    };
 
     Path FindPath(const Cell& start, const Cell& end, const Map& map)
+    {
+        std::vector<Node> nodes;
+        return FindPathDebug(start, end, map, nodes);
+    }
+
+    Path FindPathDebug(const Cell& start, const Cell& end, const Map& map, std::vector<Node>& nodes)
     {
         // Computationally cheap but treats diagonals the same as adjacents
         auto manhattan = [](const Cell& a, const Cell& b) -> int {
@@ -108,6 +74,7 @@ namespace Pathing {
                 }
             }
         }
+        nodes = tileNodes;
 
         // Generate path by traversing parents then inverting
         Path path;
@@ -144,4 +111,3 @@ namespace Pathing {
         return cells;
     }
 }
-//*/
