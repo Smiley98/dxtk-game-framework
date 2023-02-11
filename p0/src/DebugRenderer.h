@@ -1,6 +1,7 @@
 #pragma once
 #include "DeviceResources.h"
 #include "CollisionMath.h"
+#include <string>
 #include <memory>
 
 namespace Debug
@@ -20,6 +21,9 @@ namespace Debug
 	void DrawFoV(const Vector3& position, const Vector3& direction, const Vector3& target,
 		float length, float degrees, float thickness = 10.0f,
 		DirectX::XMVECTOR inColor = DirectX::Colors::Green, DirectX::XMVECTOR outColor = DirectX::Colors::Red);
+
+	//void DrawText(const Vector3& position, const std::string& text,
+	//	int size = 10, DirectX::XMVECTOR color = DirectX::Colors::White);
 
 	// All of the above functions store their parameters and render during this call
 	void DrawDeferred(const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics);

@@ -8,6 +8,8 @@ public:
 	void Load(std::shared_ptr<DX::DeviceResources> graphics) final;
 	void Unload() final;
 
+	void Text(const Vector3& position, const std::wstring& text, DirectX::XMVECTOR color = DirectX::Colors::White);
+
 	void Cone(const Matrix& world, const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics) const;
 
@@ -17,5 +19,7 @@ public:
 		std::shared_ptr<DX::DeviceResources> graphics) const;
 
 private:
+	std::unique_ptr<DirectX::SpriteBatch> mSprites;
+	std::unique_ptr<DirectX::SpriteFont> mFont;
 	std::shared_ptr<DirectX::Model> mCone;
 };

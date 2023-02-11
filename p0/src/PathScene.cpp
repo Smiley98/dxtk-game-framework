@@ -31,6 +31,7 @@ PathScene::PathScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 	{
 		ImGui::SliderInt2("Start", (int*)&mStart, 0, 9);
 		ImGui::SliderInt2("End", (int*)&mEnd, 0, 9);
+		sMiscRenderer.Text({ 0.0f, 20.0f, 1.0f }, L"Lit!", Colors::Red);
 	};
 }
 
@@ -85,7 +86,7 @@ void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	RenderMap(mMap);
 	RenderPath(mPath, mMap);
 
-	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mSpace.view, mSpace.proj, graphics);
+	//sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mSpace.view, mSpace.proj, graphics);
 }
 
 // Mouse cell test

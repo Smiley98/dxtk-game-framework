@@ -27,10 +27,15 @@ private:
     std::unique_ptr<DirectX::CommonStates>                                  mStates;
     std::unique_ptr<DirectX::BasicEffect>                                   mBatchEffect;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  mBatch;
+
+    //std::unique_ptr<DirectX::SpriteBatch>                                   mSprites;
+    //std::unique_ptr<DirectX::SpriteFont>                                    mFont;
+
     std::unique_ptr<DirectX::GeometricPrimitive>                            mShape;
     
     // D3D11 objects
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture1;
+    //Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>                        mTexture2;
     Microsoft::WRL::ComPtr<ID3D11InputLayout>                               mBatchInputLayout;
 
     Entity mParent, mChild1, mChild2;
@@ -44,6 +49,3 @@ private:
 // 
 //std::unique_ptr<DirectX::EffectFactory>           mFxFactory;
 //std::unique_ptr<DirectX::Model>                   mModel;
-//std::unique_ptr<DirectX::SpriteBatch>             mSprites;
-//std::unique_ptr<DirectX::SpriteFont>              mFont;
-//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>  mTexture2;
