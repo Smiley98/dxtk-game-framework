@@ -83,7 +83,7 @@ void Scene::Resize(std::shared_ptr<DX::DeviceResources> graphics)
 	//for (Scene* scene : sScenes)
 	//	scene->OnResize(graphics);
 
-	// Must call scene resize before updating viewport since it may modify view and proj!
+	// Must call scene resize before updating viewport since resize may modify the viewport
 	sScenes[sType]->OnResize(graphics);
 	sScenes[sType]->mSpace.viewport = Viewport(graphics->GetScreenViewport());
 }

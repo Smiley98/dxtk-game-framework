@@ -78,6 +78,10 @@
 #include "StepTimer.h"
 #include "EntityTransform.h"
 
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_win32.h"
+#include "../imgui/imgui_impl_dx11.h"
+
 namespace DX
 {
     // Helper class for COM exceptions

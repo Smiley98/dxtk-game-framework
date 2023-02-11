@@ -39,6 +39,7 @@ private:
     void Input();
     void Audio();
     void Render();
+    void GUI();
     void Clear();
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();

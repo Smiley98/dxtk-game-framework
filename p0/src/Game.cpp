@@ -43,6 +43,14 @@ void Game::Initialize(HWND window, int width, int height)
     CreateDeviceDependentResources();
     mDeviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    //ImGuiIO& io = ImGui::GetIO();
+    ImGui_ImplWin32_Init(window);
+    ImGui_ImplDX11_Init(mDeviceResources->GetD3DDevice(), mDeviceResources->GetD3DDeviceContext());
+    ImGui::StyleColorsDark();
+
     Scene::Run();
 }
 
@@ -91,10 +99,20 @@ void Game::Render()
     Clear();
 
     Scene::Render(mDeviceResources);
-    mDeviceResources->PIXEndEvent();
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+    ImGui::Begin("Test");
+    ImGui::End();
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
     // Show the new frame.
     mDeviceResources->Present();
+}
+
+void Game::GUI()
+{
 }
 
 void Game::Clear()
