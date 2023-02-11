@@ -38,9 +38,7 @@ private:
 	Tile::Cell mEnd;
 
 	std::vector<Tile::Node> mNodes;
+	int mPathRenderState = 1;
 
-	void RenderPath(const Pathing::Path& path);
 	void RenderNode(const Tile::Node& node);
-	//void RenderPathNodes(const Pathing::Path& path);
-	//void RenderNodes(const Pathing::Path& path);
 };

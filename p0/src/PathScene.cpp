@@ -8,19 +8,6 @@ using namespace DirectX;
 using namespace Tile;
 using namespace Pathing;
 
-void PathScene::RenderPath(const Path& path)
-{
-	if (!path.empty())
-	{
-		for (const Cell& cell : path)
-			RenderTileDebug(DirectX::Colors::Red, cell);
-
-		// Start isn't included in Path but End is.
-		RenderTileDebug(DirectX::Colors::Cyan, mStart);
-		RenderTileDebug(DirectX::Colors::Magenta, mEnd);
-	}
-}
-
 void PathScene::RenderNode(const Tile::Node& node)
 {
 	static std::array<DirectX::XMVECTOR, 10> ramp
@@ -49,9 +36,10 @@ PathScene::PathScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 
 	mOnGui = [&]
 	{
+		ImGui::SliderInt("Render State", &mPathRenderState, 1, 3);
 		ImGui::SliderInt2("Start", (int*)&mStart, 0, 9);
 		ImGui::SliderInt2("End", (int*)&mEnd, 0, 9);
-		sMiscRenderer.Text({ 0.0f, 20.0f, 1.0f }, L"Lit!", Colors::Red);
+		//sMiscRenderer.Text({ 0.0f, 20.0f, 1.0f }, L"Lit!", Colors::Red);
 	};
 }
 
@@ -104,15 +92,25 @@ void PathScene::OnUpdate(float dt, float tt)
 void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	RenderMap(mMap);
-	RenderPath(mPath);
+	switch (mPathRenderState)
+	{
+		case 1:
+			for (const Cell& cell : mPath)
+				RenderTileDebug(DirectX::Colors::LightGreen, cell);
+			break;
+		case 2:
+			for (const Cell& cell : mPath)
+				RenderNode(mNodes[Index(cell)]);
+			break;
+		case 3:
+			for (const Node& node : mNodes)
+				RenderNode(node);
+			break;
+	}
 
-	//for (const Node& node : mNodes)
-	//	RenderNode(node);
-
-	for (const Cell& cell : mPath)
-		RenderNode(mNodes[Index(cell)]);
-
-	//sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mSpace.view, mSpace.proj, graphics);
+	// Start isn't included in Path but End is.
+	RenderTileDebug(DirectX::Colors::Cyan, mStart);
+	RenderTileDebug(DirectX::Colors::Red, mEnd);
 }
 
 // Mouse cell test
