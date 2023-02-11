@@ -28,15 +28,12 @@ namespace Pathing {
         // least-to-greatest in order to obtain the best rather than the worst path!
         auto predicate = [](const Node& a, const Node& b) -> bool { return a.f() > b.f(); };
 
-        // Flatten from 2D to 1D
-        auto index = [&](const Cell& cell) -> int { return cell.row * MAP_SIZE + cell.col; };
-
         // Mark all nodes as unvisited (closed list = false) and append start to open list
         const int tileCount = MAP_SIZE * MAP_SIZE;
         std::vector<Node> tileNodes(tileCount);
         std::priority_queue<Node, std::vector<Node>, decltype(predicate) > openList(predicate);
         std::vector<bool> closedList(tileCount, false);
-        tileNodes[index(start)].parent = start;
+        tileNodes[Index(start)].parent = start;
         openList.push({ start });
 
         while (!openList.empty())
@@ -51,12 +48,12 @@ namespace Pathing {
 
             // Otherwise, add current cell to closed list and update g & h values of its neighbours
             openList.pop();
-            closedList[index(currentCell)] = true;
+            closedList[Index(currentCell)] = true;
 
             int gNew, hNew;
             for (const Cell& neighbour : GetNeighbours(currentCell, map))
             {
-                const int neighbourIndex = index(neighbour);
+                const int neighbourIndex = Index(neighbour);
 
                 // Skip if already visited
                 if (closedList[neighbourIndex])
@@ -79,13 +76,13 @@ namespace Pathing {
         // Generate path by traversing parents then inverting
         Path path;
         Cell currentCell = end;
-        int currentIndex = index(currentCell);
+        int currentIndex = Index(currentCell);
 
         while (!(tileNodes[currentIndex].parent == currentCell))
         {
             path.push_back(currentCell);
             currentCell = tileNodes[currentIndex].parent;
-            currentIndex = index(currentCell);
+            currentIndex = Index(currentCell);
         }
         std::reverse(path.begin(), path.end());
 

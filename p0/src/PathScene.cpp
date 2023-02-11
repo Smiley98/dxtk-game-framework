@@ -8,7 +8,7 @@ using namespace DirectX;
 using namespace Tile;
 using namespace Pathing;
 
-void PathScene::RenderPath(const Path& path, const Map& map)
+void PathScene::RenderPath(const Path& path)
 {
 	if (!path.empty())
 	{
@@ -19,6 +19,26 @@ void PathScene::RenderPath(const Path& path, const Map& map)
 		RenderTileDebug(DirectX::Colors::Cyan, mStart);
 		RenderTileDebug(DirectX::Colors::Magenta, mEnd);
 	}
+}
+
+void PathScene::RenderNode(const Tile::Node& node)
+{
+	static std::array<DirectX::XMVECTOR, 10> ramp
+	{
+		DirectX::Colors::Red,
+		DirectX::Colors::Orange,
+		DirectX::Colors::Yellow,
+		DirectX::Colors::Green,
+		DirectX::Colors::DarkGreen,
+		DirectX::Colors::Blue,
+		DirectX::Colors::Magenta,
+		DirectX::Colors::DarkMagenta,
+		DirectX::Colors::BlueViolet,
+		DirectX::Colors::Black
+	};
+
+	int score = node.f() < 10 ? node.f() : 9;
+	RenderTileDebug(ramp[score], node.cell);
 }
 
 PathScene::PathScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
@@ -78,13 +98,19 @@ void PathScene::OnUpdate(float dt, float tt)
 {
 	Mouse::State mouse = Mouse::Get().GetState();
 	mMouseWorld = ScreenToWorld({ (float)mouse.x, (float)mouse.y, 0.0f });
-	mPath = FindPath(mStart, mEnd, mMap);
+	mPath = FindPathDebug(mStart, mEnd, mMap, mNodes);
 }
 
 void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 {
 	RenderMap(mMap);
-	RenderPath(mPath, mMap);
+	RenderPath(mPath);
+
+	//for (const Node& node : mNodes)
+	//	RenderNode(node);
+
+	for (const Cell& cell : mPath)
+		RenderNode(mNodes[Index(cell)]);
 
 	//sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mSpace.view, mSpace.proj, graphics);
 }

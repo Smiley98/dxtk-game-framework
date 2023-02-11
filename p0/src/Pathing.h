@@ -13,4 +13,7 @@ namespace Pathing {
     
     // Returns adjacent cells which can be moved to (tiles who's value is EMapValue::AIR).
     std::vector<Tile::Cell> GetNeighbours(const Tile::Cell& cell, const Tile::Map& map);
+
+    // Flatten from 2D to 1D
+    inline int Index(const Tile::Cell& cell) { return cell.row * Tile::MAP_SIZE + cell.col; };
 };

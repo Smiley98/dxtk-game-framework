@@ -68,13 +68,6 @@ namespace Tile
 
         int f() const { return g + h; }
 
-        void Print()
-        {
-            printf("Cell {%i,%i}: f = %i (%ig + %ih)\n", cell.col, cell.row, f(), g, h);
-        }
-
-        void Render(const Map& map);
-
         Cell cell, parent;
         int g, h;
     };

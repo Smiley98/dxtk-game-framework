@@ -37,5 +37,10 @@ private:
 	Tile::Cell mStart;
 	Tile::Cell mEnd;
 
-	void RenderPath(const Pathing::Path& path, const Tile::Map& map);
+	std::vector<Tile::Node> mNodes;
+
+	void RenderPath(const Pathing::Path& path);
+	void RenderNode(const Tile::Node& node);
+	//void RenderPathNodes(const Pathing::Path& path);
+	//void RenderNodes(const Pathing::Path& path);
 };
