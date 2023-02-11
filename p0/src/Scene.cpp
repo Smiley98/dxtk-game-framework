@@ -162,6 +162,18 @@ void Scene::Render(std::shared_ptr<DX::DeviceResources> graphics)
 	Scene& scene = *sScenes[sType];
 	scene.OnRender(graphics);
 	Debug::DrawDeferred(scene.mSpace.view, scene.mSpace.proj, graphics);
+
+	if (scene.mOnGui != nullptr)
+	{
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+		ImGui::Begin("UI");
+		scene.mOnGui();
+		ImGui::End();
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
 }
 
 Scene::Type Scene::Current()

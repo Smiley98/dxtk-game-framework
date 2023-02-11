@@ -34,5 +34,8 @@ private:
 	Vector3 mMouseWorld;
 	Pathing::Path mPath;
 
+	Tile::Cell mStart;
+	Tile::Cell mEnd;
+
 	void RenderPath(const Pathing::Path& path, const Tile::Map& map);
 };

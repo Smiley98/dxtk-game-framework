@@ -99,20 +99,9 @@ void Game::Render()
     Clear();
 
     Scene::Render(mDeviceResources);
-    ImGui_ImplDX11_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ImGui::NewFrame();
-    ImGui::Begin("Test");
-    ImGui::End();
-    ImGui::Render();
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
     // Show the new frame.
     mDeviceResources->Present();
-}
-
-void Game::GUI()
-{
 }
 
 void Game::Clear()

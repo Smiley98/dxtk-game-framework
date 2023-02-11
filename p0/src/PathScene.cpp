@@ -23,6 +23,14 @@ void PathScene::RenderPath(const Path& path, const Map& map)
 PathScene::PathScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	: Scene(graphics, audio)
 {
+	mStart = { 1, 8 };
+	mEnd   = { 8, 1 };
+
+	mOnGui = [&]
+	{
+		ImGui::SliderInt2("Start", (int*)&mStart, 0, 9);
+		ImGui::SliderInt2("End", (int*)&mEnd, 0, 9);
+	};
 }
 
 PathScene::~PathScene()
@@ -50,10 +58,6 @@ void PathScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 
 void PathScene::OnBegin()
 {
-	AddTimer("mouse", 0.1f, [&] {
-		Cell cell = WorldToCell(mMouseWorld);
-		Print("row: " + std::to_string(cell.row) + " col :" + std::to_string(cell.col));
-	}, true);
 }
 
 void PathScene::OnEnd()
@@ -72,7 +76,7 @@ void PathScene::OnUpdate(float dt, float tt)
 {
 	Mouse::State mouse = Mouse::Get().GetState();
 	mMouseWorld = ScreenToWorld({ (float)mouse.x, (float)mouse.y, 0.0f });
-	mPath = FindPath({ 1, 8 }, WorldToCell(mMouseWorld), mMap);
+	mPath = FindPath(mStart, mEnd, mMap);
 }
 
 void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
@@ -80,9 +84,16 @@ void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 	RenderMap(mMap);
 	RenderPath(mPath, mMap);
 
-	//Cell cell = WorldToCell(mMouseWorld);
-	//size_t type = GetType(cell, mMap);
-	//RenderTile((Tile::Type)(++type % Tile::COUNT), WorldToCell(mMouseWorld));
-
 	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mSpace.view, mSpace.proj, graphics);
 }
+
+// Mouse cell test
+//AddTimer("mouse", 0.1f, [&]
+//{
+//	Cell cell = WorldToCell(mMouseWorld);
+//	Print("row: " + std::to_string(cell.row) + " col :" + std::to_string(cell.col));
+//}, true);
+//
+//Cell cell = WorldToCell(mMouseWorld);
+//size_t type = GetType(cell, mMap);
+//RenderTile((Tile::Type)(++type% Tile::COUNT), WorldToCell(mMouseWorld));

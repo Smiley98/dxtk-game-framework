@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <queue>
+#include <functional>
 
 #include "Components.h"
 
@@ -74,6 +75,8 @@ protected:
 
 	virtual void OnUpdate(float dt, float tt) = 0;
 	virtual void OnRender(std::shared_ptr<DX::DeviceResources> graphics) = 0;
+
+	std::function<void()> mOnGui = nullptr;
 
 	void AddTimer(const std::string& name, float duration, TimerCallback callback, bool repeat);
 	void RemoveTimer(const std::string& name);
