@@ -41,6 +41,7 @@ void Scene::Create(
 	sPlayerRenderer.Load(graphics);
 	sBuildingRenderer.Load(graphics);
 	sMiscRenderer.Load(graphics);
+	Debug::Load(graphics);
 
 	sPlayer = CreatePlayer(sComponents, sPlayerRenderer);
 	sComponents.transforms.GetComponent(sPlayer)->Translate(800.0f, 450.0f, 0.0f);

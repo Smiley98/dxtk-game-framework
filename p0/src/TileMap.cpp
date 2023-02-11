@@ -94,4 +94,27 @@ namespace Tile
 	{
 		return (Type)map[cell.row][cell.col];
 	}
+
+	void Node::Render() const
+	{
+		static std::array<DirectX::XMVECTOR, 10> ramp
+		{
+			DirectX::Colors::Red,
+			DirectX::Colors::Orange,
+			DirectX::Colors::Yellow,
+			DirectX::Colors::Green,
+			DirectX::Colors::DarkGreen,
+			DirectX::Colors::Blue,
+			DirectX::Colors::Magenta,
+			DirectX::Colors::DarkMagenta,
+			DirectX::Colors::BlueViolet,
+			DirectX::Colors::Black
+		};
+
+		int index = f() < 10 ? f() : 9;
+		RenderTileDebug(ramp[index], cell);
+
+		Vector3 position(CellToWorld(cell));
+		Debug::DrawText(position, std::to_wstring(f()));
+	}
 }

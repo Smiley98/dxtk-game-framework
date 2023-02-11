@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DebugRenderer.h"
 #include "Geometry.h"
+#include "Scene.h"
 
 using namespace DirectX;
 
@@ -30,11 +31,23 @@ namespace Debug
 		XMVECTOR outColor = Colors::Red;
 	};
 
+	struct TextRender
+	{
+		Vector3 position;
+		std::wstring characters;
+		XMVECTOR color = Colors::White;
+		bool centred;
+	};
+
 	std::vector<SphereRender> gSpheres;
 	std::vector<CapsuleRender> gCapsules;
 	std::vector<BoxRender> gBoxes;
 	std::vector<LineRender> gLines;
 	std::vector<FoVRender> gFoVs;
+	std::vector<TextRender> gTexts;
+
+	std::unique_ptr<SpriteBatch> gSprites;
+	std::unique_ptr<SpriteFont> gFont;
 
 	void DrawSphere(const Vector3& position, float radius, XMVECTOR color, bool wireframe)
 	{
@@ -97,6 +110,16 @@ namespace Debug
 		fov.inColor = inColor;
 		fov.outColor = outColor;
 		gFoVs.push_back(std::move(fov));
+	}
+
+	void DrawText(const Vector3& position, const std::wstring& characters, DirectX::XMVECTOR color, bool centred)
+	{
+		TextRender text;
+		text.position = position;
+		text.characters = characters;
+		text.color = color;
+		text.centred = centred;
+		gTexts.push_back(std::move(text));
 	}
 
 	void DrawSphere(const SphereRender& sphere, const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics)
@@ -189,11 +212,27 @@ namespace Debug
 		for (const FoVRender& fov : gFoVs)
 			DrawFoV(fov, view, proj, graphics);
 
+		gSprites->Begin();
+		for (const TextRender& text : gTexts)
+		{
+			Vector3 screenPoint = Scene::WorldToScreen(text.position);
+			const wchar_t* characters = text.characters.c_str();
+			if (text.centred)
+			{
+				Vector2 size = gFont->MeasureString(characters);
+				screenPoint.x -= size.x * 0.5f;
+				screenPoint.y -= size.y * 0.5f;
+			}
+			gFont->DrawString(gSprites.get(), characters, XMFLOAT2{ screenPoint.x, screenPoint.y }, text.color);
+		}
+		gSprites->End();
+
 		gSpheres.clear();
 		gCapsules.clear();
 		gBoxes.clear();
 		gLines.clear();
 		gFoVs.clear();
+		gTexts.clear();
 	}
 
 	void Draw(Primitive primitive, const Matrix& world, const Matrix& view, const Matrix& proj,
@@ -223,5 +262,17 @@ namespace Debug
 		default:
 			break;
 		}
+	}
+
+	void Load(std::shared_ptr<DX::DeviceResources> graphics)
+	{
+		gSprites = std::make_unique<SpriteBatch>(graphics->GetD3DDeviceContext());
+		gFont = std::make_unique<SpriteFont>(graphics->GetD3DDevice(), L"assets/fonts/SegoeUI_18.spritefont");
+	}
+
+	void Unload()
+	{
+		gFont.reset();
+		gSprites.reset();
 	}
 }

@@ -68,6 +68,8 @@ namespace Tile
 
         int f() const { return g + h; }
 
+        void Render() const;
+
         Cell cell, parent;
         int g, h;
     };

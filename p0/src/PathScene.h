@@ -39,6 +39,4 @@ private:
 
 	std::vector<Tile::Node> mNodes;
 	int mPathRenderState = 1;
-
-	void RenderNode(const Tile::Node& node);
 };

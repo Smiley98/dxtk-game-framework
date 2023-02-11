@@ -22,8 +22,8 @@ namespace Debug
 		float length, float degrees, float thickness = 10.0f,
 		DirectX::XMVECTOR inColor = DirectX::Colors::Green, DirectX::XMVECTOR outColor = DirectX::Colors::Red);
 
-	//void DrawText(const Vector3& position, const std::string& text,
-	//	int size = 10, DirectX::XMVECTOR color = DirectX::Colors::White);
+	void DrawText(const Vector3& position, const std::wstring& characters,
+		DirectX::XMVECTOR color = DirectX::Colors::White, bool centred = true);
 
 	// All of the above functions store their parameters and render during this call
 	void DrawDeferred(const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics);
@@ -40,4 +40,7 @@ namespace Debug
 	// This is immediate
 	void Draw(Primitive primitive, const Matrix& world, const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics, DirectX::XMVECTOR color = DirectX::Colors::White, bool wireframe = false);
+
+	void Load(std::shared_ptr<DX::DeviceResources> graphics);
+	void Unload();
 };

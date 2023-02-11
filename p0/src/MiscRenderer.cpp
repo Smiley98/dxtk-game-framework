@@ -9,11 +9,8 @@ void MiscRenderer::Load(std::shared_ptr<DX::DeviceResources> graphics)
 	Renderer::Load(graphics);
 	auto device = graphics->GetD3DDevice();
 
-	mSprites = std::make_unique<SpriteBatch>(graphics->GetD3DDeviceContext());
 	mShader = std::make_shared<BasicEffect>(device);
 	mShader->EnableDefaultLighting();
-
-	mFont = std::make_unique<SpriteFont>(device, L"assets/fonts/SegoeUI_18.spritefont");
 	mCone = Model::CreateFromVBO(device, L"assets/meshes/cone.vbo", mShader);
 }
 
@@ -23,14 +20,6 @@ void MiscRenderer::Unload()
 	mFont.reset();
 	mSprites.reset();
 	Renderer::Unload();
-}
-
-void MiscRenderer::Text(const Vector3& position, const std::wstring& text, DirectX::XMVECTOR color)
-{
-	Vector3 screenPoint = Scene::WorldToScreen(position);
-	mSprites->Begin();
-	mFont->DrawString(mSprites.get(), text.c_str(), XMFLOAT2{screenPoint.x, screenPoint.y}, color);
-	mSprites->End();
 }
 
 void MiscRenderer::Cone(const Matrix& world, const Matrix& view, const Matrix& proj,

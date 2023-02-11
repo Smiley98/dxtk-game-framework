@@ -8,8 +8,6 @@ public:
 	void Load(std::shared_ptr<DX::DeviceResources> graphics) final;
 	void Unload() final;
 
-	void Text(const Vector3& position, const std::wstring& text, DirectX::XMVECTOR color = DirectX::Colors::White);
-
 	void Cone(const Matrix& world, const Matrix& view, const Matrix& proj,
 		std::shared_ptr<DX::DeviceResources> graphics) const;
 

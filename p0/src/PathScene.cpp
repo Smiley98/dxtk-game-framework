@@ -8,26 +8,6 @@ using namespace DirectX;
 using namespace Tile;
 using namespace Pathing;
 
-void PathScene::RenderNode(const Tile::Node& node)
-{
-	static std::array<DirectX::XMVECTOR, 10> ramp
-	{
-		DirectX::Colors::Red,
-		DirectX::Colors::Orange,
-		DirectX::Colors::Yellow,
-		DirectX::Colors::Green,
-		DirectX::Colors::DarkGreen,
-		DirectX::Colors::Blue,
-		DirectX::Colors::Magenta,
-		DirectX::Colors::DarkMagenta,
-		DirectX::Colors::BlueViolet,
-		DirectX::Colors::Black
-	};
-
-	int score = node.f() < 10 ? node.f() : 9;
-	RenderTileDebug(ramp[score], node.cell);
-}
-
 PathScene::PathScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	: Scene(graphics, audio)
 {
@@ -39,7 +19,6 @@ PathScene::PathScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 		ImGui::SliderInt("Render State", &mPathRenderState, 1, 3);
 		ImGui::SliderInt2("Start", (int*)&mStart, 0, 9);
 		ImGui::SliderInt2("End", (int*)&mEnd, 0, 9);
-		//sMiscRenderer.Text({ 0.0f, 20.0f, 1.0f }, L"Lit!", Colors::Red);
 	};
 }
 
@@ -100,14 +79,14 @@ void PathScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 			break;
 		case 2:
 			for (const Cell& cell : mPath)
-				RenderNode(mNodes[Index(cell)]);
+				mNodes[Index(cell)].Render();
 			break;
 		case 3:
 			for (const Node& node : mNodes)
-				RenderNode(node);
+				node.Render();
 			break;
 	}
-
+	
 	// Start isn't included in Path but End is.
 	RenderTileDebug(DirectX::Colors::Cyan, mStart);
 	RenderTileDebug(DirectX::Colors::Red, mEnd);
