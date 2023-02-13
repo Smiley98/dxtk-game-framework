@@ -38,6 +38,7 @@ private:
 	Tile::Cell mEnd;
 	int mCurrent = 0;
 	int mNext = 1;
+	int mSteps = 0;
 
 	std::vector<Tile::Node> mNodes;
 	int mPathRenderState = 1;
