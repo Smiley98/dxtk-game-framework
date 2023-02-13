@@ -14,14 +14,17 @@ namespace DirectX
 	class SoundEffect;
 	class SoundEffectInstance;
 
-	// Graphics
-	class CommonStates;
-	class BasicEffect;
-	class EffectFactory;
-	class GeometricPrimitive;
-	class Model;
-	class SpriteBatch;
-	class SpriteFont;
+	inline namespace DX11
+	{
+		// Graphics
+		class CommonStates;
+		class BasicEffect;
+		class EffectFactory;
+		class GeometricPrimitive;
+		class Model;
+		class SpriteBatch;
+		class SpriteFont;
+	}
 }
 
 namespace DX
@@ -32,3 +35,5 @@ namespace DX
 
 #include "PrimitiveBatch.h"
 #include "VertexTypes.h"
+
+using namespace DirectX::DX11;

@@ -60,12 +60,10 @@
     <None Include="assets\sounds\ADPCMdroid.xwb">
       <Filter>Assets\Sounds</Filter>
     </None>
-    <None Include="packages.config">
-      <Filter>Config</Filter>
-    </None>
     <None Include="assets\models\tiny.sdkmesh">
       <Filter>Assets\Models</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DeviceResources.cpp" />
