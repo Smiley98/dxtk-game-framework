@@ -6,7 +6,6 @@
 
 using namespace DirectX;
 using namespace Tile;
-using namespace Pathing;
 
 void Lerp(const Cell& a, const Cell& b, float t, Vector3& position, Vector3& direction)
 {

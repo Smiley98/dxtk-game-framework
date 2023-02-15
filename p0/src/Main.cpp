@@ -43,7 +43,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     if (FAILED(hr))
         return 1;
 
-    srand(time(nullptr));
+    srand((unsigned int)time(nullptr));
 
     std::unique_ptr<Keyboard> gKeyboard = std::make_unique<Keyboard>();
     std::unique_ptr<GamePad> gGamePad = std::make_unique<GamePad>();

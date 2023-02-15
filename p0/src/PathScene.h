@@ -32,7 +32,7 @@ private:
 		std::array<int, Tile::MAP_SIZE>{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
 	};
 	Vector3 mMouseWorld;
-	Pathing::Path mPath;
+	Path mPath;
 
 	Tile::Cell mStart;
 	Tile::Cell mEnd;

@@ -1,188 +1,138 @@
 #include "pch.h"
 #include "Pathing.h"
 
-namespace Pathing {
-    using namespace Tile;
+using namespace Tile;
+constexpr bool gManhattan = true;
 
-    Path FindPath(const Cell& start, const Cell& end, const Map& map)
+Path FindPath(const Cell& start, const Cell& end, const Map& map)
+{
+    // Mark all nodes as unvisited (closed list = false) and append start to open list
+    const int tileCount = MAP_SIZE * MAP_SIZE;
+    std::vector<Node> tileNodes(tileCount);
+    std::priority_queue<Node, std::vector<Node>, decltype(&Compare) > openList(Compare);
+    std::vector<bool> closedList(tileCount, false);
+    tileNodes[Index(start)].parent = start;
+    openList.push({ start });
+
+    while (!openList.empty())
     {
-        // Computationally cheap but treats diagonals the same as adjacents
-        auto manhattan = [](const Cell& a, const Cell& b) -> int {
-            return abs(a.col - b.col) + abs(a.row - b.row);
-        };
+        const Cell currentCell = openList.top().cell;
 
-        // Computationally expensive but treats diagonals as more expensive than adjacents
-        auto euclidean = [](const Cell& a, const Cell& b) -> int {
-            int dx = a.col - b.col;
-            int dy = a.row - b.row;
-            return sqrt(dx * dx + dy * dy);
-        };
-
-        // priority_queue orders its elements *GREATEST* to least, but we want its elements
-        // least-to-greatest in order to obtain the best rather than the worst path!
-        auto predicate = [](const Node& a, const Node& b) -> bool { return a.f() > b.f(); };
-
-        // Mark all nodes as unvisited (closed list = false) and append start to open list
-        const int tileCount = MAP_SIZE * MAP_SIZE;
-        std::vector<Node> tileNodes(tileCount);
-        std::priority_queue<Node, std::vector<Node>, decltype(predicate) > openList(predicate);
-        std::vector<bool> closedList(tileCount, false);
-        tileNodes[Index(start)].parent = start;
-        openList.push({ start });
-
-        while (!openList.empty())
+        // End condition (destination reached)
+        if (currentCell == end)
         {
-            const Cell currentCell = openList.top().cell;
-
-            // End condition (destination reached)
-            if (currentCell == end)
-            {
-                break;
-            }
-
-            // Otherwise, add current cell to closed list and update g & h values of its neighbours
-            openList.pop();
-            closedList[Index(currentCell)] = true;
-
-            int gNew, hNew;
-            for (const Cell& neighbour : GetNeighbours(currentCell, map))
-            {
-                const int neighbourIndex = Index(neighbour);
-
-                // Skip if already visited
-                if (closedList[neighbourIndex])
-                    continue;
-
-                // Calculate scores
-                gNew = false ? manhattan(neighbour, end) : euclidean(neighbour, end);
-                hNew = Cost(GetType(neighbour, map));
-
-                // Append if unvisited or best score
-                if (tileNodes[neighbourIndex].f() == 0 || (gNew + hNew) < tileNodes[neighbourIndex].f())
-                {
-                    openList.push({ neighbour, gNew, hNew });
-                    tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew };
-                }
-            }
+            break;
         }
 
-        // Generate path by traversing parents then inverting
-        Path path;
-        Cell currentCell = end;
-        int currentIndex = Index(currentCell);
+        // Otherwise, add current cell to closed list and update g & h values of its neighbours
+        openList.pop();
+        closedList[Index(currentCell)] = true;
 
-        while (!(tileNodes[currentIndex].parent == currentCell))
+        float gNew, hNew;
+        for (const Cell& neighbour : Neighbours(currentCell, map))
         {
-            path.push_back(currentCell);
-            currentCell = tileNodes[currentIndex].parent;
-            currentIndex = Index(currentCell);
-        }
-        path.push_back(start);
-        std::reverse(path.begin(), path.end());
+            const int neighbourIndex = Index(neighbour);
 
-        return path;
+            // Skip if already visited
+            if (closedList[neighbourIndex])
+                continue;
+
+            // Calculate scores
+            gNew = gManhattan ? Manhattan(neighbour, end) : Euclidean(neighbour, end);
+            hNew = Cost(GetType(neighbour, map));
+
+            // Append if unvisited or best score
+            if (tileNodes[neighbourIndex].F() <= FLT_EPSILON ||
+                (gNew + hNew) < tileNodes[neighbourIndex].F())
+            {
+                openList.push({ neighbour, gNew, hNew });
+                tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew };
+            }
+        }
     }
 
-    Path FindPathDebug(const Cell& start, const Cell& end, int steps, const Map& map, std::vector<Node>& nodes)
+    // Generate path by traversing parents then inverting
+    Path path;
+    Cell currentCell = end;
+    int currentIndex = Index(currentCell);
+
+    while (!(tileNodes[currentIndex].parent == currentCell))
     {
-        // Computationally cheap but treats diagonals the same as adjacents
-        auto manhattan = [](const Cell& a, const Cell& b) -> int {
-            return abs(a.col - b.col) + abs(a.row - b.row);
-        };
+        path.push_back(currentCell);
+        currentCell = tileNodes[currentIndex].parent;
+        currentIndex = Index(currentCell);
+    }
+    path.push_back(start);
+    std::reverse(path.begin(), path.end());
 
-        // Computationally expensive but treats diagonals as more expensive than adjacents
-        auto euclidean = [](const Cell& a, const Cell& b) -> int {
-            int dx = a.col - b.col;
-            int dy = a.row - b.row;
-            return sqrt(dx * dx + dy * dy);
-        };
+    return path;
+}
 
-        // priority_queue orders its elements *GREATEST* to least, but we want its elements
-        // least-to-greatest in order to obtain the best rather than the worst path!
-        auto predicate = [](const Node& a, const Node& b) -> bool { return a.f() > b.f(); };
+Path FindPathDebug(const Cell& start, const Cell& end, int steps, const Map& map, std::vector<Node>& nodes)
+{
+    // Mark all nodes as unvisited (closed list = false) and append start to open list
+    const int tileCount = MAP_SIZE * MAP_SIZE;
+    std::vector<Node> tileNodes(tileCount);
+    std::priority_queue<Node, std::vector<Node>, decltype(&Compare) > openList(Compare);
+    std::vector<bool> closedList(tileCount, false);
+    tileNodes[Index(start)].parent = start;
+    openList.push({ start });
 
-        // Mark all nodes as unvisited (closed list = false) and append start to open list
-        const int tileCount = MAP_SIZE * MAP_SIZE;
-        std::vector<Node> tileNodes(tileCount);
-        std::priority_queue<Node, std::vector<Node>, decltype(predicate) > openList(predicate);
-        std::vector<bool> closedList(tileCount, false);
-        tileNodes[Index(start)].parent = start;
-        openList.push({ start });
+    for (int i = 0; i < steps; i++)
+    {
+        const Cell currentCell = openList.top().cell;
 
-        for (int i = 0; i < steps; i++)
+        // End condition (destination reached)
+        if (currentCell == end)
         {
-            const Cell currentCell = openList.top().cell;
+            break;
+        }
 
-            // End condition (destination reached)
-            if (currentCell == end)
+        // Otherwise, add current cell to closed list and update g & h values of its neighbours
+        openList.pop();
+        closedList[Index(currentCell)] = true;
+
+        float gNew, hNew;
+        for (const Cell& neighbour : Neighbours(currentCell, map))
+        {
+            const int neighbourIndex = Index(neighbour);
+
+            // Skip if already visited
+            if (closedList[neighbourIndex])
+                continue;
+
+            // Calculate scores
+            gNew = gManhattan ? Manhattan(neighbour, end) : Euclidean(neighbour, end);
+            hNew = Cost(GetType(neighbour, map));
+
+            // Append if unvisited or best score
+            if (tileNodes[neighbourIndex].F() <= FLT_EPSILON ||
+                (gNew + hNew) < tileNodes[neighbourIndex].F())
             {
-                break;
-            }
-
-            // Otherwise, add current cell to closed list and update g & h values of its neighbours
-            openList.pop();
-            closedList[Index(currentCell)] = true;
-
-            int gNew, hNew;
-            for (const Cell& neighbour : GetNeighbours(currentCell, map))
-            {
-                const int neighbourIndex = Index(neighbour);
-
-                // Skip if already visited
-                if (closedList[neighbourIndex])
-                    continue;
-
-                // Calculate scores
-                gNew = false ? manhattan(neighbour, end) : euclidean(neighbour, end);
-                hNew = Cost(GetType(neighbour, map));
-
-                // Append if unvisited or best score
-                if (tileNodes[neighbourIndex].f() == 0 || (gNew + hNew) < tileNodes[neighbourIndex].f())
-                {
-                    openList.push({ neighbour, gNew, hNew });
-                    tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew };
-                }
+                openList.push({ neighbour, gNew, hNew });
+                tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew };
             }
         }
-        nodes = tileNodes;
-
-        // Generate path by traversing parents then inverting
-        Path path;
-        Cell currentCell = end;
-        int currentIndex = Index(currentCell);
-
-        // If end doesn't have a parent, there's no solution
-        if (tileNodes[currentIndex].parent == Cell{ -1, -1 })
-            return {};
-
-        while (!(tileNodes[currentIndex].parent == currentCell))
-        {
-            path.push_back(currentCell);
-            currentCell = tileNodes[currentIndex].parent;
-            currentIndex = Index(currentCell);
-        }
-        path.push_back(start);
-        std::reverse(path.begin(), path.end());
-
-        return path;
     }
+    nodes = tileNodes;
 
-    std::vector<Cell> GetNeighbours(const Cell& cell, const Map& map)
+    // Generate path by traversing parents then inverting
+    Path path;
+    Cell currentCell = end;
+    int currentIndex = Index(currentCell);
+
+    // If end doesn't have a parent, there's no solution
+    if (tileNodes[currentIndex].parent == Cell{ -1, -1 })
+        return {};
+
+    while (!(tileNodes[currentIndex].parent == currentCell))
     {
-        std::vector<Cell> cells;
-        // Diagonals
-        //for (int row = cell.row - 1; row <= cell.row + 1 && row >= 0 && row < MAP_SIZE; row++)
-        //{
-        //    for (int col = cell.col - 1; col <= cell.col + 1 && col >= 0 && col < MAP_SIZE; col++)
-        //    {
-        //        if (!(col == cell.col && row == cell.row))
-        //            cells.push_back({ col, row });
-        //    }
-        //}
-        if (cell.col - 1 >= 0) cells.push_back({ cell.col - 1, cell.row });
-        if (cell.col + 1 < MAP_SIZE) cells.push_back({ cell.col + 1, cell.row });
-        if (cell.row - 1 >= 0) cells.push_back({ cell.col, cell.row - 1 });
-        if (cell.row + 1 < MAP_SIZE) cells.push_back({ cell.col, cell.row + 1 });
-        return cells;
+        path.push_back(currentCell);
+        currentCell = tileNodes[currentIndex].parent;
+        currentIndex = Index(currentCell);
     }
+    path.push_back(start);
+    std::reverse(path.begin(), path.end());
+
+    return path;
 }

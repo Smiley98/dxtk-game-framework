@@ -35,5 +35,3 @@ namespace DX
 
 #include "PrimitiveBatch.h"
 #include "VertexTypes.h"
-
-using namespace DirectX::DX11;
