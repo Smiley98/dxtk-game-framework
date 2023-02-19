@@ -72,12 +72,12 @@ public:
 		return mEntities.at(index);
 	}
 
-	const Component* GetComponent(const Entity entity) const
+	const Component* Get(const Entity entity) const
 	{
 		return HasComponent(entity) ? &mComponents.at(mLookup.at(entity)) : nullptr;
 	}
 
-	Component* GetComponent(Entity entity)
+	Component* Get(Entity entity)
 	{
 		return HasComponent(entity) ? &mComponents.at(mLookup.at(entity)) : nullptr;
 	}

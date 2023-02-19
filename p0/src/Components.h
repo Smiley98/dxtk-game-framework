@@ -18,21 +18,21 @@ struct Components
 	ComponentMap<EntityTransform> transforms;
 	ComponentMap<Hierarchy> hierarchies;
 	ComponentMap<Identifier> identifiers;
-	EntityTransform& GetTransform(Entity entity) { return *transforms.GetComponent(entity); }
-	Hierarchy& GetHierarchy(Entity entity) { return *hierarchies.GetComponent(entity); }
-	Identifier& GetIdentifier(Entity entity) { return *identifiers.GetComponent(entity); }
+	EntityTransform& GetTransform(Entity entity) { return *transforms.Get(entity); }
+	Hierarchy& GetHierarchy(Entity entity) { return *hierarchies.Get(entity); }
+	Identifier& GetIdentifier(Entity entity) { return *identifiers.Get(entity); }
 
 	// Physics Components
 	ComponentMap<Rigidbody> rigidbodies;
 	ComponentMap<Collider> colliders;
-	Rigidbody& GetRigidbody(Entity entity) { return *rigidbodies.GetComponent(entity); }
-	Collider& GetCollider(Entity entity) { return *colliders.GetComponent(entity); }
+	Rigidbody& GetRigidbody(Entity entity) { return *rigidbodies.Get(entity); }
+	Collider& GetCollider(Entity entity) { return *colliders.Get(entity); }
 
 	// Gameplay Components
 	ComponentMap<SteeringBehaviour> steering;
 	ComponentMap<Building> buildings;
 	ComponentMap<Player> players;
-	SteeringBehaviour& GetSteering(Entity entity) { return *steering.GetComponent(entity); }
-	Building& GetBuilding(Entity entity) { return *buildings.GetComponent(entity); }
-	Player& GetPlayer(Entity entity) { return *players.GetComponent(entity); }
+	SteeringBehaviour& GetSteering(Entity entity) { return *steering.Get(entity); }
+	Building& GetBuilding(Entity entity) { return *buildings.Get(entity); }
+	Player& GetPlayer(Entity entity) { return *players.Get(entity); }
 };

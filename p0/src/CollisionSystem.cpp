@@ -71,10 +71,10 @@ namespace Collision
 		{
 			for (Entity b : dynamicSpheres)
 			{
-				const EntityTransform& tA = *components.transforms.GetComponent(a);
-				const EntityTransform& tB = *components.transforms.GetComponent(b);
-				const Collider& cA = *components.colliders.GetComponent(a);
-				const Collider& cB = *components.colliders.GetComponent(b);
+				const EntityTransform& tA = *components.transforms.Get(a);
+				const EntityTransform& tB = *components.transforms.Get(b);
+				const Collider& cA = *components.colliders.Get(a);
+				const Collider& cB = *components.colliders.Get(b);
 
 				Vector3 mtv;
 				if (SphereSphere(
@@ -86,10 +86,10 @@ namespace Collision
 
 			for (Entity b : dynamicCapsules)
 			{
-				const EntityTransform& tA = *components.transforms.GetComponent(a);
-				const EntityTransform& tB = *components.transforms.GetComponent(b);
-				const Collider& cA = *components.colliders.GetComponent(a);
-				const Collider& cB = *components.colliders.GetComponent(b);
+				const EntityTransform& tA = *components.transforms.Get(a);
+				const EntityTransform& tB = *components.transforms.Get(b);
+				const Collider& cA = *components.colliders.Get(a);
+				const Collider& cB = *components.colliders.Get(b);
 
 				Vector3 mtv;
 				if (SphereCapsule(
@@ -105,10 +105,10 @@ namespace Collision
 		{
 			for (Entity b : dynamicSpheres)
 			{
-				const EntityTransform& tA = *components.transforms.GetComponent(a);
-				const EntityTransform& tB = *components.transforms.GetComponent(b);
-				const Collider& cA = *components.colliders.GetComponent(a);
-				const Collider& cB = *components.colliders.GetComponent(b);
+				const EntityTransform& tA = *components.transforms.Get(a);
+				const EntityTransform& tB = *components.transforms.Get(b);
+				const Collider& cA = *components.colliders.Get(a);
+				const Collider& cB = *components.colliders.Get(b);
 
 				Vector3 mtv;
 				if (SphereCapsule(
@@ -120,10 +120,10 @@ namespace Collision
 
 			for (Entity b : dynamicCapsules)
 			{
-				const EntityTransform& tA = *components.transforms.GetComponent(a);
-				const EntityTransform& tB = *components.transforms.GetComponent(b);
-				const Collider& cA = *components.colliders.GetComponent(a);
-				const Collider& cB = *components.colliders.GetComponent(b);
+				const EntityTransform& tA = *components.transforms.Get(a);
+				const EntityTransform& tB = *components.transforms.Get(b);
+				const Collider& cA = *components.colliders.Get(a);
+				const Collider& cB = *components.colliders.Get(b);
 
 				Vector3 mtv;
 				if (CapsuleCapsule(
@@ -142,10 +142,10 @@ namespace Collision
 			{
 				if (a == b) continue;
 
-				const EntityTransform& tA = *components.transforms.GetComponent(a);
-				const EntityTransform& tB = *components.transforms.GetComponent(b);
-				const Collider& cA = *components.colliders.GetComponent(a);
-				const Collider& cB = *components.colliders.GetComponent(b);
+				const EntityTransform& tA = *components.transforms.Get(a);
+				const EntityTransform& tB = *components.transforms.Get(b);
+				const Collider& cA = *components.colliders.Get(a);
+				const Collider& cB = *components.colliders.Get(b);
 
 				Vector3 mtv;
 				if (SphereSphere(
@@ -157,10 +157,10 @@ namespace Collision
 
 			for (Entity b : dynamicCapsules)
 			{
-				const EntityTransform& tA = *components.transforms.GetComponent(a);
-				const EntityTransform& tB = *components.transforms.GetComponent(b);
-				const Collider& cA = *components.colliders.GetComponent(a);
-				const Collider& cB = *components.colliders.GetComponent(b);
+				const EntityTransform& tA = *components.transforms.Get(a);
+				const EntityTransform& tB = *components.transforms.Get(b);
+				const Collider& cA = *components.colliders.Get(a);
+				const Collider& cB = *components.colliders.Get(b);
 
 				Vector3 mtv;
 				if (SphereCapsule(
@@ -178,10 +178,10 @@ namespace Collision
 			{
 				if (a == b) continue;
 
-				const EntityTransform& tA = *components.transforms.GetComponent(a);
-				const EntityTransform& tB = *components.transforms.GetComponent(b);
-				const Collider& cA = *components.colliders.GetComponent(a);
-				const Collider& cB = *components.colliders.GetComponent(b);
+				const EntityTransform& tA = *components.transforms.Get(a);
+				const EntityTransform& tB = *components.transforms.Get(b);
+				const Collider& cA = *components.colliders.Get(a);
+				const Collider& cB = *components.colliders.Get(b);
 
 				Vector3 mtv;
 				if (CapsuleCapsule(
@@ -201,8 +201,8 @@ namespace Collision
 			if (components.identifiers.HasComponent(collision.hits[0]) &&
 				components.identifiers.HasComponent(collision.hits[1]))
 			{
-				Tags::Tag tagA = components.identifiers.GetComponent(collision.hits[0])->tag;
-				Tags::Tag tagB = components.identifiers.GetComponent(collision.hits[1])->tag;
+				Tags::Tag tagA = components.identifiers.Get(collision.hits[0])->tag;
+				Tags::Tag tagB = components.identifiers.Get(collision.hits[1])->tag;
 
 				// Player-Player
 				if (tagA == Tags::PLAYER && tagB == Tags::PLAYER)
@@ -249,40 +249,40 @@ namespace Collision
 
 	void OnPlayerPlayer(Entity playerA, Entity playerB, const Vector3& mtv, Components& components)
 	{
-		assert(components.identifiers.GetComponent(playerA)->tag == Tags::PLAYER);
-		assert(components.identifiers.GetComponent(playerB)->tag == Tags::PLAYER);
-		components.transforms.GetComponent(playerA)->DeltaTranslate(-mtv);
-		components.transforms.GetComponent(playerB)->DeltaTranslate(mtv);
+		assert(components.identifiers.Get(playerA)->tag == Tags::PLAYER);
+		assert(components.identifiers.Get(playerB)->tag == Tags::PLAYER);
+		components.transforms.Get(playerA)->DeltaTranslate(-mtv);
+		components.transforms.Get(playerB)->DeltaTranslate(mtv);
 	}
 
 	void OnPlayerBuilding(Entity player, Entity buildingCollider, const Vector3& mtv, Components& components)
 	{
-		assert(components.identifiers.GetComponent(player)->tag == Tags::PLAYER);
-		assert(components.identifiers.GetComponent(buildingCollider)->tag == Tags::BUILDING);
+		assert(components.identifiers.Get(player)->tag == Tags::PLAYER);
+		assert(components.identifiers.Get(buildingCollider)->tag == Tags::BUILDING);
 
-		components.transforms.GetComponent(player)->DeltaTranslate(mtv);
-		components.buildings.GetComponent(Root(buildingCollider, components))->durability -= 10.0f;
+		components.transforms.Get(player)->DeltaTranslate(mtv);
+		components.buildings.Get(Root(buildingCollider, components))->durability -= 10.0f;
 	}
 
 	void OnPlayerProjectile(Entity player, Entity projectile, const Vector3& mtv, Components& components)
 	{
-		assert(components.identifiers.GetComponent(player)->tag == Tags::PLAYER);
-		assert(components.identifiers.GetComponent(projectile)->tag == Tags::PROJECTILE);
+		assert(components.identifiers.Get(player)->tag == Tags::PLAYER);
+		assert(components.identifiers.Get(projectile)->tag == Tags::PROJECTILE);
 	}
 
 	void OnBuildingProjectile(Entity building, Entity projectile, const Vector3& mtv, Components& components)
 	{
-		assert(components.identifiers.GetComponent(building)->tag == Tags::BUILDING);
-		assert(components.identifiers.GetComponent(projectile)->tag == Tags::PROJECTILE);
+		assert(components.identifiers.Get(building)->tag == Tags::BUILDING);
+		assert(components.identifiers.Get(projectile)->tag == Tags::PROJECTILE);
 	}
 
 	// mtv resolves b from a
 	bool IsColliding(Entity a, Entity b, Vector3& mtv, Components& components)
 	{
-		EntityTransform& tA = *components.transforms.GetComponent(a);
-		EntityTransform& tB = *components.transforms.GetComponent(b);
-		Collider& cA = *components.colliders.GetComponent(a);
-		Collider& cB = *components.colliders.GetComponent(b);
+		EntityTransform& tA = *components.transforms.Get(a);
+		EntityTransform& tB = *components.transforms.Get(b);
+		Collider& cA = *components.colliders.Get(a);
+		Collider& cB = *components.colliders.Get(b);
 		assert(cA.type != Collider::NONE && cB.type != Collider::NONE);
 		bool collision = false;
 
@@ -354,10 +354,10 @@ namespace Collision
 
 	bool IsColliding(Entity a, Entity b, Components& components)
 	{
-		EntityTransform& tA = *components.transforms.GetComponent(a);
-		EntityTransform& tB = *components.transforms.GetComponent(b);
-		Collider& cA = *components.colliders.GetComponent(a);
-		Collider& cB = *components.colliders.GetComponent(b);
+		EntityTransform& tA = *components.transforms.Get(a);
+		EntityTransform& tB = *components.transforms.Get(b);
+		Collider& cA = *components.colliders.Get(a);
+		Collider& cB = *components.colliders.Get(b);
 		assert(cA.type != Collider::NONE && cB.type != Collider::NONE);
 		bool collision = false;
 

@@ -12,7 +12,7 @@ Entity CreateBuilding(Components& components,
 	AddChild(entity, collider, components);
 	components.identifiers.Add(collider).tag = Tags::BUILDING;
 
-	EntityTransform& transform = *components.transforms.GetComponent(collider);
+	EntityTransform& transform = *components.transforms.Get(collider);
 	Collider& capsule = components.colliders.Add(collider);
 	capsule.type = Collider::CAPSULE;
 	capsule.dynamic = false;
@@ -75,7 +75,7 @@ std::vector<Entity> CreateMap(Map map, Components& components, const BuildingRen
 			for (int j = 0; j < cols; j++)
 			{
 				Entity building = CreateBuilding(components, Building::TD, renderer);
-				components.transforms.GetComponent(building)->Translate(x, y, 0.0f);
+				components.transforms.Get(building)->Translate(x, y, 0.0f);
 				buildings.push_back(building);
 				x += xStep;
 			}

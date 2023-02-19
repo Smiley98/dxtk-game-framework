@@ -13,7 +13,7 @@ namespace Dynamics
 			Entity entity = components.rigidbodies.GetEntity(i);
 			if (components.players.HasComponent(entity)) continue; // Player uses custom physics
 
-			EntityTransform& transform = *components.transforms.GetComponent(entity);
+			EntityTransform& transform = *components.transforms.Get(entity);
 			Rigidbody& body = components.rigidbodies[i];
 
 			Vector3 displacement;

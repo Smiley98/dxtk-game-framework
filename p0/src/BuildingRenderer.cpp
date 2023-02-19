@@ -43,11 +43,11 @@ void BuildingRenderer::Render(const Building& building,
 void BuildingRenderer::DebugBuilding(Entity entity, Components& components,
 	const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics, bool capsule)
 {
-	Entity child = *components.hierarchies.GetComponent(entity)->children.begin();
-	Collider& collider = *components.colliders.GetComponent(child);
-	Building& building = *components.buildings.GetComponent(entity);
-	EntityTransform& buildingTransform = *components.transforms.GetComponent(entity);
-	EntityTransform& colliderTransform = *components.transforms.GetComponent(child);
+	Entity child = *components.hierarchies.Get(entity)->children.begin();
+	Collider& collider = *components.colliders.Get(child);
+	Building& building = *components.buildings.Get(entity);
+	EntityTransform& buildingTransform = *components.transforms.Get(entity);
+	EntityTransform& colliderTransform = *components.transforms.Get(child);
 
 	if (capsule)
 		Debug::DrawCapsule(colliderTransform.WorldPosition(), colliderTransform.WorldForward(), collider.r, collider.hh);

@@ -44,7 +44,7 @@ void Scene::Create(
 	Debug::Load(graphics);
 
 	sPlayer = CreatePlayer(sComponents, sPlayerRenderer);
-	sComponents.transforms.GetComponent(sPlayer)->Translate(800.0f, 450.0f, 0.0f);
+	sComponents.transforms.Get(sPlayer)->Translate(800.0f, 450.0f, 0.0f);
 
 	//sScenes[SPLASH] = new SplashScene(graphics, audio);
 	//sScenes[LOADOUT] = new LoadoutScene(graphics, audio);
@@ -58,8 +58,8 @@ void Scene::Create(
 	//sScenes[COLLISION] = new CollisionScene(graphics, audio);
 	//sScenes[STEERING] = new SteeringScene(graphics, audio);
 	//sScenes[SPLINE] = new SplineScene(graphics, audio);
-	sScenes[PATH] = new PathScene(graphics, audio);
-	//sScenes[ENTITY] = new EntityScene(graphics, audio);
+	//sScenes[PATH] = new PathScene(graphics, audio);
+	sScenes[ENTITY] = new EntityScene(graphics, audio);
 	//sScenes[TEST] = new TestScene(graphics, audio);
 }
 

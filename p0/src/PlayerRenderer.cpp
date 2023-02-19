@@ -39,8 +39,8 @@ void PlayerRenderer::Render(const Matrix& world, const Matrix& view, const Matri
 void PlayerRenderer::DebugPlayer(Entity entity, Components& components,
 	const Matrix& view, const Matrix& proj, std::shared_ptr<DX::DeviceResources> graphics, bool capsule)
 {
-	EntityTransform& playerTransform = *components.transforms.GetComponent(entity);
-	Collider& playerCollider = *components.colliders.GetComponent(entity);
+	EntityTransform& playerTransform = *components.transforms.Get(entity);
+	Collider& playerCollider = *components.colliders.Get(entity);
 	if (capsule)
 	{
 		Debug::DrawCapsule(playerTransform.WorldPosition(), playerTransform.WorldForward(),

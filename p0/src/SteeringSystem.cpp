@@ -41,11 +41,11 @@ namespace Steering
 				// (This is fine even if the collider is a capsule because whether you're seeking the
 				// actual sphere contact point, or mtv relative to the centre, you'll still evade).
 				Vector3 mtv;
-				Entity child = *components.hierarchies.GetComponent(entity)->children.begin();
+				Entity child = *components.hierarchies.Get(entity)->children.begin();
 				if (Collision::IsColliding(behaviour.target, child, mtv, components))
 				{
-					EntityTransform& transform = *components.transforms.GetComponent(child);
-					Rigidbody& rb = *components.rigidbodies.GetComponent(entity);
+					EntityTransform& transform = *components.transforms.Get(child);
+					Rigidbody& rb = *components.rigidbodies.Get(entity);
 					Vector3 resolvedPosition = transform.WorldPosition() + mtv;
 					rb.acceleration = Seek(resolvedPosition, transform.WorldPosition(), rb.velocity, behaviour.maxSpeed);
 				}

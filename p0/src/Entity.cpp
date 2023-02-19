@@ -48,12 +48,12 @@ void DestroyEntity(Entity entity, Components& components)
 	};
 
 	// Recurssive case
-	for (Entity child : components.hierarchies.GetComponent(entity)->children)
+	for (Entity child : components.hierarchies.Get(entity)->children)
 		destroy(child, components);
 
 	// Base case
-	if (components.hierarchies.GetComponent(entity)->parent != INVALID_ENTITY)
-		RemoveChild(components.hierarchies.GetComponent(entity)->parent, entity, components);
+	if (components.hierarchies.Get(entity)->parent != INVALID_ENTITY)
+		RemoveChild(components.hierarchies.Get(entity)->parent, entity, components);
 	destroy(entity, components);
 
 	// Note that passing by reference to nullify the entity would create more problems than solutions.
@@ -63,32 +63,32 @@ void DestroyEntity(Entity entity, Components& components)
 
 void AddChild(Entity parent, Entity child, Components& components)
 {
-	if (components.hierarchies.GetComponent(child)->parent != INVALID_ENTITY)
+	if (components.hierarchies.Get(child)->parent != INVALID_ENTITY)
 	{
-		components.hierarchies.GetComponent(
-			components.hierarchies.GetComponent(child)->parent
+		components.hierarchies.Get(
+			components.hierarchies.Get(child)->parent
 		)->children.erase(child);
 	}
 
-	components.hierarchies.GetComponent(child)->parent = parent;
-	components.hierarchies.GetComponent(parent)->children.insert(child);
+	components.hierarchies.Get(child)->parent = parent;
+	components.hierarchies.Get(parent)->children.insert(child);
 }
 
 void RemoveChild(Entity parent, Entity child, Components& components)
 {
 	assert(
-		components.hierarchies.GetComponent(child)->parent == parent &&
-		components.hierarchies.GetComponent(parent)->children.find(child) !=
-		components.hierarchies.GetComponent(parent)->children.end()
+		components.hierarchies.Get(child)->parent == parent &&
+		components.hierarchies.Get(parent)->children.find(child) !=
+		components.hierarchies.Get(parent)->children.end()
 	);
 
-	components.hierarchies.GetComponent(parent)->children.erase(child);
-	components.hierarchies.GetComponent(child)->parent = INVALID_ENTITY;
+	components.hierarchies.Get(parent)->children.erase(child);
+	components.hierarchies.Get(child)->parent = INVALID_ENTITY;
 }
 
 Entity Root(Entity entity, Components& components)
 {
 	assert(entity != INVALID_ENTITY);
-	Entity parent = components.hierarchies.GetComponent(entity)->parent;
+	Entity parent = components.hierarchies.Get(entity)->parent;
 	return parent == INVALID_ENTITY ? entity : Root(parent, components);
 }
