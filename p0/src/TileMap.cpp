@@ -25,19 +25,25 @@ namespace Tile
 	std::vector<Cell> Neighbours(const Cell& cell, const Map& map)
 	{
 		std::vector<Cell> cells;
-		// Diagonals
-		for (int row = cell.row - 1; row <= cell.row + 1 && row >= 0 && row < MAP_SIZE; row++)
-		{
-			for (int col = cell.col - 1; col <= cell.col + 1 && col >= 0 && col < MAP_SIZE; col++)
-			{
-				if (!(col == cell.col && row == cell.row))
-					cells.push_back({ col, row });
-			}
-		}
-		//if (cell.col - 1 >= 0) cells.push_back({ cell.col - 1, cell.row });
-		//if (cell.col + 1 < MAP_SIZE) cells.push_back({ cell.col + 1, cell.row });
-		//if (cell.row - 1 >= 0) cells.push_back({ cell.col, cell.row - 1 });
-		//if (cell.row + 1 < MAP_SIZE) cells.push_back({ cell.col, cell.row + 1 });
+
+		// directional validity
+		bool top = cell.row - 1 >= 0;
+		bool bot = cell.row + 1 < MAP_SIZE;
+		bool left = cell.col - 1 >= 0;
+		bool right = cell.col + 1 < MAP_SIZE;
+
+		// horizontals and verticals
+		if (top) cells.push_back({ cell.col, cell.row - 1 });
+		if (bot) cells.push_back({ cell.col, cell.row + 1 });
+		if (left) cells.push_back({ cell.col - 1, cell.row });
+		if (right) cells.push_back({ cell.col + 1, cell.row });
+
+		// diagonals
+		if (top && left) cells.push_back({ cell.col - 1, cell.row - 1 });
+		if (top && right) cells.push_back({ cell.col + 1, cell.row - 1 });
+		if (bot && left) cells.push_back({ cell.col - 1, cell.row + 1 });
+		if (bot && right) cells.push_back({ cell.col + 1, cell.row + 1 });
+
 		return cells;
 	}
 

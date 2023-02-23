@@ -2,7 +2,7 @@
 #include "Pathing.h"
 
 using namespace Tile;
-constexpr bool gManhattan = true;
+constexpr bool gManhattan = false;
 
 Path FindPath(const Cell& start, const Cell& end, const Map& map)
 {
@@ -38,8 +38,9 @@ Path FindPath(const Cell& start, const Cell& end, const Map& map)
                 continue;
 
             // Calculate scores
-            gNew = gManhattan ? Manhattan(neighbour, end) : Euclidean(neighbour, end);
-            hNew = Cost(GetType(neighbour, map));
+            gNew = gManhattan ? Manhattan(currentCell, neighbour) : Euclidean(currentCell, neighbour);
+            hNew = gManhattan ? Manhattan(neighbour, end) : Euclidean(neighbour, end);
+            hNew += Cost(GetType(neighbour, map));
 
             // Append if unvisited or best score
             if (tileNodes[neighbourIndex].F() <= FLT_EPSILON ||
@@ -78,7 +79,7 @@ Path FindPathDebug(const Cell& start, const Cell& end, int steps, const Map& map
     tileNodes[Index(start)].parent = start;
     openList.push({ start });
 
-    for (int i = 0; i < steps; i++)
+    for (int i = 0; i < steps && !openList.empty(); i++)
     {
         const Cell currentCell = openList.top().cell;
 
@@ -102,8 +103,9 @@ Path FindPathDebug(const Cell& start, const Cell& end, int steps, const Map& map
                 continue;
 
             // Calculate scores
-            gNew = gManhattan ? Manhattan(neighbour, end) : Euclidean(neighbour, end);
-            hNew = Cost(GetType(neighbour, map));
+            gNew = gManhattan ? Manhattan(currentCell, neighbour) : Euclidean(currentCell, neighbour);
+            hNew = gManhattan ? Manhattan(neighbour, end) : Euclidean(neighbour, end);
+            hNew += Cost(GetType(neighbour, map));
 
             // Append if unvisited or best score
             if (tileNodes[neighbourIndex].F() <= FLT_EPSILON ||

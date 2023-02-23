@@ -18,7 +18,7 @@ void Lerp(const Cell& a, const Cell& b, float t, Vector3& position, Vector3& dir
 PathScene::PathScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_ptr<DirectX::AudioEngine> audio)
 	: Scene(graphics, audio)
 {
-	mStart = { 1, 8 };
+	mStart = { 0, 9 };
 	mEnd   = { 8, 1 };
 
 	mOnGui = [&]
