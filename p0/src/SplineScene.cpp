@@ -30,6 +30,11 @@ SplineScene::SplineScene(std::shared_ptr<DX::DeviceResources> graphics, std::sha
 	};
 	mSpline.speedTable = CreateSpeedTable(mSpline.points, 16);
 	mSplineFollower = CreateEntity(sComponents);
+	for (size_t i = 0; i < mSpline.points.size(); i++)
+	{
+		for (size_t j = 0; j <= 16; j++)
+			mSplineRender.push_back(Catmull(float(j) / 16.0f, i, mSpline.points));
+	}
 
 	for (size_t i = 0; i < mSpline.points.size(); i++)
 	{
@@ -105,6 +110,15 @@ void SplineScene::OnRender(std::shared_ptr<DX::DeviceResources> graphics)
 		sPlayerRenderer.Render(sComponents.GetTransform(mRacers[i]).World(), mSpace.view, mSpace.proj, graphics);
 	}
 
+	for (const Vector3& point : mSpline.points)
+		Debug::DrawSphere(point, r, Colors::Black);
+	
+	for (size_t i = 0; i < mSplineRender.size(); i++)
+	{
+		Debug::DrawLine(mSplineRender[i], mSplineRender[(i + 1) % mSplineRender.size()], 1.0f);
+		Debug::DrawSphere(mSplineRender[i], 10.0f);
+	}
+	
 	sPlayerRenderer.Render(sComponents.GetTransform(mSplineFollower).World(), mSpace.view, mSpace.proj, graphics);
 	sPlayerRenderer.Render(sComponents.GetTransform(sPlayer).World(), mSpace.view, mSpace.proj, graphics);
 }

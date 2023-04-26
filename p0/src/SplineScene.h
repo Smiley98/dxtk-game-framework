@@ -21,6 +21,7 @@ public:
 private:
     Spline mSpline;
     Entity mSplineFollower;
+    std::vector<Vector3> mSplineRender;
 
     std::vector<Entity> mRacers;
     std::vector<Entity> mCheckpoints;
