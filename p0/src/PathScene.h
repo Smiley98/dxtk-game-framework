@@ -42,4 +42,5 @@ private:
 
 	std::vector<Tile::Node> mNodes;
 	int mPathRenderState = 1;
+	bool mManhattan = true;
 };

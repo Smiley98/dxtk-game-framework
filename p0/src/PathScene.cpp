@@ -27,8 +27,9 @@ PathScene::PathScene(std::shared_ptr<DX::DeviceResources> graphics, std::shared_
 		ImGui::SliderInt("Render State", &mPathRenderState, 1, 3);
 		change |= ImGui::SliderInt("A* Iterations", &mSteps, 0, 25);
 		change |= ImGui::SliderInt2("Start", (int*)&mStart, 0, 9) || ImGui::SliderInt2("End", (int*)&mEnd, 0, 9);
+		change |= ImGui::Checkbox("Toggle Manhattan", &mManhattan);
 		if (change) {
-			mPath = FindPathDebug(mStart, mEnd, mSteps, mMap, mNodes);
+			mPath = FindPathDebug(mStart, mEnd, mSteps, mMap, mNodes, mManhattan);
 			if (!mPath.empty())
 			{
 				mCurrent = 0;
@@ -64,7 +65,7 @@ void PathScene::OnResize(std::shared_ptr<DX::DeviceResources> graphics)
 void PathScene::OnBegin()
 {
 	sComponents.GetTransform(sPlayer).Translate(CellToWorld(mStart));
-	mPath = FindPathDebug(mStart, mEnd, mSteps, mMap, mNodes);
+	mPath = FindPathDebug(mStart, mEnd, mSteps, mMap, mNodes, mManhattan);
 }
 
 void PathScene::OnEnd()

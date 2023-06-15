@@ -2,9 +2,8 @@
 #include "Pathing.h"
 
 using namespace Tile;
-constexpr bool gManhattan = false;
 
-Path FindPath(const Cell& start, const Cell& end, const Map& map)
+Path FindPath(const Cell& start, const Cell& end, const Map& map, bool manhattan)
 {
     // Mark all nodes as unvisited (closed list = false) and append start to open list
     const int tileCount = MAP_SIZE * MAP_SIZE;
@@ -38,8 +37,8 @@ Path FindPath(const Cell& start, const Cell& end, const Map& map)
                 continue;
 
             // Calculate scores
-            gNew = gManhattan ? Manhattan(currentCell, neighbour) : Euclidean(currentCell, neighbour);
-            hNew = gManhattan ? Manhattan(neighbour, end) : Euclidean(neighbour, end);
+            gNew = manhattan ? Manhattan(currentCell, neighbour) : Euclidean(currentCell, neighbour);
+            hNew = manhattan ? Manhattan(neighbour, end) : Euclidean(neighbour, end);
             hNew += Cost(GetType(neighbour, map));
 
             // Append if unvisited or best score
@@ -69,7 +68,7 @@ Path FindPath(const Cell& start, const Cell& end, const Map& map)
     return path;
 }
 
-Path FindPathDebug(const Cell& start, const Cell& end, int steps, const Map& map, std::vector<Node>& nodes)
+Path FindPathDebug(const Cell& start, const Cell& end, int steps, const Map& map, std::vector<Node>& nodes, bool manhattan)
 {
     // Mark all nodes as unvisited (closed list = false) and append start to open list
     const int tileCount = MAP_SIZE * MAP_SIZE;
@@ -103,8 +102,8 @@ Path FindPathDebug(const Cell& start, const Cell& end, int steps, const Map& map
                 continue;
 
             // Calculate scores
-            gNew = gManhattan ? Manhattan(currentCell, neighbour) : Euclidean(currentCell, neighbour);
-            hNew = gManhattan ? Manhattan(neighbour, end) : Euclidean(neighbour, end);
+            gNew = manhattan ? Manhattan(currentCell, neighbour) : Euclidean(currentCell, neighbour);
+            hNew = manhattan ? Manhattan(neighbour, end) : Euclidean(neighbour, end);
             hNew += Cost(GetType(neighbour, map));
 
             // Append if unvisited or best score
